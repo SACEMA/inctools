@@ -9,7 +9,33 @@ recencyI(BS_Count = 10000, BSDM_spread = 1000, BS_Vars = NULL,
   RSE_FRR, BigT = 730, Covar_HR = 0)
 }
 \arguments{
-\item{BS_Count}{Add details on each prarameter}
+\item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.}
+
+\item{BSDM_spread}{...}
+
+\item{BS_Vars}{...}
+
+\item{BMest}{Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).}
+
+\item{PrevH}{Prevelance of HIV in survey.}
+
+\item{RSE_PrevH}{...}
+
+\item{PrevR}{Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV.}
+
+\item{RSE_PrevR}{...}
+
+\item{MDRI}{Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.}
+
+\item{RSE_MDRI}{Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.}
+
+\item{FRR}{False Recency Rate as measured by the biomarker assay to test recency in the given prevalence survey.}
+
+\item{RSE_FRR}{Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.}
+
+\item{BigT}{Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.}
+
+\item{Covar_HR}{Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)}
 }
 \value{
 Incidence

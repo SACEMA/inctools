@@ -37,10 +37,8 @@
 
 
 
+
 prevBYcounts <- function (DE_H=1, DE_R=1, N, N_H, N_testR, N_R) {
-
-
-  #######################################################################################################
   no_s <-length(N)
   if (length(DE_H)==1)     {DE_H <- rep(DE_H, times=no_s)}         else {DE_H=DE_H}
   if (length(DE_R)==1)     {DE_R <- rep(DE_R, times=no_s)}         else {DE_R=DE_R}
@@ -54,7 +52,7 @@ prevBYcounts <- function (DE_H=1, DE_R=1, N, N_H, N_testR, N_R) {
  output <- data.frame("PrevH"=PrevH, "PrevR"=PrevR, "RSE_PrevH"=RSE_PrevH, "RSE_PrevR"=RSE_PrevR)
  return(output)
 }
-#######################################################################################################
+
 
 I_EST <- function (prevH, prevR, mdri, frr, bigt){
   prevH*(prevR - frr)/((1 - prevH)*(mdri-frr*bigt))
@@ -120,11 +118,20 @@ BS_SPREADbyDM <- function (bsdm_spread, bs_count, bsvec, dm_sd)  { # possibly be
 
 #' Incidence and incidence difference from Trinomial Counts / Prevalences of HIV and recency
 #'
-#' @param BS_Count Add details on each prarameter
-#' @param BSDM_spread Add details on each prarameter
-#' @param BS_Vars Add details on each prarameter
-#' @param BMest Add details on each prarameter
-#' @param PrevH Add details
+#' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
+#' @param BSDM_spread ...
+#' @param BS_Vars ...
+#' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).
+#' @param PrevH Prevelance of HIV in survey.
+#' @param RSE_PrevH ...
+#' @param PrevR Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV.
+#' @param RSE_PrevR ...
+#' @param MDRI Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.
+#' @param RSE_MDRI Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.
+#' @param FRR False Recency Rate as measured by the biomarker assay to test recency in the given prevalence survey.
+#' @param RSE_FRR Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.
+#' @param BigT Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.
+#' @param Covar_HR Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)
 #' @return Incidence
 #' @return RSE Incidence
 #' @return etc.
@@ -142,7 +149,7 @@ recencyI <- function (BS_Count=10000,
                       PrevH, RSE_PrevH, PrevR, RSE_PrevR,
                       MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0)
-
+#RSE_PrevH and RSE_PrevR need to be calculated in the function, and not user-defined, I believe
 {
   stopifnot (PrevH<=1     & PrevH>=0)
   stopifnot (PrevR<=1     & PrevR>=0)
