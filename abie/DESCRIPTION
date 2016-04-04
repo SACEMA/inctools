@@ -3,8 +3,33 @@ Type: Package
 Title: Assay-Based Incidence Estimation
 Version: 0.0.1
 Date: 2016-01-26
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
-LazyData: TRUE
+Authors@R: c(
+  person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
+  person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
+  person("Petra","Bäumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
+  person("Avery","McIntosh",email="avery.i.mcintosh@gmail.com",role="aut"),
+  person("Hilmarie","Brand", role="aut"),
+  person("Yuruo","Li",email="yul123@pitt.edu", role="aut"),
+  person("Simon","Daniel",email="skjdaniel@gmail.com", role="aut"),
+  person("Yusuke","Asai",email="yusuke.asai@yahoo.de",role="aut"),
+  person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="aut")
+  )
+Description: Tools for estimating incidence from biomarker data in cross-sectional
+  surveys and for calibrating tests for recent infection.
+Depends:
+    R (>= 3.2.1)
+License: GPL (>= 3)
+Date: 2015-09-15
+LazyData: True
+Imports:
+    plyr,
+    glm2,
+    cubature,
+    ggplot2,
+    pracma,
+    reshape2,
+    MASS
+Suggests:
+    foreach,
+    doMC,
+    testthat
