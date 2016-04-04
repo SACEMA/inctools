@@ -2,7 +2,7 @@ Package: abie
 Type: Package
 Title: Assay-Based Incidence Estimation
 Version: 0.0.1
-Date: 2015-09-15
+Date: 2016-05-01
 Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
