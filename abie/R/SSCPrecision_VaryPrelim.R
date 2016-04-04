@@ -229,6 +229,7 @@ SSCprecision <- function ( I              ,
     out2 <- PrevHR <- PrevH*PrevR
     out3 <- PrevHnR <-PrevH-PrevHR
 
+#call DM_FirstOrderTerms instead of defined here.
     fot_PrevH <- ((((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-FRR)/(((1-PrevH)^2)*(MDRI-FRR*BigT)))
     fot_PrevR <- (PrevH/((1-PrevH)*(MDRI-FRR*BigT)))
     fot_MDRI  <- ((FRR*PrevH-((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)*PrevH)/((1-PrevH)*((MDRI-FRR*BigT)^2)))
@@ -254,7 +255,7 @@ if(RSE_I=="out") {
     PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
     out2 <- PrevHR <- PrevH*PrevR
     out3 <- PrevHnR <-PrevH-PrevHR
-
+###omit the function here defined below and input the ouptut of DM_FirstOrderTerms
     fot_PrevH <- ((((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-FRR)/(((1-PrevH)^2)*(MDRI-FRR*BigT)))
     fot_PrevR <- (PrevH/((1-PrevH)*(MDRI-FRR*BigT)))
     fot_MDRI  <- ((FRR*PrevH-((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)*PrevH)/((1-PrevH)*((MDRI-FRR*BigT)^2)))
@@ -353,7 +354,7 @@ SSCprecision             ( I              =0.015,
                            n              = "out",
                            step           = 5)
 #####################################################################################################################
-#example of an error (three inputs to CR, coverag rate)
+#there is some error here, not sure what...
 SSCprecision             ( I              =0.015,
                            RSE_I          ="out",
                            PrevH          =0.2,
