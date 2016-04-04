@@ -1,11 +1,11 @@
-####== Sample Size calculation for desired precision of I estimation   
+####== Sample Size calculation for desired precision of I estimation
 #######################################################################################################
 ####== PrevH:    prevalence of HIV
 ####== PrevR:    prevalence of recency when HIV positive and therefore tested for recency
-####== I:        incidence expected 
+####== I:        incidence expected
 ####== CR:       coverage rate; probability (0 - 1) of being tested for recency when positive
-####==  
-####== Covar_HR: covariance of probs being postive & being recent of survey 1&2 (vector) 
+####==
+####== Covar_HR: covariance of probs being postive & being recent of survey 1&2 (vector)
 ####== MDRI:     mean duration of recent infection [days] (vector/integer)
 ####== RSE_MDRI: Relative standard error of MDRI   [days] (vector/integer)
 ####== FRR:      False recent rate (vector/integer)
@@ -13,8 +13,8 @@
 ####== BigT:     post-infection time cut-off true vs false recent [days] default 730 days (integer)
 ####== DE_H:     Design effect of HIV-prevalence test (vector/integer)
 ####== DE_R:     Design effect of recency test (vector/integer)
-####== BS_Vars:  Variables to be bootstrapped e.g.c("PrevH", "PrevR", "MDRI", "FRR") (string vector) 
-####== 
+####== BS_Vars:  Variables to be bootstrapped e.g.c("PrevH", "PrevR", "MDRI", "FRR") (string vector)
+####==
 #######################################################################################################
 
 MDRI     <- c(200,250)
@@ -30,6 +30,14 @@ DE_H     <- 1
 DE_R     <- 1
 n        <- "out"
 step <- 5
+
+#Note to self: 'step' is number of steps between minimum I and maximum I in the calculation of
+#a range of output. So supply a vector or max/min theoretical incidences, and the function gives
+#a range of values (step number of values ) for the output. This can be done for all input variables.
+#DO WE WANT THIS OPTION??
+
+#Only gives option of n or RSE_I to be 'out' or not. So only gives precision or n. Makes sense.
+#Either give function n to get RSE_I or give it RSE_I to get n.
 
 
 SSCprecision <- function ( I              ,
@@ -50,7 +58,7 @@ SSCprecision <- function ( I              ,
   if (length(test) > 15) {
     stop("only a maximum of 2 variables are allowed to vary")
   }
-  
+
   if (length(I)>2        | length(I)<1)       {("specifiy (only) min & max values for I")}
   if (length(RSE_I)>2    | length(RSE_I)<1)   {("specifiy (only) min & max values for RSE_I")}
   if (length(PrevH)>2    | length(PrevH)<1)   {("specifiy (only) min & max values for PrevH")}
@@ -63,7 +71,8 @@ SSCprecision <- function ( I              ,
   if (length(DE_H)>2     | length(DE_H)<1)    {("specifiy (only) min & max values for DE_H")}
   if (length(DE_R)>2     | length(DE_R)<1)    {("specifiy (only) min & max values for DE_R")}
   if (length(n)>2        | length(n)<1)       {("specifiy (only) min & max values for n")}
- 
+
+#THIS SECTION STARTING HERE NEEDS UPDATED ERROR NOTES
   if (is.numeric(I)>0)        {stopifnot (I<=1        & I>=0)}
   if (is.numeric(RSE_I)>0)    {stopifnot (RSE_I<=1    & RSE_I>=0)}
   if (is.numeric(PrevH)>0)    {stopifnot (PrevH<=1    & PrevH>=0)}
@@ -75,7 +84,9 @@ SSCprecision <- function ( I              ,
   if (is.numeric(DE_H)>0)     {stopifnot (DE_H>=1)}
   if (is.numeric(DE_R)>0)     {stopifnot (DE_R>=1)}
   if (is.numeric(n)>0)        {stopifnot (n>100)}
-  if (length(BigT)==1) {
+
+#CAN BE MADE MORE SUCCINCT
+    if (length(BigT)==1) {
     if (BigT<=182)          {
       warning ("BigT is smaller than half a year")
       }
@@ -86,189 +97,189 @@ SSCprecision <- function ( I              ,
       }
     }
   }
-  
+
   vary1 <- NULL
   vary2 <- NULL
   if (length(I)==2)      {
     I <- matrix(rep(seq(from=min(I),to=max(I),length.out=step),times=step),ncol=step,nrow=step)
-    if (length(vary1)==0)         { 
-      vary1 <- I 
+    if (length(vary1)==0)         {
+      vary1 <- I
       vary_name1 <- "I"
-    } else { 
-      vary2 = I = t(I) 
+    } else {
+      vary2 = I = t(I)
       vary_name2 = "I"
-    } 
-  }   
+    }
+  }
   if (length(RSE_I)==2)   {
     RSE_I <- matrix(rep(seq(from=min(RSE_I),to=max(RSE_I),length.out=step),times=step),ncol=step,nrow=step)
-    if (length(vary1)==0){ 
-      vary1 <- RSE_I 
+    if (length(vary1)==0){
+      vary1 <- RSE_I
       vary_name1 <- "I"
-    } else { 
-      vary2 = RSE_I = t(RSE_I) 
+    } else {
+      vary2 = RSE_I = t(RSE_I)
       vary_name2 = "I"
-    } 
-  }  
+    }
+  }
   if (length(PrevH)==2)   {
     PrevH  <- matrix(rep(seq(from=min(PrevH),to=max(PrevH),length.out=step),times=step),ncol=step,nrow=step)
-    if (length(vary1)==0){ 
-      vary1 <- PrevH 
+    if (length(vary1)==0){
+      vary1 <- PrevH
       vary_name1 <- "PrevH"
-    } else { 
-      vary2 = PervH = t(PrevH) 
+    } else {
+      vary2 = PervH = t(PrevH)
       vary_name2 <- "PrevH"
-    } 
-  }   
+    }
+  }
   if (length(CR)==2) {
     CR <- matrix(rep(seq(from=min(CR),to=max(CR),length.out=step),times=step),ncol=step,nrow=step)
-    if (length(vary1)==0)         { 
-      vary1 <- CR 
+    if (length(vary1)==0)         {
+      vary1 <- CR
       vary_name1 <- "CR"
-    } else { 
-      vary2 = CR = t(CR) 
+    } else {
+      vary2 = CR = t(CR)
       vary_name2 = "CR"
-    } 
-  }    
+    }
+  }
   if (length(MDRI)==2) {
     MDRI <- matrix(rep(seq(from=min(MDRI),to=max(MDRI),length.out=step),times=step),ncol=step,nrow=step)
-    if (length(vary1)==0)         { 
+    if (length(vary1)==0)         {
       vary1 <- MDRI
       vary_name1 <- "MDRI"
-    } else { 
-      vary2 = MDRI = t(MDRI) 
+    } else {
+      vary2 = MDRI = t(MDRI)
       vary_name2 = "MDRI"
-    } 
-  } 
+    }
+  }
   if (length(RSE_MDRI)==2){
     RSE_MDRI <- matrix(rep(seq(from=min(RSE_MDRI),to=max(RSE_MDRI),length.out=step),times=step),ncol=step,nrow=step)
-    if (length(vary1)==0)         { 
-      vary1 <- RSE_MDRI 
+    if (length(vary1)==0)         {
+      vary1 <- RSE_MDRI
       vary_name1 <- "RSE_MDRI"
-    } else { 
-      vary2 = RSE_MDRI = t(RSE_MDRI) 
+    } else {
+      vary2 = RSE_MDRI = t(RSE_MDRI)
       vary_name2 = "RSE_MDRI"
-    } 
-  } 
+    }
+  }
   if (length(FRR)==2)  {
     FRR <- matrix(rep(seq(from=min(FRR),to=max(FRR),length.out=step),times=step),nrow=step,ncol=step)
-    if (length(vary1)==0)         { 
-      vary1 <- FRR 
+    if (length(vary1)==0)         {
+      vary1 <- FRR
       vary_name1 <- "FRR"
-    } else { 
-      vary2 = FRR = t(FRR) 
+    } else {
+      vary2 = FRR = t(FRR)
       vary_name2 = "FRR"
-    } 
-  } 
+    }
+  }
   if (length(RSE_FRR)==2) {
     RSE_FRR <- matrix(rep(seq(from=min(RSE_FRR),to=max(RSE_FRR),length.out=step),times=step),nrow=step,ncol=step)
-    if (length(vary1)==0)         { 
-      vary1 <- RSE_FRR 
+    if (length(vary1)==0)         {
+      vary1 <- RSE_FRR
       vary_name1 <- "RSE_FRR"
-    } else { 
-      vary2 = RSE_FRR = t(RSE_FRR) 
+    } else {
+      vary2 = RSE_FRR = t(RSE_FRR)
       vary_name2 = "RSE_FRR"
-    } 
-  } 
+    }
+  }
   if (length(BigT)==2)  {
     BigT <- matrix(rep(seq(from=min(BigT),to=max(BigT),length.out=step),times=step),nrow=step,ncol=step)
-    if (length(vary1)==0)         { 
-      vary1 <- BigT 
+    if (length(vary1)==0)         {
+      vary1 <- BigT
       vary_name1 <- "BigT"
-    } else { 
-      vary2 = BigT = t(BigT) 
+    } else {
+      vary2 = BigT = t(BigT)
       vary_name2 = "BigT"
-    } 
-  } 
+    }
+  }
   if (length(DE_H)==2)    {
     DE_H <- matrix(rep(seq(from=min(DE_H),to=max(DE_H),length.out=step),times=step),nrow=step,ncol=step)
-    if (length(vary1)==0)         { 
-      vary1 <- DE_H 
+    if (length(vary1)==0)         {
+      vary1 <- DE_H
       vary_name1 <- "DE_H"
-    } else { 
-      vary2 = DE_H = t(DE_H) 
+    } else {
+      vary2 = DE_H = t(DE_H)
       vary_name2 = "DE_H"
-    } 
-  }    
+    }
+  }
   if (length(DE_R)==2)  {
     DE_R <- matrix(rep(seq(from=min(DE_R),to=max(DE_R),length.out=step),times=step),nrow=step,ncol=step)
-    if (length(vary1)==0)        { 
-      vary1 <- DE_R 
+    if (length(vary1)==0)        {
+      vary1 <- DE_R
       vary_name1 <- "DE_R"
-    } else { 
-      vary2 = DE_R = t(DE_R) 
+    } else {
+      vary2 = DE_R = t(DE_R)
       vary_name2 = "DE_R"
-    } 
-  }   
+    }
+  }
   if (length(n)==2)   {
     n <- matrix(rep(seq(from=min(n),to=max(n),length.out=step),times=step),nrow=step,ncol=step)
-    if (length(vary1)==0)         { 
-      vary1 <- n 
+    if (length(vary1)==0)         {
+      vary1 <- n
       vary_name1 <- "n"
-    } else { 
-      vary2 = n = t(n) 
+    } else {
+      vary2 = n = t(n)
       vary_name2 = "n"
-    } 
-  }      
-  
+    }
+  }
+
   if (is.numeric(MDRI)) {MDRI <- MDRI/365.25}
   if (is.numeric(BigT)) {BigT <- BigT/365.25}
-  
-  if (n=="out") { 
+
+  if (n=="out") {
     PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
     out2 <- PrevHR <- PrevH*PrevR
     out3 <- PrevHnR <-PrevH-PrevHR
-    
+
     fot_PrevH <- ((((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-FRR)/(((1-PrevH)^2)*(MDRI-FRR*BigT)))
     fot_PrevR <- (PrevH/((1-PrevH)*(MDRI-FRR*BigT)))
     fot_MDRI  <- ((FRR*PrevH-((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)*PrevH)/((1-PrevH)*((MDRI-FRR*BigT)^2)))
     fot_FRR   <- ((PrevH*(BigT*((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-MDRI))/((1-PrevH)*((MDRI-FRR*BigT)^2)))
-    
+
     out4 <- RSE_I_inf <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I
-    
+
     out1 <- n <- ((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf^2)*I^2)
     #   alternative formula for n without requirement of previouscalculations (usable for uniroot)
-    #   n <- (I^2*DE_H/(PrevH*(1-PrevH)) + 
+    #   n <- (I^2*DE_H/(PrevH*(1-PrevH)) +
     #         DE_R*PrevH/((1-PrevH)^2*(MDRI-FRR*BigT)^2*CR)*
     #        (FRR+I*(1-PrevH)*(MDRI-FRR*BigT)/PrevH)*(1-(FRR+I*(1-PrevH)*(MDRI-FRR*BigT)/PrevH)))/
     #        ((RSE_I^2*I^2)-
     #        (((I*(1-PrevH)*(MDRI-FRR*BigT)*RSE_MDRI*MDRI)^2+
     #        ((PrevH*BigT*FRR+BigT*I*(1-PrevH)*(MDRI-FRR*BigT)-PrevH*MDRI)*FRR*RSE_FRR)^2)/
-    #        (((1-PrevH)*(MDRI-FRR*BigT)^2)^2)))    
+    #        (((1-PrevH)*(MDRI-FRR*BigT)^2)^2)))
     out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH
-    out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR 
+    out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR
     out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")}
-  
-  
+
+
 if(RSE_I=="out") {
     PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
     out2 <- PrevHR <- PrevH*PrevR
     out3 <- PrevHnR <-PrevH-PrevHR
-    
+
     fot_PrevH <- ((((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-FRR)/(((1-PrevH)^2)*(MDRI-FRR*BigT)))
     fot_PrevR <- (PrevH/((1-PrevH)*(MDRI-FRR*BigT)))
     fot_MDRI  <- ((FRR*PrevH-((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)*PrevH)/((1-PrevH)*((MDRI-FRR*BigT)^2)))
     fot_FRR   <- ((PrevH*(BigT*((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-MDRI))/((1-PrevH)*((MDRI-FRR*BigT)^2)))
-    
+
     out4 <- RSE_I_inf <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I
-    
+
     out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH
     out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR
-    
-    out1 <- RSE_I <-sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + 
-                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf^2) 
+
+    out1 <- RSE_I <-sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H +
+                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf^2)
     out_names <- c("RSE_I","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")}
-  
-  
+
+
   # if(PrevH=="out")    { }
   # if (CR=="out")      { }
-  # if (MDRI=="out")    { } 
+  # if (MDRI=="out")    { }
   # if(RSE_MDRI=="out") { }
   # if (FRR=="out")     { }
   # if (RSE_FRR=="out") { }
   # if (BigT=="out")    { }
   # if (DE_H=="out")    { }
   # if(DE_R=="out")     { }
-  
+
   if (length(test)==15) {
     VARY1<-vector(length=step)
     for (i in c(1:step)) {
@@ -290,9 +301,9 @@ if(RSE_I=="out") {
     out5<-cbind(VARY1,out5)
     out5<-rbind(VARY2,out5)
     out6<-cbind(VARY1,out6)
-    out6<-rbind(VARY2,out6)  
+    out6<-rbind(VARY2,out6)
   }
-  
+
   if (length(test)==14) {
     VARY1<-vector(length=step)
     for (i in c(1:step)) {
@@ -303,15 +314,14 @@ if(RSE_I=="out") {
     out3<-cbind(VARY1,out3[,1])
     out4<-cbind(VARY1,out4[,1])
     out5<-cbind(VARY1,out5[,1])
-    out6<-cbind(VARY1,out6[,1])  
+    out6<-cbind(VARY1,out6[,1])
   }
-  
+
   output <- list (out1, out2, out3, out4, out5,out6)
   names(output)<-out_names
-  
+
   return(output)
-  
-  #plot(...
+
 }
 
 #####################################################################################################################
@@ -340,9 +350,10 @@ SSCprecision             ( I              =0.015,
                            BigT           = 710,
                            DE_H           = 1,
                            DE_R           = 1,
-                           n              = "out", 
+                           n              = "out",
                            step           = 5)
 #####################################################################################################################
+#example of an error (three inputs to CR, coverag rate)
 SSCprecision             ( I              =0.015,
                            RSE_I          ="out",
                            PrevH          =0.2,
@@ -356,3 +367,7 @@ SSCprecision             ( I              =0.015,
                            DE_R           = 1,
                            n              = 3622,
                            step           = 5)
+
+
+
+
