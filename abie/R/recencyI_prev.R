@@ -149,7 +149,8 @@ recencyI <- function (BS_Count=10000,
                       PrevH, RSE_PrevH, PrevR, RSE_PrevR,
                       MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0)
-#RSE_PrevH and RSE_PrevR need to be calculated in the function, and not user-defined, I believe
+#RSE_PrevH and RSE_PrevR need to be calculated in the function, and not user-defined.
+  #The structure now is that function requires format input from ancillary function prevBYcounts OUTSIDE the recencyI() function. Not optimal. This should be done inside the function....
 {
   stopifnot (PrevH<=1     & PrevH>=0)
   stopifnot (PrevR<=1     & PrevR>=0)
