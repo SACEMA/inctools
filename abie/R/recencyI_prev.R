@@ -121,6 +121,10 @@ BS_SPREADbyDM <- function (bsdm_spread, bs_count, bsvec, dm_sd)  { # possibly be
 #' Incidence and incidence difference from Trinomial Counts / Prevalences of HIV and recency
 #'
 #' @param BS_Count Add details on each prarameter
+#' @param BSDM_spread Add details on each prarameter
+#' @param BS_Vars Add details on each prarameter
+#' @param BMest Add details on each prarameter
+#' @param PrevH Add details
 #' @return Incidence
 #' @return RSE Incidence
 #' @return etc.
