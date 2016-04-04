@@ -2,7 +2,7 @@ Package: abie
 Type: Package
 Title: Assay-Based Incidence Estimation
 Version: 0.0.1
-Date: 2016-01-26
+Date: 2015-09-15
 Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
@@ -14,12 +14,11 @@ Authors@R: c(
   person("Yusuke","Asai",email="yusuke.asai@yahoo.de",role="aut"),
   person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="aut")
   )
-Description: Tools for estimating incidence from biomarker data in cross-sectional
-  surveys and for calibrating tests for recent infection.
+Description: Tools for estimating incidence from biomarker data in cross-
+    sectional surveys and for calibrating tests for recent infection.
 Depends:
     R (>= 3.2.1)
 License: GPL (>= 3)
-Date: 2015-09-15
 LazyData: True
 Imports:
     plyr,
@@ -33,3 +32,4 @@ Suggests:
     foreach,
     doMC,
     testthat
+RoxygenNote: 5.0.1
