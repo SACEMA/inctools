@@ -73,6 +73,8 @@ BS_SURVEY_ESTS <- function (prevH, prevR, mdri, frr, bs_count,
                      0,             0,            bs_var_mdri, 0,
                      0,             0,            0,           bs_var_frr),
                  nrow=4, ncol=4)
+#bs_var_prevH,   bs_var_prevR, and so on are...?empirical, observed variance of variable?
+#returns bootstraps of prevH, prevR, mdri, frr
   BS_RootEst <- MASS::mvrnorm(n=bs_count, mu=Mu, Sigma=sigma, empirical=TRUE)
   return (BS_RootEst)
 }
@@ -117,16 +119,16 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 
 #THIS FUNCTION IS USED TO RUN A HYBRID BOOTSTRAPPING/DELTA-METHOD APPROXIMATION FOR THE VARIANCE OF I.
 #THIS FUNCTION IS CURRENTLY NOT IN USE
-BS_SPREADbyDM <- function (bsdm_spread, bs_count, bsvec, dm_sd)  { # possibly be replace by options from "test_BSbyDM
-  spread_seq <- (rnorm(bsdm_spread, mean(bsvec), dm_sd))-mean(bsvec)
-  BS_spread <- vector(length=bsdm_spread*bs_count)
-  for (i in c(1:bs_count)) {
-    BS_spread[(i*bsdm_spread-bsdm_spread+1):(i*bsdm_spread)] <- spread_seq + bsvec[i]
-  }
-  CIlo <- quantile (BS_spread, 0.025)
-  CIup <- quantile (BS_spread, 0.975)
-  return(c(CIlo, CIup))
-}
+# BS_SPREADbyDM <- function (bsdm_spread, bs_count, bsvec, dm_sd)  { # possibly be replace by options from "test_BSbyDM
+#   spread_seq <- (rnorm(bsdm_spread, mean(bsvec), dm_sd))-mean(bsvec)
+#   BS_spread <- vector(length=bsdm_spread*bs_count)
+#   for (i in c(1:bs_count)) {
+#     BS_spread[(i*bsdm_spread-bsdm_spread+1):(i*bsdm_spread)] <- spread_seq + bsvec[i]
+#   }
+#   CIlo <- quantile (BS_spread, 0.025)
+#   CIup <- quantile (BS_spread, 0.975)
+#   return(c(CIlo, CIup))
+# }
 
 
 
@@ -158,6 +160,23 @@ BS_SPREADbyDM <- function (bsdm_spread, bs_count, bsvec, dm_sd)  { # possibly be
 #' @examples
 #' example
 #' @export
+
+#TESTING THIS FUNCTION, I WANT TO CREATE INITIAL VALUES.
+probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
+BMest="sameTest"
+BS_Count=1000
+BigT=730
+Covar_HR=0
+PrevH=probs[,1]
+RSE_PrevH=probs[,3]
+PrevR=probs[,2]
+RSE_PrevR=probs[,4]
+MDRI=c(200,200,200)
+RSE_MDRI=c(0.05,0.05,0.05)
+FRR=c(0.01,0.01,0.01)
+RSE_FRR=c(0.2,0.2,0.2)
+BS_Vars= FALSE
+
 recencyI <- function (BS_Count=10000,
                       BS_Vars= FALSE,
                       BMest="sameTest",
@@ -179,7 +198,7 @@ recencyI <- function (BS_Count=10000,
   if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for MDRI")}
   if (BigT<=182)                {warning ("BigT is smaller than half a year")}
 
-  no_s <- length(PrevH)
+  no_s <- length(PrevH) #dimension of inputs (number of surveys)
   if (length(MDRI)==1)     {MDRI <- rep(MDRI, times=no_s)}         else {MDRI=MDRI}
   if (length(FRR)==1)      {FRR  <- rep(FRR, times=no_s)}          else {FRR=FRR}
   if (length(RSE_MDRI)==1) {RSE_MDRI <- rep(RSE_MDRI, times=no_s)} else {RSE_MDRI=RSE_MDRI}
@@ -194,88 +213,113 @@ recencyI <- function (BS_Count=10000,
 
   I_Est <- I_EST(prevH=PrevH, prevR=PrevR, mdri=MDRI, frr=FRR, bigt=BigT)
 
-  deltaI_Est_Mat<-matrix(ncol=no_s, nrow=no_s)
+  deltaI_Est_Mat<-matrix(ncol=no_s, nrow=no_s) #empty matrix of dim (# surveys*# surveys)
   for (i in c(1:no_s)) {
     for (j in c(1:no_s)) {
       deltaI_Est_Mat[j,i]<-I_Est[i]-I_Est[j]
     }
   }
-  deltaI_Est_Vec <- as.vector(deltaI_Est_Mat)
+#now each element in deltaI_Est_Mat is the difference in I for each survey
+#the ij element is I[i]-I[j].
 
-  if (is.element("PrevH", BS_Vars)) {
+
+  deltaI_Est_Vec <- as.vector(deltaI_Est_Mat)
+#makes above matrix into a vector
+
+#in my first worked example, there's no bootstrapping, so BS_VARS=NULL
+#this section defines the empirical variance of each object to be bootsrapped for the mvtrnorm function
+  if (BS_Vars==TRUE) {
     BS_Var_PrevH <- (RSE_PrevH*PrevH)^2
-    DM_Var_PrevH <- rep(0, times=no_s)
-  } else {
-    BS_Var_PrevH <- rep(0, times=no_s)
-    DM_Var_PrevH <- (RSE_PrevH*PrevH)^2
-  }
-  if (is.element("PrevR", BS_Vars)) {
     BS_Var_PrevR <- (RSE_PrevR*PrevR)^2
-    DM_Var_PrevR <- rep(0, times=no_s)
-  } else {
-    BS_Var_PrevR <- rep(0, times=no_s)
-    DM_Var_PrevR <- (RSE_PrevR*PrevR)^2
-  }
-  if (is.element("MDRI", BS_Vars))  {
     BS_Var_MDRI  <- (MDRI*RSE_MDRI)^2
-    DM_Var_MDRI  <- rep(0, times=no_s)
-  } else {
-    BS_Var_MDRI  <- rep(0, times=no_s)
-    DM_Var_MDRI  <- (MDRI*RSE_MDRI)^2
-  }
-  if (is.element("FRR", BS_Vars))   {
     BS_Var_FRR   <- (FRR*RSE_FRR)^2
+
+    DM_Var_PrevH <- rep(0, times=no_s)
+    DM_Var_PrevR <- rep(0, times=no_s)
+    DM_Var_MDRI  <- rep(0, times=no_s)
     DM_Var_FRR   <- rep(0, times=no_s)
   } else {
+    BS_Var_PrevH <- rep(0, times=no_s)
+    BS_Var_PrevR <- rep(0, times=no_s)
+    BS_Var_MDRI  <- rep(0, times=no_s)
     BS_Var_FRR   <- rep(0, times=no_s)
+
+    DM_Var_PrevH <- (RSE_PrevH*PrevH)^2
+    DM_Var_PrevR <- (RSE_PrevR*PrevR)^2
+    DM_Var_MDRI  <- (MDRI*RSE_MDRI)^2
     DM_Var_FRR   <- (FRR*RSE_FRR)^2
   }
 
-  if (length(BS_Vars)!=0) {
-    I_BSMat <- matrix(nrow=BS_Count, ncol=no_s)
-    BS_RootEstMat <- matrix(nrow=BS_Count, ncol=no_s*4)
-    BS_Var_I <- vector(length=no_s)
-    for (i in c(1:no_s)) {
+
+
+  if (BS_Vars==TRUE) { #in other words, if there's bootstrapping at all: but this may be wrong, as it looks like length(BS_Vars) will always be greater than 0...
+    I_BSMat <- matrix(nrow=BS_Count, ncol=no_s) #creates empty matrix of dim (#BS samples*#surveys)
+    BS_RootEstMat <- matrix(nrow=BS_Count, ncol=no_s*4) #creates empty matrix of dim (#BS samples-by-#surveys*4)
+    BS_Var_I <- vector(length=no_s) #vector of length # of surveys
+
+#loop that, for each survey
+      for (i in 1:no_s) {
       BS_RootEstMat [,(i*4-3):(i*4)] <- BS_SURVEY_ESTS  (prevH=PrevH[i], prevR=PrevR[i], mdri=MDRI[i], frr=FRR[i], bs_count=BS_Count,
                                                          bs_var_prevH=BS_Var_PrevH[i], bs_var_prevR=BS_Var_PrevR[i],
                                                          bs_var_mdri=BS_Var_MDRI[i], bs_var_frr=BS_Var_FRR[i],
                                                          covar_HR=Covar_HR[i])
     }
+    #returns bootstraps of prevH, prevR, mdri, frr as columns, one for each survey, so if survey#=3, then
+    #first four columns are for prevH, prevR, mdri, frr as columns, then next four are for those varaibles from second survey, and so on...
+
+#I THINK THIS BELOW SECTION SHOULD HAVE AN INDEX LOOP RIGHT?? AS IT STANDS THERE'S NOTHING...
+    for(i in 1:no_s){
       if ((BMest=="sameTest"| BMest=="FRR.indep")  & (is.element("MDRI", BS_Vars))) {
         BS_RootEstMat[,(i*4-1)] <- BS_RootEstMat[,3]
-      }
+      }#above is saying, if the test is the same, or FRR.indep (meaning mdri still same) then each column in BS matrix
+       #corresponding to mdri will equal the first BS sample of that variable
       if (BMest=="sameTest" & (is.element("FRR", BS_Vars))) {
         BS_RootEstMat[,(i*4)] <- BS_RootEstMat[,4]
-      }
-    for (i in c(1:no_s)) {
+      } #similarly if it's same test then FRR will be recorded as same in there.
+}
+
+
+    for (i in 1:no_s) {
       I_BSVec <- I_EST(prevH=BS_RootEstMat[,(i*4-3)], prevR=BS_RootEstMat[,(i*4-2)],
                        mdri=BS_RootEstMat[,(i*4-1)],  frr=BS_RootEstMat[,(i*4)], bigt=BigT)
       I_BSMat[,i] <-I_BSVec
       BS_Var_I[i] <- var(I_BSMat[,i])
     }
+#now compute BS I and variance of I from BS samples
 
-    deltaI_BSMat <- matrix(nrow=BS_Count, ncol=(no_s^2))
+
+#matrix of bootstrapped differences between surveys
+  deltaI_BSMat <- matrix(nrow=BS_Count, ncol=(no_s^2))#empty matrix of dim (BS samples by number surveys squared)
     for (i in c(1:no_s)){
       for (j in c(1:no_s)) {
         deltaI_BSMat[,(i*no_s-(no_s-j))] <- I_BSMat[,i]-I_BSMat[,j]
         I_BSMat[,i] <- sort(I_BSMat[,i], decreasing=FALSE)
       }
     }
+
+#makes vector of variances of difference in BS estimates of I from different surveys
     BS_Var_deltaI <- vector(length=no_s^2)
     for (i in c(1:(no_s^2))) {
       deltaI_BSMat[,i] <- sort(deltaI_BSMat[,i], decreasing=FALSE)
       BS_Var_deltaI[i] <- var(deltaI_BSMat[,i])
     }
-  } else { # if BS_Vars is NULL
-    BS_Var_I=rep(0, times=no_s)
+
+#tracks back to line: 'if (BS_Vars==TRUE) {'
+
+  } else { # if BS_Vars is FALSE
+    BS_Var_I=rep(0, times=no_s) #so if no BS-ing, make the BS variables null
     BS_Var_deltaI=rep(0, times=no_s^2)
   }
 
-  if (length(BS_Vars)!=4) {
+#this next section manages the BS smoothing created by Petra. We won't use that now.
+  if (BS_Vars==FALSE) {
+    #next few lines make delta method matrix
     fot_Mat  <- matrix (nrow=no_s, ncol=4)
     DM_Var_I <- vector(length=no_s)
     for (i in c(1:no_s)) {
       fot_Mat[i,] <- DM_FirstOrderTerms (prevH=PrevH[i], prevR=PrevR[i], mdri=MDRI[i], frr=FRR[i], bigt=BigT)
+      #DM_FirstOrderTerms gives fot_prevH, fot_prevR, fot_mdri, fot_frr, so FOT for each prev. survey input
+      #and each row of fot_Mat has the FOT for prev. survey i.
       DM_Var_I[i] <- (fot_Mat[i,1]^2)*DM_Var_PrevH[i] + (fot_Mat[i,2]^2)*DM_Var_PrevR[i] +
                      (fot_Mat[i,3]^2)*DM_Var_MDRI[i]  + (fot_Mat[i,4]^2)*DM_Var_FRR[i]
     }
@@ -293,8 +337,6 @@ recencyI <- function (BS_Count=10000,
                                                          dm_var_frr1=DM_Var_FRR[i],     dm_var_frr2=DM_Var_FRR[j])
       }
     }
-
-
   } else { # if BS is performed for all variables
     DM_Var_I <- rep(0, times=no_s)
     DM_Var_deltaI <- rep(0, times=no_s^2)
@@ -309,19 +351,17 @@ recencyI <- function (BS_Count=10000,
   RSE_deltaI   <- sqrt(Var_deltaI)/abs(deltaI_Est_Vec)
   SD_deltaI    <- sqrt(Var_deltaI)
 
+
+#this function takes bootstrap matrix, SD via delta method, and I estimates, and returns the spread version of those
+#IM REWRITING THIS SO THAT IT ONLY TAKES FULL BS OR DELTA-METHOD
  CI_BSandDM <- function (BSMat, DM_SD, Est) {
     if (sum(DM_Var_I)>0)  {
-       if (sum(BS_Var_I)>0)  {
-         for (i in c(1:ncol(BSMat))) {
-           CI_Mat[i,] <- BS_SPREADbyDM(bsdm_spread=BSDM_spread, bs_count=BS_Count, bsvec=BSMat[,i], dm_sd=DM_SD[i])
-         }
-       } else {
          for (i in c(1:length(Est))) {
                CI_Mat[i,1] <- qnorm(0.025, mean=Est[i], sd=DM_SD[i])
                CI_Mat[i,2] <- qnorm(0.975, mean=Est[i], sd=DM_SD[i])
          }
        }
-    } else {
+    else {
       for (i in c(1:ncol(BSMat))) {
              CI_Mat[i,1] <- quantile(BSMat[,i], 0.025)
              CI_Mat[i,2] <- quantile(BSMat[,i], 0.975)
