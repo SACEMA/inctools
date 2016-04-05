@@ -2,10 +2,10 @@
 % Please edit documentation in R/recencyI_prev.R
 \name{incBYcounts}
 \alias{incBYcounts}
-\title{Incidence and incidence difference statistics from trinomial prevalences of HIV and recency}
+\title{Incidence and incidence difference statistics from trinomial counts of HIV and recency}
 \usage{
 incBYcounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
-  BS_Vars = FALSE, BMest = "sameTest", MDRI, RSE_MDRI, FRR, RSE_FRR,
+  Boot = FALSE, BMest = "sameTest", MDRI, RSE_MDRI, FRR, RSE_FRR,
   BigT = 730, Covar_HR = 0)
 }
 \arguments{
@@ -23,7 +23,7 @@ incBYcounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
 
 \item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.}
 
-\item{BS_Vars}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.}
+\item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.}
 
 \item{BMest}{Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).}
 
@@ -39,13 +39,17 @@ incBYcounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
 
 \item{Covar_HR}{Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)}
 }
+\value{
+Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
+}
 \description{
-Incidence and incidence difference statistics from trinomial prevalences of HIV and recency
+Incidence and incidence difference statistics from trinomial counts of HIV and recency
 }
 \details{
-general details
+Here is where we give a description in words of what the function does.
 }
 \examples{
-example
+incBYcounts(5000 ,N_H = 1000, N_testR = 1000, N_R = 70, BS_Vars=TRUE, BMest="MDRI.FRR.indep",
+MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
 }
 

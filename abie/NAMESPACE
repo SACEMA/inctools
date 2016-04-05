@@ -3,4 +3,4 @@
 export(frr_binomial)
 export(incBYcounts)
 export(mdri_ml_binomial)
-export(probs)
+export(recencyI)

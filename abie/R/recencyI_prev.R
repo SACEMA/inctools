@@ -33,7 +33,7 @@
 ####== BigT:     post-infection time cut-off true vs false recent [days] default 730 days (integer)
 ####== DE_H:     Design effect of HIV-prevalence test (vector/integer)
 ####== DE_R:     Design effect of recency test (vector/integer)
-####== BS_Vars:  Variables to be bootstrapped e.g.c("PrevH", "PrevR", "MDRI", "FRR") (string vector)
+####== Boot:  Variables to be bootstrapped e.g.c("PrevH", "PrevR", "MDRI", "FRR") (string vector)
 ####== BS_Count: Number of iterations for bootstrapping (integer)
 ####== BMest:    Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)
 #######################################################################################################
@@ -137,7 +137,7 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 #' Incidence and incidence difference statistics from trinomial prevalences of HIV and recency
 #'
 #' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
-#' @param BS_Vars True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
+#' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
 #' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).
 #' @param PrevH Prevelance of HIV in survey.
 #' @param RSE_PrevH Relative Standard Error (RSE) of estimate for population prevalence of HIV
@@ -149,36 +149,35 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 #' @param RSE_FRR Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.
 #' @param BigT Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.
 #' @param Covar_HR Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)
-#' @return Incidence
-#' @return RSE Incidence
-#' @return etc.
+#' @return Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
 #' @details
 #'
 #' general details
 #'
 #' @examples
-#' example
+#' recencyI(BS_Count=10000, Boot=FALSE, BMest="sameTest", PrevH=0.20,
+#' RSE_PrevH=0.028, PrevR=0.10, RSE_PrevR=0.094, MDRI=200, RSE_MDRI=0.05,
+#' FRR=0.01, RSE_FRR=0.2, BigT=730)
 #' @export
-
-
-#TESTING THE RECENCYI() FUNCTION, I WANT TO CREATE INITIAL VALUES TO RUN THROUGH THE CODE LINE-BY-LINE WITH.
-probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
-BMest="sameTest"
-BS_Count=1000
-BigT=730
-Covar_HR=0
-PrevH=probs[,1]
-RSE_PrevH=probs[,3]
-PrevR=probs[,2]
-RSE_PrevR=probs[,4]
-MDRI=200
-RSE_MDRI=0.05
-FRR=0.01
-RSE_FRR=0.2
-BS_Vars= FALSE
+#
+# #TESTING THE RECENCYI() FUNCTION, I WANT TO CREATE INITIAL VALUES TO RUN THROUGH THE CODE LINE-BY-LINE WITH.
+# probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
+# BMest="sameTest"
+# BS_Count=1000
+# BigT=730
+# Covar_HR=0
+# PrevH=probs[,1]
+# RSE_PrevH=probs[,3]
+# PrevR=probs[,2]
+# RSE_PrevR=probs[,4]
+# MDRI=200
+# RSE_MDRI=0.05
+# FRR=0.01
+# RSE_FRR=0.2
+# Boot= FALSE
 
 recencyI <- function (BS_Count=10000,
-                      BS_Vars= FALSE,
+                      Boot= FALSE,
                       BMest="sameTest",
                       PrevH, RSE_PrevH, PrevR, RSE_PrevR,
                       MDRI, RSE_MDRI, FRR, RSE_FRR,
@@ -228,7 +227,7 @@ recencyI <- function (BS_Count=10000,
 
 #in my first worked example, there's no bootstrapping, so BS_VARS=NULL
 #this section defines the empirical variance of each object to be bootsrapped for the mvtrnorm function
-  if (BS_Vars==TRUE) {
+  if (Boot==TRUE) {
     BS_Var_PrevH <- (RSE_PrevH*PrevH)^2
     BS_Var_PrevR <- (RSE_PrevR*PrevR)^2
     BS_Var_MDRI  <- (MDRI*RSE_MDRI)^2
@@ -252,7 +251,7 @@ recencyI <- function (BS_Count=10000,
 
 
 
-  if (BS_Vars==TRUE) { #in other words, if there's bootstrapping at all: but this may be wrong, as it looks like length(BS_Vars) will always be greater than 0...
+  if (Boot==TRUE) { #in other words, if there's bootstrapping at all: but this may be wrong, as it looks like length(Boot) will always be greater than 0...
     I_BSMat <- matrix(nrow=BS_Count, ncol=no_s) #creates empty matrix of dim (#BS samples*#surveys)
     BS_RootEstMat <- matrix(nrow=BS_Count, ncol=no_s*4) #creates empty matrix of dim (#BS samples-by-#surveys*4)
     BS_Var_I <- vector(length=no_s) #vector of length # of surveys
@@ -269,11 +268,11 @@ recencyI <- function (BS_Count=10000,
 
 #I THINK THIS BELOW SECTION SHOULD HAVE AN INDEX LOOP RIGHT?? AS IT STANDS THERE'S NOTHING...
     for(i in 1:no_s){
-      if ((BMest=="sameTest"| BMest=="FRR.indep")  & (is.element("MDRI", BS_Vars))) {
+      if ((BMest=="sameTest"| BMest=="FRR.indep")  & (is.element("MDRI", Boot))) {
         BS_RootEstMat[,(i*4-1)] <- BS_RootEstMat[,3]
       }#above is saying, if the test is the same, or FRR.indep (meaning mdri still same) then each column in BS matrix
        #corresponding to mdri will equal the first BS sample of that variable
-      if (BMest=="sameTest" & (is.element("FRR", BS_Vars))) {
+      if (BMest=="sameTest" & (is.element("FRR", Boot))) {
         BS_RootEstMat[,(i*4)] <- BS_RootEstMat[,4]
       } #similarly if it's same test then FRR will be recorded as same in there.
 }
@@ -304,15 +303,15 @@ recencyI <- function (BS_Count=10000,
       BS_Var_deltaI[i] <- var(deltaI_BSMat[,i])
     }
 
-#tracks back to line: 'if (BS_Vars==TRUE) {'
+#tracks back to line: 'if (Boot==TRUE) {'
 
-  } else { # if BS_Vars is FALSE
+  } else { # if Boot is FALSE
     BS_Var_I=rep(0, times=no_s) #so if no BS-ing, make the BS variables null
     BS_Var_deltaI=rep(0, times=no_s^2)
   }
 
 #this next section manages the BS smoothing created by Petra. We won't use that now.
-  if (BS_Vars==FALSE) {
+  if (Boot==FALSE) {
     #next few lines make delta method matrix
     fot_Mat  <- matrix (nrow=no_s, ncol=4)
     DM_Var_I <- vector(length=no_s)
@@ -341,6 +340,7 @@ recencyI <- function (BS_Count=10000,
     DM_Var_I <- rep(0, times=no_s)
     DM_Var_deltaI <- rep(0, times=no_s^2)
   }
+
 
   DM_SD_I      <- sqrt(DM_Var_I)
   DM_SD_deltaI <- sqrt(DM_Var_deltaI)
@@ -439,7 +439,7 @@ recencyI <- function (BS_Count=10000,
 
 #HERE I (AVERY) ADD A FUNCTION THAT TAKES AS ARGUMENTS COUNTS, INSTEAD OF PROPORTIONS, BUT OUTPUTS THE SAME RESULTS AS RECENCYI() FUNCTION
 
-#' Incidence and incidence difference statistics from trinomial prevalences of HIV and recency
+#' Incidence and incidence difference statistics from trinomial counts of HIV and recency
 #'
 #' @param N Total sample size of survey.
 #' @param N_H Count of persons testing positive for HIV.
@@ -448,7 +448,7 @@ recencyI <- function (BS_Count=10000,
 #' @param DE_H Design effects from cluster survey methods for HIV-prevalence test (vector/integer). These values factor into the calculation of the standard error of the proportion of persons testing positive for HIV.
 #' @param DE_R Design effects from cluster survey methods for HIV-recency test (vector/integer). These values factor into the calculation of the standard error of the proportion of persons testing recent for HIV.
 #' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
-#' @param BS_Vars True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
+#' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
 #' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).
 #' @param MDRI Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.
 #' @param RSE_MDRI Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.
@@ -456,22 +456,21 @@ recencyI <- function (BS_Count=10000,
 #' @param RSE_FRR Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.
 #' @param BigT Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.
 #' @param Covar_HR Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)
-#' @details
-#'
-#' general details
-#'
+#' @details Here is where we give a description in words of what the function does.
+#' @return Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
 #' @examples
-#' example
+#' incBYcounts(5000 ,N_H = 1000, N_testR = 1000, N_R = 70, BS_Vars=TRUE, BMest="MDRI.FRR.indep",
+#' MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
 #' @export
 incBYcounts<-function(N, N_H, N_testR, N_R,
                       DE_H=1, DE_R=1,
-                      BS_Count=10000, BS_Vars= FALSE,
+                      BS_Count=10000, Boot= FALSE,
                       BMest="sameTest", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0){
   counts.to.prev<-prevBYcounts(N=N, N_H=N_H, N_testR=N_testR,N_R=N_R, DE_H=DE_H, DE_R=DE_R)
 
   recencyI(BS_Count=BS_Count,
-           BS_Vars= BS_Vars,
+           Boot= Boot,
            BMest=BMest,
            PrevH=counts.to.prev$PrevH, RSE_PrevH=counts.to.prev$RSE_PrevH,
            PrevR=counts.to.prev$PrevR, RSE_PrevR=counts.to.prev$RSE_PrevR,
@@ -492,7 +491,7 @@ probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R
 
 ################### == Call - DM only ==######################################################
 recencyI  (BS_Count=10000,
-           BS_Vars=FALSE,
+           Boot=FALSE,
            BMest="sameTest",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -503,7 +502,7 @@ recencyI  (BS_Count=10000,
 
 ################### == Call - BS only ==######################################################
 recencyI  (BS_Count=10000,
-           BS_Vars=TRUE,
+           Boot=TRUE,
            BMest="sameTest",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -515,7 +514,7 @@ recencyI  (BS_Count=10000,
 ################### == Call - DM & BS combinded ==############################################
 # recencyI  (BS_Count=10000,
 #            BSDM_spread=1000,
-#            BS_Vars=c("MDRI","FRR"),
+#            Boot=c("MDRI","FRR"),
 #            BMest="sameTest",
 #            PrevH=probs[,1], RSE_PrevH=probs[,3],
 #            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -529,7 +528,7 @@ recencyI  (BS_Count=10000,
 #
 # recencyI  (BS_Count=10000,
 #            BSDM_spread=1000,
-#            BS_Vars=c("MDRI","FRR"),
+#            Boot=c("MDRI","FRR"),
 #            BMest="sameTest",
 #            PrevH=probs[,1], RSE_PrevH=probs[,3],
 #            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -542,7 +541,7 @@ recencyI  (BS_Count=10000,
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
-           BS_Vars=FALSE,
+           Boot=FALSE,
            BMest="sameTest",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -554,7 +553,7 @@ recencyI  (BS_Count=10000,
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
-           BS_Vars=FALSE,
+           Boot=FALSE,
            BMest="FRR.indep",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -566,7 +565,7 @@ recencyI  (BS_Count=10000,
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
-           BS_Vars=FALSE,
+           Boot=FALSE,
            BMest="MDRI.FRR.indep",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -578,7 +577,7 @@ recencyI  (BS_Count=10000,
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
-           BS_Vars=TRUE,
+           Boot=TRUE,
            BMest="MDRI.FRR.indep",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -592,7 +591,7 @@ recencyI  (BS_Count=10000,
 #   ## control function with I_EST leaving out FRR ####
 # BS_Count=10000
 # BSDM_spread=1000
-# BS_Vars=c("PrevH","PrevR","MDRI","FRR")
+# Boot=c("PrevH","PrevR","MDRI","FRR")
 # BMest="MDRI.FRR.indep"
 # PrevH=probs[,1]
 # RSE_PrevH=probs[,3]
@@ -603,19 +602,19 @@ recencyI  (BS_Count=10000,
 # Covar_HR=c(0,0,0)
 # BigT=730/365.25
 #
-# if 	(is.element("PrevH", BS_Vars)) {BS_Var_PrevH <- (RSE_PrevH*PrevH)^2
+# if 	(is.element("PrevH", Boot)) {BS_Var_PrevH <- (RSE_PrevH*PrevH)^2
 # DM_Var_PrevH <- rep(0, times=no_s)}  else
 # {BS_Var_PrevH <- rep(0, times=no_s)
 # DM_Var_PrevH <- (RSE_PrevH*PrevH)^2}
-# if 	(is.element("PrevR", BS_Vars)) {BS_Var_PrevR <- (RSE_PrevR*PrevR)^2
+# if 	(is.element("PrevR", Boot)) {BS_Var_PrevR <- (RSE_PrevR*PrevR)^2
 # DM_Var_PrevR <- rep(0, times=no_s)}  else
 # {BS_Var_PrevR <- rep(0, times=no_s)
 # DM_Var_PrevR <- (RSE_PrevR*PrevR)^2}
-# if 	(is.element("MDRI", BS_Vars))  {BS_Var_MDRI  <- (MDRI*RSE_MDRI)^2
+# if 	(is.element("MDRI", Boot))  {BS_Var_MDRI  <- (MDRI*RSE_MDRI)^2
 # DM_Var_MDRI  <- rep(0, times=no_s)}   else
 # {BS_Var_MDRI  <- rep(0, times=no_s)
 # DM_Var_MDRI  <- (MDRI*RSE_MDRI)^2}
-# if 	(is.element("FRR", BS_Vars))   {BS_Var_FRR   <- (FRR*RSE_FRR)^2
+# if 	(is.element("FRR", Boot))   {BS_Var_FRR   <- (FRR*RSE_FRR)^2
 # DM_Var_FRR   <- rep(0, times=no_s)}    else
 # {BS_Var_FRR   <- rep(0, times=no_s)
 # DM_Var_FRR   <- (FRR*RSE_FRR)^2}
@@ -644,9 +643,9 @@ recencyI  (BS_Count=10000,
 #                                                  bs_var_prevH=BS_Var_PrevH[i], bs_var_prevR=BS_Var_PrevR[i],
 #                                                  bs_var_mdri=BS_Var_MDRI[i],
 #                                                  covar_HR=Covar_HR[i])
-#     if ((BMest=="sameTest"| BMest=="FRR.indep")  & (is.element("MDRI", BS_Vars))) {
+#     if ((BMest=="sameTest"| BMest=="FRR.indep")  & (is.element("MDRI", Boot))) {
 #       BS_RootEstMat[,(i*3-1)] <- BS_RootEstMat[,2] }
-#     if (BMest=="sameTest" & (is.element("FRR", BS_Vars))) {
+#     if (BMest=="sameTest" & (is.element("FRR", Boot))) {
 #       BS_RootEstMat[,(i*3)] <- BS_RootEstMat[,3] }
 #     I_BSVec <- I_EST2(prevH=BS_RootEstMat[,(i*3-2)], prevR=BS_RootEstMat[,(i*3-1)],
 #                      mdri=BS_RootEstMat[,(i*3)])
