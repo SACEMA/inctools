@@ -66,11 +66,13 @@ step <- 5
 #' @return Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
 #' @details
 #'
-#' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision
+#' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties and the prevalence/incidence in a hypothetical context, or gives sample size necessary for a given level of estimator precision.
+#' Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained soley by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.
 #'
 #' @examples
-#' SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05,
-#' FRR = 0.01, RSE_FRR = 0.2, BigT = 730, DE_H = 1, DE_R = 1, n = "out", step = 5)
+#' SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
+#' MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
+#' BigT = 730, DE_H = 1, DE_R = 1, n = "out", step = 5)
 #' @export
 #'
 SSCprecision <- function ( I              ,
@@ -414,19 +416,19 @@ SSCprecision             ( I              =0.015,
 
 #####################################################################################################################
 #there is some error here, not sure what...
-SSCprecision             ( I              =0.015,
-                           RSE_I          ="out",
-                           PrevH          =0.2,
-                           CR             =c(0.7,1),
-                           MDRI           =200,
-                           RSE_MDRI       =0.05,
-                           FRR            =0.01,
-                           RSE_FRR        =0.2,
-                           BigT           = 730,
-                           DE_H           = c(1,2),
-                           DE_R           = 1,
-                           n              = 3622,
-                           step           = 5)
+# SSCprecision             ( I              =0.015,
+#                            RSE_I          ="out",
+#                            PrevH          =0.2,
+#                            CR             =c(0.7,1),
+#                            MDRI           =200,
+#                            RSE_MDRI       =0.05,
+#                            FRR            =0.01,
+#                            RSE_FRR        =0.2,
+#                            BigT           = 730,
+#                            DE_H           = c(1,2),
+#                            DE_R           = 1,
+#                            n              = 3622,
+#                            step           = 5)
 
 
 

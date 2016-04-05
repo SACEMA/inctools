@@ -9,34 +9,34 @@ recencyI(BS_Count = 10000, Boot = FALSE, BMest = "sameTest", PrevH,
   Covar_HR = 0)
 }
 \arguments{
-\item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.}
+\item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence}
 
-\item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.}
+\item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting}
 
-\item{BMest}{Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).}
+\item{BMest}{Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)}
 
-\item{PrevH}{Prevelance of HIV in survey.}
+\item{PrevH}{Prevalence of HIV}
 
 \item{RSE_PrevH}{Relative Standard Error (RSE) of estimate for population prevalence of HIV}
 
-\item{PrevR}{Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV.}
+\item{PrevR}{Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV}
 
-\item{RSE_PrevR}{Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently.}
+\item{RSE_PrevR}{Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently}
 
-\item{MDRI}{Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.}
+\item{MDRI}{mean duration of recent infection [days] (vector/integer)}
 
-\item{RSE_MDRI}{Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.}
+\item{RSE_MDRI}{Relative standard error of MDRI [days] (vector/integer)}
 
-\item{FRR}{False Recency Rate as measured by the biomarker assay to test recency in the given prevalence survey.}
+\item{FRR}{False recent rate (vector/integer)}
 
-\item{RSE_FRR}{Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.}
+\item{RSE_FRR}{Relative standard error of FRR (vector/integer)}
 
-\item{BigT}{Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.}
+\item{BigT}{post-infection time cut-off true vs false recent [days] default 730 days (integer)}
 
 \item{Covar_HR}{Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)}
 }
 \value{
-Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
+Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different
 }
 \description{
 Incidence and incidence difference statistics from trinomial prevalences of HIV and recency

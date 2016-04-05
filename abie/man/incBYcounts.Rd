@@ -9,44 +9,44 @@ incBYcounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
   BigT = 730, Covar_HR = 0)
 }
 \arguments{
-\item{N}{Total sample size of survey.}
+\item{N}{Total sample size of survey}
 
-\item{N_H}{Count of persons testing positive for HIV.}
+\item{N_H}{Count of persons testing positive for HIV}
 
-\item{N_testR}{Count of persons tested for recency among those found to be HIV positive.}
+\item{N_testR}{Count of persons tested for recency among those found to be HIV positive}
 
-\item{N_R}{Count of persons found to be recently infected.}
+\item{N_R}{Count of persons found to be recently infected}
 
-\item{DE_H}{Design effects from cluster survey methods for HIV-prevalence test (vector/integer). These values factor into the calculation of the standard error of the proportion of persons testing positive for HIV.}
+\item{DE_H}{Design effect of HIV-prevalence test (vector/integer)}
 
-\item{DE_R}{Design effects from cluster survey methods for HIV-recency test (vector/integer). These values factor into the calculation of the standard error of the proportion of persons testing recent for HIV.}
+\item{DE_R}{Design effect of recency test (vector/integer)}
 
 \item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.}
 
-\item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.}
+\item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting}
 
-\item{BMest}{Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).}
+\item{BMest}{Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)}
 
-\item{MDRI}{Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.}
+\item{MDRI}{mean duration of recent infection [days] (vector/integer)}
 
-\item{RSE_MDRI}{Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.}
+\item{RSE_MDRI}{Relative standard error of MDRI [days] (vector/integer)}
 
-\item{FRR}{False Recency Rate as measured by the biomarker assay to test recency in the given prevalence survey.}
+\item{FRR}{False recent rate (vector/integer)}
 
-\item{RSE_FRR}{Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.}
+\item{RSE_FRR}{Relative standard error of FRR (vector/integer)}
 
-\item{BigT}{Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.}
+\item{BigT}{Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey}
 
 \item{Covar_HR}{Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)}
 }
 \value{
-Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
+Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different
 }
 \description{
 Incidence and incidence difference statistics from trinomial counts of HIV and recency
 }
 \details{
-Here is where we give a description in words of what the function does.
+Here is where we give a description in words of what the function does
 }
 \examples{
 incBYcounts(5000 ,N_H = 1000, N_testR = 1000, N_R = 70, BS_Vars=TRUE, BMest="MDRI.FRR.indep",
