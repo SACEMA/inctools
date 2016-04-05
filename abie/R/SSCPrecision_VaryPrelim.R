@@ -43,7 +43,8 @@ step <- 5
 #Either give function n to get RSE_I or give it RSE_I to get n.
 
 #This function covers what was made in spreadsheets ABIE_v3_Test_Performance_Calculator (which takes SS
-# and other variables of test, hypothetical data, and gives precision), and
+# and other variables of test, hypothetical data, and gives precision), and what was done in sheet
+# ABIE_v3_Sample_Size_Calculator, which gives SS for a given precision level.
 
 
 
@@ -61,7 +62,7 @@ step <- 5
 #' @param BigT post-infection time cut-off true vs false recent [days] default 730 days (integer)
 #' @param DE_H Design effect of HIV-prevalence test (vector/integer)
 #' @param DE_R Design effect of recency test (vector/integer)
-#' @param n Sample Size, either given hypothetical value or to be determined by function
+#' @param n Sample Size, either a given hypothetical value or to be determined by function (default)
 #' @param step number of steps between minimum I and maximum I in the calculation of a range of output
 #' @return Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
 #' @details
@@ -89,8 +90,8 @@ SSCprecision <- function ( I              ,
                            n              = "out",
                            step           = 5)
 {
-  test <- c( I,RSE_I,PrevH,CR ,MDRI ,RSE_MDRI,FRR,RSE_FRR,BigT,DE_H,DE_R,n,step)
-  if (length(test) > 15) {
+  var_list <- c( I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT, DE_H, DE_R, n,step)
+  if (length(var_list) > 15) {
     stop("only a maximum of 2 variables are allowed to vary")
   }
 
@@ -316,7 +317,7 @@ if(RSE_I=="out") {
   # if (DE_H=="out")    { }
   # if(DE_R=="out")     { }
 
-  if (length(test)==15) {
+  if (length(var_list)==15) {
     VARY1<-vector(length=step)
     for (i in c(1:step)) {
       VARY1[i]<-paste(vary_name1,vary1[i,1])
@@ -340,7 +341,7 @@ if(RSE_I=="out") {
     out6<-rbind(VARY2,out6)
   }
 
-  if (length(test)==14) {
+  if (length(var_list)==14) {
     VARY1<-vector(length=step)
     for (i in c(1:step)) {
       VARY1[i]<-paste(vary_name1,vary1[i,1])
