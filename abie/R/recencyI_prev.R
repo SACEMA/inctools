@@ -136,20 +136,20 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 
 #' Incidence and incidence difference statistics from trinomial prevalences of HIV and recency
 #'
-#' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
-#' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
-#' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).
-#' @param PrevH Prevelance of HIV in survey.
+#' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence
+#' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting
+#' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)
+#' @param PrevH Prevalence of HIV
 #' @param RSE_PrevH Relative Standard Error (RSE) of estimate for population prevalence of HIV
-#' @param PrevR Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV.
-#' @param RSE_PrevR Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently.
-#' @param MDRI Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.
-#' @param RSE_MDRI Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.
-#' @param FRR False Recency Rate as measured by the biomarker assay to test recency in the given prevalence survey.
-#' @param RSE_FRR Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.
-#' @param BigT Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.
+#' @param PrevR Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV
+#' @param RSE_PrevR Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently
+#' @param MDRI mean duration of recent infection [days] (vector/integer)
+#' @param RSE_MDRI Relative standard error of MDRI [days] (vector/integer)
+#' @param FRR False recent rate (vector/integer)
+#' @param RSE_FRR Relative standard error of FRR (vector/integer)
+#' @param BigT post-infection time cut-off true vs false recent [days] default 730 days (integer)
 #' @param Covar_HR Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)
-#' @return Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
+#' @return Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different
 #' @details
 #'
 #' general details
@@ -441,23 +441,23 @@ recencyI <- function (BS_Count=10000,
 
 #' Incidence and incidence difference statistics from trinomial counts of HIV and recency
 #'
-#' @param N Total sample size of survey.
-#' @param N_H Count of persons testing positive for HIV.
-#' @param N_testR Count of persons tested for recency among those found to be HIV positive.
-#' @param N_R Count of persons found to be recently infected.
-#' @param DE_H Design effects from cluster survey methods for HIV-prevalence test (vector/integer). These values factor into the calculation of the standard error of the proportion of persons testing positive for HIV.
-#' @param DE_R Design effects from cluster survey methods for HIV-recency test (vector/integer). These values factor into the calculation of the standard error of the proportion of persons testing recent for HIV.
+#' @param N Total sample size of survey
+#' @param N_H Count of persons testing positive for HIV
+#' @param N_testR Count of persons tested for recency among those found to be HIV positive
+#' @param N_R Count of persons found to be recently infected
+#' @param DE_H Design effect of HIV-prevalence test (vector/integer)
+#' @param DE_R Design effect of recency test (vector/integer)
 #' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
-#' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
-#' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).
-#' @param MDRI Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.
-#' @param RSE_MDRI Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.
-#' @param FRR False Recency Rate as measured by the biomarker assay to test recency in the given prevalence survey.
-#' @param RSE_FRR Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.
-#' @param BigT Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.
+#' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting
+#' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)
+#' @param MDRI mean duration of recent infection [days] (vector/integer)
+#' @param RSE_MDRI Relative standard error of MDRI [days] (vector/integer)
+#' @param FRR False recent rate (vector/integer)
+#' @param RSE_FRR Relative standard error of FRR (vector/integer)
+#' @param BigT Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey
 #' @param Covar_HR Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)
-#' @details Here is where we give a description in words of what the function does.
-#' @return Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
+#' @details Here is where we give a description in words of what the function does
+#' @return Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns identical results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different
 #' @examples
 #' incBYcounts(5000 ,N_H = 1000, N_testR = 1000, N_R = 70, BS_Vars=TRUE, BMest="MDRI.FRR.indep",
 #' MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)

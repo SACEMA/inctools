@@ -17,6 +17,9 @@
 ####==
 #######################################################################################################
 
+#This function is to be separate from SS-Power function. This function takes as argument test characteristics,
+#and returns EITHER sample size for a given precision, or a given precision for a given sample size.
+
 MDRI     <- c(200,250)
 RSE_MDRI <- 0.05
 FRR      <- 0.01
@@ -33,13 +36,43 @@ step <- 5
 
 #Note to self: 'step' is number of steps between minimum I and maximum I in the calculation of
 #a range of output. So supply a vector or max/min theoretical incidences, and the function gives
-#a range of values (step number of values ) for the output. This can be done for all input variables.
+#a range of values (step number of values) for the output. This can be done for all input variables.
 #DO WE WANT THIS OPTION??
 
 #Only gives option of n or RSE_I to be 'out' or not. So only gives precision or n. Makes sense.
 #Either give function n to get RSE_I or give it RSE_I to get n.
 
+#This function covers what was made in spreadsheets ABIE_v3_Test_Performance_Calculator (which takes SS
+# and other variables of test, hypothetical data, and gives precision), and
 
+
+
+
+#' Sample Size or Precision Calculation
+#'
+#' @param I Expected Incidence
+#' @param RSE_I Relative Standard Error of Incidence Estimate
+#' @param PrevH Prevalence of HIV
+#' @param CR Coverage rate: probability (0-1) of being tested for recency when positive for HIV
+#' @param MDRI mean duration of recent infection [days] (vector/integer)
+#' @param RSE_MDRI Relative standard error of MDRI   [days] (vector/integer)
+#' @param FRR False recent rate (vector/integer)
+#' @param RSE_FRR Relative standard error of FRR (vector/integer)
+#' @param BigT post-infection time cut-off true vs false recent [days] default 730 days (integer)
+#' @param DE_H Design effect of HIV-prevalence test (vector/integer)
+#' @param DE_R Design effect of recency test (vector/integer)
+#' @param n Sample Size, either given hypothetical value or to be determined by function
+#' @param step number of steps between minimum I and maximum I in the calculation of a range of output
+#' @return Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
+#' @details
+#'
+#' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision
+#'
+#' @examples
+#' SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05,
+#' FRR = 0.01, RSE_FRR = 0.2, BigT = 730, DE_H = 1, DE_R = 1, n = "out", step = 5)
+#' @export
+#'
 SSCprecision <- function ( I              ,
                            RSE_I          ,
                            PrevH          ,
@@ -325,6 +358,13 @@ if(RSE_I=="out") {
 
 }
 
+
+
+
+
+
+
+#Examples of function use:
 #####################################################################################################################
 SSCprecision             ( I              =0.015,
                            RSE_I          =0.25,
@@ -353,6 +393,25 @@ SSCprecision             ( I              =0.015,
                            DE_R           = 1,
                            n              = "out",
                            step           = 5)
+
+
+#####################################################################################################################
+SSCprecision             ( I              =0.015,
+                           RSE_I          ="out",
+                           PrevH          =0.2,
+                           CR             =0.7,
+                           MDRI           =200,
+                           RSE_MDRI       =0.05,
+                           FRR            =0.01,
+                           RSE_FRR        =0.2,
+                           BigT           = 730,
+                           DE_H           = 1,
+                           DE_R           = 1,
+                           n              = 3622,
+                           step           = 5)
+
+
+
 #####################################################################################################################
 #there is some error here, not sure what...
 SSCprecision             ( I              =0.015,
