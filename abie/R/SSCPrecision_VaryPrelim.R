@@ -95,18 +95,18 @@ SSCprecision <- function ( I              ,
     stop("only a maximum of 2 variables are allowed to vary")
   }
 
-  if (length(I)>2        | length(I)<1)       {("specifiy (only) min & max values for I")}
-  if (length(RSE_I)>2    | length(RSE_I)<1)   {("specifiy (only) min & max values for RSE_I")}
-  if (length(PrevH)>2    | length(PrevH)<1)   {("specifiy (only) min & max values for PrevH")}
-  if (length(CR)>2       | length(CR)<1)      {("specifiy (only) min & max values for CR")}
-  if (length(MDRI)>2     | length(MDRI)<1)    {("specifiy (only) min & max values for MDRI")}
-  if (length(RSE_MDRI)>2 | length(RSE_MDRI)<1){("specifiy (only) min & max values for RSE_MDRI")}
-  if (length(FRR)>2      | length(FRR)<1)     {("specifiy (only) min & max values for FRR")}
-  if (length(RSE_FRR)>2  | length(RSE_FRR)<1) {("specifiy (only) min & max values for RSE_FRR")}
-  if (length(BigT)>2     | length(BigT)<1)    {("specifiy (only) min & max values for BigT")}
-  if (length(DE_H)>2     | length(DE_H)<1)    {("specifiy (only) min & max values for DE_H")}
-  if (length(DE_R)>2     | length(DE_R)<1)    {("specifiy (only) min & max values for DE_R")}
-  if (length(n)>2        | length(n)<1)       {("specifiy (only) min & max values for n")}
+  if (length(I)>2        | length(I)<1)       {stop("specifiy (only) min & max values for I")}
+  if (length(RSE_I)>2    | length(RSE_I)<1)   {stop("specifiy (only) min & max values for RSE_I")}
+  if (length(PrevH)>2    | length(PrevH)<1)   {stop("specifiy (only) min & max values for PrevH")}
+  if (length(CR)>2       | length(CR)<1)      {stop("specifiy (only) min & max values for CR")}
+  if (length(MDRI)>2     | length(MDRI)<1)    {stop("specifiy (only) min & max values for MDRI")}
+  if (length(RSE_MDRI)>2 | length(RSE_MDRI)<1){stop("specifiy (only) min & max values for RSE_MDRI")}
+  if (length(FRR)>2      | length(FRR)<1)     {stop("specifiy (only) min & max values for FRR")}
+  if (length(RSE_FRR)>2  | length(RSE_FRR)<1) {stop("specifiy (only) min & max values for RSE_FRR")}
+  if (length(BigT)>2     | length(BigT)<1)    {stop("specifiy (only) min & max values for BigT")}
+  if (length(DE_H)>2     | length(DE_H)<1)    {stop("specifiy (only) min & max values for DE_H")}
+  if (length(DE_R)>2     | length(DE_R)<1)    {stop("specifiy (only) min & max values for DE_R")}
+  if (length(n)>2        | length(n)<1)       {stop("specifiy (only) min & max values for n")}
 
 #THIS SECTION STARTING HERE NEEDS UPDATED ERROR NOTES
   if (is.numeric(I)>0)        {stopifnot (I<=1        & I>=0)}
