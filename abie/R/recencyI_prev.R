@@ -436,12 +436,19 @@ recencyI <- function (BS_Count=10000,
 
 
 
+
+
+
+
+
+
+
+#EXAMPLES OF RUNNING THE CODE (UPDATED TO REMOVE THE BS-DM HYBRID SMOOTHER)
 probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R=c(100,70))
 
 ################### == Call - DM only ==######################################################
 recencyI  (BS_Count=10000,
-           BSDM_spread=1000,
-           BS_Vars=NULL,
+           BS_Vars=FALSE,
            BMest="sameTest",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -452,8 +459,7 @@ recencyI  (BS_Count=10000,
 
 ################### == Call - BS only ==######################################################
 recencyI  (BS_Count=10000,
-           BSDM_spread=1000,
-           BS_Vars=c("PrevH", "PrevR", "MDRI","FRR"),
+           BS_Vars=TRUE,
            BMest="sameTest",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -463,37 +469,36 @@ recencyI  (BS_Count=10000,
 ##############################################################################################
 
 ################### == Call - DM & BS combinded ==############################################
-recencyI  (BS_Count=10000,
-           BSDM_spread=1000,
-           BS_Vars=c("MDRI","FRR"),
-           BMest="sameTest",
-           PrevH=probs[,1], RSE_PrevH=probs[,3],
-           PrevR=probs[,2], RSE_PrevR=probs[,4],
-           MDRI=200, RSE_MDRI=0.05,
-           FRR=0.01, RSE_FRR=0.2,
-           BigT=730)
+# recencyI  (BS_Count=10000,
+#            BSDM_spread=1000,
+#            BS_Vars=c("MDRI","FRR"),
+#            BMest="sameTest",
+#            PrevH=probs[,1], RSE_PrevH=probs[,3],
+#            PrevR=probs[,2], RSE_PrevR=probs[,4],
+#            MDRI=200, RSE_MDRI=0.05,
+#            FRR=0.01, RSE_FRR=0.2,
+#            BigT=730)
 ##############################################################################################
 
 ################### == Only 1 Dataset == Call - DM & BS combinded ==##########################
-probs<-prevBYcounts (N=5000, N_H=1000, N_testR=1000, N_R=100)
-
-recencyI  (BS_Count=10000,
-           BSDM_spread=1000,
-           BS_Vars=c("MDRI","FRR"),
-           BMest="sameTest",
-           PrevH=probs[,1], RSE_PrevH=probs[,3],
-           PrevR=probs[,2], RSE_PrevR=probs[,4],
-           MDRI=200, RSE_MDRI=0.05,
-           FRR=0.01, RSE_FRR=0.2,
-           BigT=730)
+# probs<-prevBYcounts (N=5000, N_H=1000, N_testR=1000, N_R=100)
+#
+# recencyI  (BS_Count=10000,
+#            BSDM_spread=1000,
+#            BS_Vars=c("MDRI","FRR"),
+#            BMest="sameTest",
+#            PrevH=probs[,1], RSE_PrevH=probs[,3],
+#            PrevR=probs[,2], RSE_PrevR=probs[,4],
+#            MDRI=200, RSE_MDRI=0.05,
+#            FRR=0.01, RSE_FRR=0.2,
+#            BigT=730)
 ##############################################################################################
 
 ########== Check with spread sheets """"""sameTest""""""==###########
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
-           BSDM_spread=1000,
-           BS_Vars=NULL,
+           BS_Vars=FALSE,
            BMest="sameTest",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -505,8 +510,7 @@ recencyI  (BS_Count=10000,
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
-           BSDM_spread=1000,
-           BS_Vars=NULL,
+           BS_Vars=FALSE,
            BMest="FRR.indep",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -518,8 +522,7 @@ recencyI  (BS_Count=10000,
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
-           BSDM_spread=1000,
-           BS_Vars=NULL,
+           BS_Vars=FALSE,
            BMest="MDRI.FRR.indep",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
@@ -532,7 +535,7 @@ probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,
 
 recencyI  (BS_Count=10000,
            BSDM_spread=1000,
-           BS_Vars=c("PrevH","PrevR","MDRI","FRR"),
+           BS_Vars=TRUE,
            BMest="MDRI.FRR.indep",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
