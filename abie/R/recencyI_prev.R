@@ -42,8 +42,8 @@
 
 
 #INPUT IS COUNTS, OUTPUT IS PROPORTIONS AND SE OF PROPORTIONS
-prevBYcounts <- function (N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
-  no_s <-length(N)
+prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
+  no_s <- length(N)
   if (length(DE_H)==1)     {DE_H <- rep(DE_H, times=no_s)}         else {DE_H=DE_H}
   if (length(DE_R)==1)     {DE_R <- rep(DE_R, times=no_s)}         else {DE_R=DE_R}
   stopifnot(no_s==length(N_H)  & no_s==length(N_R) & no_s==length(N_testR) &
@@ -53,14 +53,14 @@ prevBYcounts <- function (N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
   RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/N)*DE_H)/PrevH
   RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/N_testR)*DE_R)/PrevR
 
- output <- data.frame("PrevH"=PrevH, "PrevR"=PrevR, "RSE_PrevH"=RSE_PrevH, "RSE_PrevR"=RSE_PrevR)
- return(output)
+  output <- data.frame("PrevH"=PrevH, "PrevR"=PrevR, "RSE_PrevH"=RSE_PrevH, "RSE_PrevR"=RSE_PrevR)
+  return(output)
 }
 
 
 #SIMPLE FORMULA FOR INCIDENCE
 I_EST <- function (prevH, prevR, mdri, frr, bigt){
-  prevH*(prevR - frr)/((1 - prevH)*(mdri-frr*bigt))
+                   prevH*(prevR - frr)/((1 - prevH)*(mdri-frr*bigt))
 }
 
 
@@ -81,7 +81,7 @@ BS_SURVEY_ESTS <- function (prevH, prevR, mdri, frr, bs_count,
 
 
 #INPUT IS PROPORTIONS, TEST CHARACTERISTICS, OUTPUT IS PARTIAL DERIVATIVES WITH RESPECT TO (WRT) EACH INPUT VARIABLE
-DM_FirstOrderTerms <-function (prevH, prevR, mdri, frr, bigt)   {
+DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
   fot_prevH <- (prevR-frr)/(((1-prevH)^2)*(mdri-frr*bigt)) #E.G. d(I)/d(P_H)
   fot_prevR <- prevH/((1-prevH)*(mdri-frr*bigt))
   fot_mdri  <- (frr*prevH-prevR*prevH)/((1-prevH)*((mdri-frr*bigt)^2))
@@ -432,6 +432,11 @@ recencyI <- function (BS_Count=10000,
 
 
 
+
+
+
+
+
 #HERE I (AVERY) ADD A FUNCTION THAT TAKES AS ARGUMENTS COUNTS, INSTEAD OF PROPORTIONS, BUT OUTPUTS THE SAME RESULTS AS RECENCYI() FUNCTION
 
 #' Incidence and incidence difference statistics from trinomial prevalences of HIV and recency
@@ -458,36 +463,20 @@ recencyI <- function (BS_Count=10000,
 #' @examples
 #' example
 #' @export
-incBYcounts<-function(N,
-                      N_H,
-                      N_testR,
-                      N_R,
-                      DE_H=1,
-                      DE_R=1,
-                      BS_Count=10000,
-                      BS_Vars= FALSE,
-                      BMest="sameTest",
-                      MDRI,
-                      RSE_MDRI,
-                      FRR,
-                      RSE_FRR,
-                      BigT=730,
-                      Covar_HR=0){
+incBYcounts<-function(N, N_H, N_testR, N_R,
+                      DE_H=1, DE_R=1,
+                      BS_Count=10000, BS_Vars= FALSE,
+                      BMest="sameTest", MDRI, RSE_MDRI, FRR, RSE_FRR,
+                      BigT=730, Covar_HR=0){
+  counts.to.prev<-prevBYcounts(N=N, N_H=N_H, N_testR=N_testR,N_R=N_R, DE_H=DE_H, DE_R=DE_R)
 
-counts.to.prev<-prevBYcounts(N=N,
-                             N_H=N_H,
-                             N_testR=N_testR,
-                             N_R=N_R,
-                             DE_H=DE_H,
-                             DE_R=DE_R)
-
-recencyI(BS_Count=BS_Count,
-         BS_Vars= BS_Vars,
-         BMest=BMest,
-         PrevH=counts.to.prev$PrevH, RSE_PrevH=counts.to.prev$RSE_PrevH,
-         PrevR=counts.to.prev$PrevR, RSE_PrevR=counts.to.prev$RSE_PrevR,
-         MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
-         BigT=BigT, Covar_HR=Covar_HR)
+  recencyI(BS_Count=BS_Count,
+           BS_Vars= BS_Vars,
+           BMest=BMest,
+           PrevH=counts.to.prev$PrevH, RSE_PrevH=counts.to.prev$RSE_PrevH,
+           PrevR=counts.to.prev$PrevR, RSE_PrevR=counts.to.prev$RSE_PrevR,
+           MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
+           BigT=BigT, Covar_HR=Covar_HR)
 }
 
 
