@@ -42,7 +42,7 @@
 
 
 #INPUT IS COUNTS, OUTPUT IS PROPORTIONS AND SE OF PROPORTIONS
-prevBYcounts <- function (DE_H=1, DE_R=1, N, N_H, N_testR, N_R) {
+prevBYcounts <- function (N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
   no_s <-length(N)
   if (length(DE_H)==1)     {DE_H <- rep(DE_H, times=no_s)}         else {DE_H=DE_H}
   if (length(DE_R)==1)     {DE_R <- rep(DE_R, times=no_s)}         else {DE_R=DE_R}
@@ -134,16 +134,15 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 
 
 
-#' Incidence and incidence difference from Trinomial Counts / Prevalences of HIV and recency
+#' Incidence and incidence difference statistics from trinomial prevalences of HIV and recency
 #'
 #' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
-#' @param BSDM_spread ...
-#' @param BS_Vars ...
+#' @param BS_Vars True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
 #' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).
 #' @param PrevH Prevelance of HIV in survey.
-#' @param RSE_PrevH ...
+#' @param RSE_PrevH Relative Standard Error (RSE) of estimate for population prevalence of HIV
 #' @param PrevR Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV.
-#' @param RSE_PrevR ...
+#' @param RSE_PrevR Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently.
 #' @param MDRI Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.
 #' @param RSE_MDRI Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.
 #' @param FRR False Recency Rate as measured by the biomarker assay to test recency in the given prevalence survey.
@@ -161,7 +160,8 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 #' example
 #' @export
 
-#TESTING THIS FUNCTION, I WANT TO CREATE INITIAL VALUES.
+
+#TESTING THE RECENCYI() FUNCTION, I WANT TO CREATE INITIAL VALUES TO RUN THROUGH THE CODE LINE-BY-LINE WITH.
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 BMest="sameTest"
 BS_Count=1000
@@ -171,10 +171,10 @@ PrevH=probs[,1]
 RSE_PrevH=probs[,3]
 PrevR=probs[,2]
 RSE_PrevR=probs[,4]
-MDRI=c(200,200,200)
-RSE_MDRI=c(0.05,0.05,0.05)
-FRR=c(0.01,0.01,0.01)
-RSE_FRR=c(0.2,0.2,0.2)
+MDRI=200
+RSE_MDRI=0.05
+FRR=0.01
+RSE_FRR=0.2
 BS_Vars= FALSE
 
 recencyI <- function (BS_Count=10000,
@@ -432,8 +432,63 @@ recencyI <- function (BS_Count=10000,
 
 
 
+#HERE I (AVERY) ADD A FUNCTION THAT TAKES AS ARGUMENTS COUNTS, INSTEAD OF PROPORTIONS, BUT OUTPUTS THE SAME RESULTS AS RECENCYI() FUNCTION
 
+#' Incidence and incidence difference statistics from trinomial prevalences of HIV and recency
+#'
+#' @param N Total sample size of survey.
+#' @param N_H Count of persons testing positive for HIV.
+#' @param N_testR Count of persons tested for recency among those found to be HIV positive.
+#' @param N_R Count of persons found to be recently infected.
+#' @param DE_H Design effects from cluster survey methods for HIV-prevalence test (vector/integer). These values factor into the calculation of the standard error of the proportion of persons testing positive for HIV.
+#' @param DE_R Design effects from cluster survey methods for HIV-recency test (vector/integer). These values factor into the calculation of the standard error of the proportion of persons testing recent for HIV.
+#' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
+#' @param BS_Vars True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
+#' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string).
+#' @param MDRI Mean Duration of Recent Infection as measured by a biomarker assay to test recency among positive cases.
+#' @param RSE_MDRI Relative Standard Error (RSE) of parameter MDRI as measured by the biomarker assay to test recency in the given prevalence survey.
+#' @param FRR False Recency Rate as measured by the biomarker assay to test recency in the given prevalence survey.
+#' @param RSE_FRR Relative Standard Error (RSE) of parameter FRR as measured by the biomarker assay to test recency in the given prevalence survey.
+#' @param BigT Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.
+#' @param Covar_HR Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)
+#' @details
+#'
+#' general details
+#'
+#' @examples
+#' example
+#' @export
+incBYcounts<-function(N,
+                      N_H,
+                      N_testR,
+                      N_R,
+                      DE_H=1,
+                      DE_R=1,
+                      BS_Count=10000,
+                      BS_Vars= FALSE,
+                      BMest="sameTest",
+                      MDRI,
+                      RSE_MDRI,
+                      FRR,
+                      RSE_FRR,
+                      BigT=730,
+                      Covar_HR=0){
 
+counts.to.prev<-prevBYcounts(N=N,
+                             N_H=N_H,
+                             N_testR=N_testR,
+                             N_R=N_R,
+                             DE_H=DE_H,
+                             DE_R=DE_R)
+
+recencyI(BS_Count=BS_Count,
+         BS_Vars= BS_Vars,
+         BMest=BMest,
+         PrevH=counts.to.prev$PrevH, RSE_PrevH=counts.to.prev$RSE_PrevH,
+         PrevR=counts.to.prev$PrevR, RSE_PrevR=counts.to.prev$RSE_PrevR,
+         MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
+         BigT=BigT, Covar_HR=Covar_HR)
+}
 
 
 
@@ -534,7 +589,6 @@ recencyI  (BS_Count=10000,
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
-           BSDM_spread=1000,
            BS_Vars=TRUE,
            BMest="MDRI.FRR.indep",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
