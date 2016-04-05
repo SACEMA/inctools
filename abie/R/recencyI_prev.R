@@ -16,6 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+
+
+#THESE ARE PRELIMINARY NOTES FOR THE WRITER OF THIS CODE. STANDARD CAP/NON-CAP ARE PETRA'S CODE. ALL CAPS IS AVERY
 ####== Incidence and incidence difference from Trinomial Counts / Prevalences of HIV and recency
 #######################################################################################################
 ####== N:        sample size of survey 1&2 (vector)
@@ -35,9 +38,10 @@
 ####== BMest:    Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)
 #######################################################################################################
 
+#NOTE: THESE FIRST FEW FUNCTIONS ARE USED ONLY IN SERVICE TO FUNCTION RECNECYI().
 
 
-
+#INPUT IS COUNTS, OUTPUT IS PROPORTIONS AND SE OF PROPORTIONS
 prevBYcounts <- function (DE_H=1, DE_R=1, N, N_H, N_testR, N_R) {
   no_s <-length(N)
   if (length(DE_H)==1)     {DE_H <- rep(DE_H, times=no_s)}         else {DE_H=DE_H}
@@ -54,10 +58,13 @@ prevBYcounts <- function (DE_H=1, DE_R=1, N, N_H, N_testR, N_R) {
 }
 
 
+#SIMPLE FORMULA FOR INCIDENCE
 I_EST <- function (prevH, prevR, mdri, frr, bigt){
   prevH*(prevR - frr)/((1 - prevH)*(mdri-frr*bigt))
 }
 
+
+#FORMULA FOR BOOTSTRAPPING EDF OF INPUT PARAMETERS TO RECENCYI() FUNCTION
 BS_SURVEY_ESTS <- function (prevH, prevR, mdri, frr, bs_count,
                             bs_var_prevH, bs_var_prevR, bs_var_mdri, bs_var_frr, covar_HR) {
   Mu    <- c(prevH, prevR, mdri, frr)
@@ -70,14 +77,18 @@ BS_SURVEY_ESTS <- function (prevH, prevR, mdri, frr, bs_count,
   return (BS_RootEst)
 }
 
+
+#INPUT IS PROPORTIONS, TEST CHARACTERISTICS, OUTPUT IS PARTIAL DERIVATIVES WITH RESPECT TO (WRT) EACH INPUT VARIABLE
 DM_FirstOrderTerms <-function (prevH, prevR, mdri, frr, bigt)   {
-  fot_prevH <- (prevR-frr)/(((1-prevH)^2)*(mdri-frr*bigt))
+  fot_prevH <- (prevR-frr)/(((1-prevH)^2)*(mdri-frr*bigt)) #E.G. d(I)/d(P_H)
   fot_prevR <- prevH/((1-prevH)*(mdri-frr*bigt))
   fot_mdri  <- (frr*prevH-prevR*prevH)/((1-prevH)*((mdri-frr*bigt)^2))
   fot_frr   <- (prevH*(bigt*prevR-mdri))/((1-prevH)*((mdri-frr*bigt)^2))
   return (c(fot_prevH, fot_prevR, fot_mdri, fot_frr))
 }
 
+
+#THIS FUNCTION TAKES TESTING SCHEME (SAME ASSAY, DIFFERENT, ETC.) AND RETURNS VAR[I].
 DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
                            fot_prevH2, fot_prevR2, fot_mdri2, fot_frr2,
                            dm_var_prevH1, dm_var_prevR1, dm_var_mdri1, dm_var_frr1,
@@ -104,6 +115,8 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
   }
 }
 
+#THIS FUNCTION IS USED TO RUN A HYBRID BOOTSTRAPPING/DELTA-METHOD APPROXIMATION FOR THE VARIANCE OF I.
+#THIS FUNCTION IS CURRENTLY NOT IN USE
 BS_SPREADbyDM <- function (bsdm_spread, bs_count, bsvec, dm_sd)  { # possibly be replace by options from "test_BSbyDM
   spread_seq <- (rnorm(bsdm_spread, mean(bsvec), dm_sd))-mean(bsvec)
   BS_spread <- vector(length=bsdm_spread*bs_count)
@@ -114,6 +127,9 @@ BS_SPREADbyDM <- function (bsdm_spread, bs_count, bsvec, dm_sd)  { # possibly be
   CIup <- quantile (BS_spread, 0.975)
   return(c(CIlo, CIup))
 }
+
+
+
 
 
 #' Incidence and incidence difference from Trinomial Counts / Prevalences of HIV and recency
@@ -143,8 +159,7 @@ BS_SPREADbyDM <- function (bsdm_spread, bs_count, bsvec, dm_sd)  { # possibly be
 #' example
 #' @export
 recencyI <- function (BS_Count=10000,
-                      BSDM_spread=1000,
-                      BS_Vars= NULL,
+                      BS_Vars= FALSE,
                       BMest="sameTest",
                       PrevH, RSE_PrevH, PrevR, RSE_PrevR,
                       MDRI, RSE_MDRI, FRR, RSE_FRR,
