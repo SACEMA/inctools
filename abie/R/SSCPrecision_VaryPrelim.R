@@ -113,7 +113,7 @@ for(i in 1:12){
 }
 
 
-for(i in c(1:8,10,11)){
+for(i in c(1:4,6:8,10,11)){
   if (is.numeric(var_list[[1:length(var_list[i])]]) > 0 &
       (sum(var_list[[i]]<=1)!=length(var_list[[i]]) | sum(var_list[[i]]>=0)!=length(var_list[[i]]))  )
   {stop("Some input values are less than 0 or greater than 1")}
@@ -283,8 +283,9 @@ for(i in c(1:8,10,11)){
   if (is.numeric(BigT)) {BigT <- BigT/365.25}
 
 
-  t
-
+  PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT)) / PrevH + FRR)
+  out2 <- PrevHR <- PrevH*PrevR     #Prev.HIV&recent
+  out3 <- PrevHnR <-PrevH-PrevHR    #Prev.HIV&nonrecent
 
   #need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
   fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
@@ -301,14 +302,12 @@ for(i in c(1:8,10,11)){
     fot_FRR   <- matrix(fot[((step*step)*3+1):(((step*step)*4))],nrow=step,ncol=step)
   }
 
+
 #IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
   if (n=="out") {
-    PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT)) / PrevH + FRR)
-    out2 <- PrevHR <- PrevH*PrevR     #Prev.HIV&recent
-    out3 <- PrevHnR <-PrevH-PrevHR    #Prev.HIV&nonrecent
     out4 <- RSE_I_inf_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
     out1 <- n <- ((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2)
-    out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH              #RSE.PrevH
+    out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH              #RSE.PrevH #FLAG!!
     out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR     #RSE.PrevR
     out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
     }
@@ -317,9 +316,9 @@ for(i in c(1:8,10,11)){
 
 #IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
 if(RSE_I=="out") {
-    PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
-    out2 <- PrevHR <- PrevH*PrevR
-    out3 <- PrevHnR <-PrevH-PrevHR
+    # PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
+    # out2 <- PrevHR <- PrevH*PrevR
+    # out3 <- PrevHnR <-PrevH-PrevHR
 ###omit the function here defined below and input the ouptut of DM_FirstOrderTerms
     fot_PrevH <- ((((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-FRR)/(((1-PrevH)^2)*(MDRI-FRR*BigT)))
     fot_PrevR <- (PrevH/((1-PrevH)*(MDRI-FRR*BigT)))
