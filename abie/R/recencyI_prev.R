@@ -246,6 +246,10 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
 
   if (Boot==TRUE) {
+
+    DM_Var_I <- rep(0, times=no_s)
+    DM_Var_deltaI <- rep(0, times=no_s^2)
+
     I_BSMat <- matrix(nrow=BS_Count, ncol=no_s) #creates empty matrix of dim (#BS samples*#surveys)
     BS_RootEstMat <- matrix(nrow=BS_Count, ncol=no_s*4) #creates empty matrix of dim (#BS samples-by-#surveys*4)
     BS_Var_I <- vector(length=no_s) #vector of length # of surveys
@@ -299,13 +303,11 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
 #tracks back to line: 'if (Boot==TRUE) {'
 
-  } else { # if Boot is FALSE
+  }
+  else { # if Boot is FALSE
     BS_Var_I=rep(0, times=no_s) #so if no BS-ing, make the BS variables null
     BS_Var_deltaI=rep(0, times=no_s^2)
-  }
 
-#this next section manages the BS smoothing created by Petra. We won't use that now.
-  if (Boot==FALSE) {
     #next few lines make delta method matrix
     fot_Mat  <- matrix (nrow=no_s, ncol=4)
     DM_Var_I <- vector(length=no_s)
@@ -330,9 +332,6 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
                                                          dm_var_frr1=DM_Var_FRR[i],     dm_var_frr2=DM_Var_FRR[j])
       }
     }
-  } else { # if BS is performed for all variables
-    DM_Var_I <- rep(0, times=no_s)
-    DM_Var_deltaI <- rep(0, times=no_s^2)
   }
 
 
@@ -399,7 +398,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
   out_deltaI_Est <- round(deltaI_Est_Vec, digit=5)
   out_RSE_deltaI <- round(RSE_deltaI, digit=5)
-  out_p_value <- round(p_value, digit=5)
+  out_p_value <- p_value
   out_CI_deltaI_Mat <- round(CI_deltaI_Mat, digit=5)
 
   if (length(I_Est)==1) {
