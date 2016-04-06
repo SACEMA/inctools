@@ -93,14 +93,18 @@ SSCprecision <- function ( I              ,
 {
 #still need to make sure the function only handles a single "out" and not two, or none
 #CHECK TO MAKE SURE ONLY TWO VARIABLES ARE ALLOWED TO VARY
-  var_list <- list( I=I, RSE_I=RSE_I, PrevH=PrevH, CR=CR, MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR, BigT=BigT, DE_H=DE_H, DE_R=DE_R, n=n, step=step)
-  if (length(var_list) > 15) {
-    stop("only a maximum of 2 variables are allowed to vary")
+  var_list <- list(I=I, RSE_I=RSE_I, PrevH=PrevH, CR=CR, MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR, BigT=BigT, DE_H=DE_H, DE_R=DE_R, n=n, step=step)
+
+  max.list<-0
+  for(i in 1:length(var_list)){
+  if (length(var_list[[i]]) > 1) {max.list=max.list+1}
+  if (max.list>2)  {stop("only a maximum of 2 variables are allowed to vary")}
   }
+
   if (sum(var_list=="out") > 1) {
     stop("only one of the variables RSE_I or n can be requested at a time")
   }
-  if (length(var_list) < 8) {
+  if (length(var_list[1:8]) < 8) {
     stop("Not enough variables have been specified")
   }
 
@@ -108,18 +112,24 @@ for(i in 1:12){
   if (length(var_list[[i]])>2 | length(var_list[[i]])<1)  {stop(paste("specifiy (only) min & max values for ",names(var_list)[i]),sep="")}
 }
 
-#THIS SECTION STARTING HERE NEEDS UPDATED ERROR NOTES
-  if (is.numeric(I)>0)        {stopifnot (I<=1        & I>=0)}
-  if (is.numeric(RSE_I)>0)    {stopifnot (RSE_I<=1    & RSE_I>=0)}
-  if (is.numeric(PrevH)>0)    {stopifnot (PrevH<=1    & PrevH>=0)}
-  if (is.numeric(CR)>0)       {stopifnot (CR<=1       & CR>=0)}
-  if (is.numeric(MDRI)>0)     {stopifnot (MDRI>=0)}
-  if (is.numeric(RSE_MDRI)>0) {stopifnot (RSE_MDRI<=1 & RSE_MDRI>=0)}
-  if (is.numeric(FRR)>0)      {stopifnot (FRR<=1      & FRR>=0)}
-  if (is.numeric(RSE_FRR)>0)  {stopifnot (RSE_FRR<=1  & RSE_FRR>=0)}
-  if (is.numeric(DE_H)>0)     {stopifnot (DE_H>=1)}
-  if (is.numeric(DE_R)>0)     {stopifnot (DE_R>=1)}
-  if (is.numeric(n)>0)        {stopifnot (n>100)}
+
+for(i in c(1:8,10,11)){
+  if (is.numeric(var_list[[1:length(var_list[i])]]) > 0 &
+      (sum(var_list[[i]]<=1)!=length(var_list[[i]]) | sum(var_list[[i]]>=0)!=length(var_list[[i]]))  )
+  {stop("Some input values are less than 0 or greater than 1")}
+}
+#above code does what below code does, only in 1 line. Which should we keep?
+  # if (is.numeric(I)>0)        {stopifnot (I<=1        & I>=0)}
+  # if (is.numeric(RSE_I)>0)    {stopifnot (RSE_I<=1    & RSE_I>=0)}
+  # if (is.numeric(PrevH)>0)    {stopifnot (PrevH<=1    & PrevH>=0)}
+  # if (is.numeric(CR)>0)       {stopifnot (CR<=1       & CR>=0)}
+  # if (is.numeric(MDRI)>0)     {stopifnot (MDRI>=0)}
+  # if (is.numeric(RSE_MDRI)>0) {stopifnot (RSE_MDRI<=1 & RSE_MDRI>=0)}
+  # if (is.numeric(FRR)>0)      {stopifnot (FRR<=1      & FRR>=0)}
+  # if (is.numeric(RSE_FRR)>0)  {stopifnot (RSE_FRR<=1  & RSE_FRR>=0)}
+  # if (is.numeric(DE_H)>0)     {stopifnot (DE_H>=1)}
+  # if (is.numeric(DE_R)>0)     {stopifnot (DE_R>=1)}
+  # if (is.numeric(n)>0)        {stopifnot (n>100)}
 
 
 #WARNING FOR SIZE OF ASSAY TIME CUTPOINT
