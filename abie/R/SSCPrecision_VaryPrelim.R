@@ -20,7 +20,7 @@
 #This function is to be separate from SS-Power function. This function takes as argument test characteristics,
 #and returns EITHER sample size for a given precision, or a given precision for a given sample size.
 
-MDRI     <- c(200,250)
+MDRI     <- 200
 RSE_MDRI <- 0.05
 FRR      <- 0.01
 RSE_FRR  <- 0.2
@@ -76,6 +76,7 @@ step <- 5
 #' BigT = 730, DE_H = 1, DE_R = 1, n = "out", step = 5)
 #' @export
 #'
+#FOR THIS FUNCTION TO RUN, THE FUNCTION DM_FirstOrderTerms MUST BE INVOKED. IT EXISTS IN R SCRIPT recencyI_prev.R
 SSCprecision <- function ( I              ,
                            RSE_I          ,
                            PrevH          ,
@@ -90,11 +91,13 @@ SSCprecision <- function ( I              ,
                            n              = "out",
                            step           = 5)
 {
+#CHECK TO MAKE SURE ONLY TWO VARIABLES ARE ALLOWED TO VARY
   var_list <- c( I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT, DE_H, DE_R, n,step)
   if (length(var_list) > 15) {
     stop("only a maximum of 2 variables are allowed to vary")
   }
 
+#GENERAL ERROR NOTES
   if (length(I)>2        | length(I)<1)       {stop("specifiy (only) min & max values for I")}
   if (length(RSE_I)>2    | length(RSE_I)<1)   {stop("specifiy (only) min & max values for RSE_I")}
   if (length(PrevH)>2    | length(PrevH)<1)   {stop("specifiy (only) min & max values for PrevH")}
@@ -121,7 +124,8 @@ SSCprecision <- function ( I              ,
   if (is.numeric(DE_R)>0)     {stopifnot (DE_R>=1)}
   if (is.numeric(n)>0)        {stopifnot (n>100)}
 
-#CAN BE MADE MORE SUCCINCT
+
+#WARNING FOR SIZE OF ASSAY TIME CUTPOINT
     if (length(BigT)==1) {
     if (BigT<=182)          {
       warning ("BigT is smaller than half a year")
@@ -134,8 +138,15 @@ SSCprecision <- function ( I              ,
     }
   }
 
+######### THIS WHOLE SECTION HERE IS FOR IF ONE OR MORE OF THE VARIABLES IS ALLOWED TO VARY#######
+#CREATES TWO NULL VALUES, I BELIVE FOR WHICH VARIABLES ARE TO VARY
   vary1 <- NULL
   vary2 <- NULL
+#NOW FOR EACH VARIABLE IN LIST, IF IT'S ALLOWED TO VARY, THEN MAKE A MATRIX OF VALUES FOR THE STEP,
+#FROM BEGINNING TO END, STEP NUMBER OF COLUMNS. IF THE VARIABLE IS THE FIRST ONE IN THIS LIST TO VARY
+#THEN WE'RE CALLING THE VARIABLE IT'S SAME NAME, AS A MATRIX, AND IF IT'S THE SECOND, WE'RE CALLING
+#THAT VARIABLE AS IT'S SAME NAME, BUT AS A TRANSPOSED MATRIX, SO NOW THE ROWS ARE THE STEPPING VALUES
+#there's got to be a way to make this more efficient, like if two have been met, STOP...
   if (length(I)==2)      {
     I <- matrix(rep(seq(from=min(I),to=max(I),length.out=step),times=step),ncol=step,nrow=step)
     if (length(vary1)==0)         {
@@ -178,7 +189,8 @@ SSCprecision <- function ( I              ,
   }
   if (length(MDRI)==2) {
     MDRI <- matrix(rep(seq(from=min(MDRI),to=max(MDRI),length.out=step),times=step),ncol=step,nrow=step)
-    if (length(vary1)==0)         {
+    #IF THIS VARIABLE IS TO VARY, MAKE A MATRIX OF DIM (STEP*STEP) WHERE EACH COLUMN IS THE SEQUENCE OF VALUES
+        if (length(vary1)==0)         {
       vary1 <- MDRI
       vary_name1 <- "MDRI"
     } else {
@@ -188,6 +200,7 @@ SSCprecision <- function ( I              ,
   }
   if (length(RSE_MDRI)==2){
     RSE_MDRI <- matrix(rep(seq(from=min(RSE_MDRI),to=max(RSE_MDRI),length.out=step),times=step),ncol=step,nrow=step)
+  #IF THIS VARIABLE IS TO VARY, MAKE A MATRIX OF DIM (STEP*STEP) WHERE EACH COLUMN IS THE SEQUENCE OF VALUES
     if (length(vary1)==0)         {
       vary1 <- RSE_MDRI
       vary_name1 <- "RSE_MDRI"
@@ -256,22 +269,40 @@ SSCprecision <- function ( I              ,
       vary_name2 = "n"
     }
   }
+######### END SECTION FOR IF ONE OR MORE OF THE VARIABLES IS ALLOWED TO VARY#######
 
+#NOW MAKE VARIABLES IN DAYS TO BE IN UNITS YEARS
   if (is.numeric(MDRI)) {MDRI <- MDRI/365.25}
   if (is.numeric(BigT)) {BigT <- BigT/365.25}
 
+
+
+
+#IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
   if (n=="out") {
     PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
-    out2 <- PrevHR <- PrevH*PrevR
-    out3 <- PrevHnR <-PrevH-PrevHR
+    out2 <- PrevHR <- PrevH*PrevR     #Prev.HIV&recent
+    out3 <- PrevHnR <-PrevH-PrevHR    #Prev.HIV&nonrecent
 
-#call DM_FirstOrderTerms instead of defined here.
-    fot_PrevH <- ((((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-FRR)/(((1-PrevH)^2)*(MDRI-FRR*BigT)))
-    fot_PrevR <- (PrevH/((1-PrevH)*(MDRI-FRR*BigT)))
-    fot_MDRI  <- ((FRR*PrevH-((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)*PrevH)/((1-PrevH)*((MDRI-FRR*BigT)^2)))
-    fot_FRR   <- ((PrevH*(BigT*((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-MDRI))/((1-PrevH)*((MDRI-FRR*BigT)^2)))
 
-    out4 <- RSE_I_inf <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I
+#need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
+fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
+#if the output of each term of DM_FirstOrderTerms is univariate, do one thing, otherwise, do another...
+if(length(var_list) == 11){
+  fot_PrevH <- fot[1]
+  fot_PrevR <- fot[2]
+  fot_MDRI  <- fot[3]
+  fot_FRR   <- fot[4]
+}else{
+  fot_PrevH <- matrix(fot[1:(step*step)],nrow=step,ncol=step,byrow=F)
+  fot_PrevR <- matrix(fot[((step*step)*1+1):(((step*step)*2))],nrow=step,ncol=step)
+  fot_MDRI  <- matrix(fot[((step*step)*2+1):(((step*step)*3))],nrow=step,ncol=step)
+  fot_FRR   <- matrix(fot[((step*step)*3+1):(((step*step)*4))],nrow=step,ncol=step)
+  }
+
+
+
+    out4 <- RSE_I_inf <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
 
     out1 <- n <- ((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf^2)*I^2)
     #   alternative formula for n without requirement of previouscalculations (usable for uniroot)
@@ -282,11 +313,13 @@ SSCprecision <- function ( I              ,
     #        (((I*(1-PrevH)*(MDRI-FRR*BigT)*RSE_MDRI*MDRI)^2+
     #        ((PrevH*BigT*FRR+BigT*I*(1-PrevH)*(MDRI-FRR*BigT)-PrevH*MDRI)*FRR*RSE_FRR)^2)/
     #        (((1-PrevH)*(MDRI-FRR*BigT)^2)^2)))
-    out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH
-    out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR
+    out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH              #RSE.PrevH
+    out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR     #RSE.PrevR
     out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")}
 
 
+
+#IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
 if(RSE_I=="out") {
     PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
     out2 <- PrevHR <- PrevH*PrevR
