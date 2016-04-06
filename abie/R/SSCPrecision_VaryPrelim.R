@@ -290,7 +290,7 @@ for(i in c(1:4,6:8,10,11)){
   #need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
   fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
   #if the output of each term of DM_FirstOrderTerms is univariate, do one thing, otherwise, do another...
-  if(length(var_list) == 13){
+  if(sum(lengths(var_list)>1)==0){
     fot_PrevH <- fot[1]
     fot_PrevR <- fot[2]
     fot_MDRI  <- fot[3]
@@ -337,7 +337,7 @@ if(RSE_I=="out") {
 
 
 
-  if (length(var_list)==15) {
+  if (sum(lengths(var_list))==15) {
     VARY1<-vector(length=step)
     for (i in c(1:step)) {
       VARY1[i]<-paste(vary_name1,vary1[i,1])
@@ -361,7 +361,7 @@ if(RSE_I=="out") {
     out6<-rbind(VARY2,out6)
   }
 
-  if (length(var_list)==14) {
+  if (sum(lengths(var_list))==14) {
     VARY1<-vector(length=step)
     for (i in c(1:step)) {
       VARY1[i]<-paste(vary_name1,vary1[i,1])
