@@ -176,15 +176,11 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 # RSE_FRR=0.2
 # Boot= FALSE
 
-recencyI <- function (BS_Count=10000,
-                      Boot= FALSE,
-                      BMest="sameTest",
-                      PrevH, RSE_PrevH, PrevR, RSE_PrevR,
-                      MDRI, RSE_MDRI, FRR, RSE_FRR,
-                      BigT=730, Covar_HR=0)
-#RSE_PrevH and RSE_PrevR need to be calculated in the function, and not user-defined.
-  #The structure now is that function requires format input from ancillary function prevBYcounts OUTSIDE the recencyI() function. Not optimal. This should be done inside the function....
-{
+recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
+                      Boot= FALSE, BS_Count=10000,
+                      BMest="sameTest", MDRI, RSE_MDRI, FRR, RSE_FRR,
+                      BigT=730, Covar_HR=0){
+
   stopifnot (PrevH<=1     & PrevH>=0)
   stopifnot (PrevR<=1     & PrevR>=0)
   stopifnot (RSE_PrevH<=1 & RSE_PrevH>=0)

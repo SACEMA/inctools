@@ -47,6 +47,15 @@ step <- 5
 # ABIE_v3_Sample_Size_Calculator, which gives SS for a given precision level.
 
 
+#Needs to be defined for function to work:
+DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
+  fot_prevH <- (prevR-frr)/(((1-prevH)^2)*(mdri-frr*bigt)) #E.G. d(I)/d(P_H)
+  fot_prevR <- prevH/((1-prevH)*(mdri-frr*bigt))
+  fot_mdri  <- (frr*prevH-prevR*prevH)/((1-prevH)*((mdri-frr*bigt)^2))
+  fot_frr   <- (prevH*(bigt*prevR-mdri))/((1-prevH)*((mdri-frr*bigt)^2))
+  return (c(fot_prevH, fot_prevR, fot_mdri, fot_frr))
+}
+
 
 
 #' Sample Size or Precision Calculation
@@ -67,7 +76,7 @@ step <- 5
 #' @return Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
 #' @details
 #'
-#' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties and the prevalence/incidence in a hypothetical context, or gives sample size necessary for a given level of estimator precision.
+#' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSI of incidence) and the prevalence/incidence in a hypothetical context, or gives sample size necessary for a given level of estimator precision.
 #' Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained soley by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.
 #'
 #' @examples
@@ -113,11 +122,18 @@ for(i in 1:12){
 }
 
 
-for(i in c(1:4,6:8,10,11)){
+for(i in c(1,3,4,6:8)){
   if (is.numeric(var_list[[1:length(var_list[i])]]) > 0 &
       (sum(var_list[[i]]<=1)!=length(var_list[[i]]) | sum(var_list[[i]]>=0)!=length(var_list[[i]]))  )
   {stop("Some input values are less than 0 or greater than 1")}
 }
+
+if(sum(RSE_I!="out")>0){
+  if (is.numeric(var_list[[1:length(var_list[2])]]) > 0 &
+      (sum(var_list[[2]]<=1)!=length(var_list[[2]]) | sum(var_list[[2]]>=0)!=length(var_list[[2]]))  )
+  {stop("Some input values are less than 0 or greater than 1")}
+}
+
 #above code does what below code does, only in 1 line. Which should we keep?
   # if (is.numeric(I)>0)        {stopifnot (I<=1        & I>=0)}
   # if (is.numeric(RSE_I)>0)    {stopifnot (RSE_I<=1    & RSE_I>=0)}
@@ -284,8 +300,8 @@ for(i in c(1:4,6:8,10,11)){
 
 
   PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT)) / PrevH + FRR)
-  out2 <- PrevHR <- PrevH*PrevR     #Prev.HIV&recent
-  out3 <- PrevHnR <-PrevH-PrevHR    #Prev.HIV&nonrecent
+  out2 <- round(PrevHR <- PrevH*PrevR,5)     #Prev.HIV&recent
+  out3 <- round(PrevHnR <-PrevH-PrevHR,5)    #Prev.HIV&nonrecent
 
   #need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
   fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
@@ -305,17 +321,17 @@ for(i in c(1:4,6:8,10,11)){
 
 #IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
   if (n=="out") {
-    out4 <- RSE_I_inf_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
-    out1 <- n <- ((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2)
-    out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH              #RSE.PrevH #FLAG!!
-    out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR     #RSE.PrevR
+    out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I,5) #RSE.I.inf.sample
+    out1 <- n <- round(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2),5)
+    out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH,5)              #RSE.PrevH
+    out6 <- RSE_PrevR <- round(sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR,5)     #RSE.PrevR
     out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
     }
 
 
 
 #IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
-if(RSE_I=="out") {
+if(sum(RSE_I=="out")>0) {
     # PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
     # out2 <- PrevHR <- PrevH*PrevR
     # out3 <- PrevHnR <-PrevH-PrevHR
@@ -325,60 +341,59 @@ if(RSE_I=="out") {
     fot_MDRI  <- ((FRR*PrevH-((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)*PrevH)/((1-PrevH)*((MDRI-FRR*BigT)^2)))
     fot_FRR   <- ((PrevH*(BigT*((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-MDRI))/((1-PrevH)*((MDRI-FRR*BigT)^2)))
 
-    out4 <- RSE_I_inf_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I
+    out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I,5)
 
-    out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH
-    out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR
+    out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH,5)
+    out6 <- RSE_PrevR <- round(sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR,5)
 
-    out1 <- RSE_I <-sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H +
-                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf_ss^2)
+    out1 <- RSE_I <-round(sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H +
+                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf_ss^2),5)
     out_names <- c("RSE_I","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
     }
 
 
 
   if (sum(lengths(var_list))==15) {
-    VARY1<-vector(length=step)
+    variable.1 <- vector(length=step)
     for (i in c(1:step)) {
-      VARY1[i]<-paste(vary_name1,vary1[i,1])
+      variable.1[i] <- paste(vary_name1, vary1[i,1])
     }
-    VARY2<-vector(length=step)
+    variable.2 <- vector(length=step)
     for (i in c(1:step)) {
-      VARY2[i]<-paste(vary_name2,vary2[1,i])
+      variable.2[i] <- paste(vary_name2, vary2[1,i])
     }
-    VARY2 <- c("",VARY2)
-    out1<-cbind(VARY1,out1)
-    out1<-rbind(VARY2,out1)
-    out2<-cbind(VARY1,out2)
-    out2<-rbind(VARY2,out2)
-    out3<-cbind(VARY1,out3)
-    out3<-rbind(VARY2,out3)
-    out4<-cbind(VARY1,out4)
-    out4<-rbind(VARY2,out4)
-    out5<-cbind(VARY1,out5)
-    out5<-rbind(VARY2,out5)
-    out6<-cbind(VARY1,out6)
-    out6<-rbind(VARY2,out6)
+    variable.2 <- c("",variable.2)
+    out1 <- cbind(variable.1,out1)
+    out1 <- rbind(variable.2,out1)
+    out2 <- cbind(variable.1,out2)
+    out2 <- rbind(variable.2,out2)
+    out3 <- cbind(variable.1,out3)
+    out3 <- rbind(variable.2,out3)
+    out4 <- cbind(variable.1,out4)
+    out4 <- rbind(variable.2,out4)
+    out5 <- cbind(variable.1,out5)
+    out5 <- rbind(variable.2,out5)
+    out6 <- cbind(variable.1,out6)
+    out6 <- rbind(variable.2,out6)
   }
 
   if (sum(lengths(var_list))==14) {
-    VARY1<-vector(length=step)
+    variable.1 <- vector(length=step)
     for (i in c(1:step)) {
-      VARY1[i]<-paste(vary_name1,vary1[i,1])
+      variable.1[i] <- paste(vary_name1, vary1[i,1])
     }
-    out1<-cbind(VARY1,out1[,1])
-    out2<-cbind(VARY1,out2[,1])
-    out3<-cbind(VARY1,out3[,1])
-    out4<-cbind(VARY1,out4[,1])
-    out5<-cbind(VARY1,out5[,1])
-    out6<-cbind(VARY1,out6[,1])
+    out1 <- cbind(variable.1,out1[,1])
+    out2 <- cbind(variable.1,out2[,1])
+    out3 <- cbind(variable.1,out3[,1])
+    out4 <- cbind(variable.1,out4[,1])
+    out5 <- cbind(variable.1,out5[,1])
+    out6 <- cbind(variable.1,out6[,1])
   }
 
-  output <- list (out1, out2, out3, out4, out5,out6)
-  names(output)<-out_names
+  output <- list (out1, out2, out3, out4, out5, out6)
+  names(output) <- out_names
 
   return(output)
-
 }
 
 
@@ -416,7 +431,7 @@ SSCprecision             ( I              =0.015,
                            DE_R           = 1,
                            n              = "out",
                            step           = 5)
-
+#doesn't work when FRR varies alone or with others
 
 #####################################################################################################################
 SSCprecision             ( I              =0.015,
@@ -436,20 +451,41 @@ SSCprecision             ( I              =0.015,
 
 
 #####################################################################################################################
+SSCprecision             ( I              =0.015,
+                           RSE_I          ="out",
+                           PrevH          =c(0.2,0.22),
+                           CR             =0.7,
+                           MDRI           =200,
+                           RSE_MDRI       =0.05,
+                           FRR            =0.01,
+                           RSE_FRR        =0.2,
+                           BigT           = 730,
+                           DE_H           = 1,
+                           DE_R           = 1,
+                           n              = 3622,
+                           step           = 5)
+
+
+
+
+
+
+
+
 #there is some error here, not sure what...
-# SSCprecision             ( I              =0.015,
-#                            RSE_I          ="out",
-#                            PrevH          =0.2,
-#                            CR             =c(0.7,1),
-#                            MDRI           =200,
-#                            RSE_MDRI       =0.05,
-#                            FRR            =0.01,
-#                            RSE_FRR        =0.2,
-#                            BigT           = 730,
-#                            DE_H           = c(1,2),
-#                            DE_R           = 1,
-#                            n              = 3622,
-#                            step           = 5)
+SSCprecision             ( I              =0.015,
+                           RSE_I          ="out",
+                           PrevH          =0.2,
+                           CR             =0.7,
+                           MDRI           =200,
+                           RSE_MDRI       =0.05,
+                           FRR            =0.01,
+                           RSE_FRR        =0.2,
+                           BigT           = 730,
+                           DE_H           = 1,
+                           DE_R           = 1,
+                           n              = 3622,
+                           step           = 5)
 
 
 

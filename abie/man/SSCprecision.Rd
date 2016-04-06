@@ -30,7 +30,7 @@ SSCprecision(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
 
 \item{DE_R}{Design effect of recency test (vector/integer)}
 
-\item{n}{Sample Size, either given hypothetical value or to be determined by function}
+\item{n}{Sample Size, either a given hypothetical value or to be determined by function (default)}
 
 \item{step}{number of steps between minimum I and maximum I in the calculation of a range of output}
 }
@@ -41,7 +41,7 @@ Either sample size necessary for a given precision under a given set of testing 
 Sample Size or Precision Calculation
 }
 \details{
-Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties and the prevalence/incidence in a hypothetical context, or gives sample size necessary for a given level of estimator precision.
+Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSI of incidence) and the prevalence/incidence in a hypothetical context, or gives sample size necessary for a given level of estimator precision.
 Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained soley by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.
 }
 \examples{
