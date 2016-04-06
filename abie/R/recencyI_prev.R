@@ -221,7 +221,6 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   deltaI_Est_Vec <- as.vector(deltaI_Est_Mat)
 #makes above matrix into a vector
 
-#in my first worked example, there's no bootstrapping, so BS_VARS=NULL
 #this section defines the empirical variance of each object to be bootsrapped for the mvtrnorm function
   if (Boot==TRUE) {
     BS_Var_PrevH <- (RSE_PrevH*PrevH)^2
@@ -246,8 +245,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   }
 
 
-
-  if (Boot==TRUE) { #in other words, if there's bootstrapping at all: but this may be wrong, as it looks like length(Boot) will always be greater than 0...
+  if (Boot==TRUE) {
     I_BSMat <- matrix(nrow=BS_Count, ncol=no_s) #creates empty matrix of dim (#BS samples*#surveys)
     BS_RootEstMat <- matrix(nrow=BS_Count, ncol=no_s*4) #creates empty matrix of dim (#BS samples-by-#surveys*4)
     BS_Var_I <- vector(length=no_s) #vector of length # of surveys
@@ -264,11 +262,11 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
 #I THINK THIS BELOW SECTION SHOULD HAVE AN INDEX LOOP RIGHT?? AS IT STANDS THERE'S NOTHING...
     for(i in 1:no_s){
-      if ((BMest=="sameTest"| BMest=="FRR.indep")  & (is.element("MDRI", Boot))) {
+      if ((BMest=="sameTest"| BMest=="FRR.indep")  ) {
         BS_RootEstMat[,(i*4-1)] <- BS_RootEstMat[,3]
       }#above is saying, if the test is the same, or FRR.indep (meaning mdri still same) then each column in BS matrix
        #corresponding to mdri will equal the first BS sample of that variable
-      if (BMest=="sameTest" & (is.element("FRR", Boot))) {
+      if (BMest=="sameTest" ) {
         BS_RootEstMat[,(i*4)] <- BS_RootEstMat[,4]
       } #similarly if it's same test then FRR will be recorded as same in there.
 }
