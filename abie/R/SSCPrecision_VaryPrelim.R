@@ -301,10 +301,9 @@ if(length(var_list) == 11){
   }
 
 
+out4 <- RSE_I_inf_ss_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
 
-    out4 <- RSE_I_inf <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
-
-    out1 <- n <- ((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf^2)*I^2)
+    out1 <- n <- ((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2)
     #   alternative formula for n without requirement of previouscalculations (usable for uniroot)
     #   n <- (I^2*DE_H/(PrevH*(1-PrevH)) +
     #         DE_R*PrevH/((1-PrevH)^2*(MDRI-FRR*BigT)^2*CR)*
@@ -330,25 +329,16 @@ if(RSE_I=="out") {
     fot_MDRI  <- ((FRR*PrevH-((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)*PrevH)/((1-PrevH)*((MDRI-FRR*BigT)^2)))
     fot_FRR   <- ((PrevH*(BigT*((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-MDRI))/((1-PrevH)*((MDRI-FRR*BigT)^2)))
 
-    out4 <- RSE_I_inf <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I
+    out4 <- RSE_I_inf_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I
 
     out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH
     out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR
 
     out1 <- RSE_I <-sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H +
-                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf^2)
+                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf_ss^2)
     out_names <- c("RSE_I","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")}
 
 
-  # if(PrevH=="out")    { }
-  # if (CR=="out")      { }
-  # if (MDRI=="out")    { }
-  # if(RSE_MDRI=="out") { }
-  # if (FRR=="out")     { }
-  # if (RSE_FRR=="out") { }
-  # if (BigT=="out")    { }
-  # if (DE_H=="out")    { }
-  # if(DE_R=="out")     { }
 
   if (length(var_list)==15) {
     VARY1<-vector(length=step)
