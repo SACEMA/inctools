@@ -190,6 +190,10 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   stopifnot (FRR<=1       & FRR>=0)
   stopifnot (RSE_FRR<=1   & RSE_FRR>=0)
 
+  if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.idep"))==0){
+    stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.idep")
+  }
+
   if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for MDRI")}
   if (BigT<=182)                {warning ("BigT is smaller than half a year")}
 
@@ -344,7 +348,6 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   RSE_deltaI   <- sqrt(Var_deltaI)/abs(deltaI_Est_Vec)
   SD_deltaI    <- sqrt(Var_deltaI)
 
-
 #this function takes bootstrap matrix, SD via delta method, and I estimates, and returns the spread version of those
 #IM REWRITING THIS SO THAT IT ONLY TAKES FULL BS OR DELTA-METHOD
  CI_BSandDM <- function (BSMat, DM_SD, Est) {
@@ -460,6 +463,18 @@ incBYcounts<-function(N, N_H, N_testR, N_R,
                       BS_Count=10000, Boot= FALSE,
                       BMest="sameTest", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0){
+
+  if ((N_H|N_testR|N_R)>N) {
+    stop("sample subset larger than total sample")
+  }
+  if (N_testR<N_R) {
+    stop("counts of recency tested less than counts of those found to be recently infected")
+  }
+  if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.idep"))==0){
+    stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.idep")
+  }
+
+
   counts.to.prev<-prevBYcounts(N=N, N_H=N_H, N_testR=N_testR,N_R=N_R, DE_H=DE_H, DE_R=DE_R)
 
   recencyI(BS_Count=BS_Count,
