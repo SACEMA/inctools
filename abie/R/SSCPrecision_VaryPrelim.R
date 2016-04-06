@@ -91,25 +91,22 @@ SSCprecision <- function ( I              ,
                            n              = "out",
                            step           = 5)
 {
+#still need to make sure the function only handles a single "out" and not two, or none
 #CHECK TO MAKE SURE ONLY TWO VARIABLES ARE ALLOWED TO VARY
-  var_list <- c( I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT, DE_H, DE_R, n,step)
+  var_list <- list( I=I, RSE_I=RSE_I, PrevH=PrevH, CR=CR, MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR, BigT=BigT, DE_H=DE_H, DE_R=DE_R, n=n, step=step)
   if (length(var_list) > 15) {
     stop("only a maximum of 2 variables are allowed to vary")
   }
+  if (sum(var_list=="out") > 1) {
+    stop("only one of the variables RSE_I or n can be requested at a time")
+  }
+  if (length(var_list) < 8) {
+    stop("Not enough variables have been specified")
+  }
 
-#GENERAL ERROR NOTES
-  if (length(I)>2        | length(I)<1)       {stop("specifiy (only) min & max values for I")}
-  if (length(RSE_I)>2    | length(RSE_I)<1)   {stop("specifiy (only) min & max values for RSE_I")}
-  if (length(PrevH)>2    | length(PrevH)<1)   {stop("specifiy (only) min & max values for PrevH")}
-  if (length(CR)>2       | length(CR)<1)      {stop("specifiy (only) min & max values for CR")}
-  if (length(MDRI)>2     | length(MDRI)<1)    {stop("specifiy (only) min & max values for MDRI")}
-  if (length(RSE_MDRI)>2 | length(RSE_MDRI)<1){stop("specifiy (only) min & max values for RSE_MDRI")}
-  if (length(FRR)>2      | length(FRR)<1)     {stop("specifiy (only) min & max values for FRR")}
-  if (length(RSE_FRR)>2  | length(RSE_FRR)<1) {stop("specifiy (only) min & max values for RSE_FRR")}
-  if (length(BigT)>2     | length(BigT)<1)    {stop("specifiy (only) min & max values for BigT")}
-  if (length(DE_H)>2     | length(DE_H)<1)    {stop("specifiy (only) min & max values for DE_H")}
-  if (length(DE_R)>2     | length(DE_R)<1)    {stop("specifiy (only) min & max values for DE_R")}
-  if (length(n)>2        | length(n)<1)       {stop("specifiy (only) min & max values for n")}
+for(i in 1:12){
+  if (length(var_list[[i]])>2 | length(var_list[[i]])<1)  {stop(paste("specifiy (only) min & max values for ",names(var_list)[i]),sep="")}
+}
 
 #THIS SECTION STARTING HERE NEEDS UPDATED ERROR NOTES
   if (is.numeric(I)>0)        {stopifnot (I<=1        & I>=0)}
@@ -276,38 +273,35 @@ SSCprecision <- function ( I              ,
   if (is.numeric(BigT)) {BigT <- BigT/365.25}
 
 
+  t
 
+
+  #need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
+  fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
+  #if the output of each term of DM_FirstOrderTerms is univariate, do one thing, otherwise, do another...
+  if(length(var_list) == 13){
+    fot_PrevH <- fot[1]
+    fot_PrevR <- fot[2]
+    fot_MDRI  <- fot[3]
+    fot_FRR   <- fot[4]
+  }else{
+    fot_PrevH <- matrix(fot[1:(step*step)],nrow=step,ncol=step,byrow=F)
+    fot_PrevR <- matrix(fot[((step*step)*1+1):(((step*step)*2))],nrow=step,ncol=step)
+    fot_MDRI  <- matrix(fot[((step*step)*2+1):(((step*step)*3))],nrow=step,ncol=step)
+    fot_FRR   <- matrix(fot[((step*step)*3+1):(((step*step)*4))],nrow=step,ncol=step)
+  }
 
 #IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
   if (n=="out") {
     PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT)) / PrevH + FRR)
     out2 <- PrevHR <- PrevH*PrevR     #Prev.HIV&recent
     out3 <- PrevHnR <-PrevH-PrevHR    #Prev.HIV&nonrecent
-
-
-#need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
-fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
-#if the output of each term of DM_FirstOrderTerms is univariate, do one thing, otherwise, do another...
-if(length(var_list) == 13){
-  fot_PrevH <- fot[1]
-  fot_PrevR <- fot[2]
-  fot_MDRI  <- fot[3]
-  fot_FRR   <- fot[4]
-}else{
-  fot_PrevH <- matrix(fot[1:(step*step)],nrow=step,ncol=step,byrow=F)
-  fot_PrevR <- matrix(fot[((step*step)*1+1):(((step*step)*2))],nrow=step,ncol=step)
-  fot_MDRI  <- matrix(fot[((step*step)*2+1):(((step*step)*3))],nrow=step,ncol=step)
-  fot_FRR   <- matrix(fot[((step*step)*3+1):(((step*step)*4))],nrow=step,ncol=step)
-  }
-
-
-out4 <- RSE_I_inf_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
-
+    out4 <- RSE_I_inf_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
     out1 <- n <- ((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2)
-
     out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH              #RSE.PrevH
     out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR     #RSE.PrevR
-    out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")}
+    out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
+    }
 
 
 
@@ -329,7 +323,8 @@ if(RSE_I=="out") {
 
     out1 <- RSE_I <-sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H +
                             (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf_ss^2)
-    out_names <- c("RSE_I","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")}
+    out_names <- c("RSE_I","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
+    }
 
 
 
