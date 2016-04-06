@@ -280,7 +280,7 @@ SSCprecision <- function ( I              ,
 
 #IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
   if (n=="out") {
-    PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
+    PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT)) / PrevH + FRR)
     out2 <- PrevHR <- PrevH*PrevR     #Prev.HIV&recent
     out3 <- PrevHnR <-PrevH-PrevHR    #Prev.HIV&nonrecent
 
