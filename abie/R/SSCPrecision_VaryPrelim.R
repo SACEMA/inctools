@@ -27,7 +27,7 @@ RSE_FRR  <- 0.2
 BigT     <- 730
 I        <- 0.015
 RSE_I    <- 0.25
-PrevH    <- c(0.1,0.5)
+PrevH    <- 0.1
 CR       <- 1
 DE_H     <- 1
 DE_R     <- 1
@@ -288,7 +288,7 @@ SSCprecision <- function ( I              ,
 #need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
 fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
 #if the output of each term of DM_FirstOrderTerms is univariate, do one thing, otherwise, do another...
-if(length(var_list) == 11){
+if(length(var_list) == 13){
   fot_PrevH <- fot[1]
   fot_PrevR <- fot[2]
   fot_MDRI  <- fot[3]
@@ -301,17 +301,10 @@ if(length(var_list) == 11){
   }
 
 
-out4 <- RSE_I_inf_ss_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
+out4 <- RSE_I_inf_ss <- sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I #RSE.I.inf.sample
 
     out1 <- n <- ((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2)
-    #   alternative formula for n without requirement of previouscalculations (usable for uniroot)
-    #   n <- (I^2*DE_H/(PrevH*(1-PrevH)) +
-    #         DE_R*PrevH/((1-PrevH)^2*(MDRI-FRR*BigT)^2*CR)*
-    #        (FRR+I*(1-PrevH)*(MDRI-FRR*BigT)/PrevH)*(1-(FRR+I*(1-PrevH)*(MDRI-FRR*BigT)/PrevH)))/
-    #        ((RSE_I^2*I^2)-
-    #        (((I*(1-PrevH)*(MDRI-FRR*BigT)*RSE_MDRI*MDRI)^2+
-    #        ((PrevH*BigT*FRR+BigT*I*(1-PrevH)*(MDRI-FRR*BigT)-PrevH*MDRI)*FRR*RSE_FRR)^2)/
-    #        (((1-PrevH)*(MDRI-FRR*BigT)^2)^2)))
+
     out5 <- RSE_PrevH <- sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH              #RSE.PrevH
     out6 <- RSE_PrevR <- sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR     #RSE.PrevR
     out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")}
