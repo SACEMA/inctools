@@ -148,11 +148,12 @@ if(sum(RSE_I!="out")>0){
   # if (is.numeric(n)>0)        {stopifnot (n>100)}
 
 
-#WARNING FOR SIZE OF ASSAY TIME CUTPOINT
     if (sum(BigT<=182)){
       warning ("BigT is smaller than half a year")
       }
-
+  if (sum(BigT<MDRI)>0){
+    stop ("MDRI cannot be greater than BigT")
+  }
 
 ######### THIS WHOLE SECTION HERE IS FOR IF ONE OR MORE OF THE VARIABLES IS ALLOWED TO VARY#######
 #CREATES TWO NULL VALUES, I BELIVE FOR WHICH VARIABLES ARE TO VARY
