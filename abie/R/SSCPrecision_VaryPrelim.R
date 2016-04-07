@@ -172,6 +172,9 @@ if(sum(RSE_I!="out")>0){
   if(sum(I>.20)>0){
     warning(paste("Possible error in incidence input.", max(I)," seems exceptionally high",sep=""))
   }
+  if(sum(n<1000)>0){
+    warning("Sample size is smaller than 1000")
+  }
 
 
 #Need error that reads: "ERROR: Test properties not consistent with test for recent infection"
@@ -469,7 +472,7 @@ SSCprecision             ( I              =0.015,
                            n              = 5000,
                            step           = 5)
 #this does not give same value of RSE_I as spreadhsheet for these values, close, but not totally
-
+#this is not my (Avery's) error: but was present in sheet Petra gave me.
 
 #####################################################################################################################
 SSCprecision             ( I              =0.015,
