@@ -181,7 +181,7 @@ DM_VAR_deltaI <- function (BMest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 # Boot= FALSE
 
 recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
-                      Boot= FALSE, BS_Count=10000,
+                      Boot=FALSE, BS_Count=10000,
                       BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0){
 
@@ -203,6 +203,11 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   }
 
   if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for MDRI")}
+
+  if(sum(FRR>0.10)>0){
+    warning("Estimated FRR is greater than 10%")
+  }
+
   if (BigT<=182)                {warning ("BigT is smaller than half a year")}
 
   no_s <- length(PrevH) #dimension of inputs (number of surveys)
@@ -565,7 +570,7 @@ recencyI  (BS_Count=10000,
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
            MDRI=200, RSE_MDRI=0.05,
-           FRR=0.01, RSE_FRR=0.2,
+           FRR=c(0.01,0.02,0.001), RSE_FRR=0.2,
            BigT=730)
 
 ########== bootstrap control by FRR=0 ==###########
@@ -587,7 +592,7 @@ recencyI  (BS_Count=10000,
 incBYcounts (N=5000, N_H=1000, N_testR=1000, N_R=100,
              DE_H=1, DE_R=1,
              BS_Count=10000, Boot= FALSE,
-             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0, RSE_FRR=0.05,
+             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0.01, RSE_FRR=0.05,
              BigT=730, Covar_HR=0)
 
 ########== incidence by counts, two surveys ==###########
