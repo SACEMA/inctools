@@ -5,8 +5,8 @@
 \title{Incidence and incidence difference statistics from trinomial counts of HIV and recency}
 \usage{
 incBYcounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
-  Boot = FALSE, BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-  BigT = 730, Covar_HR = 0)
+  Boot = FALSE, alpha = 0.05, BMest = "same.test", MDRI, RSE_MDRI, FRR,
+  RSE_FRR, BigT = 730, Covar_HR = 0)
 }
 \arguments{
 \item{N}{Total sample size of survey}
