@@ -349,17 +349,8 @@ if(sum(RSE_I!="out")>0){
 
 
 
-#IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
+#IF precision IS THE OUPUT VARIABLE (SO sample size n IS FIXED)
 if(sum(RSE_I=="out")>0) {
-    # PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)
-    # out2 <- PrevHR <- PrevH*PrevR
-    # out3 <- PrevHnR <-PrevH-PrevHR
-###omit the function here defined below and input the ouptut of DM_FirstOrderTerms
-    fot_PrevH <- ((((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-FRR)/(((1-PrevH)^2)*(MDRI-FRR*BigT)))
-    fot_PrevR <- (PrevH/((1-PrevH)*(MDRI-FRR*BigT)))
-    fot_MDRI  <- ((FRR*PrevH-((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)*PrevH)/((1-PrevH)*((MDRI-FRR*BigT)^2)))
-    fot_FRR   <- ((PrevH*(BigT*((I*(1-PrevH)*(MDRI-FRR*BigT))/PrevH + FRR)-MDRI))/((1-PrevH)*((MDRI-FRR*BigT)^2)))
-
     out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I,5)
 
     out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH,5)
