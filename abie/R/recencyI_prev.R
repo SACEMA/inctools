@@ -526,31 +526,7 @@ recencyI  (BS_Count=10000,
            BigT=730)
 ##############################################################################################
 
-################### == Call - DM & BS combinded ==############################################
-# recencyI  (BS_Count=10000,
-#            BSDM_spread=1000,
-#            Boot=c("MDRI","FRR"),
-#            BMest="same.test",
-#            PrevH=probs[,1], RSE_PrevH=probs[,3],
-#            PrevR=probs[,2], RSE_PrevR=probs[,4],
-#            MDRI=200, RSE_MDRI=0.05,
-#            FRR=0.01, RSE_FRR=0.2,
-#            BigT=730)
-##############################################################################################
 
-################### == Only 1 Dataset == Call - DM & BS combinded ==##########################
-# probs<-prevBYcounts (N=5000, N_H=1000, N_testR=1000, N_R=100)
-#
-# recencyI  (BS_Count=10000,
-#            BSDM_spread=1000,
-#            Boot=c("MDRI","FRR"),
-#            BMest="same.test",
-#            PrevH=probs[,1], RSE_PrevH=probs[,3],
-#            PrevR=probs[,2], RSE_PrevR=probs[,4],
-#            MDRI=200, RSE_MDRI=0.05,
-#            FRR=0.01, RSE_FRR=0.2,
-#            BigT=730)
-##############################################################################################
 
 ########== Check with spread sheets """"""same.test""""""==###########
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
