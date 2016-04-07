@@ -430,6 +430,15 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
     }
   }
 
+
+  for(i in 1:2){
+    for(j in 1:nrow(CI_deltaI_Mat)){
+      if(!is.na(CI_deltaI_Mat[j,i]) & (CI_deltaI_Mat[j,i]<0 | CI_deltaI_Mat[j,i]>1))
+      {warning("CI out of [0,1] bounds"); break}
+    }
+  }
+
+
   out_deltaI_Est <- round(deltaI_Est_Vec, digit=5)
   out_RSE_deltaI <- round(RSE_deltaI, digit=5)
   out_p_value <- round(p_value,5)
