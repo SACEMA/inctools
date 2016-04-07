@@ -319,8 +319,8 @@ if(sum(RSE_I!="out")>0){
 
 
   PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT)) / PrevH + FRR)
-  out2 <- round(PrevHR <- PrevH*PrevR,5)     #Prev.HIV&recent
-  out3 <- round(PrevHnR <-PrevH-PrevHR,5)    #Prev.HIV&nonrecent
+  out2 <- PrevHR <- round(PrevH*PrevR,5)     #Prev.HIV&recent
+  out3 <- PrevHnR <- round(PrevH-PrevHR,5)    #Prev.HIV&nonrecent
 
   #need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
   fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
@@ -405,7 +405,7 @@ if(sum(RSE_I=="out")>0) {
   names(output) <- out_names
 
   return(output)
-}
+  }
 
 
 
@@ -434,18 +434,18 @@ SSCprecision             ( I              =0.015,
 #####################################################################################################################
 SSCprecision             ( I              =0.015,
                            RSE_I          =0.25,
-                           PrevH          =c(0.15,0.25),
+                           PrevH          =0.20,
                            CR             =1,
                            MDRI           =200,
                            RSE_MDRI       =0.05,
                            FRR            =0.01,
                            RSE_FRR        =0.2,
-                           BigT           = 710,
+                           BigT           = 730,
                            DE_H           = 1,
                            DE_R           = 1,
                            n              = "out",
                            step           = 5)
-#doesn't work when FRR varies alone or with others (is that really true? just certain vaules?)
+#doesn't work when FRR goes above 3% for these values
 
 
 #####################################################################################################################
