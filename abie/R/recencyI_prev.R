@@ -204,6 +204,10 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
   if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for FRR")}
 
+  if(sum(MDRI<90)>0){
+    warning("Estimated MDRI less than 90 days")
+  }
+
   if(sum(FRR>0.10)>0){
     warning("Estimated FRR is greater than 10%")
   }
@@ -222,6 +226,8 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   if(sum(RSE_MDRI>0.30)>0){
     warning("RSE of estimated MDRI is greater than 30%")
   }
+
+  if (sum(MDRI>BigT)>0) {stop("MDRI cannot be greater than BigT")}
 
   if (BigT<=182)                {warning ("BigT is smaller than half a year")}
 
