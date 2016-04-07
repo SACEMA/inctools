@@ -76,13 +76,21 @@ DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
 #' @return Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
 #' @details
 #'
-#' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSI of incidence) and the prevalence/incidence in a hypothetical context, or gives sample size necessary for a given level of estimator precision.
+#' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSE of incidence) and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision.
 #' Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained soley by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.
 #'
 #' @examples
 #' SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
 #' MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
-#' BigT = 730, DE_H = 1, DE_R = 1, n = "out", step = 5)
+#' BigT = 730, DE_H = 1.1, DE_R = 1, n = "out")
+#'
+#' SSCprecision(I = c(0.015,0.02), RSE_I = 0.25, PrevH = c(0.10,0.20),
+#' CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
+#' BigT = 700, DE_H = 1, DE_R = 1, n = "out", step = 5)
+#'
+#' SSCprecision(I = 0.017, RSE_I = "out", PrevH = c(0.10,0.20),
+#' CR = 1, MDRI = 211, RSE_MDRI = 0.05, FRR = 0.009, RSE_FRR = 0.2,
+#' BigT = 720, n = 5000, step = 5)
 #' @export
 #'
 #FOR THIS FUNCTION TO RUN, THE FUNCTION DM_FirstOrderTerms MUST BE INVOKED. IT EXISTS IN R SCRIPT recencyI_prev.R
@@ -100,10 +108,9 @@ SSCprecision <- function ( I              ,
                            n              = "out",
                            step           = 5)
 {
-#still need to make sure the function only handles a single "out" and not two, or none
-#CHECK TO MAKE SURE ONLY TWO VARIABLES ARE ALLOWED TO VARY
   var_list <- list(I=I, RSE_I=RSE_I, PrevH=PrevH, CR=CR, MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR, BigT=BigT, DE_H=DE_H, DE_R=DE_R, n=n, step=step)
 
+  #CHECK TO MAKE SURE ONLY TWO VARIABLES ARE ALLOWED TO VARY
   max.list<-0
   for(i in 1:length(var_list)){
   if (length(var_list[[i]]) > 1) {max.list=max.list+1}
@@ -342,6 +349,7 @@ if(sum(RSE_I!="out")>0){
   if (n=="out") {
     out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I,5) #RSE.I.inf.sample
     out1 <- n <- round(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2),5)
+    if(sum(((PrevH*(1-PrevH))/n)*DE_H<=0)>0){stop("no sample size will meet input constraints")}
     out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH,5)              #RSE.PrevH
     out6 <- RSE_PrevR <- round(sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR,5)     #RSE.PrevR
     out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
@@ -445,8 +453,20 @@ SSCprecision             ( I              =0.015,
                            DE_R           = 1,
                            n              = "out",
                            step           = 5)
-#doesn't work when FRR goes above 3% for these values
-
+#doesn't work when FRR goes above 3.7% for these values
+SSCprecision             ( I              =0.015,
+                           RSE_I          =0.25,
+                           PrevH          =0.20,
+                           CR             =1,
+                           MDRI           =200,
+                           RSE_MDRI       =0.05,
+                           FRR            =0.039,
+                           RSE_FRR        =0.2,
+                           BigT           = 730,
+                           DE_H           = 1,
+                           DE_R           = 1,
+                           n              = "out",
+                           step           = 5)
 
 #####################################################################################################################
 #default of spreadsheet ABIE_v3_Test_Performance_Calculator

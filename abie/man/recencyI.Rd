@@ -9,13 +9,13 @@ recencyI(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
   BigT = 730, Covar_HR = 0)
 }
 \arguments{
-\item{PrevH}{Prevalence of HIV}
+\item{PrevH}{Prevalence of HIV (vector/integer)}
 
-\item{RSE_PrevH}{Relative Standard Error (RSE) of estimate for population prevalence of HIV}
+\item{RSE_PrevH}{Relative Standard Error (RSE) of estimate for population prevalence of HIV (vector/integer)}
 
-\item{PrevR}{Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV}
+\item{PrevR}{Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV (vector/integer)}
 
-\item{RSE_PrevR}{Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently}
+\item{RSE_PrevR}{Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently (vector/integer)}
 
 \item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting}
 
@@ -33,7 +33,7 @@ recencyI(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
 
 \item{BigT}{post-infection time cut-off true vs false recent [days] default 730 days (integer)}
 
-\item{Covar_HR}{Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)}
+\item{Covar_HR}{Covariance of probability of being postive and being categorized recent from survey (vector/integer)}
 }
 \value{
 Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns said results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
@@ -49,9 +49,10 @@ recencyI(PrevH=0.20, RSE_PrevH=0.028, PrevR=0.10, RSE_PrevR=0.094,
 BS_Count=10000, Boot=TRUE, BMest="same.test", MDRI=200, RSE_MDRI=0.05,
 FRR=0.01, RSE_FRR=0.2, BigT=730)
 
+
 recencyI(PrevH=c(0.20,0.21,0.18), RSE_PrevH=c(0.028,0.03,0.022),
-PrevR=c(0.10,0.13,0.12), RSE_PrevR=c(0.094,0.095,0.05), BS_Count=10000,
-Boot=FALSE, BMest="MDRI.FRR.indep", MDRI=200, RSE_MDRI=0.05,
-FRR=c(0.01,0.009,0.02), RSE_FRR=0.2, BigT=730)
+PrevR=c(0.10,0.13,0.12), RSE_PrevR=c(0.094,0.095,0.05),
+BS_Count=10000, Boot=FALSE, BMest="MDRI.FRR.indep", MDRI=200,
+RSE_MDRI=0.05, FRR=c(0.01,0.009,0.02), RSE_FRR=0.2, BigT=730)
 }
 
