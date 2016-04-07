@@ -202,10 +202,25 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
     stop("Bootstrap samples count must be positive integer")
   }
 
-  if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for MDRI")}
+  if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for FRR")}
 
   if(sum(FRR>0.10)>0){
     warning("Estimated FRR is greater than 10%")
+  }
+  if(sum(FRR==0)>0){
+    warning("Zero estimated FRR")
+  }
+  if(sum(RSE_FRR>0.30)>0){
+    warning("RSE of estimated FRR is greater than 30%")
+  }
+  if(sum(RSE_FRR<0.05)>0){
+    warning("RSE of estimated FRR is less than 5%")
+  }
+  if(sum(RSE_MDRI<0.01)>0){
+    warning("RSE of estimated MDRI is less than 1%")
+  }
+  if(sum(RSE_MDRI>0.30)>0){
+    warning("RSE of estimated MDRI is greater than 30%")
   }
 
   if (BigT<=182)                {warning ("BigT is smaller than half a year")}
@@ -402,6 +417,9 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
       delta_code [(i*no_s-(no_s-j))] <- paste(i, j, sep=" vs ")
     }
   }
+
+  if(sum(out_RSE_I>0.25)){warning("RSE of incidence estimator greater than 25%")}
+
 
   for (i in c(1:no_s)) {
     deltaI_Est_Vec[(i*no_s-(no_s-i))]<-NA
