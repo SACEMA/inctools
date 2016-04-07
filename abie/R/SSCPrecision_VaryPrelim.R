@@ -148,12 +148,34 @@ if(sum(RSE_I!="out")>0){
   # if (is.numeric(n)>0)        {stopifnot (n>100)}
 
 
-    if (sum(BigT<=182)){
-      warning ("BigT is smaller than half a year")
+  if (sum(BigT<=182)){
+    warning ("BigT is smaller than half a year")
       }
   if (sum(BigT<MDRI)>0){
     stop ("MDRI cannot be greater than BigT")
   }
+  if(sum(RSE_MDRI<0.01)>0){
+    warning("RSE of estimated MDRI is less than 1%")
+  }
+  if(sum(FRR==0)>0){
+    warning("Zero estimated FRR")
+  }
+  if(sum(FRR>0.10)>0){
+    warning("Estimated FRR is greater than 10%")
+  }
+  if(sum(RSE_FRR>0.30)>0){
+    warning("RSE of estimated FRR is greater than 30%")
+  }
+  if(sum(RSE_FRR<0.05)>0){
+    warning("RSE of estimated FRR is less than 5%")
+  }
+  if(sum(I>.20)>0){
+    warning(paste("Possible error in incidence input.", max(I)," seems exceptionally high",sep=""))
+  }
+
+
+#Need error that reads: "ERROR: Test properties not consistent with test for recent infection"
+
 
 ######### THIS WHOLE SECTION HERE IS FOR IF ONE OR MORE OF THE VARIABLES IS ALLOWED TO VARY#######
 #CREATES TWO NULL VALUES, I BELIVE FOR WHICH VARIABLES ARE TO VARY
@@ -398,6 +420,8 @@ if(sum(RSE_I=="out")>0) {
 
 #Examples of function use:
 #####################################################################################################################
+#default of spreadsheet ABIE_v3_Sample_Size_Calculator.xlsx
+
 SSCprecision             ( I              =0.015,
                            RSE_I          =0.25,
                            PrevH          =0.2,
@@ -411,6 +435,7 @@ SSCprecision             ( I              =0.015,
                            DE_R           = 1,
                            n              = "out",
                            step           = 5)
+
 #####################################################################################################################
 SSCprecision             ( I              =0.015,
                            RSE_I          =0.25,
@@ -425,7 +450,26 @@ SSCprecision             ( I              =0.015,
                            DE_R           = 1,
                            n              = "out",
                            step           = 5)
-#doesn't work when FRR varies alone or with others
+#doesn't work when FRR varies alone or with others (is that really true? just certain vaules?)
+
+
+#####################################################################################################################
+#default of spreadsheet ABIE_v3_Test_Performance_Calculator
+SSCprecision             ( I              =0.015,
+                           RSE_I          ="out",
+                           PrevH          =0.2,
+                           CR             =0.7,
+                           MDRI           =200,
+                           RSE_MDRI       =0.05,
+                           FRR            =0.01,
+                           RSE_FRR        =0.2,
+                           BigT           = 730,
+                           DE_H           = 1,
+                           DE_R           = 1,
+                           n              = 5000,
+                           step           = 5)
+#this does not give same value of RSE_I as spreadhsheet for these values, close, but not totally
+
 
 #####################################################################################################################
 SSCprecision             ( I              =0.015,
