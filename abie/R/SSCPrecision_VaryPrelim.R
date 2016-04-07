@@ -149,17 +149,10 @@ if(sum(RSE_I!="out")>0){
 
 
 #WARNING FOR SIZE OF ASSAY TIME CUTPOINT
-    if (length(BigT)==1) {
-    if (BigT<=182)          {
+    if (sum(BigT<=182)){
       warning ("BigT is smaller than half a year")
       }
-  } else {
-    for (i in c(1,2)) {
-      if (BigT[i]<=182)          {
-        warning ("BigT is smaller than half a year")
-      }
-    }
-  }
+
 
 ######### THIS WHOLE SECTION HERE IS FOR IF ONE OR MORE OF THE VARIABLES IS ALLOWED TO VARY#######
 #CREATES TWO NULL VALUES, I BELIVE FOR WHICH VARIABLES ARE TO VARY
