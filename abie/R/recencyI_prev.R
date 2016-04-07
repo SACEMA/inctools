@@ -43,6 +43,10 @@
 
 #INPUT IS COUNTS, OUTPUT IS PROPORTIONS AND SE OF PROPORTIONS
 prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
+  if (sum(DE_H<1) >0 | sum(DE_R<1) >0) {
+    stop("Design effects must be >1")
+  }
+
   no_s <- length(N)
   if (length(DE_H)==1)     {DE_H <- rep(DE_H, times=no_s)}         else {DE_H=DE_H}
   if (length(DE_R)==1)     {DE_R <- rep(DE_R, times=no_s)}         else {DE_R=DE_R}
@@ -464,7 +468,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 #' @export
 incBYcounts<-function(N, N_H, N_testR, N_R,
                       DE_H=1, DE_R=1,
-                      BS_Count=10000, Boot= FALSE,
+                      BS_Count=10000, Boot=FALSE,
                       BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0){
 
