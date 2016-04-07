@@ -432,8 +432,10 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
   out_deltaI_Est <- round(deltaI_Est_Vec, digit=5)
   out_RSE_deltaI <- round(RSE_deltaI, digit=5)
-  out_p_value <- p_value
+  out_p_value <- round(p_value,5)
   out_CI_deltaI_Mat <- round(CI_deltaI_Mat, digit=5)
+
+  out_p_value<-ifelse(out_p_value<0.001,"<0.0001",out_p_value)
 
   if (length(I_Est)==1) {
     output <- data.frame ("Incidence"=out_I_Est,
