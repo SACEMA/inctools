@@ -91,23 +91,23 @@ DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
 
 
 #THIS FUNCTION TAKES TESTING SCHEME (SAME ASSAY, DIFFERENT, ETC.) AND RETURNS VAR[I].
-DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
+DM_VAR_deltaI <- function (BMest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
                            fot_prevH2, fot_prevR2, fot_mdri2, fot_frr2,
                            dm_var_prevH1, dm_var_prevR1, dm_var_mdri1, dm_var_frr1,
                            dm_var_prevH2, dm_var_prevR2, dm_var_mdri2, dm_var_frr2) {
-  if(bmest=="sameTest"){
+  if(BMest=="same.test"){
     DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
       ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
       ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
       ((fot_frr1-fot_frr2)^2*dm_var_frr1)
   }
-  else if(bmest=="FRR.indep") {
+  else if(BMest=="FRR.indep") {
     DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
       ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
       ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
       ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
   }
-  else if(bmest=="MDRI.FRR.indep") {
+  else if(BMest=="MDRI.FRR.indep") {
     DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
       ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
       ((fot_mdri1^2)*dm_var_mdri1)   + ((fot_mdri2^2)*dm_var_mdri2)   +
@@ -178,7 +178,7 @@ DM_VAR_deltaI <- function (bmest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 
 recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
                       Boot= FALSE, BS_Count=10000,
-                      BMest="sameTest", MDRI, RSE_MDRI, FRR, RSE_FRR,
+                      BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0){
 
   stopifnot (PrevH<=1     & PrevH>=0)
@@ -270,7 +270,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
 #I THINK THIS BELOW SECTION SHOULD HAVE AN INDEX LOOP RIGHT?? AS IT STANDS THERE'S NOTHING...
     for(i in 1:no_s){
-      if ((BMest=="sameTest"| BMest=="FRR.indep")  ) {
+      if ((BMest=="same.test"| BMest=="FRR.indep")  ) {
         BS_RootEstMat[,(i*4-1)] <- BS_RootEstMat[,3]
       }#above is saying, if the test is the same, or FRR.indep (meaning mdri still same) then each column in BS matrix
        #corresponding to mdri will equal the first BS sample of that variable
@@ -326,7 +326,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
     DM_Var_deltaI <- vector(length=no_s^2)
     for (i in c(1:no_s)) {
       for (j in c(1:no_s)) {
-        DM_Var_deltaI[i*no_s-(no_s-j)] <- DM_VAR_deltaI (bmest=BMest, fot_prevH1=fot_Mat[i,1], fot_prevH2=fot_Mat[j,1],
+        DM_Var_deltaI[i*no_s-(no_s-j)] <- DM_VAR_deltaI (BMest=BMest, fot_prevH1=fot_Mat[i,1], fot_prevH2=fot_Mat[j,1],
                                                          fot_prevR1=fot_Mat[i,2],   fot_prevR2=fot_Mat[j,2],
                                                          fot_mdri1=fot_Mat[i,3],    fot_mdri2=fot_Mat[j,3],
                                                          fot_frr1=fot_Mat[i,4],     fot_frr2=fot_Mat[j,4],
@@ -461,13 +461,16 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 incBYcounts<-function(N, N_H, N_testR, N_R,
                       DE_H=1, DE_R=1,
                       BS_Count=10000, Boot= FALSE,
-                      BMest="sameTest", MDRI, RSE_MDRI, FRR, RSE_FRR,
+                      BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0){
 
-  if ((N_H|N_testR|N_R)>N) {
+  if (sum(N_H>N)>0) {
     stop("sample subset larger than total sample")
   }
-  if (N_testR<N_R) {
+  if (sum(N_R>N)>0) {
+    stop("sample subset larger than total sample")
+  }
+  if (sum(N_testR<N_R)>0) {
     stop("counts of recency tested less than counts of those found to be recently infected")
   }
   if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.idep"))==0){
@@ -593,6 +596,29 @@ recencyI  (BS_Count=10000,
            FRR=0, RSE_FRR=0,
            BigT=730)
 
+
+
+
+########== incidence by counts, single survey ==###########
+incBYcounts (N=5000, N_H=1000, N_testR=1000, N_R=100,
+             DE_H=1, DE_R=1,
+             BS_Count=10000, Boot= FALSE,
+             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0, RSE_FRR=0.05,
+             BigT=730, Covar_HR=0)
+
+########== incidence by counts, two surveys ==###########
+incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,950), N_R=c(100,70),
+             DE_H=1, DE_R=1,
+             BS_Count=10000, Boot= FALSE,
+             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0, RSE_FRR=0.05,
+             BigT=730, Covar_HR=0)
+
+########== incidence by counts, two surveys, FRR independent ==###########
+incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,950), N_R=c(100,70),
+             DE_H=1, DE_R=1,
+             BS_Count=10000, Boot= FALSE,
+             BMest="FRR.indep", MDRI=200, RSE_MDRI=.05, FRR=0, RSE_FRR=0.05,
+             BigT=730, Covar_HR=0)
 
 
 
