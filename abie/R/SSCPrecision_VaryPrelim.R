@@ -370,6 +370,7 @@ if(sum(RSE_I=="out")>0) {
     out_names <- c("RSE_I","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
     }
 
+  if(sum(RSE_I>0.50)>0){warning("Implied RSE of incidence is greater than 50%")}
 
 
   if (sum(lengths(var_list))==15) {
