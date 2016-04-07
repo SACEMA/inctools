@@ -155,14 +155,14 @@ DM_VAR_deltaI <- function (BMest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 #' general details
 #'
 #' @examples
-#' recencyI(BS_Count=10000, Boot=FALSE, BMest="sameTest", PrevH=0.20,
+#' recencyI(BS_Count=10000, Boot=FALSE, BMest="same.test", PrevH=0.20,
 #' RSE_PrevH=0.028, PrevR=0.10, RSE_PrevR=0.094, MDRI=200, RSE_MDRI=0.05,
 #' FRR=0.01, RSE_FRR=0.2, BigT=730)
 #' @export
 #
 # #TESTING THE RECENCYI() FUNCTION, I WANT TO CREATE INITIAL VALUES TO RUN THROUGH THE CODE LINE-BY-LINE WITH.
 # probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
-# BMest="sameTest"
+# BMest="same.test"
 # BS_Count=1000
 # BigT=730
 # Covar_HR=0
@@ -190,8 +190,12 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   stopifnot (FRR<=1       & FRR>=0)
   stopifnot (RSE_FRR<=1   & RSE_FRR>=0)
 
-  if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.idep"))==0){
+  if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.indep"))==0){
     stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.idep")
+  }
+
+  if(BS_Count<=0){
+    stop("Bootstrap samples count must be positive integer")
   }
 
   if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for MDRI")}
@@ -274,7 +278,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
         BS_RootEstMat[,(i*4-1)] <- BS_RootEstMat[,3]
       }#above is saying, if the test is the same, or FRR.indep (meaning mdri still same) then each column in BS matrix
        #corresponding to mdri will equal the first BS sample of that variable
-      if (BMest=="sameTest" ) {
+      if (BMest=="same.test" ) {
         BS_RootEstMat[,(i*4)] <- BS_RootEstMat[,4]
       } #similarly if it's same test then FRR will be recorded as same in there.
 }
@@ -503,7 +507,7 @@ probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R
 ################### == Call - DM only ==######################################################
 recencyI  (BS_Count=10000,
            Boot=FALSE,
-           BMest="sameTest",
+           BMest="same.test",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
            MDRI=200, RSE_MDRI=0.05,
@@ -514,7 +518,7 @@ recencyI  (BS_Count=10000,
 ################### == Call - BS only ==######################################################
 recencyI  (BS_Count=10000,
            Boot=TRUE,
-           BMest="sameTest",
+           BMest="same.test",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
            MDRI=200, RSE_MDRI=0.05,
@@ -526,7 +530,7 @@ recencyI  (BS_Count=10000,
 # recencyI  (BS_Count=10000,
 #            BSDM_spread=1000,
 #            Boot=c("MDRI","FRR"),
-#            BMest="sameTest",
+#            BMest="same.test",
 #            PrevH=probs[,1], RSE_PrevH=probs[,3],
 #            PrevR=probs[,2], RSE_PrevR=probs[,4],
 #            MDRI=200, RSE_MDRI=0.05,
@@ -540,7 +544,7 @@ recencyI  (BS_Count=10000,
 # recencyI  (BS_Count=10000,
 #            BSDM_spread=1000,
 #            Boot=c("MDRI","FRR"),
-#            BMest="sameTest",
+#            BMest="same.test",
 #            PrevH=probs[,1], RSE_PrevH=probs[,3],
 #            PrevR=probs[,2], RSE_PrevR=probs[,4],
 #            MDRI=200, RSE_MDRI=0.05,
@@ -548,12 +552,12 @@ recencyI  (BS_Count=10000,
 #            BigT=730)
 ##############################################################################################
 
-########== Check with spread sheets """"""sameTest""""""==###########
+########== Check with spread sheets """"""same.test""""""==###########
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
            Boot=FALSE,
-           BMest="sameTest",
+           BMest="same.test",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
            MDRI=200, RSE_MDRI=0.05,
@@ -677,9 +681,9 @@ incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,950), N_R=c(100,70
 #                                                  bs_var_prevH=BS_Var_PrevH[i], bs_var_prevR=BS_Var_PrevR[i],
 #                                                  bs_var_mdri=BS_Var_MDRI[i],
 #                                                  covar_HR=Covar_HR[i])
-#     if ((BMest=="sameTest"| BMest=="FRR.indep")  & (is.element("MDRI", Boot))) {
+#     if ((BMest=="same.test"| BMest=="FRR.indep")  & (is.element("MDRI", Boot))) {
 #       BS_RootEstMat[,(i*3-1)] <- BS_RootEstMat[,2] }
-#     if (BMest=="sameTest" & (is.element("FRR", Boot))) {
+#     if (BMest=="same.test" & (is.element("FRR", Boot))) {
 #       BS_RootEstMat[,(i*3)] <- BS_RootEstMat[,3] }
 #     I_BSVec <- I_EST2(prevH=BS_RootEstMat[,(i*3-2)], prevR=BS_RootEstMat[,(i*3-1)],
 #                      mdri=BS_RootEstMat[,(i*3)])

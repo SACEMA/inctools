@@ -4,17 +4,11 @@
 \alias{recencyI}
 \title{Incidence and incidence difference statistics from trinomial prevalences of HIV and recency}
 \usage{
-recencyI(BS_Count = 10000, Boot = FALSE, BMest = "sameTest", PrevH,
-  RSE_PrevH, PrevR, RSE_PrevR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
+recencyI(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
+  BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
   Covar_HR = 0)
 }
 \arguments{
-\item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence}
-
-\item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting}
-
-\item{BMest}{Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)}
-
 \item{PrevH}{Prevalence of HIV}
 
 \item{RSE_PrevH}{Relative Standard Error (RSE) of estimate for population prevalence of HIV}
@@ -22,6 +16,12 @@ recencyI(BS_Count = 10000, Boot = FALSE, BMest = "sameTest", PrevH,
 \item{PrevR}{Proportion of persons found to be 'recent' by biomarker assay among total persons found positive for HIV}
 
 \item{RSE_PrevR}{Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently}
+
+\item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting}
+
+\item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence}
+
+\item{BMest}{Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)}
 
 \item{MDRI}{mean duration of recent infection [days] (vector/integer)}
 
@@ -45,7 +45,7 @@ Incidence and incidence difference statistics from trinomial prevalences of HIV 
 general details
 }
 \examples{
-recencyI(BS_Count=10000, Boot=FALSE, BMest="sameTest", PrevH=0.20,
+recencyI(BS_Count=10000, Boot=FALSE, BMest="same.test", PrevH=0.20,
 RSE_PrevH=0.028, PrevR=0.10, RSE_PrevR=0.094, MDRI=200, RSE_MDRI=0.05,
 FRR=0.01, RSE_FRR=0.2, BigT=730)
 }
