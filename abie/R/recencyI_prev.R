@@ -181,7 +181,7 @@ DM_VAR_deltaI <- function (BMest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 # Boot= FALSE
 
 recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
-                      Boot=FALSE, BS_Count=10000,
+                      Boot=FALSE, BS_Count=10000, alpha=0.05,
                       BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0){
 
@@ -381,14 +381,14 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
  CI_BSandDM <- function (BSMat, DM_SD, Est) {
     if (sum(DM_Var_I)>0)  {
          for (i in c(1:length(Est))) {
-               CI_Mat[i,1] <- qnorm(0.025, mean=Est[i], sd=DM_SD[i])
-               CI_Mat[i,2] <- qnorm(0.975, mean=Est[i], sd=DM_SD[i])
+               CI_Mat[i,1] <- qnorm(alpha/2, mean=Est[i], sd=DM_SD[i])
+               CI_Mat[i,2] <- qnorm(1-alpha/2, mean=Est[i], sd=DM_SD[i])
          }
        }
     else {
       for (i in c(1:ncol(BSMat))) {
-             CI_Mat[i,1] <- quantile(BSMat[,i], 0.025)
-             CI_Mat[i,2] <- quantile(BSMat[,i], 0.975)
+             CI_Mat[i,1] <- quantile(BSMat[,i], alpha/2)
+             CI_Mat[i,2] <- quantile(BSMat[,i], 1-alpha/2)
       }
     }
     return (CI_Mat)
@@ -431,11 +431,14 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   }
 
 
-  for(i in 1:2){
-    for(j in 1:nrow(CI_deltaI_Mat)){
-      if(!is.na(CI_deltaI_Mat[j,i]) & (CI_deltaI_Mat[j,i]<0 | CI_deltaI_Mat[j,i]>1))
+
+    for(i in 1:length(out_CI_I_lo)){
+      if((out_CI_I_lo[i]!="" & out_CI_I_lo[i]<0) | ( (out_CI_I_lo[i]!="" & out_CI_I_lo[i]>1)))
       {warning("CI out of [0,1] bounds"); break}
     }
+  for(i in 1:length(out_CI_I_up)){
+    if((out_CI_I_up[i]!="" & out_CI_I_up[i]<0) | ( (out_CI_I_up[i]!="" & out_CI_I_up[i]>1)))
+    {warning("CI out of [0,1] bounds"); break}
   }
 
 
@@ -502,7 +505,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 #' @export
 incBYcounts<-function(N, N_H, N_testR, N_R,
                       DE_H=1, DE_R=1,
-                      BS_Count=10000, Boot=FALSE,
+                      BS_Count=10000, Boot=FALSE, alpha=0.05,
                       BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730, Covar_HR=0){
 
@@ -522,9 +525,7 @@ incBYcounts<-function(N, N_H, N_testR, N_R,
 
   counts.to.prev<-prevBYcounts(N=N, N_H=N_H, N_testR=N_testR,N_R=N_R, DE_H=DE_H, DE_R=DE_R)
 
-  recencyI(BS_Count=BS_Count,
-           Boot= Boot,
-           BMest=BMest,
+  recencyI(BS_Count=BS_Count, Boot= Boot, alpha=alpha, BMest=BMest,
            PrevH=counts.to.prev$PrevH, RSE_PrevH=counts.to.prev$RSE_PrevH,
            PrevR=counts.to.prev$PrevR, RSE_PrevR=counts.to.prev$RSE_PrevR,
            MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
@@ -621,14 +622,14 @@ recencyI  (BS_Count=10000,
 incBYcounts (N=5000, N_H=1000, N_testR=1000, N_R=100,
              DE_H=1, DE_R=1,
              BS_Count=10000, Boot= FALSE,
-             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0.01, RSE_FRR=0.05,
+             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0.01, RSE_FRR=0.06,
              BigT=730, Covar_HR=0)
 
 ########== incidence by counts, two surveys ==###########
-incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,950), N_R=c(100,70),
+incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R=c(100,70),
              DE_H=1, DE_R=1,
              BS_Count=10000, Boot= FALSE,
-             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0, RSE_FRR=0.05,
+             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0.01, RSE_FRR=0.06,
              BigT=730, Covar_HR=0)
 
 ########== incidence by counts, two surveys, FRR independent ==###########
