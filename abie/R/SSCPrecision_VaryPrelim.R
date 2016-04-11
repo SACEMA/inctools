@@ -33,7 +33,7 @@ DE_H     <- 1
 DE_R     <- 1
 n        <- "out"
 step <- 5
-
+#
 #Note to self: 'step' is number of steps between minimum I and maximum I in the calculation of
 #a range of output. So supply a vector or max/min theoretical incidences, and the function gives
 #a range of values (step number of values) for the output. This can be done for all input variables.
