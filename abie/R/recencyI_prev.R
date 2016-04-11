@@ -94,7 +94,7 @@ DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
 }
 
 
-#TAKES TESTING SCHEME (SAME ASSAY, DIFFERENT, ETC.) AND RETURNS VAR[I].
+#TAKES TESTING SCHEME (SAME ASSAY, DIFFERENT, ETC.) AND RETURNS VAR[diff in I].
 DM_VAR_deltaI <- function (BMest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
                            fot_prevH2, fot_prevR2, fot_mdri2, fot_frr2,
                            dm_var_prevH1, dm_var_prevR1, dm_var_mdri1, dm_var_frr1,
@@ -122,6 +122,30 @@ DM_VAR_deltaI <- function (BMest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
 }
 
 
+
+DM_VAR_deltaI.infSS<-function(BMest,
+                              fot_mdri1, fot_frr1,
+                              fot_mdri2, fot_frr2,
+                              dm_var_mdri1, dm_var_frr1,
+                              dm_var_mdri2, dm_var_frr2){
+  if(BMest=="same.test"){
+    DM_Var_deltaI <-
+      ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
+      ((fot_frr1-fot_frr2)^2*dm_var_frr1)
+  }
+  else if(BMest=="FRR.indep") {
+    DM_Var_deltaI <-
+      ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
+      ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
+  }
+  else if(BMest=="MDRI.FRR.indep") {
+    DM_Var_deltaI <-
+      ((fot_mdri1^2)*dm_var_mdri1)   + ((fot_mdri2^2)*dm_var_mdri2)   +
+      ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
+  } else {
+    stop("specify BMest")
+  }
+}
 
 
 
