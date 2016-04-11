@@ -35,7 +35,7 @@
 ####== DE_R:     Design effect of recency test (vector/integer)
 ####== Boot:  Variables to be bootstrapped e.g.c("PrevH", "PrevR", "MDRI", "FRR") (string vector)
 ####== BS_Count: Number of iterations for bootstrapping (integer)
-####== BMest:    Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.idep" (string)
+####== BMest:    Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.indep" (string)
 #######################################################################################################
 
 #NOTE: THESE FIRST FEW FUNCTIONS ARE USED ONLY IN SERVICE TO FUNCTION RECNECYI().
