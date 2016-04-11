@@ -4,7 +4,6 @@
 ####== PrevR:    prevalence of recency when HIV positive and therefore tested for recency
 ####== I:        incidence expected
 ####== CR:       coverage rate; probability (0 - 1) of being tested for recency when positive
-####==
 ####== Covar_HR: covariance of probs being postive & being recent of survey 1&2 (vector)
 ####== MDRI:     mean duration of recent infection [days] (vector/integer)
 ####== RSE_MDRI: Relative standard error of MDRI   [days] (vector/integer)
@@ -13,7 +12,6 @@
 ####== BigT:     post-infection time cut-off true vs false recent [days] default 730 days (integer)
 ####== DE_H:     Design effect of HIV-prevalence test (vector/integer)
 ####== DE_R:     Design effect of recency test (vector/integer)
-####== BS_Vars:  Variables to be bootstrapped e.g.c("PrevH", "PrevR", "MDRI", "FRR") (string vector)
 ####==
 #######################################################################################################
 
@@ -94,7 +92,7 @@ DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
 #' @export
 #'
 #FOR THIS FUNCTION TO RUN, THE FUNCTION DM_FirstOrderTerms MUST BE INVOKED. IT EXISTS IN R SCRIPT recencyI_prev.R
-SSCprecision <- function ( I              ,
+SSCpower <-     function ( I              ,
                            RSE_I          ,
                            PrevH          ,
                            CR             ,
