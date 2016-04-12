@@ -108,9 +108,6 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n, alpha=0.05, Power="out", DE_H=1,
     stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.idep")
   }
 
-  # if(BS_Count<=0){
-  #   stop("Bootstrap samples count must be positive integer")
-  # }
 
   if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for FRR")}
 
