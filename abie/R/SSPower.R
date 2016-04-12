@@ -1,68 +1,72 @@
+#SCRIPT UNFINISHED
+
 #This script is a function that takes either a sample size and gives power for a test of two incidences,
-#or takes power and gives the required sample size necessary
-
-#Needs to be defined for function to work:
-DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
-  fot_prevH <- (prevR-frr)/(((1-prevH)^2)*(mdri-frr*bigt)) #E.G. d(I)/d(P_H)
-  fot_prevR <- prevH/((1-prevH)*(mdri-frr*bigt))
-  fot_mdri  <- (frr*prevH-prevR*prevH)/((1-prevH)*((mdri-frr*bigt)^2))
-  fot_frr   <- (prevH*(bigt*prevR-mdri))/((1-prevH)*((mdri-frr*bigt)^2))
-  return (c(fot_prevH, fot_prevR, fot_mdri, fot_frr))
-}
-
-
-#TAKES TESTING SCHEME (SAME ASSAY, DIFFERENT, ETC.) AND RETURNS VAR[diff in I].
-DM_VAR_deltaI <- function (BMest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
-                           fot_prevH2, fot_prevR2, fot_mdri2, fot_frr2,
-                           dm_var_prevH1, dm_var_prevR1, dm_var_mdri1, dm_var_frr1,
-                           dm_var_prevH2, dm_var_prevR2, dm_var_mdri2, dm_var_frr2) {
-  if(BMest=="same.test"){
-    DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
-      ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
-      ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
-      ((fot_frr1-fot_frr2)^2*dm_var_frr1)
-  }
-  else if(BMest=="FRR.indep") {
-    DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
-      ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
-      ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
-      ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
-  }
-  else if(BMest=="MDRI.FRR.indep") {
-    DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
-      ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
-      ((fot_mdri1^2)*dm_var_mdri1)   + ((fot_mdri2^2)*dm_var_mdri2)   +
-      ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
-  } else {
-    stop("specify BMest")
-  }
-}
+#or takes power and gives the required sample size necessary.
 
 
 
-DM_VAR_deltaI.infSS<-function(BMest,
-                              fot_mdri1, fot_frr1,
-                              fot_mdri2, fot_frr2,
-                              dm_var_mdri1, dm_var_frr1,
-                              dm_var_mdri2, dm_var_frr2){
-  if(BMest=="same.test"){
-    DM_Var_deltaI <-
-      ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
-      ((fot_frr1-fot_frr2)^2*dm_var_frr1)
-  }
-  else if(BMest=="FRR.indep") {
-    DM_Var_deltaI <-
-      ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
-      ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
-  }
-  else if(BMest=="MDRI.FRR.indep") {
-    DM_Var_deltaI <-
-      ((fot_mdri1^2)*dm_var_mdri1)   + ((fot_mdri2^2)*dm_var_mdri2)   +
-      ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
-  } else {
-    stop("specify BMest")
-  }
-}
+# #Needs to be defined for function to work:
+# DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
+#   fot_prevH <- (prevR-frr)/(((1-prevH)^2)*(mdri-frr*bigt)) #E.G. d(I)/d(P_H)
+#   fot_prevR <- prevH/((1-prevH)*(mdri-frr*bigt))
+#   fot_mdri  <- (frr*prevH-prevR*prevH)/((1-prevH)*((mdri-frr*bigt)^2))
+#   fot_frr   <- (prevH*(bigt*prevR-mdri))/((1-prevH)*((mdri-frr*bigt)^2))
+#   return (c(fot_prevH, fot_prevR, fot_mdri, fot_frr))
+# }
+#
+#
+# #TAKES TESTING SCHEME (SAME ASSAY, DIFFERENT, ETC.) AND RETURNS VAR[diff in I].
+# DM_VAR_deltaI <- function (BMest, fot_prevH1, fot_prevR1, fot_mdri1, fot_frr1,
+#                            fot_prevH2, fot_prevR2, fot_mdri2, fot_frr2,
+#                            dm_var_prevH1, dm_var_prevR1, dm_var_mdri1, dm_var_frr1,
+#                            dm_var_prevH2, dm_var_prevR2, dm_var_mdri2, dm_var_frr2) {
+#   if(BMest=="same.test"){
+#     DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
+#       ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
+#       ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
+#       ((fot_frr1-fot_frr2)^2*dm_var_frr1)
+#   }
+#   else if(BMest=="FRR.indep") {
+#     DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
+#       ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
+#       ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
+#       ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
+#   }
+#   else if(BMest=="MDRI.FRR.indep") {
+#     DM_Var_deltaI <- ((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +
+#       ((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +
+#       ((fot_mdri1^2)*dm_var_mdri1)   + ((fot_mdri2^2)*dm_var_mdri2)   +
+#       ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
+#   } else {
+#     stop("specify BMest")
+#   }
+# }
+#
+#
+#
+# DM_VAR_deltaI.infSS<-function(BMest,
+#                               fot_mdri1, fot_frr1,
+#                               fot_mdri2, fot_frr2,
+#                               dm_var_mdri1, dm_var_frr1,
+#                               dm_var_mdri2, dm_var_frr2){
+#   if(BMest=="same.test"){
+#     DM_Var_deltaI <-
+#       ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
+#       ((fot_frr1-fot_frr2)^2*dm_var_frr1)
+#   }
+#   else if(BMest=="FRR.indep") {
+#     DM_Var_deltaI <-
+#       ((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +
+#       ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
+#   }
+#   else if(BMest=="MDRI.FRR.indep") {
+#     DM_Var_deltaI <-
+#       ((fot_mdri1^2)*dm_var_mdri1)   + ((fot_mdri2^2)*dm_var_mdri2)   +
+#       ((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)
+#   } else {
+#     stop("specify BMest")
+#   }
+# }
 
 
 #Test values:
@@ -83,15 +87,15 @@ BigT     <- 730
 CR       <- 1
 DE_H     <- 1
 DE_R     <- 1
-N1        <- 5000
-N2 <-5000
-step <- 5
+n1        <- 5000
+n2 <-5000
+# step <- 5
 alpha=0.05
 BMest="same.test"
 
 #add N_testR to calculation...
 
-SSPower <- function (I1, I2, PrevH1, PrevH2, n, alpha=0.05, Power="out", DE_H=1, DE_R=1,
+SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", DE_H=1, DE_R=1,
                       BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730){
 
@@ -148,19 +152,13 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n, alpha=0.05, Power="out", DE_H=1,
   if (length(CR)==1)  {CR  <- rep(CR, times=no_s)}  else {CR=CR}
 
 
-    #these next two lines were just added...
-  # if (length(PrevH)==1) {PrevH <- rep(PrevH, times=no_s)} else {PrevH=PrevH}
-  # if (length(PrevR)==1) {PrevR <- rep(PrevR, times=no_s)} else {PrevR=PrevR}
-  # if (is.na(I[1])) {I <- rep(I, times=no_s)}
-
-
   stopifnot(no_s==length(MDRI)    & no_s==length(RSE_MDRI)  & no_s==length(FRR)   &
               no_s==length(RSE_FRR)  & length(BigT)==1)
 
 
   MDRI<-MDRI/365.25
   BigT<-BigT/365.25
-  N <- c(N1,N2)
+  N <- c(n1,n2)
   PrevH <- c(PrevH1,PrevH2)
   I<-c(I1,I2)
   deltaI_Est <- I[1]-I[2]
@@ -171,12 +169,12 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n, alpha=0.05, Power="out", DE_H=1,
   DM_Var_MDRI  <- (MDRI*RSE_MDRI)^2
   DM_Var_FRR   <- (FRR*RSE_FRR)^2
 
-  MDRI.CI <- 365.25*data.frame(lci=qnorm(alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR)),uci=qnorm(1-alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR[1])))
-  FRR.CI <- data.frame(lci=qnorm(alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR)),uci=qnorm(1-alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR[1])))
+  MDRI.CI <- 365.25*data.frame(Implied.MDRI.CI.low=qnorm(alpha/2, mean=MDRI, sd=sqrt(DM_Var_MDRI)),Implied.MDRI.CI.up=qnorm(1-alpha/2, mean=MDRI, sd=sqrt(DM_Var_MDRI)))
+  FRR.CI <- data.frame(Implied.FRR.CI.low=qnorm(alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR)),Implied.FRR.CI.up=qnorm(1-alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR)))
 
-
-  DM_Var_PrevH<-PrevH*(1-PrevH)*DE_H/N
-  DM_Var_PrevR<-PrevR*(1-PrevR)*DE_R/N
+#
+#   DM_Var_PrevH<-PrevH*(1-PrevH)*DE_H/N
+#   DM_Var_PrevR<-PrevR*(1-PrevR)*DE_R/N
 
 
 # #
@@ -192,11 +190,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n, alpha=0.05, Power="out", DE_H=1,
 #     }
 #     #I tested this function explicitely. It works, and works in the other function scripts as well.
 #
-# #
-# #
-# #
-# #
-# #
+
 # #     DM_Var_deltaI <- DM_VAR_deltaI (BMest=BMest, fot_prevH1=fot_Mat[1,1], fot_prevH2=fot_Mat[2,1],
 # #                                                      fot_prevR1=fot_Mat[1,2],   fot_prevR2=fot_Mat[2,2],
 # #                                                      fot_mdri1=fot_Mat[1,3],    fot_mdri2=fot_Mat[2,3],
@@ -226,6 +220,10 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n, alpha=0.05, Power="out", DE_H=1,
 # #   SD_deltaI    <- sqrt(Var_deltaI)
 #
 
+
+
+#Instead of trying to get the fot function to work, I explicitely wrote out the commands for the Var[I], Var[D-I]
+
   Var_I <- I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))
                 + (RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2
                 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2
@@ -250,21 +248,51 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n, alpha=0.05, Power="out", DE_H=1,
   deltaI_CI[1] <- qnorm(alpha/2, mean=deltaI_Est, sd=sqrt(Var_delta_I))
   deltaI_CI[2] <- qnorm(1-alpha/2, mean=deltaI_Est, sd=sqrt(Var_delta_I))
 
-  Power <- 1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI, sd=1)
+  ss.power <- 1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI, sd=1)
   Power.infSS <-1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI.infSS, sd=1)
 
+  if(ss.power<0.7){warning("Probability of correct inference less than 70%")}
 
 
 if(Power=="out"){
-  output<- list(data.frame(Survey=c(1,2), I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3),row.names=F),
-              data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(Power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))))
+  if(BMest=="FRR.indep"){
+  output <- list(Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                 Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), Implied.RSE_I=round(RSE_I,3), Implied.CI.low=round(CI.low,3), Implied.CI.up=round(CI.up,3)),
+                 Implied.FRR.Statistics=data.frame(Given.MDRI=round(MDRI[1]*365.25,3), Implied.MDRI.CI.low=round(MDRI.CI[1,1],3), Implied.MDRI.CI.up=round(MDRI.CI[1,2],3)),
+                 Implied.MDRI.Statistics=data.frame(Given.FRR=round(FRR,3), Implied.FRR.CI.low=round(FRR.CI[,1],3), Implied.FRR.CI.up=round(FRR.CI[,2],3)),
+                 Implied.Subject.Counts=data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) ))
+                 )
+} else if(BMest=="same.test") {output <- list(Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                      Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), Implied.RSE_I=round(RSE_I,3), Implied.CI.low=round(CI.low,3), Implied.CI.up=round(CI.up,3)),
+                      Implied.FRR.Statistics=data.frame(Given.MDRI=round(MDRI[1]*365.25,3), Implied.MDRI.CI.low=round(MDRI.CI[1,1],3), Implied.MDRI.CI.up=round(MDRI.CI[1,2],3)),
+                      Implied.MDRI.Statistics=data.frame(Given.FRR=round(FRR[1],3), Implied.FRR.CI.low=round(FRR.CI[1,1],3), Implied.FRR.CI.up=round(FRR.CI[1,2],3)),
+                      Implied.Subject.Counts=data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) ))
+)
+} else if(BMest=="MDRI.FRR.indep"){ output <- list(Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                                                  Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), Implied.RSE_I=round(RSE_I,3), Implied.CI.low=round(CI.low,3), Implied.CI.up=round(CI.up,3)),
+                                                  Implied.FRR.Statistics=data.frame(Given.MDRI=round(MDRI*365.25,3), Implied.MDRI.CI.low=round(MDRI.CI[,1],3), Implied.MDRI.CI.up=round(MDRI.CI[,2],3)),
+                                                  Implied.MDRI.Statistics=data.frame(Given.FRR=round(FRR,3), Implied.FRR.CI.low=round(FRR.CI[,1],3), Implied.FRR.CI.up=round(FRR.CI[,2],3)),
+                                                  Implied.Subject.Counts=data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) ))
+)
+}
 }
 
-if(n=="out"){
-#fill in later
+
+   if(n=="out"){
+if (BMest=="same.test") {SS<- ceiling(sum(I^2*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))) /
+         ( (deltaI_Est/(qnorm(1-0.858)-1.959964))^2 - ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2) -
+         ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) ) )
+} else if(BMest=="FRR.indep"){ SS<-
+
+} else if(BMest=="MDRI.FRR.indep"){ SS<-
+
+}
 }
 
-  return (output)
+
+
+
+  return(output)
 }
 
 
@@ -272,5 +300,70 @@ if(n=="out"){
 
 
 
+
+
+##################### ---  Test some values against spreadsheets ---- #######################
+I1 <- 0.05
+I2 <- 0.03
+PrevH1 <- .2
+PrevH2 <- .2
+Power="out"
+MDRI     <- 200
+RSE_MDRI <- 0.05
+FRR      <- 0.01
+RSE_FRR  <- 0.2
+BigT     <- 730
+CR       <- 1
+DE_H     <- 1
+DE_R     <- 1
+n1       <- 5000
+n2       <-5000
+alpha=0.05
+BMest="same.test"
+
+SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", DE_H=1, DE_R=1,
+                     BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
+                     BigT=730)
+
+
+my.data<-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", DE_H=1, DE_R=1,
+                 BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
+                 BigT=730)
+my.data$Inc.Difference.Statistics
+my.data[[1]]
+my.data[[1]][4]
+my.data[[1]]$Power
+names(my.data)
+str(my.data)
+
+
+
+##################### ---  Test some values against spreadsheets ---- #######################
+
+I1 <- 0.05
+I2 <- 0.03
+PrevH1 <- .19
+PrevH2 <- .1
+Power="out"
+MDRI     <- 190
+RSE_MDRI <- 0.06
+FRR      <- 0.01
+RSE_FRR  <- c(.15,0.2)
+BigT     <- 730
+CR       <- c(.95,.9)
+DE_H     <- c(1,1.1)
+DE_R     <- c(1.1,1)
+n1       <- 5000
+n2       <-2000
+alpha=0.05
+BMest="FRR.indep"
+
+
+
+my.test<-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", DE_H=DE_H, DE_R=DE_R,
+                 BMest="FRR.indep", MDRI, RSE_MDRI, FRR, RSE_FRR,
+                 BigT=730)
+
+my.test
 
 
