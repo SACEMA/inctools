@@ -277,7 +277,6 @@ if(Power=="out"){
 }
 }
 
-
    if(n=="out"){
 if (BMest=="same.test") {SS<- ceiling(sum(I^2*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))) /
          ( (deltaI_Est/(qnorm(1-0.858)-1.959964))^2 - ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2) -
@@ -285,12 +284,12 @@ if (BMest=="same.test") {SS<- ceiling(sum(I^2*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR
 } else if(BMest=="FRR.indep"){ SS<- ceiling(sum(I^2*((1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2)))) /
                                                   ( (deltaI_Est/(qnorm(1-0.858)-1.959964))^2 -  ((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2 -
                                                       sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)) )
-} else if(BMest=="MDRI.FRR.indep"){ SS<-
-
+} else if(BMest=="MDRI.FRR.indep"){ SS<- ceiling(sum(I^2*((1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2)))) /
+                                                   ( (deltaI_Est/(qnorm(1-0.858)-1.959964))^2 -  sum(I^2*(RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2) -
+                                                       sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2 )))
 }
+     output<-list(Minimum.Common.SS=SS)
 }
-
-
 
 
   return(output)
