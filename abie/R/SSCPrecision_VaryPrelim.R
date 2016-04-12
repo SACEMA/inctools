@@ -92,7 +92,7 @@ DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
 #' @export
 #'
 #FOR THIS FUNCTION TO RUN, THE FUNCTION DM_FirstOrderTerms MUST BE INVOKED. IT EXISTS IN R SCRIPT recencyI_prev.R
-SSCpower <-     function ( I              ,
+SSCprecision <-     function ( I              ,
                            RSE_I          ,
                            PrevH          ,
                            CR             ,
@@ -452,19 +452,19 @@ SSCprecision             ( I              =0.015,
                            n              = "out",
                            step           = 5)
 #doesn't work when FRR goes above 3.7% for these values
-SSCprecision             ( I              =0.015,
-                           RSE_I          =0.25,
-                           PrevH          =0.20,
-                           CR             =1,
-                           MDRI           =200,
-                           RSE_MDRI       =0.05,
-                           FRR            =0.039,
-                           RSE_FRR        =0.2,
-                           BigT           = 730,
-                           DE_H           = 1,
-                           DE_R           = 1,
-                           n              = "out",
-                           step           = 5)
+# SSCprecision             ( I              =0.015,
+#                            RSE_I          =0.25,
+#                            PrevH          =0.20,
+#                            CR             =1,
+#                            MDRI           =200,
+#                            RSE_MDRI       =0.05,
+#                            FRR            =0.039,
+#                            RSE_FRR        =0.2,
+#                            BigT           = 730,
+#                            DE_H           = 1,
+#                            DE_R           = 1,
+#                            n              = "out",
+#                            step           = 5)
 
 #####################################################################################################################
 #default of spreadsheet ABIE_v3_Test_Performance_Calculator
