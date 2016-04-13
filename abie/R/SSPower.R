@@ -226,22 +226,24 @@ if(Power=="out"){
 } else if(SS=="out"){
 if (BMest=="same.test")
   {SS <- ceiling(sum(I^2*((1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))/
-                    ((.02/(qnorm(1-0.8)-qnorm(1-alpha/2)) )^2 -
+                    ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)) )^2 -
                     ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)  -
                     ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2)
                      ))
 } else if(BMest=="FRR.indep")
   { SS <- ceiling(sum(I^2*((1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2)))) /
-                  ((deltaI_Est/(qnorm(1-0.858)-qnorm(1-alpha/2)))^2  -  ((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2 -
+                  ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)))^2  -  ((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2 -
                   sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)
                   ))
 } else if(BMest=="MDRI.FRR.indep")
   { SS <- ceiling(sum(I^2*((1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2)))) /
-                      ((deltaI_Est/(qnorm(1-0.858)-qnorm(1-alpha/2)))^2  -  sum(I^2*(RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2) -
+                      ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)))^2  -  sum(I^2*(RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2) -
                       sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2 )
                       ))
 }
-  #Now based on derived common SS, output implied summary statistics
+  if(SS<0){stop("No sample size will meet the given contraints")}
+
+    #Now based on derived common SS, output implied summary statistics
   N<-c(SS,SS)
   Var_I <- I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))
                 + (RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2
@@ -267,7 +269,6 @@ if (BMest=="same.test")
 
   ss.power <- 1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI, sd=1)
   Power.infSS <-1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI.infSS, sd=1)
-
 
   if(BMest=="FRR.indep"){
     output <- list(Minimum.Common.SS=SS,
@@ -341,7 +342,7 @@ str(my.data)
 
 
 
-##################### ---  Test values against spreadsheets (Find Power)---- #######################
+##################### ---  Test values against spreadsheets (Find SS)---- #######################
 
 I1 <- 0.05
 I2 <- 0.03
@@ -376,9 +377,33 @@ test.SS
 
 
 ##################### ---  Test values against spreadsheets (Find Sample Size)---- #######################
+#See how to break the thing
+I1 <- 0.01
+I2 <- 0.011
+PrevH1 <- .2
+PrevH2 <- .15
+Power= .99
+SS = "out"
+MDRI     <- 200
+RSE_MDRI <- 0.05
+FRR      <- 0.01
+RSE_FRR  <- 0.2
+BigT     <- 730
+CR       <- 1
+DE_H     <- 1
+DE_R     <- 1
+n1       <- NULL
+n2       <-NULL
+alpha=0.05
+BMest="same.test"
 
 
 
+test.SS <- SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=Power, SS="out", DE_H=DE_H, DE_R=DE_R,
+                   BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
+                   BigT=730)
+
+test.SS
 
 
 
