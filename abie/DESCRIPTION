@@ -29,7 +29,7 @@ Imports:
     pracma,
     reshape2
 Suggests:
-    foreach,
     doMC,
+    foreach,
     testthat
 RoxygenNote: 5.0.1
