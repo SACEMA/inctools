@@ -34,15 +34,16 @@
 #' @details ...
 #'
 #' @examples
-#'SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.20, n1=5000,
-#'n2=5000, alpha=0.05, Power="out", SS=NULL, DE_H=1, DE_R=1,
-#'BMest="same.test", MDRI=200, RSE_MDRI=0.05, FRR=0.01,
+#'SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.20,
+#'n1=5000, n2=5000, alpha=0.05, Power="out", SS=NULL,
+#'DE_H=1, DE_R=1, BMest="same.test", MDRI=200,
+#'RSE_MDRI=0.05, FRR=0.01, RSE_FRR=0.20, BigT=730)
+#'
+#'
+#'SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.20,
+#'alpha=0.05, Power=0.80, SS="out", DE_H=1, DE_R=1,
+#'BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=0.01,
 #'RSE_FRR=0.20, BigT=730)
-#'
-#'
-#'SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.20, alpha=0.05,
-#'Power=0.80, SS="out", DE_H=1, DE_R=1, BMest="FRR.indep",
-#'MDRI=200, RSE_MDRI=0.05, FRR=0.01, RSE_FRR=0.20, BigT=730)
 #' @export
 
 
@@ -62,7 +63,6 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS=
   if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.indep"))==0){
     stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.idep")
   }
-
 
   if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for FRR")}
 
@@ -188,7 +188,7 @@ if(Power=="out"){
   RSE_deltaI <- sqrt(Var_delta_I)/abs(deltaI_Est)
   RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){sqrt(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2)/I
   } else if(BMest=="FRR.indep") {   sqrt(((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2  + sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2))/deltaI_Est
-  } else if(BMest=="same.test"){    ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) }
+  } else if(BMest=="same.test"){    sqrt(((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2))/deltaI_Est }
 
 
 
