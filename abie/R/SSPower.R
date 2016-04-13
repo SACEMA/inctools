@@ -51,6 +51,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS=
                       BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730){
 
+############ Begin warning messages ################
    stopifnot (PrevH1<=1     & PrevH1>=0)
    stopifnot (PrevH2<=1     & PrevH2>=0)
    stopifnot (MDRI>=0)
@@ -89,7 +90,8 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS=
 
   if (sum(MDRI>BigT)>0) {stop("MDRI cannot be greater than BigT")}
 
-  if (BigT<=182)                {warning ("BigT is smaller than half a year")}
+  if (sum(BigT<=182)>0) {warning ("BigT is smaller than half a year")}
+
 
   no_s <- 2 #dimension of inputs (number of surveys)
   if (length(MDRI)==1)     {MDRI <- rep(MDRI, times=no_s)}         else {MDRI=MDRI}
@@ -99,11 +101,11 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS=
   if (length(DE_H)==1)  {DE_H  <- rep(DE_H, times=no_s)}  else {DE_H=DE_H}
   if (length(DE_R)==1)  {DE_R  <- rep(DE_R, times=no_s)}  else {DE_R=DE_R}
   if (length(CR)==1)  {CR  <- rep(CR, times=no_s)}  else {CR=CR}
- # if (length(BigT)==1)  {CR  <- rep(BigT, times=no_s)}  else {BigT=BigT}
+  if (length(BigT)==1)  {BigT  <- rep(BigT, times=no_s)}  else {BigT=BigT}
+
+  ############ End warning messages ################
 
 
-  stopifnot(no_s==length(MDRI)    & no_s==length(RSE_MDRI)  & no_s==length(FRR)   &
-              no_s==length(RSE_FRR)  & length(BigT)==1)
 
 
   MDRI<-MDRI/365.25
@@ -116,7 +118,6 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS=
   HIV.neg<- 1-PrevH
   PrevR <- I*(1-PrevH)*(MDRI-FRR*BigT)+(FRR*PrevH)
 
-
   DM_Var_MDRI  <- (MDRI*RSE_MDRI)^2
   DM_Var_FRR   <- (FRR*RSE_FRR)^2
 
@@ -124,7 +125,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS=
   FRR.CI <- data.frame(CI.low=qnorm(alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR)),CI.up=qnorm(1-alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR)))
 
 
-#####################################################################################
+##################################   Break   #########################################
 #This section was an attempt to use the same machinery as recnecyI() wrt to first order terms.
 #It was quite troublesome, and I wasn't able to get it to work, so I scrapped it and explicitely
 #calculated the formulas
@@ -174,11 +175,12 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS=
 # #   RSE_deltaI   <- sqrt(Var_deltaI)/abs(deltaI_Est) #sqrt(Var_deltaI)/abs(deltaI_Est_Vec)
 # #   RSE_deltaI.infSS   <- sqrt(DM_Var_deltaI.infSS)/abs(deltaI_Est)
 # #   SD_deltaI    <- sqrt(Var_deltaI)
-#####################################################################################
+  ##################################  End Break  #########################################
 
 
 
-#Instead of trying to get the fot function to work, I explicitely wrote out the commands for the Var[I], Var[D-I]
+#Instead of trying to get the 'fot' function to work,
+#I explicitely wrote out the commands for the Var[I], Var[D-I]
 if(Power=="out"){
   if(n1<1 | n2<1) stop("Sample size input must be a positive integer")
 
@@ -395,7 +397,7 @@ MDRI     <- c(200,210)
 RSE_MDRI <- c(0.05,0.04)
 FRR      <- c(0.01,0.03)
 RSE_FRR  <- c(0.2,0.21)
-BigT     <- 730
+BigT     <- c(730,720)
 CR       <- c(1,0.9)
 DE_H     <- c(1,1.2)
 DE_R     <- c(1.1,1)
