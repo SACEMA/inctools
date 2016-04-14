@@ -20,7 +20,7 @@
 #' @param n1 Sample size for survey 1
 #' @param n2 Sample size for survey 2
 #' @param alpha Significance level for test (default alpha=0.05)
-#' @param Power Desired power used to caluculate a sample size for the surveys. Default is 0.80, meaning the function outputs the necessary sample size to achieve stated power for a test of differences in incidence.
+#' @param Power Desired power used to calculate a sample size for the surveys. Default is 0.80, meaning the function outputs the necessary sample size to achieve stated power for a test of differences in incidence.
 #' @param SS Sample size. Default is NULL, meaning the function takes a power argument and outputs sample size needed to achieve power level for test of differences for incidence. If parameter is set to a number, then function will return the power achieved by the test of differences under that sample size.
 #' @param DE_H Design effect of HIV-prevalence test (vector/integer)
 #' @param DE_R Design effect of recency test (vector/integer)
