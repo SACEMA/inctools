@@ -1,18 +1,17 @@
 ####== Sample Size calculation for desired precision of I estimation
 #######################################################################################################
-####== PrevH:    prevalence of HIV
-####== PrevR:    prevalence of recency when HIV positive and therefore tested for recency
-####== I:        incidence expected
+####== PrevH:    prevalence of HIV in population
+####== PrevR:    proportion of recency among those HIV positive (and tested for recency)
+####== I:        expected incidence
 ####== CR:       coverage rate; probability (0 - 1) of being tested for recency when positive
-####== Covar_HR: covariance of probs being postive & being recent of survey 1&2 (vector)
+####== Covar_HR: covariance of probs being postive and being recent of survey 1&2 (vector)
 ####== MDRI:     mean duration of recent infection [days] (vector/integer)
-####== RSE_MDRI: Relative standard error of MDRI   [days] (vector/integer)
+####== RSE_MDRI: Relative standard error of MDRI [days] (vector/integer)
 ####== FRR:      False recent rate (vector/integer)
 ####== RSE_FRR:  Relative standard error of FRR (vector/integer)
 ####== BigT:     post-infection time cut-off true vs false recent [days] default 730 days (integer)
 ####== DE_H:     Design effect of HIV-prevalence test (vector/integer)
 ####== DE_R:     Design effect of recency test (vector/integer)
-####==
 #######################################################################################################
 
 #This function is to be separate from SS-Power function. This function takes as argument test characteristics,

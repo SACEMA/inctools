@@ -40,7 +40,7 @@ incBYcounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
 \item{Covar_HR}{Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys)}
 }
 \value{
-Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns said results, as well as estimates of indcidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the indcidence measures are different.
+Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns said results, as well as estimates of incidence  differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the incidence  measures are different.
 }
 \description{
 Incidence and incidence difference statistics from trinomial counts of HIV and recency

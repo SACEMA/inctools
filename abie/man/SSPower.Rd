@@ -23,7 +23,7 @@ SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha = 0.05, Power = 0.8,
 
 \item{alpha}{Significance level for test (default alpha=0.05)}
 
-\item{Power}{Desired power used to caluculate a sample size for the surveys. Default is 0.80, meaning the function outputs the necessary sample size to achieve stated power for a test of differences in incidence.}
+\item{Power}{Desired power used to calculate a sample size for the surveys. Default is 0.80, meaning the function outputs the necessary sample size to achieve stated power for a test of differences in incidence.}
 
 \item{SS}{Sample size. Default is NULL, meaning the function takes a power argument and outputs sample size needed to achieve power level for test of differences for incidence. If parameter is set to a number, then function will return the power achieved by the test of differences under that sample size.}
 
