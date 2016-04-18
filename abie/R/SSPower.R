@@ -60,7 +60,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1="both", n2="both", alpha=0.05, P
    stopifnot (RSE_FRR<=1   & RSE_FRR>=0)
 
   if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.indep"))==0){
-    stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.idep")
+    stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.indep")
   }
 
   if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for FRR")}
