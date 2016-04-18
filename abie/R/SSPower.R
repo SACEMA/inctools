@@ -11,7 +11,7 @@
 
 
 
-#' Power and sample size calculation for assay-based incidence estimation.
+#' Power and sample size calculation for assay-based incidence estimation
 #'
 #' @param I1 Predicted incidence of HIV in survey 1.
 #' @param I2 Predicted incidence of HIV in survey 2.

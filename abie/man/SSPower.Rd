@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSPower.R
 \name{SSPower}
 \alias{SSPower}
-\title{Power and sample size calculation for assay-based incidence estimation.}
+\title{Power and sample size calculation for assay-based incidence estimation}
 \usage{
 SSPower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
   Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1,
@@ -47,7 +47,7 @@ SSPower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
 Common sample size of two surveys--or the sample size of one survey given the other has already been completed--necessary to achieve a given power level for testing a null hypothesis that the incidence rates are identical between populations; alternatively, the power of said test under a particular sample size scenario. Function also returns implied statistics from input values on paramters, confidence limits, and population counts.
 }
 \description{
-Power and sample size calculation for assay-based incidence estimation.
+Power and sample size calculation for assay-based incidence estimation
 }
 \examples{
 SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,

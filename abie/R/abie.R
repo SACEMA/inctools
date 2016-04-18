@@ -1,6 +1,6 @@
 #' abie: a package for assay-based incidence estimation.
 #'
-#' The abie package provides functions to calculate incidence and tests of incidence difference between two populations.
+#' The abie package provides functions to calculate incidence and tests of incidence difference between two populations, as well as power and sample size constraints for differenct study scenarios.
 #' abie also provides functions for calculation of mean duration of recent infection and false recency rates from assays for recent infection.
 #'
 #' @section abie Functions:
