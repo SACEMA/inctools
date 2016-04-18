@@ -720,7 +720,7 @@ I1 <- 0.05
 I2 <- 0.03
 PrevH1 <- .1
 PrevH2 <- .1
-Power=0.7351
+Power=0.8
 SS = "out"
 CR = c(1,.9)
 MDRI     <- c(200,210)
@@ -736,7 +736,7 @@ n2       <-"both"
 alpha=0.05
 BMest="MDRI.FRR.indep"
 
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=.7351, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
         BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=BigT)
 
