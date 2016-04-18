@@ -7,8 +7,6 @@
 
 
 
-#add N_testR to calculation...
-
 
 
 #' Power and sample size calculation for assay-based incidence estimation
@@ -247,6 +245,7 @@ if(Power=="out"){
 
   else
     if(SS=="out" & n1=="out"){
+      if(n2=="out"){stop("both n1 and n2 cannot be designated 'out'")}
     if (BMest=="same.test")
     {SS <- ceiling(I[1]^2*((1/PrevH[1])*(DE_H[1]/(1-PrevH[1])+(DE_R[1]/CR[1])*(PrevR[1]/PrevH[1])*(1-PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1]-FRR[1])^2)))/
                      ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)) )^2 -
@@ -332,6 +331,7 @@ if(Power=="out"){
 
   else
     if(SS=="out" & n2=="out"){
+      if(n1=="out"){stop("both n1 and n2 cannot be designated 'out'")}
       if (BMest=="same.test")
       {SS <- ceiling(I[2]^2*((1/PrevH[2])*(DE_H[2]/(1-PrevH[2])+(DE_R[2]/CR[2])*(PrevR[2]/PrevH[2])*(1-PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2]-FRR[2])^2)))/
                        ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)) )^2 -
@@ -708,7 +708,7 @@ n2       <-5000
 alpha=0.05
 BMest="FRR.indep"
 
-SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2=5000, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
+SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2="out", alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
         BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=730)
 
@@ -805,6 +805,29 @@ SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Po
 
 
 
+#another error message test: both SS and both n1 and n2 are labeled "out"
+# I1 <- 0.05
+# I2 <- 0.03
+# PrevH1 <- .2
+# PrevH2 <- .15
+# Power= .8
+# SS = "out"
+# MDRI     <- 200
+# RSE_MDRI <- 0.05
+# FRR      <- c(0.01,0.02)
+# RSE_FRR  <- c(0.2,.19)
+# BigT     <- 730
+# CR       <- 1
+# DE_H     <- 1
+# DE_R     <- 1
+# n1       <- "out"
+# n2       <-"out"
+# alpha=0.05
+# BMest="FRR.indep"
+#
+# SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2="out", alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
+#         BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
+#         BigT=730)
 
 
 
