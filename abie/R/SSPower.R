@@ -587,10 +587,10 @@ n2       <-4500
 alpha=0.05
 BMest="MDRI.FRR.indep"
 
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=4000, n2=4500, alpha=0.05,
-        Power="out", SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=alpha,
+        Power="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
         BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
-        BigT=730)
+        BigT=BigT)
 
 
 
@@ -658,6 +658,35 @@ SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=.8, SS="out", CR=1, DE
 
 
 
+##################### ---  Test values against spreadsheets (Find SS)---- #######################
+
+
+I1 <- 0.05
+I2 <- 0.03
+PrevH1 <- .2
+PrevH2 <- .15
+Power= .8
+SS = "out"
+MDRI     <- 200
+RSE_MDRI <- c(0.05,0.04)
+FRR      <- c(0.01,0.02)
+RSE_FRR  <- c(0.2,0.19)
+BigT     <- c(730,725)
+CR       <- 1
+DE_H     <- c(1.1,1.2)
+DE_R     <- 1
+n1       <- "both"
+n2       <-"both"
+alpha=0.05
+BMest="MDRI.FRR.indep"
+
+SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=.8, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+        BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
+        BigT=BigT)
+
+
+
+
 
 ##################### ---  Test values against spreadsheets (Find SS--one value)---- #######################
 I1 <- 0.05
@@ -668,8 +697,8 @@ Power= .8
 SS = "out"
 MDRI     <- 200
 RSE_MDRI <- 0.05
-FRR      <- 0.01
-RSE_FRR  <- 0.2
+FRR      <- c(0.01,0.02)
+RSE_FRR  <- c(0.2,.19)
 BigT     <- 730
 CR       <- 1
 DE_H     <- 1
@@ -680,7 +709,7 @@ alpha=0.05
 BMest="FRR.indep"
 
 SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2=5000, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
-        BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=0.01, RSE_FRR=0.2,
+        BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=730)
 
 
@@ -767,9 +796,9 @@ SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Po
 #
 #
 #
-# test.SS <- SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=Power, SS="out", CR=1, DE_H=DE_H, DE_R=DE_R,
-#                    BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-#                    BigT=730)
+# test.SS <- SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+#                    BMest="same.test", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
+#                    BigT=BigT)
 #
 # test.SS
 
