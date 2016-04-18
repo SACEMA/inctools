@@ -4,9 +4,9 @@
 \alias{SSPower}
 \title{Power and Sample Size calculation for assay-based incidence estimation}
 \usage{
-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha = 0.05, Power = 0.8,
-  SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI,
-  RSE_MDRI, FRR, RSE_FRR, BigT = 730)
+SSPower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
+  Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1,
+  BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730)
 }
 \arguments{
 \item{I1}{Predicted incidence of HIV in survey 1}

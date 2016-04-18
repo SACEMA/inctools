@@ -47,7 +47,7 @@
 #' @export
 
 
-SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS="out", CR=1, DE_H=1, DE_R=1,
+SSPower <- function (I1, I2, PrevH1, PrevH2, n1="both", n2="both", alpha=0.05, Power=0.80, SS="out", CR=1, DE_H=1, DE_R=1,
                       BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT=730){
 
@@ -101,7 +101,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=0.80, SS=
   if (length(DE_H)==1)  {DE_H  <- rep(DE_H, times=no_s)}  else {DE_H=DE_H}
   if (length(DE_R)==1)  {DE_R  <- rep(DE_R, times=no_s)}  else {DE_R=DE_R}
   if (length(CR)==1)  {CR  <- rep(CR, times=no_s)}  else {CR=CR}
-  if (length(BigT)==1)  {BigT  <- rep(BigT, times=no_s)}  else {BigT=BigT}
+  if(BMest=="MDRI.FRR.indep"){if (length(BigT)==1)  {BigT  <- rep(BigT, times=no_s)}  else {BigT=BigT} }
 
   ############ End warning messages ################
 
@@ -236,7 +236,180 @@ if(Power=="out"){
                                                   Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],3), CI.up=round(FRR.CI[,2],3)),
                                                   Implied.Subject.Counts=data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) )
 }
-} else if(SS=="out"){
+}
+
+  else
+    if(SS=="out" & n1=="out"){
+    if (BMest=="same.test")
+    {SS <- ceiling(I[1]^2*((1/PrevH[1])*(DE_H[1]/(1-PrevH[1])+(DE_R[1]/CR[1])*(PrevR[1]/PrevH[1])*(1-PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1]-FRR[1])^2)))/
+                     ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)) )^2 -
+                        ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)  -
+                        ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) -
+                        1/n2*I[2]^2*((1/PrevH[2])*(DE_H[2]/(1-PrevH[2])+(DE_R[2]/CR[2])*(PrevR[2]/PrevH[2])*(1-PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2]-FRR[2])^2)))
+                     )
+    )
+    } else if(BMest=="FRR.indep")
+    { SS <- ceiling(I[1]^2*((1/PrevH[1])*(DE_H[1]/(1-PrevH[1])+(DE_R[1]/CR[1])*(PrevR[1]/PrevH[1])*(1-PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1]-FRR[1])^2))) /
+                      ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)))^2  -  ((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2 -
+                         sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2) -
+                         1/n2*I[2]^2*((1/PrevH[2])*(DE_H[2]/(1-PrevH[2])+(DE_R[2]/CR[2])*(PrevR[2]/PrevH[2])*(1-PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2]-FRR[2])^2)))
+                      ))
+    } else if(BMest=="MDRI.FRR.indep")
+    { SS <- ceiling(I[1]^2*((1/PrevH[1])*(DE_H[1]/(1-PrevH[1])+(DE_R[1]/CR[1])*(PrevR[1]/PrevH[1])*(1-PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1]-FRR[1])^2))) /
+                      ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)))^2  -  sum(I^2*(RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2) -
+                         sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2 ) -
+                         1/n2*I[2]^2*((1/PrevH[2])*(DE_H[2]/(1-PrevH[2])+(DE_R[2]/CR[2])*(PrevR[2]/PrevH[2])*(1-PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2]-FRR[2])^2)))
+                      ))
+    }
+
+    if(SS<0){stop("No sample size will meet the given contraints")}
+
+
+    #Now based on derived common SS, output implied summary statistics
+    N<-c(SS,n2) #make derived necessary common sample size a vector
+    if(sum(PrevR/PrevH*(CR*(N-N*HIV.neg))<10)>0 ) #formula is count of expected recent infections
+      warning("Expected count of 'recent' infections is less than 10 for at least one survey")
+
+    Var_I <- I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))
+                  + (RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2
+                  +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2
+    )
+    RSE_I <- sqrt(Var_I)/I
+    Var_delta_I <-
+      if(BMest=="MDRI.FRR.indep"){Var_I[1]+Var_I[2]
+      } else if(BMest=="FRR.indep") { sum(I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))  +   ((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2  +    sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)
+      } else if(BMest=="same.test"){ sum(I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))  +   ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) }
+
+    RSE_deltaI <- sqrt(Var_delta_I)/abs(deltaI_Est)
+    RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){ sqrt(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2)/I
+    } else if(BMest=="FRR.indep") {   sqrt(((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2  + sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2))/deltaI_Est
+    } else if(BMest=="same.test"){    sqrt(((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2))/deltaI_Est }
+
+    CI.low <- qnorm(alpha/2, mean=I, sd=sqrt(Var_I))
+    CI.up <- qnorm(1-alpha/2, mean=I, sd=sqrt(Var_I))
+
+    deltaI_CI<-NULL
+    deltaI_CI[1] <- qnorm(alpha/2, mean=deltaI_Est, sd=sqrt(Var_delta_I))
+    deltaI_CI[2] <- qnorm(1-alpha/2, mean=deltaI_Est, sd=sqrt(Var_delta_I))
+
+    ss.power <- 1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI, sd=1)
+    Power.infSS <-1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI.infSS, sd=1)
+
+    if(BMest=="FRR.indep"){
+      output <- list(Minimum.SS=SS,
+                     Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                     Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
+                     Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI[1]*365.25,3), CI.low=round(MDRI.CI[1,1],3), CI.up=round(MDRI.CI[1,2],3)),
+                     Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],4), CI.up=round(FRR.CI[,2],4)),
+                     Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
+    } else
+      if(BMest=="same.test") {output <- list(Minimum.SS=SS,
+                                             Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                                             Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
+                                             Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI[1]*365.25,3), CI.low=round(MDRI.CI[1,1],3), CI.up=round(MDRI.CI[1,2],3)),
+                                             Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR[1],3), CI.low=round(FRR.CI[1,1],4), CI.up=round(FRR.CI[1,2],4)),
+                                             Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
+      } else
+        if(BMest=="MDRI.FRR.indep"){ output <- list(Minimum.SS=SS,
+                                                    Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                                                    Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
+                                                    Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI*365.25,3), CI.low=round(MDRI.CI[,1],3), CI.up=round(MDRI.CI[,2],3)),
+                                                    Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],4), CI.up=round(FRR.CI[,2],4)),
+                                                    Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
+
+        }
+
+
+
+  }
+
+  else
+    if(SS=="out" & n2=="out"){
+      if (BMest=="same.test")
+      {SS <- ceiling(I[2]^2*((1/PrevH[2])*(DE_H[2]/(1-PrevH[2])+(DE_R[2]/CR[2])*(PrevR[2]/PrevH[2])*(1-PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2]-FRR[2])^2)))/
+                       ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)) )^2 -
+                          ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)  -
+                          ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) -
+                          1/n1*I[1]^2*((1/PrevH[1])*(DE_H[1]/(1-PrevH[1])+(DE_R[1]/CR[1])*(PrevR[1]/PrevH[1])*(1-PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1]-FRR[1])^2)))
+                       )
+      )
+      } else if(BMest=="FRR.indep")
+      { SS <- ceiling(I[2]^2*((1/PrevH[2])*(DE_H[2]/(1-PrevH[2])+(DE_R[2]/CR[2])*(PrevR[2]/PrevH[2])*(1-PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2]-FRR[2])^2))) /
+                        ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)))^2  -  ((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2 -
+                           sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2) -
+                           1/n1*I[1]^2*((1/PrevH[1])*(DE_H[1]/(1-PrevH[1])+(DE_R[1]/CR[1])*(PrevR[1]/PrevH[1])*(1-PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1]-FRR[1])^2)))
+                        ))
+      } else if(BMest=="MDRI.FRR.indep")
+      { SS <- ceiling(I[2]^2*((1/PrevH[2])*(DE_H[2]/(1-PrevH[2])+(DE_R[2]/CR[2])*(PrevR[2]/PrevH[2])*(1-PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2]-FRR[2])^2))) /
+                        ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)))^2  -  sum(I^2*(RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2) -
+                           sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2 ) -
+                           1/n1*I[1]^2*((1/PrevH[1])*(DE_H[1]/(1-PrevH[1])+(DE_R[1]/CR[1])*(PrevR[1]/PrevH[1])*(1-PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1]-FRR[1])^2)))
+                        ))
+      }
+
+      if(SS<0){stop("No sample size will meet the given contraints")}
+
+
+      #Now based on derived common SS, output implied summary statistics
+      N<-c(SS,n2) #make derived necessary common sample size a vector
+      if(sum(PrevR/PrevH*(CR*(N-N*HIV.neg))<10)>0 ) #formula is count of expected recent infections
+        warning("Expected count of 'recent' infections is less than 10 for at least one survey")
+
+      Var_I <- I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))
+                    + (RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2
+                    +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2
+      )
+      RSE_I <- sqrt(Var_I)/I
+      Var_delta_I <-
+        if(BMest=="MDRI.FRR.indep"){Var_I[1]+Var_I[2]
+        } else if(BMest=="FRR.indep") { sum(I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))  +   ((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2  +    sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)
+        } else if(BMest=="same.test"){ sum(I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))  +   ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) }
+
+      RSE_deltaI <- sqrt(Var_delta_I)/abs(deltaI_Est)
+      RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){ sqrt(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2)/I
+      } else if(BMest=="FRR.indep") {   sqrt(((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2  + sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2))/deltaI_Est
+      } else if(BMest=="same.test"){    sqrt(((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2))/deltaI_Est }
+
+      CI.low <- qnorm(alpha/2, mean=I, sd=sqrt(Var_I))
+      CI.up <- qnorm(1-alpha/2, mean=I, sd=sqrt(Var_I))
+
+      deltaI_CI<-NULL
+      deltaI_CI[1] <- qnorm(alpha/2, mean=deltaI_Est, sd=sqrt(Var_delta_I))
+      deltaI_CI[2] <- qnorm(1-alpha/2, mean=deltaI_Est, sd=sqrt(Var_delta_I))
+
+      ss.power <- 1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI, sd=1)
+      Power.infSS <-1-pnorm(q=qnorm(1-alpha/2), mean=1/RSE_deltaI.infSS, sd=1)
+
+      if(BMest=="FRR.indep"){
+        output <- list(Minimum.SS=SS,
+                       Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                       Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
+                       Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI[1]*365.25,3), CI.low=round(MDRI.CI[1,1],3), CI.up=round(MDRI.CI[1,2],3)),
+                       Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],4), CI.up=round(FRR.CI[,2],4)),
+                       Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
+      } else
+        if(BMest=="same.test") {output <- list(Minimum.SS=SS,
+                                               Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                                               Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
+                                               Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI[1]*365.25,3), CI.low=round(MDRI.CI[1,1],3), CI.up=round(MDRI.CI[1,2],3)),
+                                               Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR[1],3), CI.low=round(FRR.CI[1,1],4), CI.up=round(FRR.CI[1,2],4)),
+                                               Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
+        } else
+          if(BMest=="MDRI.FRR.indep"){ output <- list(Minimum.SS=SS,
+                                                      Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
+                                                      Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
+                                                      Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI*365.25,3), CI.low=round(MDRI.CI[,1],3), CI.up=round(MDRI.CI[,2],3)),
+                                                      Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],4), CI.up=round(FRR.CI[,2],4)),
+                                                      Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
+
+          }
+
+
+
+    }
+
+  else
+    if(SS=="out" & n1=="both" & n2=="both"){
 if (BMest=="same.test")
   {SS <- ceiling(sum(I^2*((1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))/
                     ((deltaI_Est/(qnorm(1-Power)-qnorm(1-alpha/2)) )^2 -
@@ -293,29 +466,30 @@ if (BMest=="same.test")
                    Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
                    Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
                    Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI[1]*365.25,3), CI.low=round(MDRI.CI[1,1],3), CI.up=round(MDRI.CI[1,2],3)),
-                   Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],3), CI.up=round(FRR.CI[,2],3)),
+                   Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],4), CI.up=round(FRR.CI[,2],4)),
                    Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
   } else
     if(BMest=="same.test") {output <- list(Minimum.Common.SS=SS,
                                                 Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
                                                 Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
                                                 Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI[1]*365.25,3), CI.low=round(MDRI.CI[1,1],3), CI.up=round(MDRI.CI[1,2],3)),
-                                                Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR[1],3), CI.low=round(FRR.CI[1,1],3), CI.up=round(FRR.CI[1,2],3)),
+                                                Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR[1],3), CI.low=round(FRR.CI[1,1],4), CI.up=round(FRR.CI[1,2],4)),
                                                 Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
   } else
     if(BMest=="MDRI.FRR.indep"){ output <- list(Minimum.Common.SS=SS,
                                                      Inc.Difference.Statistics=data.frame(deltaI_Est=round(deltaI_Est,3), RSE_deltaI=round(RSE_deltaI,3), RSE_deltaI.infSS=ifelse(RSE_deltaI.infSS<0.001,"<0.001",round(RSE_deltaI.infSS,3)), Power=round(ss.power,3), Power.infSS=ifelse(Power.infSS>0.99,">0.99",round(Power.infSS,3))),
                                                      Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
                                                      Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI*365.25,3), CI.low=round(MDRI.CI[,1],3), CI.up=round(MDRI.CI[,2],3)),
-                                                     Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],3), CI.up=round(FRR.CI[,2],3)),
+                                                     Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],4), CI.up=round(FRR.CI[,2],4)),
                                                      Implied.Subject.Counts=round(data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) ) )
   }
    }
 
 
-  return(output)
-}
 
+  return(output)
+
+  }
 
 
 
@@ -432,8 +606,8 @@ BigT     <- 730
 CR       <- 1
 DE_H     <- 1
 DE_R     <- 1
-n1       <- NULL
-n2       <-NULL
+n1       <- "both"
+n2       <-"both"
 alpha=0.05
 BMest="same.test"
 
@@ -447,6 +621,60 @@ test.SS
 
 
 
+
+##################### ---  Test values against spreadsheets (Find SS)---- #######################
+
+
+I1 <- 0.05
+I2 <- 0.03
+PrevH1 <- .2
+PrevH2 <- .15
+Power= .8
+SS = "out"
+MDRI     <- 200
+RSE_MDRI <- 0.05
+FRR      <- 0.01
+RSE_FRR  <- 0.2
+BigT     <- 730
+CR       <- 1
+DE_H     <- 1
+DE_R     <- 1
+n1       <- "both"
+n2       <-"both"
+alpha=0.05
+BMest="FRR.indep"
+
+SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=DE_H, DE_R=DE_R,
+        BMest="FRR.indep", MDRI, RSE_MDRI, FRR, RSE_FRR,
+        BigT=730)
+
+
+
+
+
+##################### ---  Test values against spreadsheets (Find SS--one value)---- #######################
+I1 <- 0.05
+I2 <- 0.03
+PrevH1 <- .2
+PrevH2 <- .15
+Power= .8
+SS = "out"
+MDRI     <- 200
+RSE_MDRI <- 0.05
+FRR      <- 0.01
+RSE_FRR  <- 0.2
+BigT     <- 730
+CR       <- 1
+DE_H     <- 1
+DE_R     <- 1
+n1       <- "out"
+n2       <-5000
+alpha=0.05
+BMest="FRR.indep"
+
+SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2=5000, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
+        BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=0.01, RSE_FRR=0.2,
+        BigT=730)
 
 
 
