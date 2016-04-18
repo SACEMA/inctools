@@ -241,7 +241,7 @@ if(Power=="out"){
                                                   Implied.Incidence.Statistics=data.frame(Survey=c(1,2), Given.I=round(I,3), RSE_I=round(RSE_I,3), CI.low=round(CI.low,3), CI.up=round(CI.up,3)),
                                                   Implied.MDRI.Statistics=data.frame(Given.MDRI=round(MDRI*365.25,3), CI.low=round(MDRI.CI[,1],3), CI.up=round(MDRI.CI[,2],3)),
                                                   Implied.FRR.Statistics=data.frame(Given.FRR=round(FRR,3), CI.low=round(FRR.CI[,1],3), CI.up=round(FRR.CI[,2],3)),
-                                                  Implied.Subject.Counts=data.frame(Survey.1=c(HIV.negative=N[1]*HIV.neg[1],HIV.positive=N[1]-N[1]*HIV.neg[1],HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=N[2]*HIV.neg[2],HIV.positive=N[2]-N[2]*HIV.neg[2],HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) )
+                                                  Implied.Subject.Counts=data.frame(Survey.1=c(HIV.negative=round(N[1]*HIV.neg[1]),HIV.positive=round(N[1]-N[1]*HIV.neg[1]),HIV.post.tested.for.recent=round(CR[1]*(N[1]-N[1]*HIV.neg[1])),Recency.test.pos=round(PrevR[1]/PrevH[1]*(CR[1]*(N[1]-N[1]*HIV.neg[1]) ))),Survey.2=c(HIV.negative=round(N[2]*HIV.neg[2]),HIV.positive=round(N[2]-N[2]*HIV.neg[2]),HIV.post.tested.for.recent=round(CR[2]*(N[2]-N[2]*HIV.neg[2])),Recency.test.pos=round(PrevR[2]/PrevH[2]*(CR[2]*(N[2]-N[2]*HIV.neg[2]) )) )) )
 }
 }
 
@@ -288,7 +288,7 @@ if(Power=="out"){
       } else if(BMest=="same.test"){ sum(I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))  +   ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) }
 
     RSE_deltaI <- sqrt(Var_delta_I)/abs(deltaI_Est)
-    RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){ sqrt(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2)/I
+    RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){ sqrt(sum(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2))/deltaI_Est
     } else if(BMest=="FRR.indep") {   sqrt(((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2  + sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2))/deltaI_Est
     } else if(BMest=="same.test"){    sqrt(((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2))/deltaI_Est }
 
@@ -373,7 +373,7 @@ if(Power=="out"){
         } else if(BMest=="same.test"){ sum(I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))  +   ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) }
 
       RSE_deltaI <- sqrt(Var_delta_I)/abs(deltaI_Est)
-      RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){ sqrt(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2)/I
+      RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){ sqrt(sum(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2))/deltaI_Est
       } else if(BMest=="FRR.indep") {   sqrt(((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2  + sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2))/deltaI_Est
       } else if(BMest=="same.test"){    sqrt(((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2))/deltaI_Est }
 
@@ -454,7 +454,7 @@ if (BMest=="same.test")
     } else if(BMest=="same.test"){ sum(I^2*((1/N)*(1/PrevH)*(DE_H/(1-PrevH)+(DE_R/CR)*(PrevR/PrevH)*(1-PrevR/PrevH)/((PrevR/PrevH-FRR)^2))))  +   ((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2) }
 
   RSE_deltaI <- sqrt(Var_delta_I)/abs(deltaI_Est)
-  RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){ sqrt(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2)/I
+  RSE_deltaI.infSS <-  if(BMest=="MDRI.FRR.indep"){ sqrt(sum(((RSE_MDRI*MDRI/(MDRI-FRR*BigT))^2 +(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2)*I^2))/deltaI_Est
   } else if(BMest=="FRR.indep") {   sqrt(((MDRI[1]*RSE_MDRI[1])^2)*(I[1]/(MDRI[1]-FRR[1]*BigT)-I[2]/(MDRI[1]-FRR[2]*BigT))^2  + sum(I^2*(RSE_FRR*FRR*(MDRI-(PrevR/PrevH)*BigT)/((MDRI-FRR*BigT)*(PrevR/PrevH-FRR)))^2))/deltaI_Est
   } else if(BMest=="same.test"){    sqrt(((RSE_MDRI[1]*MDRI[1])/(MDRI[1]-FRR[1]*BigT))^2*(deltaI_Est^2)   +   ((FRR[1]*RSE_FRR[1])^2/((MDRI[1]-FRR[1]*BigT)^4)*(PrevH[2]*(MDRI[1]-PrevR[2]/PrevH[2]*BigT)/(1-PrevH[2])-PrevH[1]*(MDRI[1]-PrevR[1]/PrevH[1]*BigT)/(1-PrevH[1]))^2))/deltaI_Est }
 
@@ -588,7 +588,7 @@ alpha=0.05
 BMest="MDRI.FRR.indep"
 
 SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=4000, n2=4500, alpha=0.05,
-        Power="out", SS=NULL, CR=CR, DE_H=DE_H, DE_R=DE_R,
+        Power="out", SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
         BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=730)
 
@@ -686,32 +686,58 @@ SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2=5000, alpha=0.0
 
 
 
-##################### ---  Test values against spreadsheets (Find SS--one value)---- #######################
+##################### ---  Test values against spreadsheets (Find SS)---- #######################
 I1 <- 0.05
 I2 <- 0.03
-PrevH1 <- .2
-PrevH2 <- .15
-Power= .8
+PrevH1 <- .1
+PrevH2 <- .1
+Power=0.7351
 SS = "out"
-MDRI     <- 200
-RSE_MDRI <- c(0.05,0.045)
-FRR      <- c(0.011,0.01)
-RSE_FRR  <- 0.2
+CR = c(1,.9)
+MDRI     <- c(200,210)
+RSE_MDRI <- c(0.05,0.04)
+FRR      <- c(0.01,0.03)
+RSE_FRR  <- c(0.2,0.21)
 BigT     <- c(730,720)
 CR       <- c(1,0.9)
-DE_H     <- c(1,1.1)
-DE_R     <- c(1,1.11)
-n1       <- 5000
-n2       <-"out"
+DE_H     <- c(1,1.2)
+DE_R     <- c(1.1,1)
+n1       <- "both"
+n2       <-"both"
 alpha=0.05
 BMest="MDRI.FRR.indep"
 
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=5000, n2="out", alpha=0.05, Power=.8, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
-        BMest="MDRI.FRR.indep", MDRI=200, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=0.2,
+SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=.7351, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+        BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=BigT)
 
 
 
+
+##################### ---  Test values against spreadsheets (Find SS--one value)---- #######################
+I1 <- 0.05
+I2 <- 0.03
+PrevH1 <- .1
+PrevH2 <- .1
+Power=0.8
+SS = "out"
+CR = c(1,.9)
+MDRI     <- c(200,210)
+RSE_MDRI <- c(0.05,0.04)
+FRR      <- c(0.01,0.03)
+RSE_FRR  <- c(0.2,0.21)
+BigT     <- c(730,720)
+CR       <- c(1,0.9)
+DE_H     <- c(1,1.2)
+DE_R     <- c(1.1,1)
+n1       <- 4500
+n2       <-"out"
+alpha=0.05
+BMest="MDRI.FRR.indep"
+
+SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+        BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
+        BigT=BigT)
 
 
 
