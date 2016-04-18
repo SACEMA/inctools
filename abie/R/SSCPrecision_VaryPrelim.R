@@ -55,21 +55,21 @@ DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
 
 
 
-#' Sample Size or Precision Calculation
+#' Sample size or precision calculation
 #'
-#' @param I Expected Incidence
-#' @param RSE_I Relative Standard Error of Incidence Estimate
-#' @param PrevH Prevalence of HIV
-#' @param CR Coverage rate: probability (0-1) of being tested for recency when positive for HIV
-#' @param MDRI mean duration of recent infection [days] (vector/integer)
-#' @param RSE_MDRI Relative standard error of MDRI   [days] (vector/integer)
-#' @param FRR False recent rate (vector/integer)
-#' @param RSE_FRR Relative standard error of FRR (vector/integer)
-#' @param BigT post-infection time cut-off true vs false recent [days] default 730 days (integer)
-#' @param DE_H Design effect of HIV-prevalence test (vector/integer)
-#' @param DE_R Design effect of recency test (vector/integer)
-#' @param n Sample Size, either a given hypothetical value or to be determined by function (default)
-#' @param step number of steps between minimum I and maximum I in the calculation of a range of output
+#' @param I Expected Incidence.
+#' @param RSE_I Relative Standard Error of Incidence Estimate.
+#' @param PrevH Prevalence of HIV.
+#' @param CR Coverage rate: probability (0-1) of being tested for recency when positive for HIV.
+#' @param MDRI mean duration of recent infection in days (vector/integer).
+#' @param RSE_MDRI Relative standard error of MDRI (vector/integer).
+#' @param FRR False recent rate (vector/integer).
+#' @param RSE_FRR Relative standard error of FRR (vector/integer).
+#' @param BigT post-infection time cut-off for true vs. false recency. Default is 730 days.
+#' @param DE_H Design effect of HIV prevalence test (vector/integer).
+#' @param DE_R Design effect of recency test (vector/integer).
+#' @param n Sample Size, either a given hypothetical value or to be determined by function, which is the default.
+#' @param step number of steps between minimum I and maximum I in the calculation of a range of output.
 #' @return Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
 #' @details
 #'

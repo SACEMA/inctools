@@ -2,43 +2,43 @@
 % Please edit documentation in R/SSCPrecision_VaryPrelim.R
 \name{SSCprecision}
 \alias{SSCprecision}
-\title{Sample Size or Precision Calculation}
+\title{Sample size or precision calculation}
 \usage{
 SSCprecision(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
   DE_H = 1, DE_R = 1, n = "out", step = 5)
 }
 \arguments{
-\item{I}{Expected Incidence}
+\item{I}{Expected Incidence.}
 
-\item{RSE_I}{Relative Standard Error of Incidence Estimate}
+\item{RSE_I}{Relative Standard Error of Incidence Estimate.}
 
-\item{PrevH}{Prevalence of HIV}
+\item{PrevH}{Prevalence of HIV.}
 
-\item{CR}{Coverage rate: probability (0-1) of being tested for recency when positive for HIV}
+\item{CR}{Coverage rate: probability (0-1) of being tested for recency when positive for HIV.}
 
-\item{MDRI}{mean duration of recent infection [days] (vector/integer)}
+\item{MDRI}{mean duration of recent infection in days (vector/integer).}
 
-\item{RSE_MDRI}{Relative standard error of MDRI   [days] (vector/integer)}
+\item{RSE_MDRI}{Relative standard error of MDRI (vector/integer).}
 
-\item{FRR}{False recent rate (vector/integer)}
+\item{FRR}{False recent rate (vector/integer).}
 
-\item{RSE_FRR}{Relative standard error of FRR (vector/integer)}
+\item{RSE_FRR}{Relative standard error of FRR (vector/integer).}
 
-\item{BigT}{post-infection time cut-off true vs false recent [days] default 730 days (integer)}
+\item{BigT}{post-infection time cut-off for true vs. false recency. Default is 730 days.}
 
-\item{DE_H}{Design effect of HIV-prevalence test (vector/integer)}
+\item{DE_H}{Design effect of HIV prevalence test (vector/integer).}
 
-\item{DE_R}{Design effect of recency test (vector/integer)}
+\item{DE_R}{Design effect of recency test (vector/integer).}
 
-\item{n}{Sample Size, either a given hypothetical value or to be determined by function (default)}
+\item{n}{Sample Size, either a given hypothetical value or to be determined by function, which is the default.}
 
-\item{step}{number of steps between minimum I and maximum I in the calculation of a range of output}
+\item{step}{number of steps between minimum I and maximum I in the calculation of a range of output.}
 }
 \value{
 Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
 }
 \description{
-Sample Size or Precision Calculation
+Sample size or precision calculation
 }
 \details{
 Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSE of incidence) and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision.
