@@ -426,7 +426,8 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   DM_SD_deltaI <- sqrt(DM_Var_deltaI)
   Var_I        <- BS_Var_I + DM_Var_I
   RSE_I        <- sqrt(Var_I)/I_Est
-
+  Var_MDRI <- BS_Var_MDRI + DM_Var_MDRI
+  Var_FRR  <- BS_Var_FRR + DM_Var_MDRI
 
   # RSE_I.infSS  <- sqrt(DM_Var_I.infSS)/I_Est #only given if boot=F
   # RSE.deltaI.infSS<- sqrt(DM_Var_deltaI.infSS)/abs(deltaI_Est_Vec)
@@ -535,39 +536,60 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
   out_p_value<-ifelse(out_p_value<0.001,"<0.0001",out_p_value)
 
+  MDRI.CI <- round(365.25*data.frame(CI.low=qnorm(alpha/2, mean=MDRI, sd=sqrt(Var_MDRI)), CI.up=qnorm(1-alpha/2, mean=MDRI, sd=sqrt(Var_MDRI))),3)
+  FRR.CI <- round(data.frame(CI.low=qnorm(alpha/2, mean=FRR, sd=sqrt(Var_FRR)),CI.up=qnorm(1-alpha/2, mean=FRR, sd=sqrt(Var_FRR))),4)
+
+
+
+
+
+
   if (length(I_Est)==1) {
     output <- list(Incidence.Statistics=data.frame("Incidence"=out_I_Est,
                           "CI low"=out_CI_I_lo,
                           "CI up"=out_CI_I_up,
                           "RSE"=out_RSE_I,
-                          "RSE.Inf.SS"=out_RSE_I.infSS))
+                          "RSE.Inf.SS"=out_RSE_I.infSS), MDRI.CI=MDRI.CI, FRR.CI=FRR.CI)
     } else if(Boot==F){
-    output <- list(Incidence.Statistics=data.frame ("survey"=survey_no,
-                          "Incidence"=out_I_Est,
-                          "CI low"=out_CI_I_lo,
-                          "CI up"=out_CI_I_up,
-                          "RSE"=out_RSE_I,
-                          "RSE.Inf.SS"=out_RSE_I.infSS),
-                   Incidence.Difference.Statistics=data.frame(
-                          "compare"=delta_code,
-                          "Diff"=out_deltaI_Est,
-                          "CI Diff low"=out_CI_deltaI_Mat[,1],
-                          "CI Diff up"=out_CI_deltaI_Mat[,2],
-                          "RSE Diff"=out_RSE_deltaI,
-                          "RSE Diff Inf.SS"=out_RSE.deltaI.infSS,
-                          "p-value"=out_p_value,
-                          "p-value.Inf.SS"=out_p_value.infSS) )
-    }else {output <- list(Incidence.Statistics = data.frame("survey"=survey_no,
-                                                           "Incidence"=out_I_Est,
-                                                           "CI low"=out_CI_I_lo,
-                                                           "CI up"=out_CI_I_up,
-                                                           "RSE"=out_RSE_I),
-                          Incidence.Difference.Statistics = data.frame("compare"=delta_code,
-                            "Diff"=out_deltaI_Est,
-                            "CI Diff low"=out_CI_deltaI_Mat[,1],
-                            "CI Diff up"=out_CI_deltaI_Mat[,2],
-                            "RSE Diff"=out_RSE_deltaI,
-                            "p-value"=out_p_value))
+      Incidence.Statistics=data.frame ("survey"=survey_no,
+                                       "Incidence"=out_I_Est,
+                                       "CI low"=out_CI_I_lo,
+                                       "CI up"=out_CI_I_up,
+                                       "RSE"=out_RSE_I,
+                                       "RSE.Inf.SS"=out_RSE_I.infSS)
+      Incidence.Difference.Statistics=data.frame(
+        "compare"=delta_code,
+        "Diff"=out_deltaI_Est,
+        "CI Diff low"=out_CI_deltaI_Mat[,1],
+        "CI Diff up"=out_CI_deltaI_Mat[,2],
+        "RSE Diff"=out_RSE_deltaI,
+        "RSE Diff Inf.SS"=out_RSE.deltaI.infSS,
+        "p-value"=out_p_value,
+        "p-value.Inf.SS"=out_p_value.infSS)
+      Incidence.Statistics=Incidence.Statistics[which(Incidence.Statistics[,1]!=""),]
+      Incidence.Difference.Statistics=Incidence.Difference.Statistics[which(!is.na(Incidence.Difference.Statistics[,2])),]
+      row.names(Incidence.Statistics)<-1:nrow(Incidence.Statistics)
+      row.names(Incidence.Difference.Statistics)<-1:nrow(Incidence.Difference.Statistics)
+
+    output <- list(Incidence.Statistics=Incidence.Statistics,
+                   Incidence.Difference.Statistics=Incidence.Difference.Statistics, MDRI.CI=MDRI.CI, FRR.CI=FRR.CI)
+    }else { Incidence.Difference.Statistics = data.frame("compare"=delta_code,
+                                                   "Diff"=out_deltaI_Est,
+                                                   "CI Diff low"=out_CI_deltaI_Mat[,1],
+                                                   "CI Diff up"=out_CI_deltaI_Mat[,2],
+                                                   "RSE Diff"=out_RSE_deltaI,
+                                                   "p-value"=out_p_value)
+      Incidence.Statistics = data.frame("survey"=survey_no,
+                                        "Incidence"=out_I_Est,
+                                        "CI low"=out_CI_I_lo,
+                                        "CI up"=out_CI_I_up,
+                                        "RSE"=out_RSE_I)
+      Incidence.Statistics = Incidence.Statistics[which(Incidence.Statistics[,1]!=""),]
+      Incidence.Difference.Statistics =Incidence.Difference.Statistics[which(!is.na(Incidence.Difference.Statistics[,2])),]
+      row.names(Incidence.Statistics)<-1:nrow(Incidence.Statistics)
+      row.names(Incidence.Difference.Statistics)<-1:nrow(Incidence.Difference.Statistics)
+      output <- list(Incidence.Statistics = Incidence.Statistics,
+                     Incidence.Difference.Statistics =Incidence.Difference.Statistics, MDRI.CI=MDRI.CI, FRR.CI=FRR.CI)
     }
 
 
@@ -695,7 +717,7 @@ recencyI  (BS_Count=10000,
            FRR=0.01, RSE_FRR=0.2,
            BigT=730)
 
-recencyI  (BS_Count=10000,
+recencyI  (BS_Count=100000,
            Boot=TRUE,
            BMest="same.test",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
