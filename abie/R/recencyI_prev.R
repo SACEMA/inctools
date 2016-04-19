@@ -150,6 +150,35 @@ DM_VAR_deltaI.infSS<-function(BMest,
 
 
 
+#example to get function working:
+
+
+probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R=c(100,70))
+probs
+
+PrevH = probs[,1]
+RSE_PrevH = probs[,3]
+PrevR = probs[,2]
+RSE_PrevR = probs[,4]
+
+
+
+BS_Count = 10000
+Boot = FALSE
+BMest = "MDRI.FRR.indep"
+MDRI = 200
+RSE_MDRI = 0.05
+FRR = c(0.01,0.009)
+RSE_FRR = 0.2
+BigT = 730
+Covar_HR=0
+alpha=0.05
+
+
+recencyI(PrevH=probs[,1], RSE_PrevH=probs[,3], PrevR=probs[,2], RSE_PrevR=probs[,4], Boot = FALSE, BS_Count = 10000, alpha = 0.05,
+BMest = "MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR, BigT = c(730,720), Covar_HR = 0)
+
+
 
 #' Incidence and incidence difference statistics from trinomial prevalences of HIV and recency.
 #'
@@ -199,11 +228,11 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
     stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.indep")
   }
 
-  if(BS_Count<=0){
+  if(BS_Count<=0 & Boot==TRUE){
     stop("Bootstrap samples count must be positive integer")
   }
 
-  if (length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for FRR")}
+  if (BMest!="MDRI.FRR.indep" & length(MDRI)>length(FRR)) {stop("number of inputs for MDRI is larger than number of inputs for FRR")}
 
   if(sum(MDRI<90)>0){
     warning("Estimated MDRI less than 90 days")
@@ -230,20 +259,26 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
   if (sum(MDRI>BigT)>0) {stop("MDRI cannot be greater than BigT")}
 
-  if (BigT<=182)                {warning ("BigT is smaller than half a year")}
+  if (sum(BigT<=182)>0) {warning ("BigT is smaller than half a year")}
 
   no_s <- length(PrevH) #dimension of inputs (number of surveys)
+
   if (length(MDRI)==1)     {MDRI <- rep(MDRI, times=no_s)}         else {MDRI=MDRI}
   if (length(FRR)==1)      {FRR  <- rep(FRR, times=no_s)}          else {FRR=FRR}
   if (length(RSE_MDRI)==1) {RSE_MDRI <- rep(RSE_MDRI, times=no_s)} else {RSE_MDRI=RSE_MDRI}
   if (length(RSE_FRR)==1)  {RSE_FRR  <- rep(RSE_FRR, times=no_s)}  else {RSE_FRR=RSE_FRR}
   if (length(Covar_HR)==1) {Covar_HR <- rep(Covar_HR, times=no_s)} else {Covar_HR=Covar_HR}
+  if (length(BigT)>1 & BMest!="MDRI.FRR.indep") stop("More than one BigT specified when only one MDRI")
+  if (length(BigT)==1) {BigT <- rep(BigT, times=no_s)} else {BigT=BigT}
   stopifnot(no_s==length(PrevR)   & no_s==length(RSE_PrevH) & no_s==length(PrevR) &
             no_s==length(MDRI)    & no_s==length(RSE_MDRI)  & no_s==length(FRR)   &
-            no_s==length(RSE_FRR) & no_s==length(Covar_HR)  & length(BigT)==1)
-
+            no_s==length(RSE_FRR) & no_s==length(Covar_HR))
   MDRI<-MDRI/365.25
   BigT<-BigT/365.25
+
+
+
+
 
   I_Est <- I_EST(prevH=PrevH, prevR=PrevR, mdri=MDRI, frr=FRR, bigt=BigT)
 
@@ -285,7 +320,6 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
 
   if (Boot==TRUE) {
-
     DM_Var_I <- rep(0, times=no_s)
     DM_Var_deltaI <- rep(0, times=no_s^2)
 
@@ -302,6 +336,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
     }
     #returns bootstraps of prevH, prevR, mdri, frr as columns, one for each survey, so if survey#=3, then
     #first four columns are for prevH, prevR, mdri, frr as columns, then next four are for those varaibles from second survey, and so on...
+    # dim(BS_RootEstMat)
 
 #I THINK THIS BELOW SECTION SHOULD HAVE AN INDEX LOOP RIGHT?? AS IT STANDS THERE'S NOTHING...
     for(i in 1:no_s){
@@ -321,7 +356,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
       I_BSMat[,i] <-I_BSVec
       BS_Var_I[i] <- var(I_BSMat[,i])
     }
-#now compute BS I and variance of I from BS samples
+#now compute BS I and variance of I from BS samples. dim(I_BSMat) (same rows as number of surveys)
 
 
 #matrix of bootstrapped differences between surveys
@@ -332,13 +367,14 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
         I_BSMat[,i] <- sort(I_BSMat[,i], decreasing=FALSE)
       }
     }
+#above makes empty matrix of nrow=#BS samples, ncol=#surveys squared, and inputs to each the difference for each BS estimate of incidence
 
 #makes vector of variances of difference in BS estimates of I from different surveys
     BS_Var_deltaI <- vector(length=no_s^2)
     for (i in c(1:(no_s^2))) {
       deltaI_BSMat[,i] <- sort(deltaI_BSMat[,i], decreasing=FALSE)
       BS_Var_deltaI[i] <- var(deltaI_BSMat[,i])
-    }
+    } #above sorts bootstrap differences and gets an estimate of the variance of each difference (some redundancy here)
 
 #tracks back to line: 'if (Boot==TRUE) {'
 
@@ -350,18 +386,22 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
     #next few lines make delta method matrix
     fot_Mat  <- matrix (nrow=no_s, ncol=4)
     DM_Var_I <- vector(length=no_s)
+    DM_Var_I.infSS <- vector(length=no_s) #ADDED 4.19
     for (i in c(1:no_s)) {
-      fot_Mat[i,] <- DM_FirstOrderTerms (prevH=PrevH[i], prevR=PrevR[i], mdri=MDRI[i], frr=FRR[i], bigt=BigT)
+      fot_Mat[i,] <- DM_FirstOrderTerms (prevH=PrevH[i], prevR=PrevR[i], mdri=MDRI[i], frr=FRR[i], bigt=BigT[i])
       #DM_FirstOrderTerms gives fot_prevH, fot_prevR, fot_mdri, fot_frr, so FOT for each prev. survey input
       #and each row of fot_Mat has the FOT for prev. survey i.
       DM_Var_I[i] <- (fot_Mat[i,1]^2)*DM_Var_PrevH[i] + (fot_Mat[i,2]^2)*DM_Var_PrevR[i] +
                      (fot_Mat[i,3]^2)*DM_Var_MDRI[i]  + (fot_Mat[i,4]^2)*DM_Var_FRR[i]
+      #DM_Var_I uses the fot's and variances to get the variance for each survey
+      DM_Var_I.infSS[i]<-(fot_Mat[i,3]^2)*DM_Var_MDRI[i]  + (fot_Mat[i,4]^2)*DM_Var_FRR[i]
     }
 
-    DM_Var_deltaI <- vector(length=no_s^2)
+    DM_Var_deltaI <- vector(length=no_s^2) #creates vector of length number of surveys squared.
+    DM_Var_deltaI.infSS <- vector(length=no_s^2) #creates vector of length number of surveys squared.
     for (i in c(1:no_s)) {
-      for (j in c(1:no_s)) {
-        DM_Var_deltaI[i*no_s-(no_s-j)] <- DM_VAR_deltaI (BMest=BMest, fot_prevH1=fot_Mat[i,1], fot_prevH2=fot_Mat[j,1],
+      for (j in c(1:no_s)) { #starts at 2-1 = 1, goes to 4-0 = 4.
+        DM_Var_deltaI[i*no_s-(no_s-j)] <- DM_VAR_deltaI(BMest=BMest, fot_prevH1=fot_Mat[i,1], fot_prevH2=fot_Mat[j,1],
                                                          fot_prevR1=fot_Mat[i,2],   fot_prevR2=fot_Mat[j,2],
                                                          fot_mdri1=fot_Mat[i,3],    fot_mdri2=fot_Mat[j,3],
                                                          fot_frr1=fot_Mat[i,4],     fot_frr2=fot_Mat[j,4],
@@ -369,8 +409,16 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
                                                          dm_var_prevR1=DM_Var_PrevR[i], dm_var_prevR2=DM_Var_PrevR[j],
                                                          dm_var_mdri1=DM_Var_MDRI[i],   dm_var_mdri2=DM_Var_MDRI[j],
                                                          dm_var_frr1=DM_Var_FRR[i],     dm_var_frr2=DM_Var_FRR[j])
-      }
-    }
+
+        DM_Var_deltaI.infSS[i*no_s-(no_s-j)] <-DM_VAR_deltaI.infSS(BMest=BMest,fot_mdri1=fot_Mat[i,3], fot_frr1=fot_Mat[i,4],
+                                                                   fot_mdri2=fot_Mat[j,3], fot_frr2=fot_Mat[j,4],
+                                                                   dm_var_mdri1=DM_Var_MDRI[i], dm_var_frr1=DM_Var_FRR[i],
+                                                                   dm_var_mdri2=DM_Var_MDRI[j], dm_var_frr2=DM_Var_FRR[j])
+        }
+    } #creates a vector of length number of surveys squared, each term is delta method variance applied to
+    #survey 1 & 1, 1&2, 2&1, and 2&2.
+    RSE_I.infSS  <- sqrt(DM_Var_I.infSS)/I_Est #only given if boot=F
+    RSE.deltaI.infSS<- sqrt(DM_Var_deltaI.infSS)/abs(deltaI_Est_Vec)
   }
 
 
@@ -378,13 +426,18 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   DM_SD_deltaI <- sqrt(DM_Var_deltaI)
   Var_I        <- BS_Var_I + DM_Var_I
   RSE_I        <- sqrt(Var_I)/I_Est
+
+
+  # RSE_I.infSS  <- sqrt(DM_Var_I.infSS)/I_Est #only given if boot=F
+  # RSE.deltaI.infSS<- sqrt(DM_Var_deltaI.infSS)/abs(deltaI_Est_Vec)
+  #put these in the boot=F section
   SD_I         <- sqrt(Var_I)
   Var_deltaI   <- DM_Var_deltaI +  BS_Var_deltaI
   RSE_deltaI   <- sqrt(Var_deltaI)/abs(deltaI_Est_Vec)
   SD_deltaI    <- sqrt(Var_deltaI)
 
 #this function takes bootstrap matrix, SD via delta method, and I estimates, and returns the spread version of those
-#IM REWRITING THIS SO THAT IT ONLY TAKES FULL BS OR DELTA-METHOD
+#IM REWRITING THIS SO THAT IT ONLY TAKES FULL BS OR DELTA-METHOD. Now the method takes estimates and SE and gives CIs
  CI_BSandDM <- function (BSMat, DM_SD, Est) {
     if (sum(DM_Var_I)>0)  {
          for (i in c(1:length(Est))) {
@@ -402,36 +455,55 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   }
 
   CI_Mat <- matrix(nrow=no_s, ncol=2)
-  CI_I_Mat <- CI_BSandDM (BSMat=I_BSMat, DM_SD=DM_SD_I, Est=I_Est)
+  CI_I_Mat <- CI_BSandDM (BSMat=I_BSMat, DM_SD=DM_SD_I, Est=I_Est) #CIs for incidence for each survey
   CI_Mat <- matrix(nrow=no_s^2, ncol=2)
   CI_deltaI_Mat <- CI_BSandDM (BSMat=deltaI_BSMat, DM_SD=DM_SD_deltaI, Est=deltaI_Est_Vec)
+  #above gives CIs for each element in deltaI_Est_Vec, which is a four-tuple vector for 2 surveys
 
   p_value <- pnorm((-abs(deltaI_Est_Vec)/SD_deltaI), mean=0, sd=1)*2
+  if(Boot==F){p_value.infSS <- pnorm((-abs(deltaI_Est_Vec)/sqrt(DM_Var_deltaI.infSS)), mean=0, sd=1)*2}
 
-  survey_no <- vector(length=no_s^2)
+  #gives 4 p-values for 2 surveys
+
+  survey_no <- vector(length=no_s^2) #gives 1 for 1 survey, 4 for two surveys, etc.
   out_I_Est <- vector(length=no_s^2)
   out_RSE_I <- vector(length=no_s^2)
   out_CI_I_lo  <- vector(length=no_s^2)
   out_CI_I_up <- vector(length=no_s^2)
   delta_code <- vector(length=no_s^2)
+  #need to add vector out_RSE_I_infSS here
+  if(Boot==F){
+  out_RSE_I.infSS <- vector(length=no_s^2) #ADDED 4.19
+  out_RSE.deltaI.infSS<- RSE.deltaI.infSS
+  }
+
   for (i in c(1:no_s)) {
     survey_no  [(i*no_s-(no_s-1)):(i*no_s)] <- c(i, rep("", times=(no_s-1)))
     out_I_Est  [(i*no_s-(no_s-1)):(i*no_s)] <- c(round(I_Est[i], digit=5), rep("", times=(no_s-1)))
     out_RSE_I  [(i*no_s-(no_s-1)):(i*no_s)] <- c(round(RSE_I[i], digit=5), rep("", times=(no_s-1)))
+    #need to add vector out_RSE_I_infSS here
+    if(Boot==F){
+    out_RSE_I.infSS  [(i*no_s-(no_s-1)):(i*no_s)] <- c(round(RSE_I.infSS[i], digit=5), rep("", times=(no_s-1)))
+    }
+
     out_CI_I_lo[(i*no_s-(no_s-1)):(i*no_s)] <- c(round(CI_I_Mat[i,1], digit=5), rep("", times=(no_s-1)))
     out_CI_I_up[(i*no_s-(no_s-1)):(i*no_s)] <- c(round(CI_I_Mat[i,2], digit=5), rep("", times=(no_s-1)))
     for (j in c(1:no_s)) {
       delta_code [(i*no_s-(no_s-j))] <- paste(i, j, sep=" vs ")
     }
-  }
+    }
+  #above makes components of output matrix, CIs, empty spaces, etc.
 
   if(sum(out_RSE_I>0.25)){warning("RSE of incidence estimator greater than 25%")}
 
-
+  #puts empty spaces in each place of vectors needed (the ends)
   for (i in c(1:no_s)) {
     deltaI_Est_Vec[(i*no_s-(no_s-i))]<-NA
-    RSE_deltaI[(i*no_s-(no_s-i))]<-NA
+
+    if(Boot==F){RSE_deltaI[(i*no_s-(no_s-i))]<-NA
+    out_RSE.deltaI.infSS[(i*no_s-(no_s-i))]<-NA}
     p_value[(i*no_s-(no_s-i))]<-NA
+    if(Boot==F){p_value.infSS[(i*no_s-(no_s-i))]<-NA}
     for (j in c(1:2)) {
       CI_deltaI_Mat[(i*no_s-(no_s-i)),j] <- NA
     }
@@ -450,28 +522,54 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
 
   out_deltaI_Est <- round(deltaI_Est_Vec, digit=5)
+
   out_RSE_deltaI <- round(RSE_deltaI, digit=5)
+
+  if(Boot==F){
+    out_p_value.infSS <- round(p_value.infSS,5)
+    out_RSE.deltaI.infSS <- round(out_RSE.deltaI.infSS, digit=5)
+    out_p_value.infSS<-ifelse(out_p_value.infSS<0.001,"<0.0001",out_p_value.infSS)
+  }
   out_p_value <- round(p_value,5)
   out_CI_deltaI_Mat <- round(CI_deltaI_Mat, digit=5)
 
   out_p_value<-ifelse(out_p_value<0.001,"<0.0001",out_p_value)
 
   if (length(I_Est)==1) {
-    output <- data.frame ("Incidence"=out_I_Est,
-                          "CI lo"=out_CI_I_lo,
-                          "CI up"=out_CI_I_up,
-                          "RSE"=out_RSE_I) } else {
-    output <- data.frame ("survey"=survey_no,
-                          "Incidence"=out_I_Est,
-                          "CI lo"=out_CI_I_lo,
+    output <- list(Incidence.Statistics=data.frame("Incidence"=out_I_Est,
+                          "CI low"=out_CI_I_lo,
                           "CI up"=out_CI_I_up,
                           "RSE"=out_RSE_I,
+                          "RSE.Inf.SS"=out_RSE_I.infSS))
+    } else if(Boot==F){
+    output <- list(Incidence.Statistics=data.frame ("survey"=survey_no,
+                          "Incidence"=out_I_Est,
+                          "CI low"=out_CI_I_lo,
+                          "CI up"=out_CI_I_up,
+                          "RSE"=out_RSE_I,
+                          "RSE.Inf.SS"=out_RSE_I.infSS),
+                   Incidence.Difference.Statistics=data.frame(
                           "compare"=delta_code,
                           "Diff"=out_deltaI_Est,
-                          "CI Diff lo"=out_CI_deltaI_Mat[,1],
+                          "CI Diff low"=out_CI_deltaI_Mat[,1],
                           "CI Diff up"=out_CI_deltaI_Mat[,2],
                           "RSE Diff"=out_RSE_deltaI,
-                          "p-value"=out_p_value) }
+                          "RSE Diff Inf.SS"=out_RSE.deltaI.infSS,
+                          "p-value"=out_p_value,
+                          "p-value.Inf.SS"=out_p_value.infSS) )
+    }else {output <- list(Incidence.Statistics = data.frame("survey"=survey_no,
+                                                           "Incidence"=out_I_Est,
+                                                           "CI low"=out_CI_I_lo,
+                                                           "CI up"=out_CI_I_up,
+                                                           "RSE"=out_RSE_I),
+                          Incidence.Difference.Statistics = data.frame("compare"=delta_code,
+                            "Diff"=out_deltaI_Est,
+                            "CI Diff low"=out_CI_deltaI_Mat[,1],
+                            "CI Diff up"=out_CI_deltaI_Mat[,2],
+                            "RSE Diff"=out_RSE_deltaI,
+                            "p-value"=out_p_value))
+    }
+
 
   return (output)
 }
@@ -572,6 +670,19 @@ recencyI  (BS_Count=10000,
            MDRI=200, RSE_MDRI=0.05,
            FRR=0.01, RSE_FRR=0.2,
            BigT=730)
+
+#(single survey)
+recencyI  (BS_Count=10000,
+           Boot=FALSE,
+           BMest="same.test",
+           PrevH=probs[1,1], RSE_PrevH=probs[1,3],
+           PrevR=probs[1,2], RSE_PrevR=probs[1,4],
+           MDRI=200, RSE_MDRI=0.05,
+           FRR=0.01, RSE_FRR=0.2,
+           BigT=730)
+
+
+
 ##############################################################################################
 
 ################### == Call - BS only ==######################################################
