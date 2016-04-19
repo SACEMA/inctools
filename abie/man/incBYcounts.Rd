@@ -9,17 +9,17 @@ incBYcounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
   RSE_FRR, BigT = 730, Covar_HR = 0)
 }
 \arguments{
-\item{N}{Total sample size of survey (vector/integer).}
+\item{N}{Counts of total survey sample size(s) (vector/integer).}
 
-\item{N_H}{Count of persons testing positive for HIV (vector/integer).}
+\item{N_H}{Number of HIV positive found in survey(s) (vector/integer).}
 
-\item{N_testR}{Count of persons tested for recency among those found to be HIV positive (vector/integer).}
+\item{N_testR}{Number tested for recency in survey(s) (vector/integer).}
 
-\item{N_R}{Count of persons found to be recently infected (vector/integer).}
+\item{N_R}{Number of recent cases in survey(s) (vector/integer).}
 
-\item{DE_H}{Design effect of HIV-prevalence test (vector/integer).}
+\item{DE_H}{Design effect of HIV prevalence test (vector/numeric), greater than or equal to 1. If multiple surveys are entered but only one design effect is specified, function assumes entered design effect is identical for both surveys.}
 
-\item{DE_R}{Design effect of recency test (vector/integer).}
+\item{DE_R}{Design effect of recency test (vector/numeric), greater than or equal to 1. If multiple surveys are entered but only one design effect is specified, function assumes entered design effect is identical for both surveys.}
 
 \item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.}
 
