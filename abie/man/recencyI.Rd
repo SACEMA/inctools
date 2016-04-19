@@ -33,10 +33,10 @@ recencyI(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
 
 \item{BigT}{post-infection time cut-off true vs false recent [days] default 730 days (integer).}
 
-\item{Covar_HR}{Covariance of probability of being positive and being categorized recent from survey (vector/integer).}
+\item{Covar_HR}{Covariance of probability of being positive and being categorized recent from survey (vector/integer). Note that as the variances of PrevH and PrevR are often quite small, only a suitably commensurate covariance will enable the inversion of the bootstrap covariance matrix for random number generation to proceed without error.}
 }
 \value{
-Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns said results, as well as estimates of incidence  differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the incidence  measures are different.
+Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns said results, as well as estimates of incidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the incidence  measures are different.
 }
 \description{
 Incidence and incidence difference statistics from trinomial prevalences of HIV and recency.

@@ -23,9 +23,9 @@
 #######################################################################################################
 ####== N:        Sample size of survey 1 & 2 (vector).
 ####== N_H:      Number of HIV positive of survey 1&2 (vector)
-####== N_testR:  number tested for recency of survey 1&2 (vector)
-####== N_R:      number of recent cases of survey 1&2 (vector)
-####== Covar_HR: covariance of probs being postive & being recent of survey 1&2 (vector)
+####== N_testR:  Number tested for recency of survey 1&2 (vector)
+####== N_R:      Number of recent cases of survey 1&2 (vector)
+####== Covar_HR: Covariance of probs being postive & being recent of survey 1&2 (vector)
 ####== MDRI:     mean duration of recent infection [days] (vector/integer)
 ####== RSE_MDRI: Relative standard error of MDRI [days] (vector/integer)
 ####== FRR:      False recent rate (vector/integer)
@@ -41,7 +41,24 @@
 #NOTE: THESE FIRST FEW FUNCTIONS ARE USED ONLY IN SERVICE TO FUNCTION RECNECYI().
 
 
-#INPUT IS COUNTS, OUTPUT IS PROPORTIONS AND SE OF PROPORTIONS
+
+#' Prevalence and Relative Standard Errors by Counts
+#'
+#' @param N Counts of total survey sample size(s) (vector/integer).
+#' @param N_H Number of HIV positive found in survey(s) (vector/integer).
+#' @param N_testR Number tested for recency in survey(s) (vector/integer).
+#' @param N_R Number of recent cases in survey(s) (vector/integer).
+#' @param DE_H Design effect of HIV prevalence test (vector/numeric), greater than or equal to 1. If multiple surveys are entered but only one design effect is specified, function assumes entered design effect is identical for both surveys.
+#' @param DE_R Design effect of recency test (vector/numeric), greater than or equal to 1. If multiple surveys are entered but only one design effect is specified, function assumes entered design effect is identical for both surveys.
+#' @return Prevalences and relative standard errors. Design effects are assumed negligible unless user specifies otherwise.
+#'
+#' @examples
+#' prevBYcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)
+#'
+#' prevBYcounts (N = c(5000,5000), N_H = c(1000,1000), N_testR = c(1000,1000),
+#' N_R = c(100,70), DE_H = 1, DE_R = c(1,1.1))
+#' @export
+#'
 prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
   if (sum(DE_H<1) >0 | sum(DE_R<1) >0) {
     stop("Design effects must be >1")
@@ -153,31 +170,31 @@ DM_VAR_deltaI.infSS<-function(BMest,
 #example to get function working:
 
 
-probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R=c(100,70))
-probs
-
-PrevH = probs[,1]
-RSE_PrevH = probs[,3]
-PrevR = probs[,2]
-RSE_PrevR = probs[,4]
-
-
-
-BS_Count = 10000
-Boot = FALSE
-BMest = "MDRI.FRR.indep"
-MDRI = 200
-RSE_MDRI = 0.05
-FRR = c(0.01,0.009)
-RSE_FRR = 0.2
-BigT = 730
-Covar_HR=0
-alpha=0.05
-
-
-recencyI(PrevH=probs[,1], RSE_PrevH=probs[,3], PrevR=probs[,2], RSE_PrevR=probs[,4], Boot = FALSE, BS_Count = 10000, alpha = 0.05,
-BMest = "MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR, BigT = c(730,720), Covar_HR = 0)
-
+# probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R=c(100,70))
+# probs
+#
+# PrevH = probs[,1]
+# RSE_PrevH = probs[,3]
+# PrevR = probs[,2]
+# RSE_PrevR = probs[,4]
+#
+#
+#
+# BS_Count = 10000
+# Boot = FALSE
+# BMest = "MDRI.FRR.indep"
+# MDRI = 200
+# RSE_MDRI = 0.05
+# FRR = c(0.01,0.009)
+# RSE_FRR = 0.2
+# BigT = 730
+# Covar_HR=0
+# alpha=0.05
+#
+#
+# recencyI(PrevH=probs[,1], RSE_PrevH=probs[,3], PrevR=probs[,2], RSE_PrevR=probs[,4], Boot = FALSE, BS_Count = 10000, alpha = 0.05,
+# BMest = "MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR, BigT = c(730,720), Covar_HR = 0)
+#
 
 
 #' Incidence and incidence difference statistics from trinomial prevalences of HIV and recency.
@@ -195,7 +212,7 @@ BMest = "MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR
 #' @param RSE_FRR Relative standard error of FRR (vector/integer).
 #' @param BigT post-infection time cut-off true vs false recent [days] default 730 days (integer).
 #' @param Covar_HR Covariance of probability of being positive and being categorized recent from survey (vector/integer). Note that as the variances of PrevH and PrevR are often quite small, only a suitably commensurate covariance will enable the inversion of the bootstrap covariance matrix for random number generation to proceed without error.
-#' @return Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns said results, as well as estimates of incidence  differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the incidence  measures are different.
+#' @return Incidence estimate, confidence interval, relative standard error. If multiple surveys are entered, function returns said results, as well as estimates of incidence differences, confidence intervals of differences, differences in relative standard error, and p-values testing the hypothesis that the incidence  measures are different.
 #' @details Implements assay-based incidence estimation through cross-sectional prevalence and recency of infection tests. Function parameters must be specified to include assay test characteristics and survey results as proportions. Confidence intervals are computed via Delta method approximation, except when Boot=TRUE is specified, in which case confidence intervals are generated by empirical bootstrap resampling. Inputs must be in appropriate ranges for appropriate units. Extreme input values may make calculation impossible, and if entered will elicit error notices.
 #'
 #' @examples
@@ -608,12 +625,12 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
 #' Incidence and incidence difference statistics from trinomial counts of HIV and recency.
 #'
-#' @param N Total sample size of survey (vector/integer).
-#' @param N_H Count of persons testing positive for HIV (vector/integer).
-#' @param N_testR Count of persons tested for recency among those found to be HIV positive (vector/integer).
-#' @param N_R Count of persons found to be recently infected (vector/integer).
-#' @param DE_H Design effect of HIV-prevalence test (vector/integer).
-#' @param DE_R Design effect of recency test (vector/integer).
+#' @param N Counts of total survey sample size(s) (vector/integer).
+#' @param N_H Number of HIV positive found in survey(s) (vector/integer).
+#' @param N_testR Number tested for recency in survey(s) (vector/integer).
+#' @param N_R Number of recent cases in survey(s) (vector/integer).
+#' @param DE_H Design effect of HIV prevalence test (vector/numeric), greater than or equal to 1. If multiple surveys are entered but only one design effect is specified, function assumes entered design effect is identical for both surveys.
+#' @param DE_R Design effect of recency test (vector/numeric), greater than or equal to 1. If multiple surveys are entered but only one design effect is specified, function assumes entered design effect is identical for both surveys.
 #' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
 #' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
 #' @param BMest Biomarker estimation by one the 3 options "same.test"(=default), "FRR.indep", "MDRI.FRR.indep" (string).
