@@ -21,15 +21,15 @@ Depends:
 License: GPL (>= 3)
 LazyData: True
 Imports:
-    plyr,
-    glm2,
     cubature,
     ggplot2,
+    glm2,
+    MASS,
+    plyr,
     pracma,
-    reshape2,
-    MASS
+    reshape2
 Suggests:
-    foreach,
     doMC,
+    foreach,
     testthat
 RoxygenNote: 5.0.1
