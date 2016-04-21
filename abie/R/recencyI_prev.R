@@ -60,8 +60,14 @@
 #' @export
 #'
 prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
+  if (sum(N_H>N)>0 | sum(N_R>N)>0) {
+    stop("sample subset larger than total sample")
+  }
+  if (sum(N_testR<N_R)>0) {
+    stop("counts of recency tested less than counts of those found to be recently infected")
+  }
   if (sum(DE_H<1) >0 | sum(DE_R<1) >0) {
-    stop("Design effects must be >1")
+    stop("Design effects must be >=1")
   }
 
   no_s <- length(N)
@@ -666,19 +672,9 @@ incBYcounts<-function(N, N_H, N_testR, N_R,
                       BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT = 730, Covar_HR = 0){
 
-  if (sum(N_H>N)>0) {
-    stop("sample subset larger than total sample")
-  }
-  if (sum(N_R>N)>0) {
-    stop("sample subset larger than total sample")
-  }
-  if (sum(N_testR<N_R)>0) {
-    stop("counts of recency tested less than counts of those found to be recently infected")
-  }
   if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.idep"))==0){
     stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.idep")
   }
-
 
   counts.to.prev<-prevBYcounts(N=N, N_H=N_H, N_testR=N_testR,N_R=N_R, DE_H=DE_H, DE_R=DE_R)
 
