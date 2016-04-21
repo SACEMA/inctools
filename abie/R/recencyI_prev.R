@@ -274,6 +274,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   stopifnot(no_s==length(PrevR)   & no_s==length(RSE_PrevH) & no_s==length(PrevR) &
             no_s==length(MDRI)    & no_s==length(RSE_MDRI)  & no_s==length(FRR)   &
             no_s==length(RSE_FRR) & no_s==length(Covar_HR))
+
   MDRI<-MDRI/365.25
   BigT<-BigT/365.25
 
@@ -353,7 +354,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
 
     for (i in 1:no_s) {
       I_BSVec <- I_EST(prevH=BS_RootEstMat[,(i*4-3)], prevR=BS_RootEstMat[,(i*4-2)],
-                       mdri=BS_RootEstMat[,(i*4-1)],  frr=BS_RootEstMat[,(i*4)], bigt=BigT)
+                       mdri=BS_RootEstMat[,(i*4-1)],  frr=BS_RootEstMat[,(i*4)], bigt=BigT[i])
       I_BSMat[,i] <-I_BSVec
       BS_Var_I[i] <- var(I_BSMat[,i])
     }
@@ -712,6 +713,7 @@ recencyI  (BS_Count=10000,
            FRR=0.01, RSE_FRR=0.2,
            BigT=730)
 
+#boot with a larger sample
 recencyI  (BS_Count=100000,
            Boot=TRUE,
            BMest="same.test",
@@ -720,11 +722,21 @@ recencyI  (BS_Count=100000,
            MDRI=200, RSE_MDRI=0.05,
            FRR=0.01, RSE_FRR=0.2,
            BigT=730, Covar_HR = 0.00002)
+
+#boot with a larger sample and different testing scheme
+recencyI  (BS_Count=100000,
+           Boot=TRUE,
+           BMest="FRR.indep",
+           PrevH=probs[,1], RSE_PrevH=probs[,3],
+           PrevR=probs[,2], RSE_PrevR=probs[,4],
+           MDRI=200, RSE_MDRI=0.05,
+           FRR=c(0.01,0.008), RSE_FRR=c(0.2,0.21),
+           BigT=730, Covar_HR = 0.00002)
 ##############################################################################################
 
 
 
-########== Check with spread sheets """"""same.test""""""==###########
+########== Check with spread sheets """"""same.test, three surveys""""""==###########
 probs<-prevBYcounts(N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
@@ -761,17 +773,17 @@ recencyI  (BS_Count=10000,
            BigT=730)
 
 
-########== bootstrap with warining from FRR=0 ==###########
-# probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
-#
-# recencyI  (BS_Count=10000,
-#            Boot=TRUE,
-#            BMest="MDRI.FRR.indep",
-#            PrevH=probs[,1], RSE_PrevH=probs[,3],
-#            PrevR=probs[,2], RSE_PrevR=probs[,4],
-#            MDRI=200, RSE_MDRI=0.05,
-#            FRR=0, RSE_FRR=0,
-#            BigT=730)
+#######== bootstrap with warining from FRR=0 ==###########
+probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
+#FLAG!!!
+recencyI  (BS_Count=10000,
+           Boot=TRUE,
+           BMest="MDRI.FRR.indep",
+           PrevH=probs[,1], RSE_PrevH=probs[,3],
+           PrevR=probs[,2], RSE_PrevR=probs[,4],
+           MDRI=200, RSE_MDRI=0.05,
+           FRR=0, RSE_FRR=0,
+           BigT=730)
 
 
 
