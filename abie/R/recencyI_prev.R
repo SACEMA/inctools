@@ -429,7 +429,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   Var_I        <- BS_Var_I + DM_Var_I
   RSE_I        <- sqrt(Var_I)/I_Est
   Var_MDRI <- BS_Var_MDRI + DM_Var_MDRI
-  Var_FRR  <- BS_Var_FRR + DM_Var_MDRI
+  Var_FRR  <- BS_Var_FRR + DM_Var_FRR
 
   # RSE_I.infSS  <- sqrt(DM_Var_I.infSS)/I_Est #only given if boot=F
   # RSE.deltaI.infSS<- sqrt(DM_Var_deltaI.infSS)/abs(deltaI_Est_Vec)
@@ -657,7 +657,7 @@ incBYcounts<-function(N, N_H, N_testR, N_R,
 
   counts.to.prev<-prevBYcounts(N=N, N_H=N_H, N_testR=N_testR,N_R=N_R, DE_H=DE_H, DE_R=DE_R)
 
-  recencyI(BS_Count=BS_Count, Boot= Boot, alpha=alpha, BMest=BMest,
+  recencyI(BS_Count=BS_Count, Boot=Boot, alpha=alpha, BMest=BMest,
            PrevH=counts.to.prev$PrevH, RSE_PrevH=counts.to.prev$RSE_PrevH,
            PrevR=counts.to.prev$PrevR, RSE_PrevR=counts.to.prev$RSE_PrevR,
            MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
@@ -775,10 +775,19 @@ recencyI  (BS_Count=10000,
 
 #######== bootstrap with warining from FRR=0 ==###########
 probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
-#FLAG!!!
+
 recencyI  (BS_Count=10000,
            Boot=TRUE,
            BMest="MDRI.FRR.indep",
+           PrevH=probs[,1], RSE_PrevH=probs[,3],
+           PrevR=probs[,2], RSE_PrevR=probs[,4],
+           MDRI=200, RSE_MDRI=0.05,
+           FRR=0.01, RSE_FRR=0.2,
+           BigT=730)
+
+recencyI  (BS_Count=10000,
+           Boot=FALSE,
+           BMest="same.test",
            PrevH=probs[,1], RSE_PrevH=probs[,3],
            PrevR=probs[,2], RSE_PrevR=probs[,4],
            MDRI=200, RSE_MDRI=0.05,
@@ -786,13 +795,11 @@ recencyI  (BS_Count=10000,
            BigT=730)
 
 
-
-
 ########== incidence by counts, single survey ==###########
 incBYcounts (N=5000, N_H=1000, N_testR=1000, N_R=100,
              DE_H=1, DE_R=1,
-             BS_Count=10000, Boot= FALSE,
-             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0.01, RSE_FRR=0.06,
+             BS_Count=10000, Boot=FALSE,
+             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0.01, RSE_FRR=0.2,
              BigT=730, Covar_HR=0)
 
 ########== incidence by counts, two surveys ==###########
