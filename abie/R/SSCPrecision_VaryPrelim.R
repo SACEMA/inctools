@@ -15,14 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-
+#
+#
 MDRI     <- 200
 RSE_MDRI <- 0.05
 FRR      <- 0.01
 RSE_FRR  <- 0.2
-BigT     <- 730
-I        <- c(0.015,0.020)
+BigT     <- c(530,730)
+I        <- 0.015
 RSE_I    <- 0.25
 PrevH    <- 0.1
 CR       <- 1
@@ -30,7 +30,7 @@ DE_H     <- 1
 DE_R     <- 1
 n        <- "out"
 step <- 5
-#
+
 #Note to self: 'step' is number of steps between minimum I and maximum I in the calculation of
 #a range of output. So supply a vector or max/min theoretical incidences, and the function gives
 #a range of values (step number of values) for the output. This can be done for all input variables.
@@ -335,7 +335,7 @@ if(sum(RSE_I!="out") > 0) {
     fot_MDRI  <- fot[3]
     fot_FRR   <- fot[4]
   } else { #this needs to reflect what happens to the output fot matrix which depends on which variables are allowed to vary.
-    if (length(I > 1) & sum(lengths(var_list))==14){
+    if (length(I)>1 & sum(lengths(var_list))==14){
        fot_PrevH <- matrix(fot[1:(step*step)],nrow=step,ncol=step,byrow=F)
        fot_PrevR <- fot[(step*step+1)] #things change if and only if only Incidence is allowed to vary.
        fot_MDRI  <- matrix(fot[((step*step)+2):(((step*step)*2+1))],nrow=step,ncol=step)
@@ -449,7 +449,7 @@ if (sum(RSE_I=="out") > 0) {
 
 SSCprecision             ( I              =0.015,
                            RSE_I          =0.25,
-                           PrevH          =0.2,
+                           PrevH          =0.20,
                            CR             =1,
                            MDRI           =200,
                            RSE_MDRI       =0.05,
@@ -470,7 +470,7 @@ SSCprecision             ( I              =0.015,
                            RSE_MDRI       =0.05,
                            FRR            =0.01,
                            RSE_FRR        =0.2,
-                           BigT           = c(730,625),
+                           BigT           = c(530,730),  ##FLAG
                            DE_H           = 1,
                            DE_R           = 1,
                            n              = "out",
@@ -527,7 +527,7 @@ SSCprecision             ( I              =0.015,
 
 
 #####################################################################################################################
-SSCprecision             ( I              =0.015,
+SSCprecision             ( I              =0.015,   #FLAG!!
                            RSE_I          ="out",
                            PrevH          =c(0.2,0.22),
                            CR             =0.7,
