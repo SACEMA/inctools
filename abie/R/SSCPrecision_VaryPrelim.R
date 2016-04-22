@@ -1,28 +1,28 @@
-####== Sample Size calculation for desired precision of I estimation
-#######################################################################################################
-####== PrevH:    prevalence of HIV in population
-####== PrevR:    proportion of recency among those HIV positive (and tested for recency)
-####== I:        expected incidence
-####== CR:       coverage rate; probability (0 - 1) of being tested for recency when positive
-####== Covar_HR: covariance of probs being postive and being recent of survey 1&2 (vector)
-####== MDRI:     mean duration of recent infection [days] (vector/integer)
-####== RSE_MDRI: Relative standard error of MDRI [days] (vector/integer)
-####== FRR:      False recent rate (vector/integer)
-####== RSE_FRR:  Relative standard error of FRR (vector/integer)
-####== BigT:     post-infection time cut-off true vs false recent [days] default 730 days (integer)
-####== DE_H:     Design effect of HIV-prevalence test (vector/integer)
-####== DE_R:     Design effect of recency test (vector/integer)
-#######################################################################################################
+# Assay-Based Incidence Estimation
+# Copyright (C) 2015-2016, DST/NRF Centre of Excellence in Epidemiological Modelling and Analysis (SACEMA)
+# and individual contributors.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 
-#This function is to be separate from SS-Power function. This function takes as argument test characteristics,
-#and returns EITHER sample size for a given precision, or a given precision for a given sample size.
 
 MDRI     <- 200
 RSE_MDRI <- 0.05
 FRR      <- 0.01
 RSE_FRR  <- 0.2
 BigT     <- 730
-I        <- 0.015
+I        <- c(0.015,0.020)
 RSE_I    <- 0.25
 PrevH    <- 0.1
 CR       <- 1
@@ -109,30 +109,32 @@ SSCprecision <-     function ( I              ,
 
   #CHECK TO MAKE SURE ONLY TWO VARIABLES ARE ALLOWED TO VARY
   max.list<-0
-  for(i in 1:length(var_list)){
-  if (length(var_list[[i]]) > 1) {max.list=max.list+1}
-  if (max.list>2)  {stop("only a maximum of 2 variables are allowed to vary")}
+  for (i in 1:length(var_list)){
+   if (length(var_list[[i]]) > 1) {max.list=max.list+1}
+   if (max.list>2)  {stop("only a maximum of 2 variables are allowed to vary")}
   }
 
   if (sum(var_list=="out") > 1) {
     stop("only one of the variables RSE_I or n can be requested at a time")
   }
+
   if (length(var_list[1:8]) < 8) {
     stop("Not enough variables have been specified")
   }
 
-for(i in 1:12){
-  if (length(var_list[[i]])>2 | length(var_list[[i]])<1)  {stop(paste("specifiy (only) min & max values for ",names(var_list)[i]),sep="")}
+for (i in 1:12) {
+  if (length(var_list[[i]])>2 | length(var_list[[i]])<1)  {
+    stop(paste("specifiy (only) min & max values for ",names(var_list)[i]),sep="")
+    }
 }
 
-
-for(i in c(1,3,4,6:8)){
+for (i in c(1,3,4,6:8)) {
   if (is.numeric(var_list[[1:length(var_list[i])]]) > 0 &
       (sum(var_list[[i]]<=1)!=length(var_list[[i]]) | sum(var_list[[i]]>=0)!=length(var_list[[i]]))  )
   {stop("Some input values are less than 0 or greater than 1")}
 }
 
-if(sum(RSE_I!="out")>0){
+if(sum(RSE_I!="out") > 0) {
   if (is.numeric(var_list[[1:length(var_list[2])]]) > 0 &
       (sum(var_list[[2]]<=1)!=length(var_list[[2]]) | sum(var_list[[2]]>=0)!=length(var_list[[2]]))  )
   {stop("Some input values are less than 0 or greater than 1")}
@@ -151,32 +153,31 @@ if(sum(RSE_I!="out")>0){
   # if (is.numeric(DE_R)>0)     {stopifnot (DE_R>=1)}
   # if (is.numeric(n)>0)        {stopifnot (n>100)}
 
-
-  if (sum(BigT<=182)){
+  if (sum(BigT <= 182)){
     warning ("BigT is smaller than half a year")
       }
-  if (sum(BigT<MDRI)>0){
+  if (sum(BigT < MDRI) > 0){
     stop ("MDRI cannot be greater than BigT")
   }
-  if(sum(RSE_MDRI<0.01)>0){
+  if(sum(RSE_MDRI < 0.01) > 0){
     warning("RSE of estimated MDRI is less than 1%")
   }
-  if(sum(FRR==0)>0){
+  if(sum(FRR==0) > 0){
     warning("Zero estimated FRR")
   }
-  if(sum(FRR>0.10)>0){
+  if(sum(FRR > 0.10) > 0){
     warning("Estimated FRR is greater than 10%")
   }
-  if(sum(RSE_FRR>0.30)>0){
+  if(sum(RSE_FRR > 0.30) > 0){
     warning("RSE of estimated FRR is greater than 30%")
   }
-  if(sum(RSE_FRR<0.05)>0){
+  if(sum(RSE_FRR < 0.05) > 0){
     warning("RSE of estimated FRR is less than 5%")
   }
-  if(sum(I>.20)>0){
+  if(sum(I > 0.20) > 0){
     warning(paste("Possible error in incidence input.", max(I)," seems exceptionally high",sep=""))
   }
-  if(sum(n<1000)>0){
+  if(sum(n < 1000) > 0) {
     warning("Sample size is smaller than 1000")
   }
 
@@ -323,87 +324,111 @@ if(sum(RSE_I!="out")>0){
 
 
   PrevR <- ((I*(1-PrevH)*(MDRI-FRR*BigT)) / PrevH + FRR)
-  out2 <- PrevHR <- round(PrevH*PrevR,5)     #Prev.HIV&recent
-  out3 <- PrevHnR <- round(PrevH-PrevHR,5)    #Prev.HIV&nonrecent
+  out2  <- PrevHR  <- round(PrevH*PrevR,  digits=5)     #Prev.HIV&recent
+  out3  <- PrevHnR <- round(PrevH-PrevHR, digits=5)    #Prev.HIV&nonrecent
 
-  #need to put ifelse() in here to deal with matrix fot output vs. scalar fot output
   fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
   #if the output of each term of DM_FirstOrderTerms is univariate, do one thing, otherwise, do another...
-  if(sum(lengths(var_list)>1)==0){
+  if (sum(lengths(var_list) > 1)==0) {
     fot_PrevH <- fot[1]
     fot_PrevR <- fot[2]
     fot_MDRI  <- fot[3]
     fot_FRR   <- fot[4]
-  }else{
+  } else { #this needs to reflect what happens to the output fot matrix which depends on which variables are allowed to vary.
+    if (length(I > 1) & sum(lengths(var_list))==14){
+       fot_PrevH <- matrix(fot[1:(step*step)],nrow=step,ncol=step,byrow=F)
+       fot_PrevR <- fot[(step*step+1)] #things change if and only if only Incidence is allowed to vary.
+       fot_MDRI  <- matrix(fot[((step*step)+2):(((step*step)*2+1))],nrow=step,ncol=step)
+       fot_FRR   <- matrix(fot[(((step*step)*2+2)):length(fot)],nrow=step,ncol=step)
+    }else{ #here is the situation if only a variable besides incidence is allowed to vary, or any two parameters are allowed to vary.
     fot_PrevH <- matrix(fot[1:(step*step)],nrow=step,ncol=step,byrow=F)
     fot_PrevR <- matrix(fot[((step*step)*1+1):(((step*step)*2))],nrow=step,ncol=step)
     fot_MDRI  <- matrix(fot[((step*step)*2+1):(((step*step)*3))],nrow=step,ncol=step)
     fot_FRR   <- matrix(fot[((step*step)*3+1):(((step*step)*4))],nrow=step,ncol=step)
+    }
   }
 
 
 #IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
   if (n=="out") {
-    out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I,5) #RSE.I.inf.sample
-    out1 <- n <- round(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2),5)
-    if(sum(((PrevH*(1-PrevH))/n)*DE_H<=0)>0){stop("no sample size will meet input constraints")}
-    out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH,5)              #RSE.PrevH
-    out6 <- RSE_PrevR <- round(sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR,5)     #RSE.PrevR
-    out_names <- c("sample.size","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
-    }
+    out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I, digits=5) #RSE.I.inf.sample
+    out1 <- n <- ceiling(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2))
 
+    if(sum(((PrevH*(1-PrevH))/n)*DE_H<=0)>0){
+      stop("no sample size will meet input constraints")
+      }
+
+    out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH, digits=5)              #RSE.PrevH
+    out6 <- RSE_PrevR <- round(sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR, digits=5)     #RSE.PrevR
+    out_names <- c("sample.size","Prev.HIV.and.recent","Prev.HIV.and.nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
+    }
 
 
 #IF precision IS THE OUPUT VARIABLE (SO sample size n IS FIXED)
-if(sum(RSE_I=="out")>0) {
-    out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I,5)
+if (sum(RSE_I=="out") > 0) {
+    out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I, digits=5)
 
-    out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH,5)
-    out6 <- RSE_PrevR <- round(sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR,5)
+    out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH, digits=5)
+    out6 <- RSE_PrevR <- round(sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR, digits=5)
 
     out1 <- RSE_I <-round(sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H +
-                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf_ss^2),5)
-    out_names <- c("RSE_I","Prev.HIV&recent","Prev.HIV&nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
+                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf_ss^2), digits=5)
+    out_names <- c("RSE_I","Prev.HIV.and.recent","Prev.HIV.and.nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
     }
 
-  if(sum(RSE_I>0.50)>0){warning("Implied RSE of incidence is greater than 50%")}
+  if (sum(RSE_I > 0.50) >0) {
+    warning("Implied RSE of incidence is greater than 50%")
+    }
 
 
-  if (sum(lengths(var_list))==15) {
+  if (sum(lengths(var_list))==15) { #if two variables are to vary
     variable.1 <- vector(length=step)
-    for (i in c(1:step)) {
-      variable.1[i] <- paste(vary_name1, vary1[i,1])
-    }
     variable.2 <- vector(length=step)
     for (i in c(1:step)) {
-      variable.2[i] <- paste(vary_name2, vary2[1,i])
+      variable.1[i] <- paste(vary_name1, "=", vary1[i,1])
+      variable.2[i] <- paste(vary_name2, "=", vary2[1,i])
     }
-    variable.2 <- c("",variable.2)
-    out1 <- cbind(variable.1,out1)
-    out1 <- rbind(variable.2,out1)
-    out2 <- cbind(variable.1,out2)
-    out2 <- rbind(variable.2,out2)
-    out3 <- cbind(variable.1,out3)
-    out3 <- rbind(variable.2,out3)
-    out4 <- cbind(variable.1,out4)
-    out4 <- rbind(variable.2,out4)
-    out5 <- cbind(variable.1,out5)
-    out5 <- rbind(variable.2,out5)
-    out6 <- cbind(variable.1,out6)
-    out6 <- rbind(variable.2,out6)
+
+    out1<-data.frame(out1)
+    out2<-data.frame(out2)
+    out3<-data.frame(out3)
+    out4<-data.frame(out4)
+    out5<-data.frame(out5)
+    out6<-data.frame(out6)
+
+    row.names(out1) <-variable.2
+    colnames(out1)  <-variable.1
+    row.names(out2) <-variable.2
+    colnames(out2)  <-variable.1
+    row.names(out3) <-variable.2
+    colnames(out3)  <-variable.1
+    row.names(out4) <-variable.2
+    colnames(out4)  <-variable.1
+    row.names(out5) <-variable.2
+    colnames(out5)  <-variable.1
+    row.names(out6) <-variable.2
+    colnames(out6)  <-variable.1
   }
 
-  if (sum(lengths(var_list))==14) {
+
+  if (sum(lengths(var_list))==14) { #if just one variable is allowed to vary
     variable.1 <- vector(length=step)
     for (i in c(1:step)) {
-      variable.1[i] <- paste(vary_name1, vary1[i,1])
+      variable.1[i] <- paste(vary_name1,"=", vary1[i,1])
     }
-    out1 <- cbind(variable.1,out1[,1])
-    out2 <- cbind(variable.1,out2[,1])
-    out3 <- cbind(variable.1,out3[,1])
-    out4 <- cbind(variable.1,out4[,1])
-    out5 <- cbind(variable.1,out5[,1])
-    out6 <- cbind(variable.1,out6[,1])
+    out1 <- data.frame(variable.1,out1[,1])
+    out2 <- data.frame(variable.1,out2[,1])
+    out3 <- data.frame(variable.1,out3[,1])
+    out4 <- data.frame(variable.1,out4[,1])
+    out5 <- data.frame(variable.1,out5[,1])
+    out6 <- data.frame(variable.1,out6[,1])
+
+    names(out1) <- c(vary_name1,out_names[1])
+    names(out2) <- c(vary_name1,out_names[2])
+    names(out3) <- c(vary_name1,out_names[3])
+    names(out4) <- c(vary_name1,out_names[4])
+    names(out5) <- c(vary_name1,out_names[5])
+    names(out6) <- c(vary_name1,out_names[6])
   }
 
   output <- list (out1, out2, out3, out4, out5, out6)
@@ -445,11 +470,12 @@ SSCprecision             ( I              =0.015,
                            RSE_MDRI       =0.05,
                            FRR            =0.01,
                            RSE_FRR        =0.2,
-                           BigT           = 730,
+                           BigT           = c(730,625),
                            DE_H           = 1,
                            DE_R           = 1,
                            n              = "out",
                            step           = 5)
+
 #doesn't work when FRR goes above 3.7% for these values
 # SSCprecision             ( I              =0.015,
 #                            RSE_I          =0.25,
