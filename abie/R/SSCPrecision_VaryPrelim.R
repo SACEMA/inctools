@@ -604,11 +604,6 @@ SSCprecision             ( I              =0.015,
 
 
 
-
-
-
-
-#there is some error here, not sure what...
 SSCprecision             ( I              =0.015,
                            RSE_I          ="out",
                            PrevH          =0.2,
