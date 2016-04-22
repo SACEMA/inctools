@@ -238,7 +238,7 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   }
 
   if (BS_Count<=0 & Boot==TRUE){
-    stop("Bootstrap samples count must be positive integer")
+    stop("Bootstrap sample count must be positive integer")
   }
 
   if (BMest!="MDRI.FRR.indep" & length(MDRI)>length(FRR))
@@ -692,8 +692,8 @@ incBYcounts<-function(N, N_H, N_testR, N_R,
                       BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT = 730, Covar_HR = 0){
 
-  if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.idep"))==0){
-    stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.idep")
+  if(sum(BMest==c("same.test", "FRR.indep", "MDRI.FRR.indep"))==0){
+    stop("BMest option must be same.test, FRR.indep, or MDRI.FRR.indep")
   }
 
   counts.to.prev<-prevBYcounts(N=N, N_H=N_H, N_testR=N_testR,N_R=N_R, DE_H=DE_H, DE_R=DE_R)
@@ -778,7 +778,7 @@ recencyI  (BS_Count=100000,
 
 
 ########== Check with spread sheets """"""same.test, three surveys""""""==###########
-probs<-prevBYcounts(N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
+probs<-prevBYcounts(N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,960), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
            Boot=FALSE,
@@ -790,7 +790,7 @@ recencyI  (BS_Count=10000,
            BigT=730)
 
 ########== Check with spread sheets """"""FRR.indep""""""==###########
-probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
+probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,955), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
            Boot=FALSE,
@@ -850,7 +850,22 @@ incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R=c(100,7
              BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0.01, RSE_FRR=0.06,
              BigT=730, Covar_HR=0)
 
+incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R=c(100,70),
+             DE_H=1, DE_R=1,
+             BS_Count=10000, Boot= TRUE,
+             BMest="same.test", MDRI=200, RSE_MDRI=.05, FRR=0.01, RSE_FRR=0.06,
+             BigT=730, Covar_HR=0)
+
+
+
 ########== incidence by counts, two surveys, FRR independent ==###########
+########== incidence by counts, two surveys, FRR independent ==###########
+incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,950), N_R=c(100,70),
+             DE_H=1, DE_R=1,
+             BS_Count=10000, Boot= FALSE,
+             BMest="MDRI.FRR.indep", MDRI=c(200,190), RSE_MDRI=c(0.05,0.07), FRR=c(0.01,0.02), RSE_FRR=0.05,
+             BigT=c(730,735), Covar_HR=0)
+
 incBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,950), N_R=c(100,70),
              DE_H=1, DE_R=1,
              BS_Count=10000, Boot= FALSE,
