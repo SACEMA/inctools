@@ -47,6 +47,9 @@ prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
   if (sum(DE_H<1) >0 | sum(DE_R<1) >0) {
     stop("Design effects must be >=1")
   }
+  if(sum(N_testR/N_H<.95)>0){
+    warning("Less than 95% of HIV-positive subjects have recency test results available")
+  }
 
   no_s <- length(N)
   if (length(DE_H)==1)     {DE_H <- rep(DE_H, times=no_s)}         else {DE_H=DE_H}
@@ -677,7 +680,7 @@ incBYcounts<-function(N, N_H, N_testR, N_R,
 #Final R package must omit this code
 
 
-probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,1000), N_R=c(100,70))
+probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,900), N_R=c(100,70))
 
 ################### == Call - DM only ==######################################################
 recencyI  (BS_Count=10000,
