@@ -21,14 +21,14 @@ MDRI     <- 200
 RSE_MDRI <- 0.05
 FRR      <- 0.01
 RSE_FRR  <- 0.2
-BigT     <- c(530,730)
+BigT     <- 730
 I        <- 0.015
-RSE_I    <- 0.25
+RSE_I    <- "out"
 PrevH    <- 0.1
 CR       <- 1
 DE_H     <- 1
-DE_R     <- 1
-n        <- "out"
+DE_R     <- c(1,1.5)
+n        <- c(5000,5500)
 step <- 5
 
 #Note to self: 'step' is number of steps between minimum I and maximum I in the calculation of
@@ -68,7 +68,7 @@ DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
 #' @param BigT post-infection time cut-off for true vs. false recency. Default is 730 days.
 #' @param DE_H Design effect of HIV prevalence test (vector/integer).
 #' @param DE_R Design effect of recency test (vector/integer).
-#' @param n Sample Size, either a given hypothetical value or to be determined by function, which is the default.
+#' @param n Sample Size: either a given hypothetical value, or to be determined by function, which is the default.
 #' @param step number of steps between minimum I and maximum I in the calculation of a range of output.
 #' @return Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
 #' @details
@@ -329,7 +329,7 @@ if(sum(RSE_I!="out") > 0) {
 
   fot<-DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
   #if the output of each term of DM_FirstOrderTerms is univariate, do one thing, otherwise, do another...
-  if (sum(lengths(var_list) > 1)==0) {
+  if (sum(lengths(var_list) > 1)==0 | length(fot)==4) {
     fot_PrevH <- fot[1]
     fot_PrevR <- fot[2]
     fot_MDRI  <- fot[3]
@@ -350,7 +350,7 @@ if(sum(RSE_I!="out") > 0) {
 
 
 #IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
-  if (n=="out") {
+  if (sum(n=="out")>0) {
     out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI*RSE_MDRI*MDRI)^2+(fot_FRR*RSE_FRR*FRR)^2)/I, digits=5) #RSE.I.inf.sample
     out1 <- n <- ceiling(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/((RSE_I^2-RSE_I_inf_ss^2)*I^2))
 
@@ -371,43 +371,74 @@ if (sum(RSE_I=="out") > 0) {
     out5 <- RSE_PrevH <- round(sqrt(((PrevH*(1-PrevH))/n)*DE_H)/PrevH, digits=5)
     out6 <- RSE_PrevR <- round(sqrt(((PrevR*(1-PrevR))/n*CR*PrevH)*DE_R)/PrevR, digits=5)
 
-    out1 <- RSE_I <-round(sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H +
-                            (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf_ss^2), digits=5)
+    out1 <- RSE_I <-round(sqrt(((fot_PrevH^2)*PrevH*(1-PrevH)*DE_H + (fot_PrevR^2)*(PrevR*(1-PrevR)*DE_R/(CR*PrevH)))/(n*I^2)+RSE_I_inf_ss^2), digits=5)
     out_names <- c("RSE_I","Prev.HIV.and.recent","Prev.HIV.and.nonrecent","RSE.I.inf.sample","RSE.PrevH", "RSE.PrevR")
     }
-
-  if (sum(RSE_I > 0.50) >0) {
-    warning("Implied RSE of incidence is greater than 50%")
-    }
+#
+#   if (sum(RSE_I > 0.50) >0) {
+#     warning("Implied RSE of incidence is greater than 50%")
+#     }
 
 
   if (sum(lengths(var_list))==15) { #if two variables are to vary
     variable.1 <- vector(length=step)
     variable.2 <- vector(length=step)
-    for (i in c(1:step)) {
+    for (i in 1:step) {
       variable.1[i] <- paste(vary_name1, "=", vary1[i,1])
       variable.2[i] <- paste(vary_name2, "=", vary2[1,i])
     }
 
-    out1<-data.frame(out1)
-    out2<-data.frame(out2)
-    out3<-data.frame(out3)
-    out4<-data.frame(out4)
-    out5<-data.frame(out5)
-    out6<-data.frame(out6)
+    if(length(out1)>1){
+      out1 <- data.frame(out1)
+      row.names(out1) <-variable.1
+      colnames(out1)  <-variable.2
+    }
+    if(length(out2)>1){
+      out2 <- data.frame(out2)
+      row.names(out2) <-variable.1
+      colnames(out2)  <-variable.2
+    }
+    if(length(out3)>1){
+      out3 <- data.frame(out3)
+      row.names(out3) <-variable.1
+      colnames(out3)  <-variable.2
+    }
+    if(length(out4)>1){
+      out4 <- data.frame(out4)
+      row.names(out4) <-variable.1
+      colnames(out4)  <-variable.2
+    }
+    if(length(out5)>1){
+      out5 <- data.frame(out5)
+      row.names(out5) <-variable.1
+      colnames(out5)  <-variable.2
+    }
+    if(length(out6)>1){
+      out6 <- data.frame(out6)
+      row.names(out6) <-variable.1
+      colnames(out6)  <-variable.2
+    }
 
-    row.names(out1) <-variable.2
-    colnames(out1)  <-variable.1
-    row.names(out2) <-variable.2
-    colnames(out2)  <-variable.1
-    row.names(out3) <-variable.2
-    colnames(out3)  <-variable.1
-    row.names(out4) <-variable.2
-    colnames(out4)  <-variable.1
-    row.names(out5) <-variable.2
-    colnames(out5)  <-variable.1
-    row.names(out6) <-variable.2
-    colnames(out6)  <-variable.1
+
+    # out1<-data.frame(out1)
+    # out2<-data.frame(out2)
+    # out3<-data.frame(out3)
+    # out4<-data.frame(out4)
+    # out5<-data.frame(out5)
+    # out6<-data.frame(out6)
+    #
+    # row.names(out1) <-variable.2
+    # colnames(out1)  <-variable.1
+    # row.names(out2) <-variable.2
+    # colnames(out2)  <-variable.1
+    # row.names(out3) <-variable.2
+    # colnames(out3)  <-variable.1
+    # row.names(out4) <-variable.2
+    # colnames(out4)  <-variable.1
+    # row.names(out5) <-variable.2
+    # colnames(out5)  <-variable.1
+    # row.names(out6) <-variable.2
+    # colnames(out6)  <-variable.1
   }
 
 
@@ -416,19 +447,31 @@ if (sum(RSE_I=="out") > 0) {
     for (i in c(1:step)) {
       variable.1[i] <- paste(vary_name1,"=", vary1[i,1])
     }
-    out1 <- data.frame(variable.1,out1[,1])
-    out2 <- data.frame(variable.1,out2[,1])
-    out3 <- data.frame(variable.1,out3[,1])
-    out4 <- data.frame(variable.1,out4[,1])
-    out5 <- data.frame(variable.1,out5[,1])
-    out6 <- data.frame(variable.1,out6[,1])
+    if(length(out1)>1){
+      out1 <- data.frame(variable.1,out1[,1])
+      names(out1) <- c(vary_name1,out_names[1])
+    }
+    if(length(out2)>1){
+      out2 <- data.frame(variable.1,out2[,1])
+      names(out2) <- c(vary_name1,out_names[2])
+    }
+    if(length(out3)>1){
+      out3 <- data.frame(variable.1,out3[,1])
+      names(out3) <- c(vary_name1,out_names[3])
+    }
 
-    names(out1) <- c(vary_name1,out_names[1])
-    names(out2) <- c(vary_name1,out_names[2])
-    names(out3) <- c(vary_name1,out_names[3])
-    names(out4) <- c(vary_name1,out_names[4])
-    names(out5) <- c(vary_name1,out_names[5])
-    names(out6) <- c(vary_name1,out_names[6])
+    if(length(out4)>1){
+      out4 <- data.frame(variable.1,out4[,1])
+      names(out4) <- c(vary_name1,out_names[4])
+    }
+    if(length(out5)>1){
+      out5 <- data.frame(variable.1,out5[,1])
+      names(out5) <- c(vary_name1,out_names[5])
+    }
+    if(length(out6)>1){
+      out6 <- data.frame(variable.1,out6[,1])
+      names(out6) <- c(vary_name1,out_names[6])
+    }
   }
 
   output <- list (out1, out2, out3, out4, out5, out6)
@@ -470,11 +513,28 @@ SSCprecision             ( I              =0.015,
                            RSE_MDRI       =0.05,
                            FRR            =0.01,
                            RSE_FRR        =0.2,
-                           BigT           = c(530,730),  ##FLAG
+                           BigT           = c(530,730),
                            DE_H           = 1,
                            DE_R           = 1,
                            n              = "out",
                            step           = 5)
+
+
+SSCprecision             ( I              =c(0.015,.02),
+                           RSE_I          =0.25,
+                           PrevH          =0.20,
+                           CR             =1,
+                           MDRI           =200,
+                           RSE_MDRI       =0.05,
+                           FRR            =0.01,
+                           RSE_FRR        =0.2,
+                           BigT           = c(530,730),
+                           DE_H           = 1,
+                           DE_R           = 1,
+                           n              = "out",
+                           step           = 5)
+
+
 
 #doesn't work when FRR goes above 3.7% for these values
 # SSCprecision             ( I              =0.015,
@@ -504,7 +564,7 @@ SSCprecision             ( I              =0.015,
                            BigT           = 730,
                            DE_H           = 1,
                            DE_R           = 1,
-                           n              = 5000,
+                           n              = c(5000,5500),
                            step           = 5)
 #this does not give same value of RSE_I as spreadhsheet for these values, close, but not totally
 #this is not my (Avery's) error: but was present in sheet Petra gave me.
@@ -527,16 +587,16 @@ SSCprecision             ( I              =0.015,
 
 
 #####################################################################################################################
-SSCprecision             ( I              =0.015,   #FLAG!!
+SSCprecision             ( I              =0.015,
                            RSE_I          ="out",
                            PrevH          =c(0.2,0.22),
-                           CR             =0.7,
+                           CR             =1,
                            MDRI           =200,
                            RSE_MDRI       =0.05,
                            FRR            =0.01,
                            RSE_FRR        =0.2,
                            BigT           = 730,
-                           DE_H           = 1,
+                           DE_H           = c(1,1.1),
                            DE_R           = 1,
                            n              = 3622,
                            step           = 5)
