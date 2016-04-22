@@ -544,7 +544,12 @@ recencyI <- function (PrevH, RSE_PrevH, PrevR, RSE_PrevR,
   MDRI.CI <- round(365.25*data.frame(CI.low=qnorm(alpha/2, mean=MDRI, sd=sqrt(Var_MDRI)), CI.up=qnorm(1-alpha/2, mean=MDRI, sd=sqrt(Var_MDRI))),3)
   FRR.CI <- round(data.frame(CI.low=qnorm(alpha/2, mean=FRR, sd=sqrt(Var_FRR)),CI.up=qnorm(1-alpha/2, mean=FRR, sd=sqrt(Var_FRR))),4)
 
-
+  if(BMest=="same.test"){
+    MDRI.CI <- MDRI.CI[1,]
+    FRR.CI <- FRR.CI[1,]
+  } else if(BMest=="FRR.indep"){
+    MDRI.CI <- MDRI.CI[1,]
+  }
 
 
 
@@ -680,7 +685,7 @@ incBYcounts<-function(N, N_H, N_testR, N_R,
 #Final R package must omit this code
 
 
-probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,900), N_R=c(100,70))
+probs<-prevBYcounts (N=c(5000,5000), N_H=c(1000,1000), N_testR=c(1000,970), N_R=c(100,70))
 
 ################### == Call - DM only ==######################################################
 recencyI  (BS_Count=10000,
