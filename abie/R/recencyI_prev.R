@@ -802,7 +802,7 @@ recencyI  (BS_Count=10000,
            BigT=730)
 
 ########== Check with spread sheets """"""MDRI.FRR.indep""""""==###########
-probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
+probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,980), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
            Boot=FALSE,
@@ -815,7 +815,7 @@ recencyI  (BS_Count=10000,
 
 
 #######== bootstrap with warining from FRR=0 ==###########
-probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,900), N_R=c(100,70,120))
+probs<-prevBYcounts (N=c(5000,5000,3000), N_H=c(1000,1000,1000), N_testR=c(1000,1000,990), N_R=c(100,70,120))
 
 recencyI  (BS_Count=10000,
            Boot=TRUE,
