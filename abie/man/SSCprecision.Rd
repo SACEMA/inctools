@@ -30,7 +30,7 @@ SSCprecision(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
 
 \item{DE_R}{Design effect of recency test (vector/integer).}
 
-\item{n}{Sample Size, either a given hypothetical value or to be determined by function, which is the default.}
+\item{n}{Sample Size: either a given hypothetical value, or to be determined by function, which is the default.}
 
 \item{step}{number of steps between minimum I and maximum I in the calculation of a range of output.}
 }
