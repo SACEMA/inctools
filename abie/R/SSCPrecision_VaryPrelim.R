@@ -76,6 +76,8 @@ DM_FirstOrderTerms <- function (prevH, prevR, mdri, frr, bigt)   {
 #' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSE of incidence) and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision.
 #' Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained solely by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.
 #'
+#'Up to two parameters can be given as tuple vetors, with the input parameter 'step' giving the number of points analyzed between the endpoints of the vector. This yields output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an instantiation of this process.
+#'
 #' @examples
 #' SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
 #' MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
@@ -490,19 +492,19 @@ if (sum(RSE_I=="out") > 0) {
 #####################################################################################################################
 #default of spreadsheet ABIE_v3_Sample_Size_Calculator.xlsx
 
-SSCprecision             ( I              =0.015,
-                           RSE_I          =0.25,
-                           PrevH          =0.20,
-                           CR             =1,
-                           MDRI           =200,
-                           RSE_MDRI       =0.05,
-                           FRR            =0.01,
-                           RSE_FRR        =0.2,
-                           BigT           = 730,
-                           DE_H           = 1,
-                           DE_R           = 1,
-                           n              = "out",
-                           step           = 5)
+SSCprecision  ( I              = 0.015,
+                RSE_I          = 0.25,
+                PrevH          = 0.20,
+                CR             = 1,
+                MDRI           = 200,
+                RSE_MDRI       = 0.05,
+                FRR            = 0.01,
+                RSE_FRR        = 0.2,
+                BigT           = 730,
+                DE_H           = 1,
+                DE_R           = 1,
+                n              = "out",
+                step           = 5)
 
 #####################################################################################################################
 SSCprecision             ( I              =0.015,
@@ -537,6 +539,7 @@ SSCprecision             ( I              =c(0.015,.02),
 
 
 #doesn't work when FRR goes above 3.7% for these values
+#I comment out because the package will not build with error messages present
 # SSCprecision             ( I              =0.015,
 #                            RSE_I          =0.25,
 #                            PrevH          =0.20,
@@ -552,6 +555,7 @@ SSCprecision             ( I              =c(0.015,.02),
 #                            step           = 5)
 
 #####################################################################################################################
+
 #default of spreadsheet ABIE_v3_Test_Performance_Calculator
 SSCprecision             ( I              =0.015,
                            RSE_I          ="out",
@@ -566,8 +570,7 @@ SSCprecision             ( I              =0.015,
                            DE_R           = 1,
                            n              = c(5000,5500),
                            step           = 5)
-#this does not give same value of RSE_I as spreadhsheet for these values, close, but not totally
-#this is not my (Avery's) error: but was present in sheet Petra gave me.
+
 
 #####################################################################################################################
 SSCprecision             ( I              =0.015,
