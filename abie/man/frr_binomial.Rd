@@ -7,8 +7,8 @@ Each subject with any observations after the time cutoff is assigned a recency s
 of observations for that subject after the cutoff. In the event of exactly half of the observations being
 classified as recent, the subject contributes a count of 0.5.
 The function performs an exact binomial test and reports the estimated probability of testing recent after the
-cutoff, a confidence interval for the proportion, the number of recent results ("successes"),
-number of subjects ("trials") and the number of data points contributing to the subject-level estimate.}
+cutoff, a confidence interval for the proportion, the number of recent results ('successes'),
+number of subjects ('trials') and the number of data points contributing to the subject-level estimate.}
 \usage{
 frr_binomial(data = data, subid_var = "sid", time_var = "time",
   recency_cutoff_time = 730.5, recency_rule = "binary_data",
@@ -19,9 +19,9 @@ frr_binomial(data = data, subid_var = "sid", time_var = "time",
 
 \item{subid_var}{The variable in the dataframe identifying subjects}
 
-\item{time_var}{The variable in the dataframe indicating time between "time zero" (usually detectable infection) and biomarker measurement}
+\item{time_var}{The variable in the dataframe indicating time between 'time zero' (usually detectable infection) and biomarker measurement}
 
-\item{recency_cutoff_time}{Recency time cut-off ("Big T"). Default=730.5.}
+\item{recency_cutoff_time}{Recency time cut-off ('Big T'). Default=730.5.}
 
 \item{recency_rule}{Specified rule for defining recent/non-recent outcomes from biomarker data (see Details)}
 
@@ -37,8 +37,8 @@ Each subject with any observations after the time cutoff is assigned a recency s
 of observations for that subject after the cutoff. In the event of exactly half of the observations being
 classified as recent, the subject contributes a count of 0.5.
 The function performs an exact binomial test and reports the estimated probability of testing recent after the
-cutoff, a confidence interval for the proportion, the number of recent results ("successes"),
-number of subjects ("trials") and the number of data points contributing to the subject-level estimate.
+cutoff, a confidence interval for the proportion, the number of recent results ('successes'),
+number of subjects ('trials') and the number of data points contributing to the subject-level estimate.
 }
 \details{
 recency_rule: binary_data - supply a binary variable with 1=recent and 0=non-recent in recency_vars.
@@ -49,7 +49,7 @@ thresholds, as well as whether a value below or above each threshold indicates r
 recency_params expects a list of pairs of thresholds and thresholdtypes, with zero indicating a reading below
 the threshold implies recency and 1 that a reading above the threshold implies recency. (Note: two values,
 a threshold and a thresholdtype per variable must be specified in recency_params. For example, if you specify
-recency_vars = c("ODn","ViralLoad") you may specify recency_params = c(1.5,0,500,1), meaning that an ODn reading
+recency_vars = c('ODn','ViralLoad') you may specify recency_params = c(1.5,0,500,1), meaning that an ODn reading
 below 1.5 AND a viral load reasing above 500 indicates a recent result. Objects with missing values in its
  biomarker readings will be excluded from caculation.
 }
