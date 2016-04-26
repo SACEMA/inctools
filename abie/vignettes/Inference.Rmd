@@ -84,39 +84,42 @@ The output for a single survey is an estimate of incidence along with confidence
 
 The output for multiple surveys is the same output as for a single survey, along with pairwise comparisons of incidence rates, confidence intervals of differences, and tests of equality with p-values and RSE of differences. Run the code given in the examples section at the bottom of the function help page `help("recencyI")` for examples of this implementation and output. 
 
-The delta method calculation of the estimator variance is described in the second reference, however the delta method approximation of the variance of the difference in incidence estimators is not. There are three cases that can arise: (1) the same test is used for both assays; (2) the tests are different with independent FRR; (3) the tests are indpendent with different FRR and different MDRI. The option for assay scheme is specified in both $recencyI$ and $incBYcounts$ by parameter `BMest=`. The variances of the three cases follow. 
+The delta method calculation of the estimator variance is described in the second reference, however the delta method approximation of the variance of the difference in incidence estimators is not. There are three cases that can arise: (1) the same test is used for both assays; (2) the tests are different with independent FRR; (3) the tests are indpendent with different FRR and different MDRI. The option for assay scheme is specified in both $recencyI$ and $incBYcounts$ by function parameter `BMest`. The variances of the three cases follow. 
 
 Case 1: Same test
 \begin{align}
-V[\Delta \mathbb{I}]_1 = &
-
-((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +\\
-      &((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +\\
-      &((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +\\
-      &((fot_frr1-fot_frr2)^2*dm_var_frr1)\\
+V[\Delta \mathbb{I}]_1 \approx &
+\Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
+&\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
+  & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\times PrevR_1)^2) + \\     & \frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))\ (RSE_{PrevR_2}PrevR_2)^2) +\\
+    &\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
+&\Big(\big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{(1 - PrevH_1)} -\frac{PrevH_2(T\ PrevR_2 -\Omega)}{(1 - PrevH_2)}\big)(\Omega - \beta T)^2 \Big)^2 RSE_{\beta}\ \beta\\
 \end{align}
 
 
 
 Case 2: FRR independent
 \begin{align}
-V[\Delta \mathbb{I}]_2 = &
-
-((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +\\
-      &((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +\\
-      &((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +\\
-      &((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)\\
+V[\Delta \mathbb{I}]_2 \approx &
+ \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
+&\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
+      & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\times(RSE_{PrevR_1}\ PrevR_1)^2)  +\\     &\frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))(RSE_{PrevR_2}PrevR_2)^2) +\\
+&\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
+      &\Big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{1 - PrevH_1}(\Omega - \beta_1 \ T)^2\Big)^2 RSE_{\beta_1}\ \beta_1 + \\  
+      &\Big(\frac{PrevH_2(T\ PrevR_2 - \Omega)}{1 - PrevH_2}(\Omega - \beta_2 \ T)^2)\Big)^2 RSE_{\beta_2}\ \beta_2
 \end{align}
 
 
 Case 3: FRR and MDRI independent
 \begin{align}
-V[\Delta \mathbb{I}]_3 = &
-
-((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +\\
-      &((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +\\
-      &((fot_mdri1^2)*dm_var_mdri1)   + ((fot_mdri2^2)*dm_var_mdri2)   +\\
-      &((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)\\
+V[\Delta \mathbb{I}]_3 \approx &
+ \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
+&\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
+      & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\ PrevR_1)^2)  +\\     &\frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))(RSE_{PrevR_2}PrevR_2)^2) +\\
+      &\Big(\frac{\beta_1\ PrevH_1 - PrevR_1\ PrevH_1}{1 - PrevH_1}\ (\Omega_1 - \beta_1\ T_1)^2\Big)^2 RSE_{MDRI_1}\ MDRI_1 + \\
+    &\Big(\frac{\beta_2\ PrevH_2 - PrevR_2\ PrevH_2}{1 - PrevH_2}\ (\Omega_2 - \beta_2\ T_2)^2\Big)^2 RSE_{MDRI_2}\ MDRI_2    +\\
+      &\Big(\frac{PrevH_1(T_1\ PrevR_1 - \Omega_1}{1 - PrevH_1}(\Omega_1 -\beta_1\ T_1)^2\Big)^2  RSE_{\beta_1}\ \beta_1 + \\     
+      &\Big(\frac{PrevH_2(T_2\ PrevR_2 - \Omega_2}{1 - PrevH_2}(\Omega_2 -\beta_2\ T_2)^2\Big)^2  RSE_{\beta_2}\ \beta_2 
 \end{align}
 
 
@@ -134,7 +137,7 @@ We start with estimates on parameters which are derived from data. So we have es
 
 along with their respective estimates of variance.
 
-We resample a multivariate normal distribution with argument EMPIRICAL=TRUE, which coerces the samples such that if we take the mean and variance of any number of samples of $\Omega$, say, we will get the exact mean and variance we entered into the multivariate normal sampler as parameters from the distrubtion. Each unique re-sample for each variable $\varphi$ is a B-tuple of values such that the B-tuple mean equals $\widehat{\varphi}$ and its variance exactly equals the variance of the original estimator. Corresponding to each column of this matrix is a single ``bootstrap" estimate $\mathbb{I}$, the estimate of incidence. 
+We resample a multivariate normal distribution with argument `EMPIRICAL=TRUE` to the function $mvrnorm$ from the $MASS$ package, which coerces the samples such that if we take the mean and variance of any number of samples of $\Omega$, say, we will get the exact mean and variance we entered into the multivariate normal sampler as parameters from the distrubtion. Each unique re-sample for each estimator $\varphi$ is a B-tuple of values such that the B-tuple mean equals $\widehat{\varphi}$ and its variance exactly equals the variance of the original estimator. Corresponding to each column of this matrix is a single "bootstrap" estimate $\mathbb{I}$, the estimate of incidence. 
 
 \noindent
 So we have sample matrix
@@ -144,9 +147,9 @@ So we have sample matrix
 \Omega_1 & \Omega_2 & \Omega_3 & \cdots&\Omega_B \\
 \beta_1 & \beta_2 & \beta_3 &\cdots & \beta_B 
 \end{array} \right)\] 
-$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \   \ \  \ \  \downarrow\ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \  \ \ \cdots\ \ \ \ \   \downarrow \ \ \ \ \ \ \  \ \ 
+$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \   \ \  \ \  \downarrow\ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \  \  \cdots\ \ \ \ \   \downarrow \ \ \ \ \ \ \  \ \ 
 $$
-$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \  \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \ \ \ \ \  \ \   \  \mathbb{I}_3\ \ \ \  \ \ \ \ \ \ \cdots\ \ \ \ \ \  \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
+$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \  \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \ \ \ \ \  \ \ \  \  \mathbb{I}_3\ \ \    \ \ \ \ \ \cdots\ \ \ \ \ \  \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
 $$
 which is sampled in such a way that, for example, for empirical bootstrap sample $\Omega_B$ 
 $$
