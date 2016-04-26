@@ -16,12 +16,12 @@ mdri_ml_binomial(data = data, subid_var = "sid", time_var = "time",
 
 \item{subid_var}{The variable in the dataframe identifying subjects}
 
-\item{time_var}{The variable in the dataframe indicating time between "time zero" (usually detectable infection) and biomarker measurement}
+\item{time_var}{The variable in the dataframe indicating time between 'time zero' (usually detectable infection) and biomarker measurement}
 
 \item{functional_forms}{Select functional form/link function combinations for fitting probability of testing recent as a function of time to data using binomial regression
 (see Details). Default=all supported functional forms.}
 
-\item{recency_cutoff_time}{Recency time cut-off ("Big T"). Default=730.5.}
+\item{recency_cutoff_time}{Recency time cut-off ('Big T'). Default=730.5.}
 
 \item{inclusion_time_threshold}{Data points beyond this time are excluded from the calculation (in same unit as recency_cutoff_time, default=800).}
 
@@ -55,7 +55,7 @@ Estimate MDRI (point estimate and confidence interval) using binomial regression
 Expected data frame format: Before calling the function, please import your dataset into R environment.
 
 time_var: Time since infection; Note: this package does not assume any specific time unit. It is important to specify the
-recency time cut-off "T" and the time-based data exclusion rule (inclusion_time_threshold) in the same unit as the input times.
+recency time cut-off 'T' and the time-based data exclusion rule (inclusion_time_threshold) in the same unit as the input times.
 The estimated MDRI will be in this unit.
 
 Method: This function fits a function for probability of testing recent as a function of time to the supplied data using
@@ -83,14 +83,14 @@ thresholds, as well as whether a value below or above each threshold indicates r
 recency_params expects a list of pairs of thresholds and thresholdtypes, with zero indicating a reading below the threshold
  implies recency and 1 that a reading above the threshold implies recency. (Note: two values, a threshold and a
  thresholdtype per variable must be specified in recency_params. For example, if you specify recency_vars =
- c("ODn","ViralLoad") you may specify recency_params = c(1.5,0,500,1), meaning that an ODn reading below 1.5 AND a
+ c('ODn','ViralLoad') you may specify recency_params = c(1.5,0,500,1), meaning that an ODn reading below 1.5 AND a
  viral load reasing above 500 indicates a recent result. Objects with missing values in its biomarker readings will be
  excluded from caculation.
 }
 \examples{
-mdri_ml_binomial(data=data, subid_var="PT_ID", time_var="DaysSinceEDDI",
- functional_forms=c("loglog_linear","logit_cubic"), recency_rule="independent_thresholds",
- recency_vars=c("ODn","VL"), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
+mdri_ml_binomial(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
+ functional_forms=c('loglog_linear','logit_cubic'), recency_rule='independent_thresholds',
+ recency_vars=c('ODn','VL'), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
  plot=TRUE, parallel=FALSE)
 
 In this example the MDRI and 95\% confidence interval would be calculated by determining

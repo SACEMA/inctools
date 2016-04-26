@@ -1,34 +1,24 @@
-# Assay-Based Incidence Estimation
-# Copyright (C) 2015-2016, DST/NRF Centre of Excellence in Epidemiological Modelling and Analysis (SACEMA)
-# and individual contributors.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# Assay-Based Incidence Estimation Copyright (C) 2015-2016, DST/NRF Centre of Excellence in Epidemiological Modelling
+# and Analysis (SACEMA) and individual contributors.  This program is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either
+# version 3 of the License, or (at your option) any later version.  This program is distributed in the hope that it will
+# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+# PURPOSE.  See the GNU General Public License for more details.  You should have received a copy of the GNU General
+# Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #'Estimate MDRI (point estimate and confidence interval) using binomial regression and a maximum likelihood approach
 #'
 #' @param data A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)
 #' @param functional_forms Select functional form/link function combinations for fitting probability of testing recent as a function of time to data using binomial regression
 #' (see Details). Default=all supported functional forms.
 #' @param subid_var The variable in the dataframe identifying subjects
-#' @param time_var The variable in the dataframe indicating time between "time zero" (usually detectable infection) and biomarker measurement
-# @param infwind_var The (optional) variable indicating the size of the seroconversion window, in the event time_var
-# is relative to first positive test preceded by an infection window.
-# WE NEED A WINDOW PARAMATER AND WINDOW OPTIONS - e.g. (1) uniform window width or (2) normal assumption, SDs
+#' @param time_var The variable in the dataframe indicating time between 'time zero' (usually detectable infection) and biomarker measurement
+# @param infwind_var The (optional) variable indicating the size of the seroconversion window, in the event time_var is
+# relative to first positive test preceded by an infection window.  WE NEED A WINDOW PARAMATER AND WINDOW OPTIONS - e.g.
+# (1) uniform window width or (2) normal assumption, SDs
 #' @param recency_rule Specified rule for defining recent/non-recent outcomes from biomarker data (see Details)
 #' @param recency_vars Variables to be used in determining recency outcomes
 #' @param recency_params Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule
-#' @param recency_cutoff_time Recency time cut-off ("Big T"). Default=730.5.
+#' @param recency_cutoff_time Recency time cut-off ('Big T'). Default=730.5.
 #' @param inclusion_time_threshold Data points beyond this time are excluded from the calculation (in same unit as recency_cutoff_time, default=800).
 #' @param n_bootstraps Number of subject-level bootstrap resampling operations for estimating confidence intervals, default=100 (useful for testing purposes only)
 #' @param alpha Confidence level, default=0.05.
@@ -44,7 +34,7 @@
 #' Expected data frame format: Before calling the function, please import your dataset into R environment.
 #'
 #' time_var: Time since infection; Note: this package does not assume any specific time unit. It is important to specify the
-#' recency time cut-off "T" and the time-based data exclusion rule (inclusion_time_threshold) in the same unit as the input times.
+#' recency time cut-off 'T' and the time-based data exclusion rule (inclusion_time_threshold) in the same unit as the input times.
 #' The estimated MDRI will be in this unit.
 #'
 #' Method: This function fits a function for probability of testing recent as a function of time to the supplied data using
@@ -72,14 +62,14 @@
 #' recency_params expects a list of pairs of thresholds and thresholdtypes, with zero indicating a reading below the threshold
 #'  implies recency and 1 that a reading above the threshold implies recency. (Note: two values, a threshold and a
 #'  thresholdtype per variable must be specified in recency_params. For example, if you specify recency_vars =
-#'  c("ODn","ViralLoad") you may specify recency_params = c(1.5,0,500,1), meaning that an ODn reading below 1.5 AND a
+#'  c('ODn','ViralLoad') you may specify recency_params = c(1.5,0,500,1), meaning that an ODn reading below 1.5 AND a
 #'  viral load reasing above 500 indicates a recent result. Objects with missing values in its biomarker readings will be
 #'  excluded from caculation.
 #'
 #' @examples
-#'mdri_ml_binomial(data=data, subid_var="PT_ID", time_var="DaysSinceEDDI",
-#'  functional_forms=c("loglog_linear","logit_cubic"), recency_rule="independent_thresholds",
-#'  recency_vars=c("ODn","VL"), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
+#'mdri_ml_binomial(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
+#'  functional_forms=c('loglog_linear','logit_cubic'), recency_rule='independent_thresholds',
+#'  recency_vars=c('ODn','VL'), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
 #'  plot=TRUE, parallel=FALSE)
 #'
 #' In this example the MDRI and 95% confidence interval would be calculated by determining
@@ -89,20 +79,9 @@
 #' functional forms, the confidence interval will be estimated by means of 10,000
 #' subject-level resampling operations and the fitted model curve will be plotted.
 #' @export
-mdri_ml_binomial <- function(data=data,
-                             subid_var="sid",
-                             time_var="time",
-                             functional_forms=c("loglog_linear","logit_cubic"),
-                             recency_cutoff_time=730.5,
-                             inclusion_time_threshold=800,
-                             recency_rule="binary_data",
-                             recency_vars="recency_status",
-                             recency_params=NULL,
-                             n_bootstraps=100,
-                             alpha=0.05,
-                             plot=TRUE,
-                             parallel=FALSE,
-                             cores=4) {
+mdri_ml_binomial <- function(data = data, subid_var = "sid", time_var = "time", functional_forms = c("loglog_linear", "logit_cubic"),
+                             recency_cutoff_time = 730.5, inclusion_time_threshold = 800, recency_rule = "binary_data", recency_vars = "recency_status",
+                             recency_params = NULL, n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4) {
 
 
   if (is.null(data)) {
@@ -121,16 +100,20 @@ mdri_ml_binomial <- function(data=data,
     stop("Please specify a Recency Rule")
   }
 
-  if(is.null(recency_vars)) {
+  if (is.null(recency_vars)) {
     stop("Please specify at least one Recency Variable")
   }
 
-  if (recency_rule=="binary_data") {
-    if (length(recency_vars)>1) {stop("Binary data should be specified in one recency (outcome) variable.")}
-    if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {stop("Input data is not binary")}
+  if (recency_rule == "binary_data") {
+    if (length(recency_vars) > 1) {
+      stop("Binary data should be specified in one recency (outcome) variable.")
+    }
+    if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
+      stop("Input data is not binary")
+    }
   }
 
-  if (recency_rule=="independent_thresholds" & length(recency_vars)!=0.5*length(recency_params)) {
+  if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 * length(recency_params)) {
     stop("The number of recency variables must match the number of recency paramaters.")
   }
 
@@ -138,131 +121,141 @@ mdri_ml_binomial <- function(data=data,
     stop("Subject identifier and time variables must be specified.")
   }
 
-  if (parallel==TRUE && Sys.info()['sysname']=="Windows") {
+  if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
     stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
   }
 
-  if (parallel==TRUE) {
+  if (parallel == TRUE) {
     check_package("foreach")
     check_package("doMC")
   }
 
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
-  if (sum(variables==subid_var)!=1) {print(paste("There is no column",subid_var,"in the data frame."))}
-  if (sum(variables==time_var)!=1) {print(paste("There is no column",time_var,"in the data frame."))}
-  for (i in 1:length(recency_vars)){
-    if (sum(variables==recency_vars[i])!=1) {print(paste("There is no column",recency_vars[i],"in the data frame."))}
+  if (sum(variables == subid_var) != 1) {
+    print(paste("There is no column", subid_var, "in the data frame."))
+  }
+  if (sum(variables == time_var) != 1) {
+    print(paste("There is no column", time_var, "in the data frame."))
+  }
+  for (i in 1:length(recency_vars)) {
+    if (sum(variables == recency_vars[i]) != 1) {
+      print(paste("There is no column", recency_vars[i], "in the data frame."))
+    }
   }
 
-## Assign numeric subject ids, recency variables and recency status
-  data <- process_data(data=data, subid_var=subid_var, time_var=time_var, recency_vars=recency_vars,
-                       inclusion_time_threshold=inclusion_time_threshold)
-  data <- assign_recency_status(data=data, recency_params=recency_params, recency_rule=recency_rule)
+  ## Assign numeric subject ids, recency variables and recency status
+  data <- process_data(data = data, subid_var = subid_var, time_var = time_var, recency_vars = recency_vars, inclusion_time_threshold = inclusion_time_threshold)
+  data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
 
-  tolerance_glm2=1e-8
-  maxit_glm2=50000
-  tolerance_integral=1e-8
-  maxit_integral=10000
+  tolerance_glm2 = 1e-08
+  maxit_glm2 = 50000
+  tolerance_integral = 1e-08
+  maxit_integral = 10000
 
   n_subjects <- max(data$sid)
 
-  mdri_output <- data.frame(matrix(ncol=4,nrow=0))
+  mdri_output <- data.frame(matrix(ncol = 4, nrow = 0))
   model_output <- list()
-  if (plot==TRUE) {plot_output <- list()}
+  if (plot == TRUE) {
+    plot_output <- list()
+  }
 
   for (i in 1:length(functional_forms)) {
     functional_form <- functional_forms[i]
 
-    if (parallel==TRUE && n_bootstraps!=0 ) {
+    if (parallel == TRUE && n_bootstraps != 0) {
       boot_data <- data
-      model <- fit_binomial_model(data=boot_data, functional_form=functional_form,tolerance=tolerance_glm2,
-                                       maxit=maxit_glm2)
+      model <- fit_binomial_model(data = boot_data, functional_form = functional_form, tolerance = tolerance_glm2,
+                                  maxit = maxit_glm2)
       parameters <- model$coefficients
-      mdri <- integrate_for_mdri(parameters=parameters, recency_cutoff_time = recency_cutoff_time,
-                                         functional_form=functional_form,tolerance=tolerance_integral, maxit=maxit_integral)
+      mdri <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time, functional_form = functional_form,
+                                 tolerance = tolerance_integral, maxit = maxit_integral)
       mdris <- mdri
       model_output[[functional_forms[i]]] <- model
-      if (plot==TRUE) {plot_parameters <- parameters}
+      if (plot == TRUE) {
+        plot_parameters <- parameters
+      }
 
       doMC::registerDoMC(cores)
       chosen_subjects <- vector(mode = "list", length = n_bootstraps)
-      #set.seed(123)
+      # set.seed(123)
       for (j in 1:n_bootstraps) {
-        chosen_subjects[[j]] <- sample(1:n_subjects,n_subjects, replace=T)
+        chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
       }
-      mdris <- foreach::foreach (j=1:n_bootstraps ,  .combine=rbind) %dopar% {
+      mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind) %dopar% {
         boot_data <- data[FALSE, ]
-        for (k in 1:n_subjects){
-          boot_data <- rbind(boot_data, subset(data,sid==chosen_subjects[[j]][k]))
+        for (k in 1:n_subjects) {
+          boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[[j]][k]))
         }
-        model <- fit_binomial_model(data=boot_data, functional_form=functional_form,tolerance=tolerance_glm2,
-                                         maxit=maxit_glm2)
+        model <- fit_binomial_model(data = boot_data, functional_form = functional_form, tolerance = tolerance_glm2,
+                                    maxit = maxit_glm2)
         parameters <- model$coefficients
-        mdri_iterate <- integrate_for_mdri(parameters=parameters, recency_cutoff_time = recency_cutoff_time,
-                                           functional_form=functional_form,tolerance=tolerance_integral, maxit=maxit_integral)
+        mdri_iterate <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time, functional_form = functional_form,
+                                           tolerance = tolerance_integral, maxit = maxit_integral)
         return(mdri_iterate)
       }
     } else {
-      #set.seed(123)
+      # set.seed(123)
       for (j in 0:n_bootstraps) {
-        chosen_subjects <- sample(1:n_subjects,n_subjects, replace=T)
+        chosen_subjects <- sample(1:n_subjects, n_subjects, replace = T)
         if (j != 0) {
           boot_data <- data[FALSE, ]
-          for (k in 1:n_subjects){
-            boot_data <- rbind(boot_data, subset(data,sid==chosen_subjects[k]))
+          for (k in 1:n_subjects) {
+            boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[k]))
           }
-        } else{
+        } else {
           boot_data <- data
         }
 
-        model <- fit_binomial_model(data=boot_data, functional_form=functional_form,tolerance=tolerance_glm2,
-                                         maxit=maxit_glm2)
+        model <- fit_binomial_model(data = boot_data, functional_form = functional_form, tolerance = tolerance_glm2,
+                                    maxit = maxit_glm2)
         parameters <- model$coefficients
-        mdri_iterate <- integrate_for_mdri(parameters=parameters, recency_cutoff_time = recency_cutoff_time,
-                                           functional_form=functional_form,tolerance=tolerance_integral, maxit=maxit_integral)
-        if (j==0) {
+        mdri_iterate <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time, functional_form = functional_form,
+                                           tolerance = tolerance_integral, maxit = maxit_integral)
+        if (j == 0) {
           mdri <- mdri_iterate
           mdris <- mdri
           model_output[[functional_forms[i]]] <- model
-          if (plot==TRUE) {plot_parameters <- parameters}
+          if (plot == TRUE) {
+            plot_parameters <- parameters
+          }
         } else {
-          mdris <- append(mdris,mdri_iterate)
+          mdris <- append(mdris, mdri_iterate)
         }
-      } # bootstraps
+      }  # bootstraps
     }
 
-    if (n_bootstraps==0) {
+    if (n_bootstraps == 0) {
       mdri_sd <- NA
-      mdri_ci <- c(NA,NA)
-      mdri_ff <- data.frame(round(mdri,4),NA,NA,NA)
-      mdri_output <- rbind(mdri_output,mdri_ff)
+      mdri_ci <- c(NA, NA)
+      mdri_ff <- data.frame(round(mdri, 4), NA, NA, NA)
+      mdri_output <- rbind(mdri_output, mdri_ff)
     } else {
       mdri_sd <- sd(mdris)
-      mdri_ci <- quantile(mdris, probs = c(alpha/2, 1-alpha/2))
-      mdri_ff <- data.frame(round(mdri,4), round(mdri_ci[1],4), round(mdri_ci[2],4),round(mdri_sd,4))
-      mdri_output <- rbind(mdri_output,mdri_ff)
+      mdri_ci <- quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
+      mdri_ff <- data.frame(round(mdri, 4), round(mdri_ci[1], 4), round(mdri_ci[2], 4), round(mdri_sd, 4))
+      mdri_output <- rbind(mdri_output, mdri_ff)
     }
 
 
-    if (plot==TRUE) {
-              plot_name <- functional_forms[i]
-              plot_output[[plot_name]] <- plot_probability(functional_form=functional_form, parameters=plot_parameters,
-                                                           mdri=mdri, mdri_ci=mdri_ci,
-                                                           inclusion_time_threshold=inclusion_time_threshold,
-                                                           recency_cutoff_time=recency_cutoff_time)
+    if (plot == TRUE) {
+      plot_name <- functional_forms[i]
+      plot_output[[plot_name]] <- plot_probability(functional_form = functional_form, parameters = plot_parameters,
+                                                   mdri = mdri, mdri_ci = mdri_ci, inclusion_time_threshold = inclusion_time_threshold, recency_cutoff_time = recency_cutoff_time)
     }
 
-  } # functional forms
+  }  # functional forms
   rownames(mdri_output) <- functional_forms
-  colnames(mdri_output) <- c("PE", "CI_LB","CI_UB","SD")
+  colnames(mdri_output) <- c("PE", "CI_LB", "CI_UB", "SD")
 
-  if (plot==TRUE) {output <- list("MDRI"=mdri_output,"Plots"=plot_output,"Models"=model_output)} else {output <- list("MDRI"=mdri_output,"Models"=model_output)}
+  if (plot == TRUE) {
+    output <- list(MDRI = mdri_output, Plots = plot_output, Models = model_output)
+  } else {
+    output <- list(MDRI = mdri_output, Models = model_output)
+  }
   return(output)
 }
 
 # This is complicated - needs specification of the family of individual curves, function with parameters etc...
-# Estimate MDRI using a mixed effects binomial model...
-# mdri_ml_mixedbinomial <- function() {
-# }
-
+# Estimate MDRI using a mixed effects binomial model...  mdri_ml_mixedbinomial <- function() { }
