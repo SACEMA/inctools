@@ -11,7 +11,6 @@ Authors@R: c(
   person("Hilmarie","Brand", role="aut"),
   person("Yuruo","Li",email="yul123@pitt.edu", role="aut"),
   person("Simon","Daniel",email="skjdaniel@gmail.com", role="aut"),
-  person("Yusuke","Asai",email="yusuke.asai@yahoo.de",role="aut"),
   person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="aut")
   )
 Description: Tools for estimating incidence from biomarker data in cross-
