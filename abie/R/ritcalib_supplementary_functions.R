@@ -9,7 +9,7 @@
 check_package <- function(package) {
   if (!require(package, character.only = TRUE)) {
     print(paste("Attempting to install dependency", package, sep = " "))
-    install.packages(package, dep = TRUE)
+    install.packages(package, dependencies = TRUE)
     if (!require(package, character.only = TRUE)) {
       stop(paste("Package", package, "could not be automatically installed.", sep = " "))
     }
