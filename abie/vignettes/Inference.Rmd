@@ -17,7 +17,7 @@ This vignette will describe the use of necessary functions and some background o
 
 ## prevBYcounts
 
-Function $prevBYcounts$, while not strictly necessary for inference on incidence, is the only avenue for using function $recencyI$ which allows taking into account of design effects, which factor into the relative standard error of prevalence of HIV positivity and recnecy. $incBYcounts$ has an option for design effects. The function $prevBYcounts$ takes count data from a prevalence survey and produces estimates of prevalences and relative standard errors. Design effects are assumed negligible unless user specifies otherwise. Note that the input values for design effects are assumed to be known by the user. 
+Function $prevBYcounts$, while not strictly necessary for inference on incidence, allows for using function $recencyI$ while taking into account of design effects, which factor into the relative standard error of prevalence of HIV positivity and recnecy. $incBYcounts$ has an option for design effects. The function $prevBYcounts$ takes count data from a prevalence survey and produces estimates of prevalences and relative standard errors. Design effects are assumed negligible unless user specifies otherwise. Note that the input values for design effects are assumed to be known by the user. 
 
 
 For a single survey:
@@ -84,11 +84,40 @@ The output for a single survey is an estimate of incidence along with confidence
 
 The output for multiple surveys is the same output as for a single survey, along with pairwise comparisons of incidence rates, confidence intervals of differences, and tests of equality with p-values and RSE of differences. Run the code given in the examples section at the bottom of the function help page `help("recencyI")` for examples of this implementation and output. 
 
-The delta method calculation of the estimator variance is described elewhere (). 
+The delta method calculation of the estimator variance is described in the second reference, however the delta method approximation of the variance of the difference in incidence estimators is not. There are three cases that can arise: (1) the same test is used for both assays; (2) the tests are different with independent FRR; (3) the tests are indpendent with different FRR and different MDRI. The option for assay scheme is specified in both $recencyI$ and $incBYcounts$ by parameter `BMest=`. The variances of the three cases follow. 
+
+Case 1: Same test
+\begin{align}
+V[\Delta \mathbb{I}]_1 = &
+
+((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +\\
+      &((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +\\
+      &((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +\\
+      &((fot_frr1-fot_frr2)^2*dm_var_frr1)\\
+\end{align}
 
 
 
+Case 2: FRR independent
+\begin{align}
+V[\Delta \mathbb{I}]_2 = &
 
+((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +\\
+      &((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +\\
+      &((fot_mdri1-fot_mdri2)^2*dm_var_mdri1) +\\
+      &((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)\\
+\end{align}
+
+
+Case 3: FRR and MDRI independent
+\begin{align}
+V[\Delta \mathbb{I}]_3 = &
+
+((fot_prevH1^2)*dm_var_prevH1) + ((fot_prevH2^2)*dm_var_prevH2) +\\
+      &((fot_prevR1^2)*dm_var_prevR1) + ((fot_prevR2^2)*dm_var_prevR2) +\\
+      &((fot_mdri1^2)*dm_var_mdri1)   + ((fot_mdri2^2)*dm_var_mdri2)   +\\
+      &((fot_frr1^2)*dm_var_frr1)     + ((fot_frr2^2)*dm_var_frr2)\\
+\end{align}
 
 
 ## The Empirical Bootstrapping Option
@@ -117,7 +146,7 @@ So we have sample matrix
 \end{array} \right)\] 
 $$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \   \ \  \ \  \downarrow\ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \  \ \ \cdots\ \ \ \ \   \downarrow \ \ \ \ \ \ \  \ \ 
 $$
-$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \  \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \ \ \ \ \  \ \  \ \  \mathbb{I}_3\ \ \ \  \ \ \ \ \ \ \cdots\ \ \ \ \ \  \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
+$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \  \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \ \ \ \ \  \ \   \  \mathbb{I}_3\ \ \ \  \ \ \ \ \ \ \cdots\ \ \ \ \ \  \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
 $$
 which is sampled in such a way that, for example, for empirical bootstrap sample $\Omega_B$ 
 $$
