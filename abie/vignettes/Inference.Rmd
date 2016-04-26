@@ -131,8 +131,8 @@ This method is called in $recencyI$ and $incBYcounts$ by adding the option `Boot
 
 We start with estimates on parameters that are derived from data. So we have estimates:
 
-* $\widehat{\text{Prev}}_\text{H}$,
-* $\widehat{\text{Prev}}_\text{R}$,
+* $\widehat{\text{PrevH}}$,
+* $\widehat{\text{PrevR}}$,
 * $\widehat{\Omega}$,
 * $\widehat{\beta}$,
 
@@ -143,8 +143,8 @@ We resample a multivariate normal distribution with argument `EMPIRICAL=TRUE` to
 \noindent
 So we have sample matrix
 \[ \mathbf{B} = \left( \begin{array}{ccccc}
-\text{Prev}_\text{H1} & \text{Prev}_\text{H2} & \text{Prev}_\text{H3} & \cdots & \text{Prev}_\text{HB}\\ 
-\text{Prev}_\text{R1} & \text{Prev}_\text{R2} & \text{Prev}_\text{R3} & \cdots & \text{Prev}_\text{RB}\\
+\text{PrevH}_\text{1} & \text{PrevH}_\text{2} & \text{PrevH}_\text{3} & \cdots & \text{PrevH}_\text{B}\\ 
+\text{PrevR}_\text{1} & \text{PrevR}_\text{2} & \text{PrevR}_\text{3} & \cdots & \text{PrevR}_\text{B}\\
 \Omega_1 & \Omega_2 & \Omega_3 & \cdots&\Omega_B \\
 \beta_1 & \beta_2 & \beta_3 &\cdots & \beta_B 
 \end{array} \right)\] 
