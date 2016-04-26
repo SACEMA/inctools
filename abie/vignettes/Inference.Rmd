@@ -113,9 +113,9 @@ V[\Delta \mathbb{I}]_2 \approx &
 Case 3: FRR and MDRI independent
 \begin{align}
 V[\Delta \mathbb{I}]_3 \approx &
- \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
-&\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
-      & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\ PrevR_1)^2)  +\\     &\frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))(RSE_{PrevR_2}PrevR_2)^2) +\\
+ \Big(\frac{(PrevR_1 - \beta_1)}{(1 - PrevH_1)^2} (\Omega_1 - \beta_1 T_1)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
+&\Big(\frac{(PrevR_2 - \beta_2)}{(1 - PrevH_2)^2} (\Omega_2 - \beta_2 T_2)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
+      & \frac{PrevH_1}{1 - PrevH_1}(\Omega_1 - \beta_1 T_1))\ (RSE_{PrevR_1}\ PrevR_1)^2)  +\\     &\frac{PrevH_2}{1 - PrevH_2}(\Omega_2 - \beta_2 T_2))(RSE_{PrevR_2}PrevR_2)^2) +\\
       &\Big(\frac{\beta_1\ PrevH_1 - PrevR_1\ PrevH_1}{1 - PrevH_1}\ (\Omega_1 - \beta_1\ T_1)^2\Big)^2 RSE_{MDRI_1}\ MDRI_1 + \\
     &\Big(\frac{\beta_2\ PrevH_2 - PrevR_2\ PrevH_2}{1 - PrevH_2}\ (\Omega_2 - \beta_2\ T_2)^2\Big)^2 RSE_{MDRI_2}\ MDRI_2    +\\
       &\Big(\frac{PrevH_1(T_1\ PrevR_1 - \Omega_1}{1 - PrevH_1}(\Omega_1 -\beta_1\ T_1)^2\Big)^2  RSE_{\beta_1}\ \beta_1 + \\     
@@ -148,9 +148,9 @@ So we have sample matrix
 \Omega_1 & \Omega_2 & \Omega_3 & \cdots&\Omega_B \\
 \beta_1 & \beta_2 & \beta_3 &\cdots & \beta_B 
 \end{array} \right)\] 
-$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \   \ \  \ \  \downarrow\ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \  \  \cdots\ \ \ \ \   \downarrow \ \ \ \ \ \ \  \ \ 
+$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \   \ \  \ \  \downarrow\ \ \ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \   \cdots\ \ \ \ \  \ \downarrow \ \ \ \ \ \ \  \ \ 
 $$
-$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \  \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \ \ \ \ \  \ \ \  \  \mathbb{I}_3\ \ \    \ \ \ \ \ \cdots\ \ \ \ \ \  \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
+$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \  \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \  \ \ \ \ \ \  \ \ \  \  \mathbb{I}_3\ \ \    \  \ \ \ \cdots\ \ \ \ \ \  \ \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
 $$
 which is sampled in such a way that, for example, for empirical bootstrap sample $\Omega_B$ 
 $$
