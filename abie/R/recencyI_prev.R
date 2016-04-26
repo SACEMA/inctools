@@ -148,6 +148,7 @@ DM_VAR_deltaI.infSS <- function(BMest, fot_mdri1, fot_frr1, fot_mdri2, fot_frr2,
 #' @param RSE_PrevR Relative Standard Error (RSE) of estimate for population proportion of those testing positive for HIV who have been infected recently (vector/integer).
 #' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
 #' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
+#' @param alpha test rejection threshold.
 #' @param BMest Biomarker estimation by one the 3 options 'same.test'(=default), 'FRR.indep', 'MDRI.FRR.indep' (string).
 #' @param MDRI mean duration of recent infection [days] (vector/integer).
 #' @param RSE_MDRI Relative standard error of MDRI [days] (vector/integer).
@@ -478,16 +479,16 @@ recencyI <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
   # rearranged. Perhaps this could be streamlined more.
   for (i in c(1:no_s)) {
     survey_no[(i * no_s - (no_s - 1)):(i * no_s)] <- c(i, rep("", times = (no_s - 1)))
-    out_I_Est[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(I_Est[i], digit = 5), rep("", times = (no_s - 1)))
-    out_RSE_I[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(RSE_I[i], digit = 5), rep("", times = (no_s - 1)))
+    out_I_Est[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(I_Est[i], digits = 5), rep("", times = (no_s - 1)))
+    out_RSE_I[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(RSE_I[i], digits = 5), rep("", times = (no_s - 1)))
 
     if (Boot == F) {
-      out_RSE_I.infSS[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(RSE_I.infSS[i], digit = 5), rep("", times = (no_s -
+      out_RSE_I.infSS[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(RSE_I.infSS[i], digits = 5), rep("", times = (no_s -
                                                                                                                     1)))
     }
 
-    out_CI_I_lo[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(CI_I_Mat[i, 1], digit = 5), rep("", times = (no_s - 1)))
-    out_CI_I_up[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(CI_I_Mat[i, 2], digit = 5), rep("", times = (no_s - 1)))
+    out_CI_I_lo[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(CI_I_Mat[i, 1], digits = 5), rep("", times = (no_s - 1)))
+    out_CI_I_up[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(CI_I_Mat[i, 2], digits = 5), rep("", times = (no_s - 1)))
     for (j in c(1:no_s)) {
       delta_code[(i * no_s - (no_s - j))] <- paste(i, j, sep = " vs ")
     }
@@ -531,21 +532,21 @@ recencyI <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
   }
 
 
-  out_deltaI_Est <- round(deltaI_Est_Vec, digit = 5)
-  out_RSE_deltaI <- round(RSE_deltaI, digit = 5)
+  out_deltaI_Est <- round(deltaI_Est_Vec, digits = 5)
+  out_RSE_deltaI <- round(RSE_deltaI, digits = 5)
 
   if (Boot == F) {
-    out_RSE.deltaI.infSS <- round(out_RSE.deltaI.infSS, digit = 5)
-    out_p_value.infSS <- ifelse(p_value.infSS < 0.001, "<0.0001", round(p_value.infSS, digit = 5))
+    out_RSE.deltaI.infSS <- round(out_RSE.deltaI.infSS, digits = 5)
+    out_p_value.infSS <- ifelse(p_value.infSS < 0.001, "<0.0001", round(p_value.infSS, digits = 5))
   }
 
-  out_CI_deltaI_Mat <- round(CI_deltaI_Mat, digit = 5)
-  out_p_value <- ifelse(p_value < 0.001, "<0.0001", round(p_value, digit = 5))
+  out_CI_deltaI_Mat <- round(CI_deltaI_Mat, digits = 5)
+  out_p_value <- ifelse(p_value < 0.001, "<0.0001", round(p_value, digits = 5))
 
   MDRI.CI <- round(365.25 * data.frame(CI.low = qnorm(alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)), CI.up = qnorm(1 - alpha/2,
-                                                                                                                mean = MDRI, sd = sqrt(Var_MDRI))), digit = 3)
+                                                                                                                mean = MDRI, sd = sqrt(Var_MDRI))), digits = 3)
   FRR.CI <- round(data.frame(CI.low = qnorm(alpha/2, mean = FRR, sd = sqrt(Var_FRR)), CI.up = qnorm(1 - alpha/2, mean = FRR,
-                                                                                                    sd = sqrt(Var_FRR))), digit = 4)
+                                                                                                    sd = sqrt(Var_FRR))), digits = 4)
 
   if (BMest == "same.test") {
     MDRI.CI <- MDRI.CI[1, ]
@@ -621,6 +622,7 @@ recencyI <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
 #' @param DE_R Design effect of recency test (vector/numeric), greater than or equal to 1. If multiple surveys are entered but only one design effect is specified, function assumes entered design effect is identical for both surveys.
 #' @param BS_Count Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.
 #' @param Boot True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.
+#' @param alpha test rejection threshold.
 #' @param BMest Biomarker estimation by one the 3 options 'same.test'(=default), 'FRR.indep', 'MDRI.FRR.indep' (string).
 #' @param MDRI mean duration of recent infection [days] (vector/integer).
 #' @param RSE_MDRI Relative standard error of MDRI [days] (vector/integer).
@@ -633,19 +635,19 @@ recencyI <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
 #' @return Incidence estimate, annual risk of infection, confidence interval, relative standard error of estimate and of assay characteristics MDRI and FRR. If multiple surveys are entered, function returns said results, as well as estimates of incidence  differences, confidence intervals of differences, difference relative standard errors, and p-values testing the hypothesis that the difference in incidence measures are zero. Theoretical relative standard error of incidence and incidence difference at infinite sample size is returned only if Boot=FALSE, as that calculation relies on the asymptotic behavior of components of the Delta method approximation, and is not calculable from bootstrapped values.
 #' @examples
 #' incBYcounts(N = c(5000) ,N_H = 1000, N_testR = 1000, N_R = 70,
-#' BSoot = FALSE, BMest = 'MDRI.FRR.indep', MDRI = 200, RSE_MDRI = 0.05,
+#' Boot = FALSE, BMest = 'MDRI.FRR.indep', MDRI = 200, RSE_MDRI = 0.05,
 #' FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
 #'
 #'
 #' incBYcounts(N = c(4000,4000,4050) ,N_H = c(1010,1000,900),
-#' N_testR = c(1000,1000,880), N_R = c(60,70,50), Boot=TRUE,
-#' BMest='same.test', MDRI = 210, RSE_MDRI = 0.05, FRR = 0.005,
+#' N_testR = c(1000,1000,880), N_R = c(60,70,50), Boot = TRUE,
+#' BMest = 'same.test', MDRI = 210, RSE_MDRI = 0.05, FRR = 0.005,
 #' RSE_FRR = 0.19, BigT = 700)
 #'
 #'
-#' incBYcounts(N = c(4000,4000,4000) ,N_H = c(1050,1090),
-#' N_testR = c(1000,1000), N_R = c(60,67), Boot=FALSE, BMest='FRR.indep',
-#' MDRI = 220, RSE_MDRI = 0.05, FRR = c(0.005,0.005,0.01), RSE_FRR = 0.19,
+#' incBYcounts(N = c(4000,4000) ,N_H = c(1050,1090),
+#' N_testR = c(1000,1000), N_R = c(60,67), Boot = FALSE, BMest = 'FRR.indep',
+#' MDRI = 220, RSE_MDRI = 0.05, FRR = c(0.005,0.005), RSE_FRR = 0.19,
 #' BigT = 610)
 #'
 #' @export
@@ -670,95 +672,95 @@ incBYcounts <- function(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 100
 
 
 # Begin Examples ----------------------------------------------------------
-
-######## -- The rest of this code gives example to show the function agrees with spreadsheet answers, and to see when and how
-######## the function breaks, what error messages it outputs. Final R package must omit this code
-
-
-probs <- prevBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 970), N_R = c(100, 70))
-
-################### == Call - DM only ==######################################################
-recencyI(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-
-# (single survey)
-recencyI(BS_Count = 10000, Boot = T, BMest = "same.test", PrevH = probs[1, 1], RSE_PrevH = probs[1, 3], PrevR = probs[1,
-                                                                                                                      2], RSE_PrevR = probs[1, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-
-
-
-##############################################################################################
-
-################### == Call - BS only ==######################################################
-recencyI(BS_Count = 10000, Boot = TRUE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                       2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-
-# boot with a larger sample
-recencyI(BS_Count = 1e+05, Boot = TRUE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                       2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, Covar_HR = 2e-05)
-
-# boot with a larger sample and different testing scheme
-recencyI(BS_Count = 1e+05, Boot = TRUE, BMest = "FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                       2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01, 0.008), RSE_FRR = c(0.2, 0.21), BigT = 730, Covar_HR = 2e-05)
-##############################################################################################
-
-
-
-######## == Check with spread sheets ''''''same.test, three surveys''''''==###########
-probs <- prevBYcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 960), N_R = c(100, 70,
-                                                                                                                120))
-
-recencyI(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-
-######## == Check with spread sheets ''''''FRR.indep''''''==###########
-probs <- prevBYcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 955), N_R = c(100, 70,
-                                                                                                                120))
-
-recencyI(BS_Count = 10000, Boot = FALSE, BMest = "FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-
-######## == Check with spread sheets ''''''MDRI.FRR.indep''''''==###########
-probs <- prevBYcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 980), N_R = c(100, 70,
-                                                                                                                120))
-
-recencyI(BS_Count = 10000, Boot = FALSE, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                             2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01, 0.02, 0.001), RSE_FRR = 0.2, BigT = 730)
-
-
-####### == bootstrap with warining from FRR=0 ==###########
-probs <- prevBYcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 990), N_R = c(100, 70,
-                                                                                                                120))
-
-recencyI(BS_Count = 10000, Boot = TRUE, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                            2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-
-recencyI(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0, RSE_FRR = 0, BigT = 730)
-
-
-######## == incidence by counts, single survey ==###########
-incBYcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 100, DE_H = 1, DE_R = 1, BS_Count = 10000, Boot = FALSE, BMest = "same.test",
-            MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, Covar_HR = 0)
-
-######## == incidence by counts, two surveys ==###########
-incBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 1000), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
-            Boot = FALSE, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.06, BigT = 730, Covar_HR = 0)
-
-incBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 1000), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
-            Boot = TRUE, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.06, BigT = 730, Covar_HR = 0)
-
-
-
-######## == incidence by counts, two surveys, FRR independent ==########### == incidence by counts, two surveys, FRR
-######## independent ==###########
-incBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 950), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
-            Boot = FALSE, BMest = "MDRI.FRR.indep", MDRI = c(200, 190), RSE_MDRI = c(0.05, 0.07), FRR = c(0.01, 0.02), RSE_FRR = 0.05,
-            BigT = c(730, 735), Covar_HR = 0)
-
-incBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 950), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
-            Boot = FALSE, BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05, FRR = 0, RSE_FRR = 0.05, BigT = 730, Covar_HR = 0)
-
-
-
-# End Examples ------------------------------------------------------------
+#
+# ######## -- The rest of this code gives example to show the function agrees with spreadsheet answers, and to see when and how
+# ######## the function breaks, what error messages it outputs. Final R package must omit this code
+#
+#
+# probs <- prevBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 970), N_R = c(100, 70))
+#
+# ################### == Call - DM only ==######################################################
+# recencyI(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                         2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+#
+# # (single survey)
+# recencyI(BS_Count = 10000, Boot = T, BMest = "same.test", PrevH = probs[1, 1], RSE_PrevH = probs[1, 3], PrevR = probs[1,
+#                                                                                                                       2], RSE_PrevR = probs[1, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+#
+#
+#
+# ##############################################################################################
+#
+# ################### == Call - BS only ==######################################################
+# recencyI(BS_Count = 10000, Boot = TRUE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+#
+# # boot with a larger sample
+# recencyI(BS_Count = 1e+05, Boot = TRUE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, Covar_HR = 2e-05)
+#
+# # boot with a larger sample and different testing scheme
+# recencyI(BS_Count = 1e+05, Boot = TRUE, BMest = "FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01, 0.008), RSE_FRR = c(0.2, 0.21), BigT = 730, Covar_HR = 2e-05)
+# ##############################################################################################
+#
+#
+#
+# ######## == Check with spread sheets ''''''same.test, three surveys''''''==###########
+# probs <- prevBYcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 960), N_R = c(100, 70,
+#                                                                                                                 120))
+#
+# recencyI(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                         2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+#
+# ######## == Check with spread sheets ''''''FRR.indep''''''==###########
+# probs <- prevBYcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 955), N_R = c(100, 70,
+#                                                                                                                 120))
+#
+# recencyI(BS_Count = 10000, Boot = FALSE, BMest = "FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                         2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+#
+# ######## == Check with spread sheets ''''''MDRI.FRR.indep''''''==###########
+# probs <- prevBYcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 980), N_R = c(100, 70,
+#                                                                                                                 120))
+#
+# recencyI(BS_Count = 10000, Boot = FALSE, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                              2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01, 0.02, 0.001), RSE_FRR = 0.2, BigT = 730)
+#
+#
+# ####### == bootstrap with warining from FRR=0 ==###########
+# probs <- prevBYcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 990), N_R = c(100, 70,
+#                                                                                                                 120))
+#
+# recencyI(BS_Count = 10000, Boot = TRUE, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                             2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+#
+# recencyI(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+#                                                                                                                         2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0, RSE_FRR = 0, BigT = 730)
+#
+#
+# ######## == incidence by counts, single survey ==###########
+# incBYcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 100, DE_H = 1, DE_R = 1, BS_Count = 10000, Boot = FALSE, BMest = "same.test",
+#             MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, Covar_HR = 0)
+#
+# ######## == incidence by counts, two surveys ==###########
+# incBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 1000), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
+#             Boot = FALSE, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.06, BigT = 730, Covar_HR = 0)
+#
+# incBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 1000), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
+#             Boot = TRUE, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.06, BigT = 730, Covar_HR = 0)
+#
+#
+#
+# ######## == incidence by counts, two surveys, FRR independent ==########### == incidence by counts, two surveys, FRR
+# ######## independent ==###########
+# incBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 950), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
+#             Boot = FALSE, BMest = "MDRI.FRR.indep", MDRI = c(200, 190), RSE_MDRI = c(0.05, 0.07), FRR = c(0.01, 0.02), RSE_FRR = 0.05,
+#             BigT = c(730, 735), Covar_HR = 0)
+#
+# incBYcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 950), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
+#             Boot = FALSE, BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05, FRR = 0, RSE_FRR = 0.05, BigT = 730, Covar_HR = 0)
+#
+#
+#
+# # End Examples ------------------------------------------------------------

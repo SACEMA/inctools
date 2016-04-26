@@ -28,6 +28,7 @@
 #' @param n2 Sample size for survey 2. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value "both", which is the default. If necessary sample size at a given power level for survey 2 is desired and survey 1 has been completed, n2 must be set to "out" along with SS.
 #' @param alpha Significance level for test (default alpha=0.05).
 #' @param Power Desired power used to calculate a sample size for the surveys. Default is 0.80, meaning the function outputs the necessary sample size to achieve stated power for a test of differences in incidence. If Power is set to "out", function will return power of detecting a difference in incidences for given sample size inputs.
+#' @param CR Coverage rate (0-1).
 #' @param SS Sample size. Default is "out", meaning the function takes a power argument and outputs a common sample size needed to achieve power level for test of differences for incidence. If power is desired for a given sample size, parameter value is irrelevant; however, values for n1 and n2 must be specified.
 #' @param DE_H Design effect of HIV prevalence test (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
 #' @param DE_R Design effect of recency test (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.

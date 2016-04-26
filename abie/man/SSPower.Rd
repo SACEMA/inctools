@@ -27,6 +27,8 @@ SSPower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
 
 \item{SS}{Sample size. Default is "out", meaning the function takes a power argument and outputs a common sample size needed to achieve power level for test of differences for incidence. If power is desired for a given sample size, parameter value is irrelevant; however, values for n1 and n2 must be specified.}
 
+\item{CR}{Coverage rate (0-1).}
+
 \item{DE_H}{Design effect of HIV prevalence test (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.}
 
 \item{DE_R}{Design effect of recency test (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.}

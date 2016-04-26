@@ -21,6 +21,8 @@ recencyI(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
 
 \item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.}
 
+\item{alpha}{test rejection threshold.}
+
 \item{BMest}{Biomarker estimation by one the 3 options 'same.test'(=default), 'FRR.indep', 'MDRI.FRR.indep' (string).}
 
 \item{MDRI}{mean duration of recent infection [days] (vector/integer).}
