@@ -105,7 +105,7 @@ SSCprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT
 
   for (i in 1:12) {
     if (length(var_list[[i]]) > 2 | length(var_list[[i]]) < 1) {
-      stop(paste("specifiy (only) min & max values for ", names(var_list)[i]), sep = "")
+      stop(paste("specify (only) min & max values for ", names(var_list)[i]), sep = "")
     }
   }
 

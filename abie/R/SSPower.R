@@ -142,7 +142,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
 ##################################   Break   #########################################
 #This section was an attempt to use the same machinery as recnecyI() wrt to first order terms.
-#It was quite troublesome, and I wasn't able to get it to work, so I scrapped it and explicitely
+#It was quite troublesome, and I wasn't able to get it to work, so I scrapped it and explicitly
 #calculated the formulas
 
 #   DM_Var_PrevH<-PrevH*(1-PrevH)*DE_H/N
@@ -160,7 +160,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 #       DM_Var_I[i] <- (fot_Mat[i,1]^2)*DM_Var_PrevH[i] + (fot_Mat[i,2]^2)*DM_Var_PrevR[i] +
 #         (fot_Mat[i,3]^2)*DM_Var_MDRI[i]  + (fot_Mat[i,4]^2)*DM_Var_FRR[i]
 #     }
-#     #I tested this function explicitely. It works, and works in the other function scripts as well.
+#     #I tested this function explicitly. It works, and works in the other function scripts as well.
 #
 
 # #     DM_Var_deltaI <- DM_VAR_deltaI (BMest=BMest, fot_prevH1=fot_Mat[1,1], fot_prevH2=fot_Mat[2,1],
@@ -195,7 +195,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
 
 #Instead of trying to get the 'fot' function to work,
-#I explicitely wrote out the commands for the Var[I], Var[D-I]
+#I explicitly wrote out the commands for the Var[I], Var[D-I]
 if(Power=="out"){
   if(n1<1 | n2<1) stop("Sample size input must be a positive integer")
 
@@ -278,7 +278,7 @@ if(Power=="out"){
                       ))
     }
 
-    if(SS<0){stop("No sample size will meet the given contraints")}
+    if(SS<0){stop("No sample size will meet the given constraints")}
 
 
     #Now based on derived common SS, output implied summary statistics
@@ -364,7 +364,7 @@ if(Power=="out"){
                         ))
       }
 
-      if(SS<0){stop("No sample size will meet the given contraints")}
+      if(SS<0){stop("No sample size will meet the given constraints")}
 
 
       #Now based on derived common SS, output implied summary statistics
@@ -445,7 +445,7 @@ if (BMest=="same.test")
                       ))
 }
 
-  if(SS<0){stop("No sample size will meet the given contraints")}
+  if(SS<0){stop("No sample size will meet the given constraints")}
 
 
   #Now based on derived common SS, output implied summary statistics
