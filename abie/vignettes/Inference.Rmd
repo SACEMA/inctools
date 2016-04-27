@@ -148,9 +148,9 @@ So we have sample matrix
 \Omega_1 & \Omega_2 & \Omega_3 & \cdots&\Omega_B \\
 \beta_1 & \beta_2 & \beta_3 &\cdots & \beta_B 
 \end{array} \right)\] 
-$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \   \ \  \ \  \downarrow\ \ \ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \   \cdots\ \ \ \ \  \ \downarrow \ \ \ \ \ \ \  \ \ 
+$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \  \ \ \  \ \  \downarrow\ \ \ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \ \  \cdots\ \ \ \ \  \ \downarrow \ \ \ \ \ \ \  \ \ 
 $$
-$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \  \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \  \ \ \ \ \ \  \ \ \  \  \mathbb{I}_3\ \ \    \  \ \ \ \cdots\ \ \ \ \ \  \ \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
+$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \ \ \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \  \ \ \ \ \ \  \ \ \  \  \mathbb{I}_3\ \ \  \  \  \ \ \ \cdots\ \ \ \ \ \  \ \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
 $$
 which is sampled in such a way that, for example, for empirical bootstrap sample $\Omega_B$ 
 $$
