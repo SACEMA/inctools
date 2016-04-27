@@ -24,7 +24,7 @@ Suggests: doMC, foreach, testthat, knitr, rmarkdown
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2016-04-27 08:10:45 UTC; Avery
+Packaged: 2016-04-27 10:32:03 UTC; Avery
 Author: Avery McIntosh [aut],
   Eduard Grebe [cre, aut],
   Petra Baumler [aut],
@@ -35,4 +35,4 @@ Author: Avery McIntosh [aut],
   Stefano Ongarello [ctb],
   Alex Welte [aut]
 Maintainer: Eduard Grebe <eduardgrebe@sun.ac.za>
-Built: R 3.2.3; ; 2016-04-27 08:10:46 UTC; unix
+Built: R 3.2.3; ; 2016-04-27 10:32:04 UTC; unix

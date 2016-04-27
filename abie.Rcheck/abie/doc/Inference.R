@@ -1,4 +1,4 @@
-## ----echo=F--------------------------------------------------------------
+## ---- echo=FALSE---------------------------------------------------------
 prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
   if (sum(N_H>N)>0 | sum(N_R>N)>0) {
     stop("sample subset larger than total sample")

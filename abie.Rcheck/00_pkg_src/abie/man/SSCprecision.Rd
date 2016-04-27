@@ -44,7 +44,7 @@ Sample size or precision calculation
 Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSE of incidence) and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision.
 Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained solely by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.
 
-Up to two parameters can be given as tuple vetors, with the input parameter 'step' giving the number of points analyzed between the endpoints of the vector. This yields output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an instantiation of this process.
+Up to two parameters can be given as tuple vetors, with the input parameter 'step' giving the number of points analyzed between the endpoints of the vector. This yields output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an illustration of this process. The package contains a long form vignette for this function. See package documentation for more details.
 }
 \examples{
 SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,

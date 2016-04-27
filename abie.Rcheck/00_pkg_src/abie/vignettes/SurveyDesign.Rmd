@@ -1,70 +1,24 @@
-# Assay-Based Incidence Estimation
-# Copyright (C) 2015-2016, DST/NRF Centre of Excellence in Epidemiological Modelling and Analysis (SACEMA)
-# and individual contributors.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+---
+title: "Survey Design (sample size, power, precision)"
+date: "2016"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SurveyDesign}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Integrating TCGA Data}
+---
 
+This vignette covers the use of functions $SSPower$ and $SSCprecision$. 
 
+## SSPower
+A common statistical question is whether there is adequate power for a particular study design; that is, does the probability of discovering a statistically significant result rise above a pre-specified threshold, given assumptions on effect size and sample size. 
 
-#' Power and sample size calculation for assay-based incidence estimation
-#'
-#' @param I1 Predicted incidence of HIV in survey 1.
-#' @param I2 Predicted incidence of HIV in survey 2.
-#' @param PrevH1 Predicted prevalence of HIV in survey 1.
-#' @param PrevH2 Predicted prevalence of HIV in survey 2.
-#' @param n1 Sample size for survey 1. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value "both", which is the default. If necessary sample size at a given power level for survey 1 is desired and survey 2 has been completed, n1 must be set to "out" along with SS.
-#' @param n2 Sample size for survey 2. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value "both", which is the default. If necessary sample size at a given power level for survey 2 is desired and survey 1 has been completed, n2 must be set to "out" along with SS.
-#' @param alpha Significance level for test (default alpha=0.05).
-#' @param Power Desired power used to calculate a sample size for the surveys. Default is 0.80, meaning the function outputs the necessary sample size to achieve stated power for a test of differences in incidence. If Power is set to "out", function will return power of detecting a difference in incidences for given sample size inputs.
-#' @param CR Coverage rate (0-1).
-#' @param SS Sample size. Default is "out", meaning the function takes a power argument and outputs a common sample size needed to achieve power level for test of differences for incidence. If power is desired for a given sample size, parameter value is irrelevant; however, values for n1 and n2 must be specified.
-#' @param DE_H Design effect of HIV prevalence test (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
-#' @param DE_R Design effect of recency test (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
-#' @param BMest Biomarker test parameter (MDRI, FRR, and RSE) estimation by one the 3 options "same.test"(default), "FRR.indep", "MDRI.FRR.indep" (string).
-#' @param MDRI mean duration of recent infection [days] (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
-#' @param RSE_MDRI Relative standard error of MDRI [days] (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
-#' @param FRR False recent rate (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
-#' @param RSE_FRR Relative standard error of FRR (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
-#' @param BigT Post-infection time cut-off (days). Default 730. If a single value is specified, that value is assumed to be the value for both surveys.
-#' @return Common sample size of two surveys--or the sample size of one survey given the other has already been completed--necessary to achieve a given power level for testing a null hypothesis that the incidence rates are identical between populations; alternatively, the power of said test under a particular sample size scenario. Function also returns implied statistics from input values on paramters, confidence limits, and population counts.
-#' @details The package contains a long form vignette for this function. See package documentation for more details.
-#'
-#' @examples
-#'SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
-#'n1 = 5000, n2 = 5000, alpha = 0.05, Power = "out", SS = NULL,
-#'DE_H = c(1,1.1), DE_R = 1, BMest = "same.test", MDRI = 200,
-#'RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
-#'
-#'
-#'SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
-#'alpha = 0.05, Power = 0.80, SS = "out", DE_H = 1, DE_R = 1,
-#'BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05,
-#'FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.21), BigT = 730)
-#'
-#'
-#'SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
-#'n1 = 5000, n2 = "out", alpha = 0.05, Power = 0.80, SS ="out",
-#'DE_H = 1, DE_R = 1, BMest = "MDRI.FRR.indep", MDRI = 200,
-#'RSE_MDRI = c(0.05,0.06), FRR = c(0.01,0.009),
-#'RSE_FRR = c(0.20,0.21), BigT = 730)
-#' @export
+$SSPower$ takes assumed study parameter values--incidences, prevalences, coverage rates, design effects, and assay characteristics false recency rate (FRR) and mean duration of recent infection (MDRI)--and returns the necessary common sample size of two surveys or the sample size needed for desired power for one survey given that the other survey has already been completed that is needed to achieve a given probability of rejecting the statistical test for a null hypothesis that the incidence rates are identical between populations. The function will also return the power of a test of differences under a particular sample size scenario. As supplementary output the function also returns implied statistics such as relative standard error (RSE) from input values on several parameters, their confidence limits, and population counts.
 
-
-SSPower <- function (I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05, Power = 0.80, SS = "out", CR = 1, DE_H = 1, DE_R = 1,
-                      BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-                      BigT = 730){
+As an example, consider the situation where we wish to discover the power to detect a difference in incidence estimates for a hypothetical scenario where the values of the survey are imagined, respectively, to be incidence 5\%, 3\% and prevalences at 20\%. The assay is in this scenario assumed identical for both surveys. So there are unique values for MDRI, the RSE of MDRI, FRR, the RSE of FRR, and time cut T of 200 days, 5\%, 1\%, 20\%, and 730 days. We envision total coverage, and no survey design effects. Finally, we envision a common study sample size of 5000 persons and we decide on a false positive rate $\alpha$ of 5\%. Note that here function parameter for sample size is listed as `SS = NULL`.  
+```{r, echo=FALSE}
+SSPower <- function (I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05, Power = 0.80, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730){
 
 ############ Begin warning messages ################
    stopifnot (PrevH1<=1     & PrevH1>=0)
@@ -138,64 +92,7 @@ SSPower <- function (I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
   MDRI.CI <- 365.25*data.frame(CI.low=qnorm(alpha/2, mean=MDRI, sd=sqrt(DM_Var_MDRI)), CI.up=qnorm(1-alpha/2, mean=MDRI, sd=sqrt(DM_Var_MDRI)))
   FRR.CI <- data.frame(CI.low=qnorm(alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR)),CI.up=qnorm(1-alpha/2, mean=FRR, sd=sqrt(DM_Var_FRR)))
-
-
-##################################   Break   #########################################
-#This section was an attempt to use the same machinery as recnecyI() wrt to first order terms.
-#It was quite troublesome, and I wasn't able to get it to work, so I scrapped it and explicitly
-#calculated the formulas
-
-#   DM_Var_PrevH<-PrevH*(1-PrevH)*DE_H/N
-#   DM_Var_PrevR<-PrevR*(1-PrevR)*DE_R/N
-
-
-# #
-#     #next few lines make delta method matrix
-#     fot_Mat  <- matrix (nrow=no_s, ncol=4)
-#     DM_Var_I <- vector(length=no_s)
-#     for (i in c(1:no_s)) {
-#       fot_Mat[i,] <- DM_FirstOrderTerms (prevH=PrevH[i], prevR=PrevR[i], mdri=MDRI[i], frr=FRR[i], bigt=BigT)
-#       #DM_FirstOrderTerms gives fot_prevH, fot_prevR, fot_mdri, fot_frr, so FOT for each prev. survey input
-#       #and each row of fot_Mat has the FOT for prev. survey i.
-#       DM_Var_I[i] <- (fot_Mat[i,1]^2)*DM_Var_PrevH[i] + (fot_Mat[i,2]^2)*DM_Var_PrevR[i] +
-#         (fot_Mat[i,3]^2)*DM_Var_MDRI[i]  + (fot_Mat[i,4]^2)*DM_Var_FRR[i]
-#     }
-#     #I tested this function explicitly. It works, and works in the other function scripts as well.
-#
-
-# #     DM_Var_deltaI <- DM_VAR_deltaI (BMest=BMest, fot_prevH1=fot_Mat[1,1], fot_prevH2=fot_Mat[2,1],
-# #                                                      fot_prevR1=fot_Mat[1,2],   fot_prevR2=fot_Mat[2,2],
-# #                                                      fot_mdri1=fot_Mat[1,3],    fot_mdri2=fot_Mat[2,3],
-# #                                                      fot_frr1=fot_Mat[1,4],     fot_frr2=fot_Mat[2,4],
-# #                                                      dm_var_prevH1=DM_Var_PrevH[1], dm_var_prevH2=DM_Var_PrevH[2],
-# #                                                      dm_var_prevR1=DM_Var_PrevR[1], dm_var_prevR2=DM_Var_PrevR[2],
-# #                                                      dm_var_mdri1=DM_Var_MDRI[1],   dm_var_mdri2=DM_Var_MDRI[2],
-# #                                                      dm_var_frr1=DM_Var_FRR[1],     dm_var_frr2=DM_Var_FRR[2])
-# #
-# #
-# #     DM_Var_deltaI.infSS <- DM_VAR_deltaI.infSS (BMest=BMest,
-# #                                     fot_mdri1=fot_Mat[1,3],    fot_mdri2=fot_Mat[2,3],
-# #                                     fot_frr1=fot_Mat[1,4],     fot_frr2=fot_Mat[2,4],
-# #                                     dm_var_mdri1=DM_Var_MDRI[1],   dm_var_mdri2=DM_Var_MDRI[2],
-# #                                     dm_var_frr1=DM_Var_FRR[1],     dm_var_frr2=DM_Var_FRR[2])
-#
-# #
-# #   DM_SD_I      <- sqrt(DM_Var_I)
-# #   DM_SD_deltaI <- sqrt(DM_Var_deltaI)
-# #   DM_SD_deltaI.infSS <- sqrt(DM_Var_deltaI.infSS)
-# #   Var_I        <-  DM_Var_I
-# #   RSE_I        <- sqrt(Var_I)/I
-# #   SD_I         <- sqrt(Var_I)
-# #   Var_deltaI   <- DM_Var_deltaI #+  BS_Var_deltaI
-# #   RSE_deltaI   <- sqrt(Var_deltaI)/abs(deltaI_Est) #sqrt(Var_deltaI)/abs(deltaI_Est_Vec)
-# #   RSE_deltaI.infSS   <- sqrt(DM_Var_deltaI.infSS)/abs(deltaI_Est)
-# #   SD_deltaI    <- sqrt(Var_deltaI)
-  ##################################  End Break  #########################################
-
-
-
-#Instead of trying to get the 'fot' function to work,
-#I explicitly wrote out the commands for the Var[I], Var[D-I]
+  
 if(Power=="out"){
   if(n1<1 | n2<1) stop("Sample size input must be a positive integer")
 
@@ -507,338 +404,442 @@ if (BMest=="same.test")
   return(output)
 
   }
-
-
-
-
-
-
-
-##################### ---  Test values against spreadsheets (Find Power)---- #######################
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .2
-PrevH2 <- .2
-Power="out"
-MDRI     <- 200
-RSE_MDRI <- 0.05
-FRR      <- 0.01
-RSE_FRR  <- 0.2
-BigT     <- 730
-CR       <- 1
-DE_H     <- 1
-DE_R     <- 1
-n1       <- 5000
-n2       <-5000
-alpha=0.05
-BMest="same.test"
-
-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=1, DE_R=1,
-                     BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-                     BigT=730)
-
-
-my.data<-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=1, DE_R=1,
-                 BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-                 BigT=730)
-my.data$Inc.Difference.Statistics
-my.data[[1]]
-my.data[[1]][4]
-my.data[[1]]$Power
-names(my.data)
-str(my.data)
-
-
-
-##################### ---  Test values against spreadsheets (Find Power)---- #######################
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .1
-PrevH2 <- .1
-Power="out"
-MDRI     <- 200
-RSE_MDRI <- 0.05
-FRR      <- c(0.01,0.03)
-RSE_FRR  <- c(0.2,0.21)
-BigT     <- 730
-CR       <- c(1,0.9)
-DE_H     <- c(1,1.2)
-DE_R     <- c(1.1,1)
-n1       <- 4000
-n2       <-4500
-alpha=0.05
-BMest="FRR.indep"
-
-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=DE_H, DE_R=DE_H,
-        BMest="FRR.indep", MDRI, RSE_MDRI, FRR, RSE_FRR,
-        BigT=730)
-
-
-
-
-
-##################### ---  Test values against spreadsheets (Find Power)---- #######################
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .1
-PrevH2 <- .1
-Power="out"
-CR = c(1,.9)
-MDRI     <- c(200,210)
-RSE_MDRI <- c(0.05,0.04)
-FRR      <- c(0.01,0.03)
-RSE_FRR  <- c(0.2,0.21)
-BigT     <- c(730,720)
-CR       <- c(1,0.9)
-DE_H     <- c(1,1.2)
-DE_R     <- c(1.1,1)
-n1       <- 4000
-n2       <-4500
-alpha=0.05
-BMest="MDRI.FRR.indep"
-
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=alpha,
-        Power="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
-        BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
-        BigT=BigT)
-
-
-
-
-
-
-##################### ---  Test values against spreadsheets (Find SS)---- #######################
-
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .2
-PrevH2 <- .15
-Power= .8
-SS = "out"
-MDRI     <- 200
-RSE_MDRI <- 0.05
-FRR      <- 0.01
-RSE_FRR  <- 0.2
-BigT     <- 730
-CR       <- 1
-DE_H     <- 1
-DE_R     <- 1
-n1       <- "both"
-n2       <-"both"
-alpha=0.05
-BMest="same.test"
-
-
-
-test.SS <- SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=DE_H, DE_R=DE_R,
-                 BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-                 BigT=730)
-
-test.SS
-
-
-
-
-##################### ---  Test values against spreadsheets (Find SS)---- #######################
-
-
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .2
-PrevH2 <- .15
-Power= .8
-SS = "out"
-MDRI     <- 200
-RSE_MDRI <- 0.05
-FRR      <- c(0.01,0.02)
-RSE_FRR  <- c(0.2,0.19)
-BigT     <- 730
-CR       <- 1
-DE_H     <- c(1.1,1.2)
-DE_R     <- 1
-n1       <- "both"
-n2       <-"both"
-alpha=0.05
-BMest="FRR.indep"
-
-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=DE_H, DE_R=DE_R,
-        BMest="FRR.indep", MDRI, RSE_MDRI, FRR, RSE_FRR,
-        BigT=730)
-
-
-
-
-##################### ---  Test values against spreadsheets (Find SS)---- #######################
-
-
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .2
-PrevH2 <- .15
-Power= .8
-SS = "out"
-MDRI     <- 200
-RSE_MDRI <- c(0.05,0.04)
-FRR      <- c(0.01,0.02)
-RSE_FRR  <- c(0.2,0.19)
-BigT     <- c(730,725)
-CR       <- 1
-DE_H     <- c(1.1,1.2)
-DE_R     <- 1
-n1       <- "both"
-n2       <-"both"
-alpha=0.05
-BMest="MDRI.FRR.indep"
-
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=.8, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
-        BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
-        BigT=BigT)
-
-
-
-
-
-##################### ---  Test values against spreadsheets (Find SS--one value)---- #######################
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .2
-PrevH2 <- .15
-Power= .8
-SS = "out"
-MDRI     <- 200
-RSE_MDRI <- 0.05
-FRR      <- c(0.01,0.02)
-RSE_FRR  <- c(0.2,.19)
-BigT     <- 730
-CR       <- 1
-DE_H     <- 1
-DE_R     <- 1
-n1       <- "out"
-n2       <-5000
-alpha=0.05
-BMest="FRR.indep"
-
-SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2=5000, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
-        BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
-        BigT=730)
-
-
-
-
-##################### ---  Test values against spreadsheets (Find SS)---- #######################
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .1
-PrevH2 <- .1
-Power=0.8
-SS = "out"
-CR = c(1,.9)
-MDRI     <- c(200,210)
-RSE_MDRI <- c(0.05,0.04)
-FRR      <- c(0.01,0.03)
-RSE_FRR  <- c(0.2,0.21)
-BigT     <- c(730,720)
-CR       <- c(1,0.9)
-DE_H     <- c(1,1.2)
-DE_R     <- c(1.1,1)
-n1       <- "both"
-n2       <-"both"
-alpha=0.05
-BMest="MDRI.FRR.indep"
-
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
-        BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
-        BigT=BigT)
-
-
-
-
-##################### ---  Test values against spreadsheets (Find SS--one value)---- #######################
-I1 <- 0.05
-I2 <- 0.03
-PrevH1 <- .1
-PrevH2 <- .1
-Power=0.8
-SS = "out"
-CR = c(1,.9)
-MDRI     <- c(200,210)
-RSE_MDRI <- c(0.05,0.04)
-FRR      <- c(0.01,0.03)
-RSE_FRR  <- c(0.2,0.21)
-BigT     <- c(730,720)
-CR       <- c(1,0.9)
-DE_H     <- c(1,1.2)
-DE_R     <- c(1.1,1)
-n1       <- 4500
-n2       <-"out"
-alpha=0.05
-BMest="MDRI.FRR.indep"
-
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
-        BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
-        BigT=BigT)
-
-
-
-
-
-
-##################### ---  Test values against spreadsheets (Find Sample Size)---- #######################
-# #See how to break the thing
-# I1 <- 0.01
-# I2 <- 0.011
-# PrevH1 <- .2
-# PrevH2 <- .15
-# Power= .99
-# SS = "out"
-# MDRI     <- 200
-# RSE_MDRI <- 0.05
-# FRR      <- 0.01
-# RSE_FRR  <- 0.2
-# BigT     <- 730
-# CR       <- 1
-# DE_H     <- 1
-# DE_R     <- 1
-# n1       <- "both"
-# n2       <-"both"
-# alpha=0.05
-# BMest="same.test"
-#
-#
-#
-# test.SS <- SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
-#                    BMest="same.test", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
-#                    BigT=BigT)
-#
-# test.SS
-
-
-
-
-#another error message test: both SS and both n1 and n2 are labeled "out"
-# I1 <- 0.05
-# I2 <- 0.03
-# PrevH1 <- .2
-# PrevH2 <- .15
-# Power= .8
-# SS = "out"
-# MDRI     <- 200
-# RSE_MDRI <- 0.05
-# FRR      <- c(0.01,0.02)
-# RSE_FRR  <- c(0.2,.19)
-# BigT     <- 730
-# CR       <- 1
-# DE_H     <- 1
-# DE_R     <- 1
-# n1       <- "out"
-# n2       <-"out"
-# alpha=0.05
-# BMest="FRR.indep"
-#
-# SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2="out", alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
-#         BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
-#         BigT=730)
-
+```
+
+```{r, echo=TRUE}
+SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20, n1 = 5000, n2 = 5000, alpha = 0.05, Power = "out", SS = NULL, CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
+```
+Output is presented in list form, so individual tables can be called by the user. For example, if the function object is defined as `desired.power`, then the implied subject counts deduced from assumed prevalence and given sample size can be called by entering `desired.power$Implied.Subject.Counts` or `desired.power[[5]]` into the console. 
+
+Here the output returns that the power of this particular test given the hypothetical study parameters and sample size is 0.858. In the event that we had an infinite sample size, which of course is impossible, but which is instructive to understand what amount of power is a function of sample size alone and not test characteristics, we would have a power approaching unity. 
+
+If instead of power the user wants to know a common sample size for a desired power level, the input parameters are mostly the same as above, except that each variable `n1`, `n1` are to be left unspecified in the function call or both set to `"both"`, and variable `Power` will be set to the desired level. Here we envision the situation where the FRR is independent between tests and will be specified as a tuple in the function. As before there are no design effects or lacking testing coverage. Note also that now the function parameters for sample size is set to `SS = "out"`.
+
+```{r, echo=TRUE}
+SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.15, n1 = "both", n2 = "both", alpha = 0.05, Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.22), BigT = 730)
+```
+The function call outputs that the necessary common study sample size is 4122 persons per study to achieve the desired 80\% power given the specified population parameters and assay characteristics. 
+
+Finally, imagine the situation where one study has already been completed, and values have been calculated for that study and for the recency assay in use, and it is desired to find the sample size for the second to be completed study needed to have a desired power to detect a difference in incidences. The function call for this situation is similar to the previous call, except the survey for which the sample size generation is to be performed will have the sample size parameter in the function call specified as `"out`. See below for an example of this syntax and output. Again, not that the function parameter for sample size is still set to `SS = "out"`.
+
+```{r, echo=TRUE}
+SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.15, n1 = 5000, n2 = "out", alpha = 0.05, Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.21, BigT = 730)
+```
+The function now returns the necessary sample size for survey 2 that will generate power of 80\% given the hypothetical populations parameters for survey 2 and the observed parameter estimates for survey 1 and the assay characteristics MDRI, FRR, and their respective relative standard errors and time cutpoint T. 
+
+
+
+
+
+
+
+##SSCPrecision
+This function summarizes performance of a recent infection test into a standard error of the incidence estimate given estimated test properties and the prevalence and incidence in a hypothetical context. Alternatively the function can return the sample size necessary for a given level of estimator precision. Up to two parameters can be given as tuple vectors, with the input parameter `step` specifying the number of points analyzed between the endpoints of the given tuple. This specification will yield output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an illustration of this process.
+
+```{r, echo=FALSE}
+DM_FirstOrderTerms <- function(prevH, prevR, mdri, frr, bigt) {
+  fot_prevH <- (prevR - frr)/(((1 - prevH)^2) * (mdri - frr * bigt))  #E.G. d(I)/d(P_H)
+  fot_prevR <- prevH/((1 - prevH) * (mdri - frr * bigt))
+  fot_mdri <- (frr * prevH - prevR * prevH)/((1 - prevH) * ((mdri - frr * bigt)^2))
+  fot_frr <- (prevH * (bigt * prevR - mdri))/((1 - prevH) * ((mdri - frr * bigt)^2))
+  return(c(fot_prevH, fot_prevR, fot_mdri, fot_frr))
+}
+
+SSCprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730, DE_H = 1, DE_R = 1, n = "out", step = 5) {
+  var_list <- list(I = I, RSE_I = RSE_I, PrevH = PrevH, CR = CR, MDRI = MDRI, RSE_MDRI = RSE_MDRI, FRR = FRR, RSE_FRR = RSE_FRR,
+                   BigT = BigT, DE_H = DE_H, DE_R = DE_R, n = n, step = step)
+
+  # CHECK TO MAKE SURE ONLY TWO VARIABLES ARE ALLOWED TO VARY
+  max.list <- 0
+  for (i in 1:length(var_list)) {
+    if (length(var_list[[i]]) > 1) {
+      max.list = max.list + 1
+    }
+    if (max.list > 2) {
+      stop("only a maximum of 2 variables are allowed to vary")
+    }
+  }
+
+  if (sum(var_list == "out") > 1) {
+    stop("only one of the variables RSE_I or n can be requested at a time")
+  }
+
+  if (length(var_list[1:8]) < 8) {
+    stop("Not enough variables have been specified")
+  }
+
+  for (i in 1:12) {
+    if (length(var_list[[i]]) > 2 | length(var_list[[i]]) < 1) {
+      stop(paste("specify (only) min & max values for ", names(var_list)[i]), sep = "")
+    }
+  }
+
+  for (i in c(1, 3, 4, 6:8)) {
+    if (is.numeric(var_list[[1:length(var_list[i])]]) > 0 & (sum(var_list[[i]] <= 1) != length(var_list[[i]]) | sum(var_list[[i]] >=
+                                                                                                                    0) != length(var_list[[i]]))) {
+      stop("Some input values are less than 0 or greater than 1")
+    }
+  }
+
+  if (sum(RSE_I != "out") > 0) {
+    if (is.numeric(var_list[[1:length(var_list[2])]]) > 0 & (sum(var_list[[2]] <= 1) != length(var_list[[2]]) | sum(var_list[[2]] >=
+                                                                                                                    0) != length(var_list[[2]]))) {
+      stop("Some input values are less than 0 or greater than 1")
+    }
+  }
+
+  # above code does what below code does, only in 1 line. Which should we keep?  if (is.numeric(I)>0) {stopifnot (I<=1 &
+  # I>=0)} if (is.numeric(RSE_I)>0) {stopifnot (RSE_I<=1 & RSE_I>=0)} if (is.numeric(PrevH)>0) {stopifnot (PrevH<=1 &
+  # PrevH>=0)} if (is.numeric(CR)>0) {stopifnot (CR<=1 & CR>=0)} if (is.numeric(MDRI)>0) {stopifnot (MDRI>=0)} if
+  # (is.numeric(RSE_MDRI)>0) {stopifnot (RSE_MDRI<=1 & RSE_MDRI>=0)} if (is.numeric(FRR)>0) {stopifnot (FRR<=1 & FRR>=0)}
+  # if (is.numeric(RSE_FRR)>0) {stopifnot (RSE_FRR<=1 & RSE_FRR>=0)} if (is.numeric(DE_H)>0) {stopifnot (DE_H>=1)} if
+  # (is.numeric(DE_R)>0) {stopifnot (DE_R>=1)} if (is.numeric(n)>0) {stopifnot (n>100)}
+
+  if (sum(BigT <= 182)) {
+    warning("BigT is smaller than half a year")
+  }
+  if (sum(BigT < MDRI) > 0) {
+    stop("MDRI cannot be greater than BigT")
+  }
+  if (sum(RSE_MDRI < 0.01) > 0) {
+    warning("RSE of estimated MDRI is less than 1%")
+  }
+  if (sum(FRR == 0) > 0) {
+    warning("Zero estimated FRR")
+  }
+  if (sum(FRR > 0.1) > 0) {
+    warning("Estimated FRR is greater than 10%")
+  }
+  if (sum(RSE_FRR > 0.3) > 0) {
+    warning("RSE of estimated FRR is greater than 30%")
+  }
+  if (sum(RSE_FRR < 0.05) > 0) {
+    warning("RSE of estimated FRR is less than 5%")
+  }
+  if (sum(I > 0.2) > 0) {
+    warning(paste("Possible error in incidence input.", max(I), " seems exceptionally high", sep = ""))
+  }
+  if (sum(n < 1000) > 0) {
+    warning("Sample size is smaller than 1000")
+  }
+
+
+  # Need error that reads: 'ERROR: Test properties not consistent with test for recent infection'
+
+
+  ######### THIS WHOLE SECTION HERE IS FOR IF ONE OR MORE OF THE VARIABLES IS ALLOWED TO VARY####### CREATES TWO NULL VALUES, I
+  ######### BELIVE FOR WHICH VARIABLES ARE TO VARY
+  vary1 <- NULL
+  vary2 <- NULL
+  # NOW FOR EACH VARIABLE IN LIST, IF IT'S ALLOWED TO VARY, THEN MAKE A MATRIX OF VALUES FOR THE STEP, FROM BEGINNING TO
+  # END, STEP NUMBER OF COLUMNS. IF THE VARIABLE IS THE FIRST ONE IN THIS LIST TO VARY THEN WE'RE CALLING THE VARIABLE
+  # IT'S SAME NAME, AS A MATRIX, AND IF IT'S THE SECOND, WE'RE CALLING THAT VARIABLE AS IT'S SAME NAME, BUT AS A
+  # TRANSPOSED MATRIX, SO NOW THE ROWS ARE THE STEPPING VALUES there's got to be a way to make this more efficient, like
+  # if two have been met, STOP...
+  if (length(I) == 2) {
+    I <- matrix(rep(seq(from = min(I), to = max(I), length.out = step), times = step), ncol = step, nrow = step)
+    if (length(vary1) == 0) {
+      vary1 <- I
+      vary_name1 <- "I"
+    } else {
+      vary2 = I = t(I)
+      vary_name2 = "I"
+    }
+  }
+  if (length(RSE_I) == 2) {
+    RSE_I <- matrix(rep(seq(from = min(RSE_I), to = max(RSE_I), length.out = step), times = step), ncol = step, nrow = step)
+    if (length(vary1) == 0) {
+      vary1 <- RSE_I
+      vary_name1 <- "I"
+    } else {
+      vary2 = RSE_I = t(RSE_I)
+      vary_name2 = "I"
+    }
+  }
+  if (length(PrevH) == 2) {
+    PrevH <- matrix(rep(seq(from = min(PrevH), to = max(PrevH), length.out = step), times = step), ncol = step, nrow = step)
+    if (length(vary1) == 0) {
+      vary1 <- PrevH
+      vary_name1 <- "PrevH"
+    } else {
+      vary2 = PervH = t(PrevH)
+      vary_name2 <- "PrevH"
+    }
+  }
+  if (length(CR) == 2) {
+    CR <- matrix(rep(seq(from = min(CR), to = max(CR), length.out = step), times = step), ncol = step, nrow = step)
+    if (length(vary1) == 0) {
+      vary1 <- CR
+      vary_name1 <- "CR"
+    } else {
+      vary2 = CR = t(CR)
+      vary_name2 = "CR"
+    }
+  }
+  if (length(MDRI) == 2) {
+    MDRI <- matrix(rep(seq(from = min(MDRI), to = max(MDRI), length.out = step), times = step), ncol = step, nrow = step)
+    # IF THIS VARIABLE IS TO VARY, MAKE A MATRIX OF DIM (STEP*STEP) WHERE EACH COLUMN IS THE SEQUENCE OF VALUES
+    if (length(vary1) == 0) {
+      vary1 <- MDRI
+      vary_name1 <- "MDRI"
+    } else {
+      vary2 = MDRI = t(MDRI)
+      vary_name2 = "MDRI"
+    }
+  }
+  if (length(RSE_MDRI) == 2) {
+    RSE_MDRI <- matrix(rep(seq(from = min(RSE_MDRI), to = max(RSE_MDRI), length.out = step), times = step), ncol = step,
+                       nrow = step)
+    # IF THIS VARIABLE IS TO VARY, MAKE A MATRIX OF DIM (STEP*STEP) WHERE EACH COLUMN IS THE SEQUENCE OF VALUES
+    if (length(vary1) == 0) {
+      vary1 <- RSE_MDRI
+      vary_name1 <- "RSE_MDRI"
+    } else {
+      vary2 = RSE_MDRI = t(RSE_MDRI)
+      vary_name2 = "RSE_MDRI"
+    }
+  }
+  if (length(FRR) == 2) {
+    FRR <- matrix(rep(seq(from = min(FRR), to = max(FRR), length.out = step), times = step), nrow = step, ncol = step)
+    if (length(vary1) == 0) {
+      vary1 <- FRR
+      vary_name1 <- "FRR"
+    } else {
+      vary2 = FRR = t(FRR)
+      vary_name2 = "FRR"
+    }
+  }
+  if (length(RSE_FRR) == 2) {
+    RSE_FRR <- matrix(rep(seq(from = min(RSE_FRR), to = max(RSE_FRR), length.out = step), times = step), nrow = step,
+                      ncol = step)
+    if (length(vary1) == 0) {
+      vary1 <- RSE_FRR
+      vary_name1 <- "RSE_FRR"
+    } else {
+      vary2 = RSE_FRR = t(RSE_FRR)
+      vary_name2 = "RSE_FRR"
+    }
+  }
+  if (length(BigT) == 2) {
+    BigT <- matrix(rep(seq(from = min(BigT), to = max(BigT), length.out = step), times = step), nrow = step, ncol = step)
+    if (length(vary1) == 0) {
+      vary1 <- BigT
+      vary_name1 <- "BigT"
+    } else {
+      vary2 = BigT = t(BigT)
+      vary_name2 = "BigT"
+    }
+  }
+  if (length(DE_H) == 2) {
+    DE_H <- matrix(rep(seq(from = min(DE_H), to = max(DE_H), length.out = step), times = step), nrow = step, ncol = step)
+    if (length(vary1) == 0) {
+      vary1 <- DE_H
+      vary_name1 <- "DE_H"
+    } else {
+      vary2 = DE_H = t(DE_H)
+      vary_name2 = "DE_H"
+    }
+  }
+  if (length(DE_R) == 2) {
+    DE_R <- matrix(rep(seq(from = min(DE_R), to = max(DE_R), length.out = step), times = step), nrow = step, ncol = step)
+    if (length(vary1) == 0) {
+      vary1 <- DE_R
+      vary_name1 <- "DE_R"
+    } else {
+      vary2 = DE_R = t(DE_R)
+      vary_name2 = "DE_R"
+    }
+  }
+  if (length(n) == 2) {
+    n <- matrix(rep(seq(from = min(n), to = max(n), length.out = step), times = step), nrow = step, ncol = step)
+    if (length(vary1) == 0) {
+      vary1 <- n
+      vary_name1 <- "n"
+    } else {
+      vary2 = n = t(n)
+      vary_name2 = "n"
+    }
+  }
+  ######### END SECTION FOR IF ONE OR MORE OF THE VARIABLES IS ALLOWED TO VARY#######
+
+  # NOW MAKE VARIABLES IN DAYS TO BE IN UNITS YEARS
+  if (is.numeric(MDRI)) {
+    MDRI <- MDRI/365.25
+  }
+  if (is.numeric(BigT)) {
+    BigT <- BigT/365.25
+  }
+
+
+  PrevR <- ((I * (1 - PrevH) * (MDRI - FRR * BigT))/PrevH + FRR)
+  out2 <- PrevHR <- round(PrevH * PrevR, digits = 5)  #Prev.HIV&recent
+  out3 <- PrevHnR <- round(PrevH - PrevHR, digits = 5)  #Prev.HIV&nonrecent
+
+  fot <- DM_FirstOrderTerms(PrevH, PrevR, MDRI, FRR, BigT)
+  # if the output of each term of DM_FirstOrderTerms is univariate, do one thing, otherwise, do another...
+  if (sum(lengths(var_list) > 1) == 0 | length(fot) == 4) {
+    fot_PrevH <- fot[1]
+    fot_PrevR <- fot[2]
+    fot_MDRI <- fot[3]
+    fot_FRR <- fot[4]
+  } else {
+    # this needs to reflect what happens to the output fot matrix which depends on which variables are allowed to vary.
+    if (length(I) > 1 & sum(lengths(var_list)) == 14) {
+      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = FALSE)
+      fot_PrevR <- fot[(step * step + 1)]  #things change if and only if only Incidence is allowed to vary.
+      fot_MDRI <- matrix(fot[((step * step) + 2):(((step * step) * 2 + 1))], nrow = step, ncol = step)
+      fot_FRR <- matrix(fot[(((step * step) * 2 + 2)):length(fot)], nrow = step, ncol = step)
+    } else {
+      # here is the situation if only a variable besides incidence is allowed to vary, or any two parameters are allowed to
+      # vary.
+      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = FALSE)
+      fot_PrevR <- matrix(fot[((step * step) * 1 + 1):(((step * step) * 2))], nrow = step, ncol = step)
+      fot_MDRI <- matrix(fot[((step * step) * 2 + 1):(((step * step) * 3))], nrow = step, ncol = step)
+      fot_FRR <- matrix(fot[((step * step) * 3 + 1):(((step * step) * 4))], nrow = step, ncol = step)
+    }
+  }
+
+
+  # IF SAMPLE SIZE n IS THE OUPUT VARIABLE (SO PRECISION/RSE_I IS FIXED)
+  if (sum(n == "out") > 0) {
+    out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI * RSE_MDRI * MDRI)^2 + (fot_FRR * RSE_FRR * FRR)^2)/I, digits = 5)  #RSE.I.inf.sample
+    out1 <- n <- ceiling(((fot_PrevH^2) * PrevH * (1 - PrevH) * DE_H + (fot_PrevR^2) * (PrevR * (1 - PrevR) * DE_R/(CR *
+                                                                                                                      PrevH)))/((RSE_I^2 - RSE_I_inf_ss^2) * I^2))
+
+    if (sum(((PrevH * (1 - PrevH))/n) * DE_H <= 0) > 0) {
+      stop("no sample size will meet input constraints")
+    }
+
+    out5 <- RSE_PrevH <- round(sqrt(((PrevH * (1 - PrevH))/n) * DE_H)/PrevH, digits = 5)  #RSE.PrevH
+    out6 <- RSE_PrevR <- round(sqrt(((PrevR * (1 - PrevR))/n * CR * PrevH) * DE_R)/PrevR, digits = 5)  #RSE.PrevR
+    out_names <- c("sample.size", "Prev.HIV.and.recent", "Prev.HIV.and.nonrecent", "RSE.I.inf.sample", "RSE.PrevH",
+                   "RSE.PrevR")
+  }
+
+
+  # IF precision IS THE OUPUT VARIABLE (SO sample size n IS FIXED)
+  if (sum(RSE_I == "out") > 0) {
+    out4 <- RSE_I_inf_ss <- round(sqrt((fot_MDRI * RSE_MDRI * MDRI)^2 + (fot_FRR * RSE_FRR * FRR)^2)/I, digits = 5)
+
+    out5 <- RSE_PrevH <- round(sqrt(((PrevH * (1 - PrevH))/n) * DE_H)/PrevH, digits = 5)
+    out6 <- RSE_PrevR <- round(sqrt(((PrevR * (1 - PrevR))/n * CR * PrevH) * DE_R)/PrevR, digits = 5)
+
+    out1 <- RSE_I <- round(sqrt(((fot_PrevH^2) * PrevH * (1 - PrevH) * DE_H + (fot_PrevR^2) * (PrevR * (1 - PrevR) *
+                                                                                                 DE_R/(CR * PrevH)))/(n * I^2) + RSE_I_inf_ss^2), digits = 5)
+    out_names <- c("RSE_I", "Prev.HIV.and.recent", "Prev.HIV.and.nonrecent", "RSE.I.inf.sample", "RSE.PrevH", "RSE.PrevR")
+  }
+  # if (sum(RSE_I > 0.50) >0) { warning('Implied RSE of incidence is greater than 50%') }
+
+
+  if (sum(lengths(var_list)) == 15) {
+    # if two variables are to vary
+    variable.1 <- vector(length = step)
+    variable.2 <- vector(length = step)
+    for (i in 1:step) {
+      variable.1[i] <- paste(vary_name1, "=", vary1[i, 1])
+      variable.2[i] <- paste(vary_name2, "=", vary2[1, i])
+    }
+
+    if (length(out1) > 1) {
+      out1 <- data.frame(out1)
+      row.names(out1) <- variable.1
+      colnames(out1) <- variable.2
+    }
+    if (length(out2) > 1) {
+      out2 <- data.frame(out2)
+      row.names(out2) <- variable.1
+      colnames(out2) <- variable.2
+    }
+    if (length(out3) > 1) {
+      out3 <- data.frame(out3)
+      row.names(out3) <- variable.1
+      colnames(out3) <- variable.2
+    }
+    if (length(out4) > 1) {
+      out4 <- data.frame(out4)
+      row.names(out4) <- variable.1
+      colnames(out4) <- variable.2
+    }
+    if (length(out5) > 1) {
+      out5 <- data.frame(out5)
+      row.names(out5) <- variable.1
+      colnames(out5) <- variable.2
+    }
+    if (length(out6) > 1) {
+      out6 <- data.frame(out6)
+      row.names(out6) <- variable.1
+      colnames(out6) <- variable.2
+    }
+
+
+    # out1<-data.frame(out1) out2<-data.frame(out2) out3<-data.frame(out3) out4<-data.frame(out4) out5<-data.frame(out5)
+    # out6<-data.frame(out6) row.names(out1) <-variable.2 colnames(out1) <-variable.1 row.names(out2) <-variable.2
+    # colnames(out2) <-variable.1 row.names(out3) <-variable.2 colnames(out3) <-variable.1 row.names(out4) <-variable.2
+    # colnames(out4) <-variable.1 row.names(out5) <-variable.2 colnames(out5) <-variable.1 row.names(out6) <-variable.2
+    # colnames(out6) <-variable.1
+  }
+
+
+  if (sum(lengths(var_list)) == 14) {
+    # if just one variable is allowed to vary
+    variable.1 <- vector(length = step)
+    for (i in c(1:step)) {
+      variable.1[i] <- paste(vary_name1, "=", vary1[i, 1])
+    }
+    if (length(out1) > 1) {
+      out1 <- data.frame(variable.1, out1[, 1])
+      names(out1) <- c(vary_name1, out_names[1])
+    }
+    if (length(out2) > 1) {
+      out2 <- data.frame(variable.1, out2[, 1])
+      names(out2) <- c(vary_name1, out_names[2])
+    }
+    if (length(out3) > 1) {
+      out3 <- data.frame(variable.1, out3[, 1])
+      names(out3) <- c(vary_name1, out_names[3])
+    }
+
+    if (length(out4) > 1) {
+      out4 <- data.frame(variable.1, out4[, 1])
+      names(out4) <- c(vary_name1, out_names[4])
+    }
+    if (length(out5) > 1) {
+      out5 <- data.frame(variable.1, out5[, 1])
+      names(out5) <- c(vary_name1, out_names[5])
+    }
+    if (length(out6) > 1) {
+      out6 <- data.frame(variable.1, out6[, 1])
+      names(out6) <- c(vary_name1, out_names[6])
+    }
+  }
+
+  output <- list(out1, out2, out3, out4, out5, out6)
+  names(output) <- out_names
+
+  return(output)
+}
+```
+
+The function call below returns the necessary sample size to have RSE of the incidence estimator equal to 25\%, given a hypothetical prevalence coverage rate and assay tests parameter estimates. Note here the design effects for the test of HIV positivity are set to 1.1 and that sample size is set to `n = "out"`.
+
+```{r, echo=TRUE}
+SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, DE_H = 1.1, DE_R = 1, n = 'out')
+```
+The function call returns that the necessary sample size for the desired precision in the incidence estimator is 3634 persons. Prevalence of being HIV positive and recently infected is 0.8\%, prevalence of being HIV positive and nonrecently infected is 19\%. The RSE of the incidence estimator at infinite sample size is 7.6\%, and the RSE of prevalence of positivity for HIV is 3.4\% and the RSE of prevalence of recency is 3.55\%. 
+
+
+
+Next consider the function call for a tuple of prevalence of HIV positivity values and incidence estimates that range in value between 10 and 20\% and 1.5 and 2\% respectively. The function now outputs a range of values 3 values for each output parameter that is dependent upon these two varying quantities, as well as the normal output from a single parameter function call when the output does not depend on the varying parameters. Note again that sample size is set to `n = "out"`.
+```{r, echo=TRUE}
+SSCprecision(I = c(0.015,0.02), RSE_I = 0.25, PrevH = c(0.10,0.20), CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 700, DE_H = 1, DE_R = 1, n = 'out', step = 3)
+```
+So for example in the first listed output, the sample size necessary for a given precision in the incidence estimator, the output shows that for hypothetical values of PrevH = 0.15 and I = 0.0175, midway in the step between 10 and 20\% and 1.5 and 2\% respectively, the necessary sample size for RSE_I = 0.25 is 2547 persons enrolled. 
+
+
+Finally, for calculating the RSE of incidence over a range of 5 values of prevalence of positivity with a sample size of 5000, the user will set the sample size parameter to a given value, here `n = 5000`. The precision is set to output with option  `RSE_I = "out"`.
+```{r, echo=TRUE}
+SSCprecision(I = 0.017, RSE_I = 'out', PrevH = c(0.10,0.20), CR = 1, MDRI = 211, RSE_MDRI = 0.05, FRR = 0.009, RSE_FRR = 0.2, BigT = 720, n = 5000, step = 5)
+```
 
 
 

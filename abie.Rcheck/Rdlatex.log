@@ -99,9 +99,9 @@ inear) and logit cubic polynomial[]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [7]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [8]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [9] [10]
-(/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [11]
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [11] [12]
 No file Rd2.ind.
-[12] [13] (./Rd2.aux)
+[13] (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -116,7 +116,7 @@ type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
 </usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Rd2.pdf (13 pages, 94298 bytes).
+Output written on Rd2.pdf (13 pages, 94565 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2011] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (9 entries accepted, 0 rejected).
@@ -223,8 +223,8 @@ inear) and logit cubic polynomial[]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [7]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [8]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [9] [10]
-(/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [11] (./Rd2.ind
-[12] [13]
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [11] [12]
+(./Rd2.ind [13]
 
 LaTeX Font Warning: Font shape `T1/fi4/m/it' undefined
 (Font)              using `T1/fi4/m/n' instead on input line 4.
@@ -247,7 +247,7 @@ type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
 </usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Rd2.pdf (14 pages, 96327 bytes).
+Output written on Rd2.pdf (14 pages, 96577 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2011] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (9 entries accepted, 0 rejected).
@@ -354,8 +354,8 @@ inear) and logit cubic polynomial[]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [7]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [8]
 (/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [9] [10]
-(/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [11] (./Rd2.ind
-[12] [13]
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def) [11] [12]
+(./Rd2.ind [13]
 
 LaTeX Font Warning: Font shape `T1/fi4/m/it' undefined
 (Font)              using `T1/fi4/m/n' instead on input line 4.
@@ -373,8 +373,8 @@ type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
 </usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Rd2.pdf (14 pages, 97108 bytes).
+Output written on Rd2.pdf (14 pages, 97337 bytes).
 Transcript written on Rd2.log.
 Saving output to 'abie-manual.pdf' ...
 Done
-You may want to clean up by 'rm -rf /var/folders/3h/5ywnq74520nfv8rly6p_dmlh0000gn/T//RtmpwmOpNM/Rd2pdf10bf5727084f4'
+You may want to clean up by 'rm -rf /var/folders/3h/5ywnq74520nfv8rly6p_dmlh0000gn/T//Rtmp8ByYhS/Rd2pdf115e8780694f5'
