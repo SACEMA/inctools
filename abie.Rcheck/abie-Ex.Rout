@@ -1,0 +1,418 @@
+
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "abie"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> base::assign(".ExTimings", "abie-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('abie')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("SSCprecision")
+> ### * SSCprecision
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: SSCprecision
+> ### Title: Sample size or precision calculation
+> ### Aliases: SSCprecision
+> 
+> ### ** Examples
+> 
+> SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
++ MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
++ BigT = 730, DE_H = 1.1, DE_R = 1, n = 'out')
+$sample.size
+[1] 3634
+
+$Prev.HIV.and.recent
+[1] 0.00833
+
+$Prev.HIV.and.nonrecent
+[1] 0.19167
+
+$RSE.I.inf.sample
+[1] 0.07606
+
+$RSE.PrevH
+[1] 0.0348
+
+$RSE.PrevR
+[1] 0.03558
+
+> 
+> SSCprecision(I = c(0.015,0.02), RSE_I = 0.25, PrevH = c(0.10,0.20),
++ CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
++ BigT = 700, DE_H = 1, DE_R = 1, n = 'out', step = 5)
+$sample.size
+            PrevH = 0.1 PrevH = 0.125 PrevH = 0.15 PrevH = 0.175 PrevH = 0.2
+I = 0.015          2660          2660         2660          2660        2660
+I = 0.01625        2596          2596         2596          2596        2596
+I = 0.0175         2547          2547         2547          2547        2547
+I = 0.01875        2512          2512         2512          2512        2512
+I = 0.02           2489          2489         2489          2489        2489
+
+$Prev.HIV.and.recent
+            PrevH = 0.1 PrevH = 0.125 PrevH = 0.15 PrevH = 0.175 PrevH = 0.2
+I = 0.015       0.00813       0.00813      0.00813       0.00813     0.00813
+I = 0.01625     0.00876       0.00876      0.00876       0.00876     0.00876
+I = 0.0175      0.00936       0.00936      0.00936       0.00936     0.00936
+I = 0.01875     0.00992       0.00992      0.00992       0.00992     0.00992
+I = 0.02        0.01045       0.01045      0.01045       0.01045     0.01045
+
+$Prev.HIV.and.nonrecent
+            PrevH = 0.1 PrevH = 0.125 PrevH = 0.15 PrevH = 0.175 PrevH = 0.2
+I = 0.015       0.09187       0.09187      0.09187       0.09187     0.09187
+I = 0.01625     0.11624       0.11624      0.11624       0.11624     0.11624
+I = 0.0175      0.14064       0.14064      0.14064       0.14064     0.14064
+I = 0.01875     0.16508       0.16508      0.16508       0.16508     0.16508
+I = 0.02        0.18955       0.18955      0.18955       0.18955     0.18955
+
+$RSE.I.inf.sample
+            PrevH = 0.1 PrevH = 0.125 PrevH = 0.15 PrevH = 0.175 PrevH = 0.2
+I = 0.015       0.05583       0.05583      0.05583       0.05583     0.05583
+I = 0.01625     0.05798       0.05798      0.05798       0.05798     0.05798
+I = 0.0175      0.06033       0.06033      0.06033       0.06033     0.06033
+I = 0.01875     0.06285       0.06285      0.06285       0.06285     0.06285
+I = 0.02        0.06549       0.06549      0.06549       0.06549     0.06549
+
+$RSE.PrevH
+            PrevH = 0.1 PrevH = 0.125 PrevH = 0.15 PrevH = 0.175 PrevH = 0.2
+I = 0.015       0.05817       0.05817      0.05817       0.05817     0.05817
+I = 0.01625     0.05193       0.05193      0.05193       0.05193     0.05193
+I = 0.0175      0.04717       0.04717      0.04717       0.04717     0.04717
+I = 0.01875     0.04332       0.04332      0.04332       0.04332     0.04332
+I = 0.02        0.04009       0.04009      0.04009       0.04009     0.04009
+
+$RSE.PrevR
+            PrevH = 0.1 PrevH = 0.125 PrevH = 0.15 PrevH = 0.175 PrevH = 0.2
+I = 0.015       0.02061       0.02061      0.02061       0.02061     0.02061
+I = 0.01625     0.02527       0.02527      0.02527       0.02527     0.02527
+I = 0.0175      0.02975       0.02975      0.02975       0.02975     0.02975
+I = 0.01875     0.03404       0.03404      0.03404       0.03404     0.03404
+I = 0.02        0.03817       0.03817      0.03817       0.03817     0.03817
+
+> 
+> SSCprecision(I = 0.017, RSE_I = 'out', PrevH = c(0.10,0.20),
++ CR = 1, MDRI = 211, RSE_MDRI = 0.05, FRR = 0.009, RSE_FRR = 0.2,
++ BigT = 720, n = 5000, step = 5)
+$RSE_I
+          PrevH   RSE_I
+1   PrevH = 0.1 0.16868
+2 PrevH = 0.125 0.17352
+3  PrevH = 0.15 0.17885
+4 PrevH = 0.175 0.18470
+5   PrevH = 0.2 0.19112
+
+$Prev.HIV.and.recent
+          PrevH Prev.HIV.and.recent
+1   PrevH = 0.1             0.00947
+2 PrevH = 0.125             0.00945
+3  PrevH = 0.15             0.00944
+4 PrevH = 0.175             0.00943
+5   PrevH = 0.2             0.00942
+
+$Prev.HIV.and.nonrecent
+          PrevH Prev.HIV.and.nonrecent
+1   PrevH = 0.1                0.09053
+2 PrevH = 0.125                0.11555
+3  PrevH = 0.15                0.14056
+4 PrevH = 0.175                0.16557
+5   PrevH = 0.2                0.19058
+
+$RSE.I.inf.sample
+          PrevH RSE.I.inf.sample
+1   PrevH = 0.1          0.05363
+2 PrevH = 0.125          0.05557
+3  PrevH = 0.15          0.05824
+4 PrevH = 0.175          0.06166
+5   PrevH = 0.2          0.06585
+
+$RSE.PrevH
+          PrevH RSE.PrevH
+1   PrevH = 0.1   0.04243
+2 PrevH = 0.125   0.03742
+3  PrevH = 0.15   0.03367
+4 PrevH = 0.175   0.03071
+5   PrevH = 0.2   0.02828
+
+$RSE.PrevR
+          PrevH RSE.PrevR
+1   PrevH = 0.1   0.01383
+2 PrevH = 0.125   0.01748
+3  PrevH = 0.15   0.02113
+4 PrevH = 0.175   0.02479
+5   PrevH = 0.2   0.02845
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("SSCprecision", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("SSPower")
+> ### * SSPower
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: SSPower
+> ### Title: Power and sample size calculation for assay-based incidence
+> ###   estimation
+> ### Aliases: SSPower
+> 
+> ### ** Examples
+> 
+> SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
++ n1 = 5000, n2 = 5000, alpha = 0.05, Power = "out", SS = NULL,
++ DE_H = c(1,1.1), DE_R = 1, BMest = "same.test", MDRI = 200,
++ RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
+$Inc.Difference.Statistics
+  deltaI_Est RSE_deltaI RSE_deltaI.infSS Power Power.infSS CI.low CI.up
+1       0.02       0.33            0.052 0.857       >0.99  0.007 0.033
+
+$Implied.Incidence.Statistics
+  Survey Given.I RSE_I CI.low CI.up
+1      1    0.05 0.115  0.039 0.061
+2      2    0.03 0.147  0.021 0.039
+
+$Implied.MDRI.Statistics
+  Given.MDRI CI.low CI.up
+1        200  180.4 219.6
+
+$Implied.FRR.Statistics
+  Given.FRR CI.low CI.up
+1      0.01  0.006 0.014
+
+$Implied.Subject.Counts
+                           Survey.1 Survey.2
+HIV.negative                   4000     4000
+HIV.positive                   1000     1000
+HIV.post.tested.for.recent     1000     1000
+Recency.test.pos                116       73
+
+> 
+> 
+> SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
++ alpha = 0.05, Power = 0.80, SS = "out", DE_H = 1, DE_R = 1,
++ BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05,
++ FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.21), BigT = 730)
+$Minimum.Common.SS
+[1] 4297
+
+$Inc.Difference.Statistics
+  deltaI_Est RSE_deltaI RSE_deltaI.infSS Power Power.infSS CI.low CI.up
+1       0.02      0.357            0.068   0.8       >0.99  0.006 0.034
+
+$Implied.Incidence.Statistics
+  Survey Given.I RSE_I CI.low CI.up
+1      1    0.05 0.122  0.038 0.062
+2      2    0.03 0.155  0.021 0.039
+
+$Implied.MDRI.Statistics
+  Given.MDRI CI.low CI.up
+1        200  180.4 219.6
+
+$Implied.FRR.Statistics
+  Given.FRR CI.low  CI.up
+1     0.010 0.0061 0.0139
+2     0.009 0.0053 0.0127
+
+$Implied.Subject.Counts
+                           Survey.1 Survey.2
+HIV.negative                   3438     3438
+HIV.positive                    859      859
+HIV.post.tested.for.recent      859      859
+Recency.test.pos                 99       62
+
+> 
+> 
+> SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
++ n1 = 5000, n2 = "out", alpha = 0.05, Power = 0.80, SS ="out",
++ DE_H = 1, DE_R = 1, BMest = "MDRI.FRR.indep", MDRI = 200,
++ RSE_MDRI = c(0.05,0.06), FRR = c(0.01,0.009),
++ RSE_FRR = c(0.20,0.21), BigT = 730)
+$Minimum.SS
+[1] 5792
+
+$Inc.Difference.Statistics
+  deltaI_Est RSE_deltaI RSE_deltaI.infSS Power Power.infSS CI.low CI.up
+1       0.02      0.357            0.166   0.8       >0.99  0.006 0.034
+
+$Implied.Incidence.Statistics
+  Survey Given.I RSE_I CI.low CI.up
+1      1    0.05 0.115  0.039 0.061
+2      2    0.03 0.141  0.022 0.038
+
+$Implied.MDRI.Statistics
+  Given.MDRI CI.low  CI.up
+1        200 180.40 219.60
+2        200 176.48 223.52
+
+$Implied.FRR.Statistics
+  Given.FRR CI.low  CI.up
+1     0.010 0.0061 0.0139
+2     0.009 0.0053 0.0127
+
+$Implied.Subject.Counts
+                           Survey.1 Survey.2
+HIV.negative                   4000     4634
+HIV.positive                   1000     1158
+HIV.post.tested.for.recent     1000     1158
+Recency.test.pos                116       84
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("SSPower", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("incBYcounts")
+> ### * incBYcounts
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: incBYcounts
+> ### Title: Incidence and incidence difference statistics from trinomial
+> ###   counts of HIV and recency
+> ### Aliases: incBYcounts
+> 
+> ### ** Examples
+> 
+> incBYcounts(N = c(5000) ,N_H = 1000, N_testR = 1000, N_R = 70,
++ Boot = FALSE, BMest = 'MDRI.FRR.indep', MDRI = 200, RSE_MDRI = 0.05,
++ FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+Warning in recencyI(BS_Count = BS_Count, Boot = Boot, alpha = alpha, BMest = BMest,  :
+  'same.test' is the only BMest option for a single test
+$Incidence.Statistics
+  Incidence  CI.low   CI.up     RSE RSE.Inf.SS
+1   0.02843 0.02004 0.03683 0.15063    0.05793
+
+$Annual.Risk.of.Infection
+    ARI ARI.CI.low ARI.CI.up
+1 0.028     0.0198    0.0362
+
+$MDRI.CI
+  CI.low CI.up
+1  180.4 219.6
+
+$FRR.CI
+  CI.low  CI.up
+1 0.0061 0.0139
+
+> 
+> 
+> incBYcounts(N = c(4000,4000,4050) ,N_H = c(1010,1000,900),
++ N_testR = c(1000,1000,880), N_R = c(60,70,50), Boot = TRUE,
++ BMest = 'same.test', MDRI = 210, RSE_MDRI = 0.05, FRR = 0.005,
++ RSE_FRR = 0.19, BigT = 700)
+$Incidence.Statistics
+  survey Incidence  CI.low   CI.up     RSE
+1      1   0.03286 0.02345 0.04329 0.15171
+2      2   0.03832 0.02839 0.04924 0.13982
+3      3   0.02619 0.01823 0.03511 0.16487
+
+$Incidence.Difference.Statistics
+  compare     Diff CI.Diff.low CI.Diff.up RSE.Diff p.value
+1  1 vs 2 -0.00546    -0.02006    0.00871  1.34052 0.45568
+2  1 vs 3  0.00667    -0.00599    0.01993  0.98801 0.31147
+3  2 vs 1  0.00546    -0.00871    0.02006  1.34052 0.45568
+4  2 vs 3  0.01214    -0.00100    0.02602  0.56689 0.07773
+5  3 vs 1 -0.00667    -0.01993    0.00599  0.98801 0.31147
+6  3 vs 2 -0.01214    -0.01415   -0.01021  0.08601 <0.0001
+
+$MDRI.CI
+  CI.low  CI.up
+1 189.42 230.58
+
+$FRR.CI
+  CI.low  CI.up
+1 0.0031 0.0069
+
+> 
+> 
+> incBYcounts(N = c(4000,4000) ,N_H = c(1050,1090),
++ N_testR = c(1000,1000), N_R = c(60,67), Boot = FALSE, BMest = 'FRR.indep',
++ MDRI = 220, RSE_MDRI = 0.05, FRR = c(0.005,0.005), RSE_FRR = 0.19,
++ BigT = 610)
+Warning in prevBYcounts(N = N, N_H = N_H, N_testR = N_testR, N_R = N_R,  :
+  Less than 95% of HIV-positive subjects have recency test results available
+$Incidence.Statistics
+  survey Incidence  CI.low   CI.up     RSE RSE.Inf.SS
+1      1   0.03296 0.02322 0.04269 0.15073    0.05276
+2      2    0.0391 0.02819    0.05 0.14232    0.05226
+
+$Incidence.Difference.Statistics
+  compare     Diff CI.Diff.low CI.Diff.up RSE.Diff RSE.Diff.Inf.SS p.value
+1  1 vs 2 -0.00614    -0.01986    0.00758  1.14022          0.1233 0.38047
+2  2 vs 1  0.00614    -0.00758    0.01986  1.14022          0.1233 0.38047
+  p.value.Inf.SS
+1        <0.0001
+2        <0.0001
+
+$MDRI.CI
+  CI.low  CI.up
+1 198.44 241.56
+
+$FRR.CI
+  CI.low  CI.up
+1 0.0031 0.0069
+2 0.0031 0.0069
+
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("incBYcounts", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("mdri_ml_binomial")
+> ### * mdri_ml_binomial
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: mdri_ml_binomial
+> ### Title: Estimate MDRI (point estimate and confidence interval) using
+> ###   binomial regression and a maximum likelihood approach
+> ### Aliases: mdri_ml_binomial
+> 
+> ### ** Examples
+> 
+> mdri_ml_binomial(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
++  functional_forms=c('loglog_linear','logit_cubic'), recency_rule='independent_thresholds',
++  recency_vars=c('ODn','VL'), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
++  plot=TRUE, parallel=FALSE)
+Error in mdri_ml_binomial(data = data, subid_var = "PT_ID", time_var = "DaysSinceEDDI",  : 
+  Specified data is not a dataframe or does not exist
+Execution halted
