@@ -320,14 +320,14 @@ SSCprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT
   } else {
     # this needs to reflect what happens to the output fot matrix which depends on which variables are allowed to vary.
     if (length(I) > 1 & sum(lengths(var_list)) == 14) {
-      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = F)
+      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = FALSE)
       fot_PrevR <- fot[(step * step + 1)]  #things change if and only if only Incidence is allowed to vary.
       fot_MDRI <- matrix(fot[((step * step) + 2):(((step * step) * 2 + 1))], nrow = step, ncol = step)
       fot_FRR <- matrix(fot[(((step * step) * 2 + 2)):length(fot)], nrow = step, ncol = step)
     } else {
       # here is the situation if only a variable besides incidence is allowed to vary, or any two parameters are allowed to
       # vary.
-      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = F)
+      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = FALSE)
       fot_PrevR <- matrix(fot[((step * step) * 1 + 1):(((step * step) * 2))], nrow = step, ncol = step)
       fot_MDRI <- matrix(fot[((step * step) * 2 + 1):(((step * step) * 3))], nrow = step, ncol = step)
       fot_FRR <- matrix(fot[((step * step) * 3 + 1):(((step * step) * 4))], nrow = step, ncol = step)
