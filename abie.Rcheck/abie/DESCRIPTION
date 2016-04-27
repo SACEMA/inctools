@@ -1,0 +1,38 @@
+Package: abie
+Type: Package
+Title: Assay-Based Incidence Estimation
+Version: 0.0.1
+Date: 2016-05-01
+Authors@R: c(
+  person("Avery","McIntosh",email="avery.i.mcintosh@gmail.com",role="aut"),
+  person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
+  person("Petra","Baumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
+  person("Reshma","Kassanjee", role="ctb"),
+  person("Hilmarie","Brand", role="ctb"),
+  person("Yuruo","Li",email="yul123@pitt.edu", role="ctb"),
+  person("Simon","Daniel",email="skjdaniel@gmail.com", role="ctb"),
+  person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="ctb"),
+  person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut")
+  )
+Description: Tools for estimating incidence from biomarker data in cross-
+    sectional surveys and for calibrating tests for recent infection.
+Depends: R (>= 3.2.1)
+License: GPL (>= 3)
+LazyData: True
+Imports: cubature, ggplot2, glm2, MASS, plyr, pracma
+Suggests: doMC, foreach, testthat, knitr, rmarkdown
+RoxygenNote: 5.0.1
+VignetteBuilder: knitr
+NeedsCompilation: no
+Packaged: 2016-04-27 08:10:45 UTC; Avery
+Author: Avery McIntosh [aut],
+  Eduard Grebe [cre, aut],
+  Petra Baumler [aut],
+  Reshma Kassanjee [ctb],
+  Hilmarie Brand [ctb],
+  Yuruo Li [ctb],
+  Simon Daniel [ctb],
+  Stefano Ongarello [ctb],
+  Alex Welte [aut]
+Maintainer: Eduard Grebe <eduardgrebe@sun.ac.za>
+Built: R 3.2.3; ; 2016-04-27 08:10:46 UTC; unix
