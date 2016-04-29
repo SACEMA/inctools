@@ -8,6 +8,12 @@
 # Example code in package build process
 *-Ex.R
 
+# Build-retalted stuff
+abie.Rcheck
+*.tar.gz
+*.tgz
+*.zip
+
 # RStudio files
 .Rproj.user/
 

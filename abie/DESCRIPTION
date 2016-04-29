@@ -1,12 +1,12 @@
 Package: abie
 Type: Package
 Title: Assay-Based Incidence Estimation
-Version: 0.0.1
-Date: 2016-05-01
+Version: 0.9
+Date: 2016-04-29
 Authors@R: c(
   person("Avery","McIntosh",email="avery.i.mcintosh@gmail.com",role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
-  person("Petra","Bäumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
+  person("Petra","Baeumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
   person("Reshma","Kassanjee", role="ctb"),
   person("Hilmarie","Brand", role="ctb"),
   person("Yuruo","Li",email="yul123@pitt.edu", role="ctb"),
@@ -26,8 +26,7 @@ Imports:
     glm2,
     MASS,
     plyr,
-    pracma,
-    reshape2
+    pracma
 Suggests:
     doMC,
     foreach,

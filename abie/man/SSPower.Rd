@@ -27,6 +27,8 @@ SSPower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
 
 \item{SS}{Sample size. Default is "out", meaning the function takes a power argument and outputs a common sample size needed to achieve power level for test of differences for incidence. If power is desired for a given sample size, parameter value is irrelevant; however, values for n1 and n2 must be specified.}
 
+\item{CR}{Coverage rate (0-1).}
+
 \item{DE_H}{Design effect of HIV prevalence test (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.}
 
 \item{DE_R}{Design effect of recency test (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.}
@@ -48,6 +50,9 @@ Common sample size of two surveys--or the sample size of one survey given the ot
 }
 \description{
 Power and sample size calculation for assay-based incidence estimation
+}
+\details{
+The package contains a long form vignette for this function. See package documentation for more details.
 }
 \examples{
 SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,

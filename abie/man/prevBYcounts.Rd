@@ -25,6 +25,9 @@ Prevalences and relative standard errors. Design effects are assumed negligible 
 \description{
 Prevalence and Relative Standard Errors by Counts
 }
+\details{
+Type vignette("Inference",package="abie") into console for more details on this function.
+}
 \examples{
 prevBYcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)
 

@@ -63,7 +63,7 @@ DM_FirstOrderTerms <- function(prevH, prevR, mdri, frr, bigt) {
 #' Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSE of incidence) and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision.
 #' Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained solely by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.
 #'
-#'Up to two parameters can be given as tuple vetors, with the input parameter 'step' giving the number of points analyzed between the endpoints of the vector. This yields output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an instantiation of this process.
+#'Up to two parameters can be given as tuple vetors, with the input parameter 'step' giving the number of points analyzed between the endpoints of the vector. This yields output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an illustration of this process. The package contains a long form vignette for this function. See package documentation for more details.
 #'
 #' @examples
 #' SSCprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
@@ -105,7 +105,7 @@ SSCprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT
 
   for (i in 1:12) {
     if (length(var_list[[i]]) > 2 | length(var_list[[i]]) < 1) {
-      stop(paste("specifiy (only) min & max values for ", names(var_list)[i]), sep = "")
+      stop(paste("specify (only) min & max values for ", names(var_list)[i]), sep = "")
     }
   }
 
@@ -320,14 +320,14 @@ SSCprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT
   } else {
     # this needs to reflect what happens to the output fot matrix which depends on which variables are allowed to vary.
     if (length(I) > 1 & sum(lengths(var_list)) == 14) {
-      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = F)
+      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = FALSE)
       fot_PrevR <- fot[(step * step + 1)]  #things change if and only if only Incidence is allowed to vary.
       fot_MDRI <- matrix(fot[((step * step) + 2):(((step * step) * 2 + 1))], nrow = step, ncol = step)
       fot_FRR <- matrix(fot[(((step * step) * 2 + 2)):length(fot)], nrow = step, ncol = step)
     } else {
       # here is the situation if only a variable besides incidence is allowed to vary, or any two parameters are allowed to
       # vary.
-      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = F)
+      fot_PrevH <- matrix(fot[1:(step * step)], nrow = step, ncol = step, byrow = FALSE)
       fot_PrevR <- matrix(fot[((step * step) * 1 + 1):(((step * step) * 2))], nrow = step, ncol = step)
       fot_MDRI <- matrix(fot[((step * step) * 2 + 1):(((step * step) * 3))], nrow = step, ncol = step)
       fot_FRR <- matrix(fot[((step * step) * 3 + 1):(((step * step) * 4))], nrow = step, ncol = step)
