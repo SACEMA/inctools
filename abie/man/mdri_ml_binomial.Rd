@@ -5,7 +5,7 @@
 \title{Estimate MDRI (point estimate and confidence interval) using binomial regression and a maximum likelihood approach}
 \usage{
 mdri_ml_binomial(data = data, subid_var = "sid", time_var = "time",
-  functional_forms = c("loglog_linear", "logit_cubic"),
+  functional_forms = c("cloglog_linear", "logit_cubic"),
   recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
   recency_rule = "binary_data", recency_vars = "recency_status",
   recency_params = NULL, n_bootstraps = 100, alpha = 0.05, plot = TRUE,
@@ -65,14 +65,14 @@ status from a biomarker or set of biomarkers must be specified. Currently only i
 thresholds are supported (i.e. all biomarker criteria must be met in order for a specimen to be classified as recent).
 
 Functional forms currently supported for the binomial regression fitting procedure:
-loglog_linear, logit_cubic
+cloglog_linear, logit_cubic
 
 To be implemented in the near future: logit_spline
 
 logit_cubic: Fits a binomial regression to probability of testing recent with a logit link on a polynomial in t of the
 third degree, where t is time since (detectable) infection.
 
-loglog_linear: Fits a binomial regression to probability of testing recent with a log log link on log(t), where t is
+cloglog_linear: Fits a binomial regression to probability of testing recent with a log log link on log(t), where t is
 time since (detectable) infection.
 
 recency_rule: binary_data - supply a binary variable with 1=recent and 0=non-recent in recency_vars.
@@ -89,7 +89,7 @@ recency_params expects a list of pairs of thresholds and thresholdtypes, with ze
 }
 \examples{
 mdri_ml_binomial(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
- functional_forms=c('loglog_linear','logit_cubic'), recency_rule='independent_thresholds',
+ functional_forms=c('cloglog_linear','logit_cubic'), recency_rule='independent_thresholds',
  recency_vars=c('ODn','VL'), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
  plot=TRUE, parallel=FALSE)
 

@@ -1,5 +1,5 @@
 ## ------------------------------------------------------------------------
-library(ritcalib)
+library(abie)
 
 ## ------------------------------------------------------------------------
 exampledata <- read.csv("../data/exampledata_testcalibration.csv")
@@ -10,7 +10,7 @@ mdri_ml_binomial(data=exampledata,
                  time_var = "DaysSinceEDDI",
                  recency_cutoff_time = 730.5,
                  inclusion_time_threshold = 800,
-                 functional_forms = c("loglog_linear"),
+                 functional_forms = c("cloglog_linear"),
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
@@ -38,7 +38,7 @@ mdri_ml_binomial(data=exampledata,
                  time_var = "DaysSinceEDDI",
                  recency_cutoff_time = 730.5,
                  inclusion_time_threshold = 800,
-                 functional_forms = c("logit_cubic","loglog_linear"),
+                 functional_forms = c("logit_cubic","cloglog_linear"),
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
