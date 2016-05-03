@@ -466,8 +466,8 @@ ssprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI =
              DE_H = 1, DE_R = 1, n = "out", step = 5)
 
 #####################################################################################################################
-ssprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = c(530,
-                                                                                                                            730), DE_H = 1, DE_R = 1, n = "out", step = 5)
+ssprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
+            BigT = c(530,730), DE_H = 1, DE_R = 1, n = "out", step = 5)
 
 
 ssprecision(I = c(0.015, 0.02), RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
