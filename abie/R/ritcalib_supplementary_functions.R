@@ -63,7 +63,7 @@ assign_recency_status <- function(data = data, recency_params = recency_params, 
 fit_binomial_model <- function(data = data, functional_form = functional_form, tolerance = tolerance_glm2, maxit = maxit_glm2) {
   data$time_since_eddi <- ifelse(data$time_since_eddi == 0, 1e-10, data$time_since_eddi)
 
-  switch(as.character(functional_form), loglog_linear = {
+  switch(as.character(functional_form), cloglog_linear = {
     fitted <- FALSE
     while (!fitted) {
       model <- glm2::glm2(formula = (1 - recency_status) ~ 1 + I(log(time_since_eddi)), family = binomial(link = "cloglog"),
@@ -108,7 +108,7 @@ integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = re
     stop("functional_form name required in order to evaluate functional form")
   }
 
-  switch(as.character(functional_form), loglog_linear = {
+  switch(as.character(functional_form), cloglog_linear = {
     answer <- try(cubature::adaptIntegrate(f = functional_form_clogloglinear, lowerLimit = 0, upperLimit = recency_cutoff_time,
                                            parameters = parameters, tol = tolerance, fDim = 1, maxEval = 0, absError = 0, doChecking = FALSE)$integral)
     if (class(answer) == "try-error") {
@@ -131,7 +131,7 @@ integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = re
 plot_probability <- function(functional_form = functional_form, parameters = parameters, mdri = mdri, inclusion_time_threshold = inclusion_time_threshold,
                              recency_cutoff_time = recency_cutoff_time, mdri_ci = mdri_ci) {
   plot_time <- seq(from = 0, to = inclusion_time_threshold, by = 0.01)
-  switch(as.character(functional_form), loglog_linear = {
+  switch(as.character(functional_form), cloglog_linear = {
     plotdata <- data.frame(plot_time, exp(-exp(parameters[1] + (parameters[2]) * log(plot_time))))
     colnames(plotdata) <- c("time_since_eddi", "probability")
   }, logit_cubic = {
