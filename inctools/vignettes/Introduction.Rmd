@@ -1,5 +1,5 @@
 ---
-title: "Introduction to the abie package"
+title: "Introduction to the inctools package"
 author: "Alex Welte"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -10,5 +10,5 @@ vignette: >
   %\VignetteIndexEntry{Integrating TCGA Data}
 ---
 
-##Introduction to ABIE
+##Introduction to inctools
 

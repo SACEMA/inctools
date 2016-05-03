@@ -65,7 +65,7 @@ You can either supply a list of variables and thresholds (indicating in whether 
 Load the package in order to use it
 
 ```{r}
-library(abie)
+library(inctools)
 ```
 
 ```{r}

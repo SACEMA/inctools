@@ -1,5 +1,5 @@
 ## ------------------------------------------------------------------------
-library(abie)
+library(inctools)
 
 ## ------------------------------------------------------------------------
 exampledata <- read.csv("../data/exampledata_testcalibration.csv")
@@ -13,7 +13,7 @@ mdrical(data=exampledata,
                  functional_forms = c("cloglog_linear"),
                  recency_rule = "binary_data",
                  recency_vars = "Recent",
-                 n_bootstraps = 100,
+                 n_bootstraps = 10,
                  alpha = 0.05,
                  plot = TRUE)
 
@@ -27,7 +27,7 @@ mdrical(data=exampledata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 100,
+                 n_bootstraps = 10,
                  alpha = 0.05,
                  plot = TRUE)
 
@@ -41,7 +41,7 @@ mdrical(data=exampledata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 100,
+                 n_bootstraps = 12,
                  alpha = 0.05,
                  plot = TRUE,
                  parallel = TRUE,
