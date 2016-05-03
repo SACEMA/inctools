@@ -1,5 +1,5 @@
 ---
-title: "Inference with ABIE"
+title: "Inference with abie"
 date: "2016"
 output: rmarkdown::html_vignette
 fig_caption: yes
@@ -10,7 +10,7 @@ vignette: >
   %\VignetteIndexEntry{Integrating TCGA Data}
 ---
 
-The ABIE package provides three functions for HIV incidence estimation: $recencyI$, $prevBYcounts$, and $incBYcounts$. These functions take as argument user-defined parameters and estimates taken from assays of recent HIV infection and output estimates for inference, incidence difference in the situation of multiple cross-sectional surveys (and possibly multiple assays), and confidence intervals, among other output. See the function help pages for specific examples of running the code. The principal reference for the methods behind this implementation is given by Kassanjee et al. $Epidemiology$, 2012.^[Kassanjee, Reshma, et al. "A new general biomarker-based incidence estimator." Epidemiology (Cambridge, Mass.) 23.5 (2012): 721. [URL](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3500970/)] Further guidance is provided in Kassanjee, McWalter, Welte. $AIDS$ $Research$ $and$ $Human$ $Retroviruses$. 2014.^[Kassanjee Reshma, McWalter Thomas A., and Welte Alex. "Short Communication:
+The $abie$ package provides three functions for HIV incidence estimation: $recencyI$, $prevBYcounts$, and $incBYcounts$. These functions take as argument user-defined parameters and estimates taken from assays of recent HIV infection and output estimates for inference, incidence difference in the situation of multiple cross-sectional surveys (and possibly multiple assays), and confidence intervals, among other output. See the function help pages for specific examples of running the code. The principal reference for the methods behind this implementation is given by Kassanjee et al. $Epidemiology$, 2012.^[Kassanjee, Reshma, et al. "A new general biomarker-based incidence estimator." Epidemiology (Cambridge, Mass.) 23.5 (2012): 721. [URL](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3500970/)] Further guidance is provided in Kassanjee, McWalter, Welte. $AIDS$ $Research$ $and$ $Human$ $Retroviruses$. 2014.^[Kassanjee Reshma, McWalter Thomas A., and Welte Alex. "Short Communication:
 Defining Optimality of a Test for Recent Infection for HIV Incidence Surveillance." AIDS Research and Human Retroviruses. January 2014, 30(1): 45-49. [URL](http://www.ncbi.nlm.nih.gov/pubmed/24090052)]
 
 This vignette will describe the use of necessary functions and some background on methods specific to this package.
