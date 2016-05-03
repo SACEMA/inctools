@@ -78,7 +78,7 @@ Note the construction that survey 1 (the first survey entered) had design effect
 
 
 ##recencyI and incBYcounts
-The functions $recencyI$ and $incBYcounts$ uses an identical syntax scheme to that shown above for $prevBYcounts$, and given in the functions' help pages. Both functions take data that has already been calculated about the assay used for testing recency--estimates of false recency rate (FRR--$\beta$) and mean duration of recent infection (MDRI--$\Omega$) and their respective relative standard errors and the time cut threshold for recency in days (T)--as well a test rejection threshold $\alpha$ (default=0.05) and survey data: proportions (counts, if using function $incBYcounts$) of HIV positives (PrevH) and positives for recency (PrevR) and their relative standard errors. 
+The functions $incprops$ and $inccounts$ uses an identical syntax scheme to that shown above for $prevcounts$, and given in the functions' help pages. Both functions take data that has already been calculated about the assay used for testing recency--estimates of false recency rate (FRR--$\beta$) and mean duration of recent infection (MDRI--$\Omega$) and their respective relative standard errors and the time cut threshold for recency in days (T)--as well a test rejection threshold $\alpha$ (default=0.05) and survey data: proportions (counts, if using function $inccounts$) of HIV positives (PrevH) and positives for recency (PrevR) and their relative standard errors. 
 
 The output for a single survey is an estimate of incidence along with confidence intervals and RSE, estimated annual rate of infection and associated confidence intervals, and confidence intervals for parameters MDRI and FRR, which are deduced from use input. 
 
