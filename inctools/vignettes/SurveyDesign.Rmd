@@ -18,7 +18,7 @@ $sspower$ takes assumed study parameter values--incidences, prevalences, coverag
 
 As an example, consider the situation where we wish to discover the power to detect a difference in incidence estimates for a hypothetical scenario where the values of the survey are imagined, respectively, to be incidence 5\%, 3\% and prevalences at 20\%. The assay in this scenario is assumed identical for both surveys. Thus there are unique values for MDRI, the RSE of MDRI, FRR, the RSE of FRR, and time cut T, respectively: 200 days, 5\%, 1\%, 20\%, and 730 days. We envision total coverage, and no survey design effects. Finally, we envision a common study sample size of 5000 persons and we decide on a false positive rate $\alpha$ of 5\%. Note that here function parameter for sample size is listed as `SS = NULL`, or it is omitted in the function call.  
 ```{r, echo=TRUE}
-library("abie")
+library("inctools")
 ```
 
 ```{r, echo=TRUE}
