@@ -1,6 +1,7 @@
 ---
 title: "Inference with inctools"
-date: "2016"
+author: "Avery McIntosh"
+date: "2016-05-03"
 output: rmarkdown::html_vignette
 fig_caption: yes
 vignette: >

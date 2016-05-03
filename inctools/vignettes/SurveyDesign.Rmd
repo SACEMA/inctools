@@ -1,6 +1,7 @@
 ---
 title: "Survey Design (sample size, power, precision)"
-date: "2016"
+author: "Avery McIntosh"
+date: "2016-05-03"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SurveyDesign}
