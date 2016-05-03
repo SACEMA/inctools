@@ -42,19 +42,19 @@
 #' @details The package contains a long form vignette for this function. See package documentation for more details.
 #'
 #' @examples
-#'SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
+#'sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
 #'n1 = 5000, n2 = 5000, alpha = 0.05, Power = "out", SS = NULL,
 #'DE_H = c(1,1.1), DE_R = 1, BMest = "same.test", MDRI = 200,
 #'RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
 #'
 #'
-#'SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
+#'sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
 #'alpha = 0.05, Power = 0.80, SS = "out", DE_H = 1, DE_R = 1,
 #'BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05,
 #'FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.21), BigT = 730)
 #'
 #'
-#'SSPower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
+#'sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
 #'n1 = 5000, n2 = "out", alpha = 0.05, Power = 0.80, SS ="out",
 #'DE_H = 1, DE_R = 1, BMest = "MDRI.FRR.indep", MDRI = 200,
 #'RSE_MDRI = c(0.05,0.06), FRR = c(0.01,0.009),
@@ -62,7 +62,7 @@
 #' @export
 
 
-SSPower <- function (I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05, Power = 0.80, SS = "out", CR = 1, DE_H = 1, DE_R = 1,
+sspower <- function (I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05, Power = 0.80, SS = "out", CR = 1, DE_H = 1, DE_R = 1,
                       BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                       BigT = 730){
 
@@ -533,12 +533,12 @@ n2       <-5000
 alpha=0.05
 BMest="same.test"
 
-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=1, DE_R=1,
+sspower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=1, DE_R=1,
                      BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                      BigT=730)
 
 
-my.data<-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=1, DE_R=1,
+my.data<-sspower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=1, DE_R=1,
                  BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                  BigT=730)
 my.data$Inc.Difference.Statistics
@@ -569,7 +569,7 @@ n2       <-4500
 alpha=0.05
 BMest="FRR.indep"
 
-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=DE_H, DE_R=DE_H,
+sspower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power="out", SS=NULL, CR=1, DE_H=DE_H, DE_R=DE_H,
         BMest="FRR.indep", MDRI, RSE_MDRI, FRR, RSE_FRR,
         BigT=730)
 
@@ -597,7 +597,7 @@ n2       <-4500
 alpha=0.05
 BMest="MDRI.FRR.indep"
 
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=alpha,
+sspower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=alpha,
         Power="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
         BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=BigT)
@@ -630,7 +630,7 @@ BMest="same.test"
 
 
 
-test.SS <- SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=DE_H, DE_R=DE_R,
+test.SS <- sspower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=DE_H, DE_R=DE_R,
                  BMest="same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
                  BigT=730)
 
@@ -661,7 +661,7 @@ n2       <-"both"
 alpha=0.05
 BMest="FRR.indep"
 
-SSPower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=DE_H, DE_R=DE_R,
+sspower(I1, I2, PrevH1, PrevH2, n1, n2, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=DE_H, DE_R=DE_R,
         BMest="FRR.indep", MDRI, RSE_MDRI, FRR, RSE_FRR,
         BigT=730)
 
@@ -690,7 +690,7 @@ n2       <-"both"
 alpha=0.05
 BMest="MDRI.FRR.indep"
 
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=.8, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+sspower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=.8, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
         BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=BigT)
 
@@ -718,7 +718,7 @@ n2       <-5000
 alpha=0.05
 BMest="FRR.indep"
 
-SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2=5000, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
+sspower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2=5000, alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
         BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=730)
 
@@ -746,7 +746,7 @@ n2       <-"both"
 alpha=0.05
 BMest="MDRI.FRR.indep"
 
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+sspower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
         BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=BigT)
 
@@ -774,7 +774,7 @@ n2       <-"out"
 alpha=0.05
 BMest="MDRI.FRR.indep"
 
-SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+sspower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
         BMest="MDRI.FRR.indep", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
         BigT=BigT)
 
@@ -806,7 +806,7 @@ SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Po
 #
 #
 #
-# test.SS <- SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+# test.SS <- sspower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
 #                    BMest="same.test", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
 #                    BigT=BigT)
 #
@@ -835,7 +835,7 @@ SSPower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Po
 # alpha=0.05
 # BMest="FRR.indep"
 #
-# SSPower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2="out", alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
+# sspower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2="out", alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
 #         BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
 #         BigT=730)
 

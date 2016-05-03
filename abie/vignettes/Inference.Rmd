@@ -10,20 +10,20 @@ vignette: >
   %\VignetteIndexEntry{Integrating TCGA Data}
 ---
 
-The $abie$ package provides three functions for HIV incidence estimation: $recencyI$, $prevBYcounts$, and $incBYcounts$. These functions take as argument user-defined parameters and estimates taken from assays of recent HIV infection and output estimates for inference, incidence difference in the situation of multiple cross-sectional surveys (and possibly multiple assays), and confidence intervals, among other output. See the function help pages for specific examples of running the code. The principal reference for the methods behind this implementation is given by Kassanjee et al. $Epidemiology$, 2012.^[Kassanjee, Reshma, et al. "A new general biomarker-based incidence estimator." Epidemiology (Cambridge, Mass.) 23.5 (2012): 721. [URL](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3500970/)] Further guidance is provided in Kassanjee, McWalter, Welte. $AIDS$ $Research$ $and$ $Human$ $Retroviruses$. 2014.^[Kassanjee Reshma, McWalter Thomas A., and Welte Alex. "Short Communication:
+The $abie$ package provides three functions for HIV incidence estimation: $incprops$, $prevcounts$, and $inccounts$. These functions take as argument user-defined parameters and estimates taken from assays of recent HIV infection and output estimates for inference, incidence difference in the situation of multiple cross-sectional surveys (and possibly multiple assays), and confidence intervals, among other output. See the function help pages for specific examples of running the code. The principal reference for the methods behind this implementation is given by Kassanjee et al. $Epidemiology$, 2012.^[Kassanjee, Reshma, et al. "A new general biomarker-based incidence estimator." Epidemiology (Cambridge, Mass.) 23.5 (2012): 721. [URL](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3500970/)] Further guidance is provided in Kassanjee, McWalter, Welte. $AIDS$ $Research$ $and$ $Human$ $Retroviruses$. 2014.^[Kassanjee Reshma, McWalter Thomas A., and Welte Alex. "Short Communication:
 Defining Optimality of a Test for Recent Infection for HIV Incidence Surveillance." AIDS Research and Human Retroviruses. January 2014, 30(1): 45-49. [URL](http://www.ncbi.nlm.nih.gov/pubmed/24090052)]
 
 This vignette will describe the use of necessary functions and some background on methods specific to this package.
 
-## prevBYcounts
+## prevcounts
 
-Function $prevBYcounts$, while not strictly necessary for inference on incidence, allows for using function $recencyI$ while taking into account of design effects, which factor into the relative standard error of prevalence of HIV positivity and recenecy. $incBYcounts$ has an option for design effects. The function $prevBYcounts$ takes count data from a prevalence survey and produces estimates of prevalences and relative standard errors. Design effects are assumed negligible unless user specifies otherwise. Note that the input values for design effects are assumed to be known by the user. 
+Function $prevcounts$, while not strictly necessary for inference on incidence, allows for using function $incprops$ while taking into account of design effects, which factor into the relative standard error of prevalence of HIV positivity and recenecy. $inccounts$ has an option for design effects. The function $prevcounts$ takes count data from a prevalence survey and produces estimates of prevalences and relative standard errors. Design effects are assumed negligible unless user specifies otherwise. Note that the input values for design effects are assumed to be known by the user. 
 
 
 For a single survey:
 
 ```{r, echo=FALSE}
-prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
+prevcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
   if (sum(N_H>N)>0 | sum(N_R>N)>0) {
     stop("sample subset larger than total sample")
   }
@@ -55,7 +55,7 @@ prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
 
 
 ```{r, fig.show='hold'}
-prevBYcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)
+prevcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)
 ```
 the output for the function is estimated prevalence of HIV given survey counts (5000/1000), estimated proportion of those tested who are defined as recently infected by the assay, and the relative standard error (RSE)--the ratio of standard deviation of the estimator to the estimate, which is itself an estimate of $\sigma/\mu$.   
 
@@ -68,7 +68,7 @@ Design effects in the above example are assumed negligible for test of positivit
 For two or more surveys, the function input is given in vector form using the concatenation expression `c()`.
 
 ```{r, fig.show='hold'}
-prevBYcounts (N = c(5000,5000), N_H = c(1000,1000), N_testR = c(1000,1000),
+prevcounts (N = c(5000,5000), N_H = c(1000,1000), N_testR = c(1000,1000),
 N_R = c(100,70), DE_H = 1, DE_R = c(1,1.1))
 ```
 Note the construction that survey 1 (the first survey entered) had design effects assumed negligible (=1), while the second survey had an estimated design effect (=1.1). These inputs must be followed sequentially for surveys in multiple entries. 
@@ -77,7 +77,7 @@ Note the construction that survey 1 (the first survey entered) had design effect
 
 
 
-##recencyI and incBYcounts
+##incprops and inccounts
 The functions $incprops$ and $inccounts$ uses an identical syntax scheme to that shown above for $prevcounts$, and given in the functions' help pages. Both functions take data that has already been calculated about the assay used for testing recency--estimates of false recency rate (FRR--$\beta$) and mean duration of recent infection (MDRI--$\Omega$) and their respective relative standard errors and the time cut threshold for recency in days (T)--as well a test rejection threshold $\alpha$ (default=0.05) and survey data: proportions (counts, if using function $inccounts$) of HIV positives (PrevH) and positives for recency (PrevR) and their relative standard errors. 
 
 The output for a single survey is an estimate of incidence along with confidence intervals and RSE, estimated annual rate of infection and associated confidence intervals, and confidence intervals for parameters MDRI and FRR, which are deduced from use input. 

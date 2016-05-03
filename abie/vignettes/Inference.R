@@ -1,5 +1,5 @@
 ## ---- echo=FALSE---------------------------------------------------------
-prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
+prevcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
   if (sum(N_H>N)>0 | sum(N_R>N)>0) {
     stop("sample subset larger than total sample")
   }
@@ -28,9 +28,9 @@ prevBYcounts <- function(N, N_H, N_testR, N_R, DE_H=1, DE_R=1) {
 }
 
 ## ---- fig.show='hold'----------------------------------------------------
-prevBYcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)
+prevcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)
 
 ## ---- fig.show='hold'----------------------------------------------------
-prevBYcounts (N = c(5000,5000), N_H = c(1000,1000), N_testR = c(1000,1000),
+prevcounts (N = c(5000,5000), N_H = c(1000,1000), N_testR = c(1000,1000),
 N_R = c(100,70), DE_H = 1, DE_R = c(1,1.1))
 
