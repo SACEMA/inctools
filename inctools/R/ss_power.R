@@ -1,4 +1,4 @@
-# Assay-Based Incidence Estimation
+# Incidence Estimation Tools
 # Copyright (C) 2015-2016, DST/NRF Centre of Excellence in Epidemiological Modelling and Analysis (SACEMA)
 # and individual contributors.
 #

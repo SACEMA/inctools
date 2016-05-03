@@ -1,23 +1,22 @@
-# Assay-Based Incidence Estimation Copyright (C) 2015-2016, DST/NRF Centre of Excellence in Epidemiological Modelling
-# and Analysis (SACEMA) and individual contributors.  This program is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either
-# version 3 of the License, or (at your option) any later version.  This program is distributed in the hope that it will
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.  You should have received a copy of the GNU General
-# Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-MDRI <- 200
-RSE_MDRI <- 0.05
-FRR <- 0.01
-RSE_FRR <- 0.2
-BigT <- 730
-I <- 0.015
-RSE_I <- "out"
-PrevH <- 0.1
-CR <- 1
-DE_H <- 1
-DE_R <- c(1, 1.5)
-n <- c(5000, 5500)
-step <- 5
+# Incidence Estimation Tools
+# Copyright (C) 2015-2016, DST/NRF Centre of Excellence in Epidemiological Modelling and Analysis (SACEMA)
+# and individual contributors.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
 
 # Note to self: 'step' is number of steps between minimum I and maximum I in the calculation of a range of output. So
 # supply a vector or max/min theoretical incidences, and the function gives a range of values (step number of values)
