@@ -1,7 +1,7 @@
 ---
 title: "Recent Infection Test Calibration (Estimating MDRI and FRR)"
 author: "Eduard Grebe"
-date: "`r Sys.Date()`"
+date: "2016-05-03"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{TestCalibration}
@@ -88,7 +88,7 @@ mdrical(data=exampledata,
                  plot = TRUE)
 ```
 
-## Example of *mdrical()* using the both functional forms and two independent thresholds on biomarkers
+## Example of ```mdrical()``` using the both functional forms and two independent thresholds on biomarkers
 
 Here we are also specifying a vector of variables and a vector of paramaters to define recency
 In this case we are using the assay result and the viral load. The paramaters in the vector *c(10,0,1000,1)* mean
@@ -109,7 +109,7 @@ mdrical(data=exampledata,
                  plot = TRUE)
 ```
 
-## Example of $mdrical$ in which bootstraps are run in parallel
+### Example of ```mdrical()``` in which bootstraps are run in parallel
 
 As above, but parellelise the bootstrapping. In this case, split the job over four cores.
 
@@ -132,7 +132,7 @@ mdrical(data=exampledata,
                  cores=4)
 ```
 
-## Estimating FRR using binomial proportions
+## Estimating FRR using binomial proportions with ```frrcal()```
 
 FRR is simply the binomially estimated probability of a *subject's* measurements post-$T$ being 'recent' on the recency test. A binomial exact test is performed using *binom.test()*. All of a subject's measurements post-$T$ are evaluated and if the majority are recent, the subject is considered to have measured falsely recent. Inversely, if a majority are non-recent, the subject contritbutes a 'true recent' result. Each subject represents one trial. In the case that exactly half of a subject's measurements are recent, they contribute 0.5 to the outcomes (which are rounded up to the nearest integer over all subjects).
 
