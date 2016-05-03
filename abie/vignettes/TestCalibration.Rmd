@@ -10,11 +10,23 @@ vignette: >
   %\VignetteIndexEntry{Integrating TCGA Data}
 ---
 
-This vignette covers the use of functions $mdri_ml_binomial$ and $frr_binomial$. 
+This vignette covers the use of functions $mdrical$ and $frrcal$. 
 
-**Note - this is an outline from the example file previously provided. It needs substantial work.**
+## Introduction
 
-## mdri_ml_binomial()
+Incidence estimates from cross-sectional surveys using biomarkers for 'recent infection' require that the test for recent infection (usually an adapted diagnostic assay) be accurately characterised (which we term calibration). The two critical parameters of test performance are the Mean Duration of Recent Infection (MDRI), denoted $\Omega_T$, (with $T$ the recency cutoff time), and False Recent Rate (FRR), denoted $\Beta_T$. The explicit time cutoff $T$ was introduced by Kassanjee et al. $Epidemiology$, 2012.[^1] to differentiate between 'true recent' and 'false recent' results. They state:
+
+>To lead to an informative estimator, this cut-off, though theoretically arbitrary, must be chosen to reflect the temporal dynamic range of the test for recent infection; i.e. at a time T post infection, the overwhelming majority of infected people should no longer be testing “recent”, and furthermore, T should not be larger than necessary to achieve this criterion.[^1]
+
+MDRI $\Omega_T$ is defined as the average time alive and returning a ‘recent’ result, while infected for times less than $T$. FRR $\Beta_T$ is defined as the proportion of subjects returning a 'recent' result while infected for longer than $T$.
+
+Test performance may be context-specific, and therefore, where available, local data should be used to calibrate tests. However, should published estimates be used, these may need to be adapted to the local context. Often cross-sectional incidence surveys incorporate recency testing using a Recent Infection Testing Algorithms (RITAs) and it is important to realise that the entire RITA must be appropriately calibrated. This may involve adapting MDRI estimates for more sensitive screening tests (depending on the case definition of 'recent'), or adapting FRR estimates based on weighted estimates from specimen subsets appropriate to the local population (e.g. large numbers of treated individuals). Where possible calibration should be performed using the same set of biomarkers used in a RITA, such as by including a viral load threshold in the calibration step.
+
+## Estimating MDRI using binomial regression
+
+This package provides the function $mdrical$ to estimate MDRI for a given biomarker or set of biomarkers from a dataset of based on the test being applied to well-characterised specimens and subjects. That is, time since 'infection' should be well-known, as well as test result(s). Note that 'infection' can be arbitrarily defined as the reference time (e.g. the exposure event, date of first detectability on an RNA assay, Western Blot seroconversion, etc.) but should be consistently used. If the reference time used in test calibration differs from the screening assay or algorithm that is used define someone as HIV-positive in a RITA, MDRI needs to be appropriately adapted to cater for this difference. 
+
+The following uses example data to demonstrate the use of the function $mdrical$.
 
 Load the package in order to use it
 
@@ -44,7 +56,7 @@ In the following two examples, only 1,000 bootstrap resamples are taken. We reco
 Here we will use the complementary log-log link $\ln(t)$ as predictor to model $P_R(t)$:
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center"}
-mdri_ml_binomial(data=exampledata,
+mdrical(data=exampledata,
                  subid_var = "SubjectID",
                  time_var = "DaysSinceEDDI",
                  recency_cutoff_time = 730.5,
@@ -61,7 +73,7 @@ mdri_ml_binomial(data=exampledata,
 Here we use the logit link and a cubic polynomial in $t$ to model $P_R(t)$:
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center"}
-mdri_ml_binomial(data=exampledata,
+mdrical(data=exampledata,
                  subid_var = "SubjectID",
                  time_var = "DaysSinceEDDI",
                  recency_cutoff_time = 730.5,
@@ -80,7 +92,7 @@ As above, but parellelise the bootstrapping. In this case, split the job over fo
 **Note: This only works on Unix (Mac or Linux). On Windows this will result in error messages.**
 
 ```{r, fig.width=7, fig.height=5, fig.align="center"}
-mdri_ml_binomial(data=exampledata,
+mdrical(data=exampledata,
                  subid_var = "SubjectID",
                  time_var = "DaysSinceEDDI",
                  recency_cutoff_time = 730.5,
@@ -100,7 +112,7 @@ mdri_ml_binomial(data=exampledata,
 This example calculates a false-recent rate, treating the data at subject level
 
 ```{r}
-frr_binomial(data=exampledata,
+frrcal(data=exampledata,
              subid_var = "SubjectID",
              time_var = "DaysSinceEDDI",
              recency_cutoff_time = 730.5,
@@ -151,3 +163,5 @@ Also a quote using `>`:
 
 > "He who gives up [code] safety for [code] speed deserves neither."
 ([via](https://twitter.com/hadleywickham/status/504368538874703872))
+
+[^1]: Kassanjee, Reshma, et al. "A new general biomarker-based incidence estimator." Epidemiology (Cambridge, Mass.) 23.5 (2012): 721. [URL](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3500970/)

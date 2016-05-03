@@ -5,7 +5,7 @@ library(abie)
 exampledata <- read.csv("../data/exampledata_testcalibration.csv")
 
 ## ---- fig.width=6.5, fig.height=5, fig.align="center"--------------------
-mdri_ml_binomial(data=exampledata,
+mdrical(data=exampledata,
                  subid_var = "SubjectID",
                  time_var = "DaysSinceEDDI",
                  recency_cutoff_time = 730.5,
@@ -19,7 +19,7 @@ mdri_ml_binomial(data=exampledata,
                  plot = TRUE)
 
 ## ---- fig.width=6.5, fig.height=5, fig.align="center"--------------------
-mdri_ml_binomial(data=exampledata,
+mdrical(data=exampledata,
                  subid_var = "SubjectID",
                  time_var = "DaysSinceEDDI",
                  recency_cutoff_time = 730.5,
@@ -33,7 +33,7 @@ mdri_ml_binomial(data=exampledata,
                  plot = TRUE)
 
 ## ---- fig.width=7, fig.height=5, fig.align="center"----------------------
-mdri_ml_binomial(data=exampledata,
+mdrical(data=exampledata,
                  subid_var = "SubjectID",
                  time_var = "DaysSinceEDDI",
                  recency_cutoff_time = 730.5,
@@ -49,7 +49,7 @@ mdri_ml_binomial(data=exampledata,
                  cores=4)
 
 ## ------------------------------------------------------------------------
-frr_binomial(data=exampledata,
+frrcal(data=exampledata,
              subid_var = "SubjectID",
              time_var = "DaysSinceEDDI",
              recency_cutoff_time = 730.5,
