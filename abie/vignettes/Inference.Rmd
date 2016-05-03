@@ -82,9 +82,9 @@ The functions $incprops$ and $inccounts$ uses an identical syntax scheme to that
 
 The output for a single survey is an estimate of incidence along with confidence intervals and RSE, estimated annual rate of infection and associated confidence intervals, and confidence intervals for parameters MDRI and FRR, which are deduced from use input. 
 
-The output for multiple surveys is the same output as for a single survey, along with pairwise comparisons of incidence rates, confidence intervals of differences, and tests of equality with p-values and RSE of differences. Run the code given in the examples section at the bottom of the function help page `help("recencyI")` for examples of this implementation and output. 
+The output for multiple surveys is the same output as for a single survey, along with pairwise comparisons of incidence rates, confidence intervals of differences, and tests of equality with p-values and RSE of differences. Run the code given in the examples section at the bottom of the function help page `help("incprops")` for examples of this implementation and output. 
 
-The delta method calculation of the estimator variance is described in the second reference, however the delta method approximation of the variance of the difference of incidence estimators has not been described until now. There are three cases that can arise: (1) the same test is used for both assays; (2) the tests are different with independent FRR; (3) the tests are independent with different FRR and different MDRI. The option for assay scheme is specified in both $recencyI$ and $incBYcounts$ by function parameter `BMest`. Subscripts 1 and 2 in the parameter notation denote associated survey or test parameters. The variances of the three cases follow. 
+The delta method calculation of the estimator variance is described in the second reference, however the delta method approximation of the variance of the difference of incidence estimators has not been described until now. There are three cases that can arise: (1) the same test is used for both assays; (2) the tests are different with independent FRR; (3) the tests are independent with different FRR and different MDRI. The option for assay scheme is specified in both $incprops$ and $inccounts$ by function parameter `BMest`. Subscripts 1 and 2 in the parameter notation denote associated survey or test parameters. The variances of the three cases follow. 
 
 Case 1: Same test
 \begin{align}
@@ -125,9 +125,9 @@ V[\Delta \mathbb{I}]_3 \approx &
 If bootstrapping is use in place of the delta method approximation, the user may also enter in a covariance estimate between testing for recency and testing for positivity to be used in the empirical bootstrap sampler. 
 
 ## The Empirical Bootstrapping Option
-Functions $recencyI$ and $incBYcounts$ both admit the option of bootstrapping. The default multivariate delta method approximation to the variance of the incidence estimator is adequate for inputs that are normal, however the method is still only a linear approximation. Since there are situations where the higher order terms in the Taylor expansion of variance may contribute non-negligibly to the variance estimator, and since it may be the case that both FRR and structured survey data may not be exactly normally distributed, we have programmed an empirical bootstrapping option for users wishing to make non-parametric inference on differences in proportions.
+Functions $incprops$ and $inccounts$ both admit the option of bootstrapping. The default multivariate delta method approximation to the variance of the incidence estimator is adequate for inputs that are normal, however the method is still only a linear approximation. Since there are situations where the higher order terms in the Taylor expansion of variance may contribute non-negligibly to the variance estimator, and since it may be the case that both FRR and structured survey data may not be exactly normally distributed, we have programmed an empirical bootstrapping option for users wishing to make non-parametric inference on differences in proportions.
 
-This method is called in $recencyI$ and $incBYcounts$ by adding the option `Boot = TRUE`. The method is described below.
+This method is called in $incprops$ and $inccounts$ by adding the option `Boot = TRUE`. The method is described below.
 
 We start with estimates on parameters that are derived from data. So we have estimates:
 
