@@ -83,12 +83,12 @@ mdrical(data=exampledata,
                  functional_forms = c("cloglog_linear"),
                  recency_rule = "binary_data",
                  recency_vars = "Recent",
-                 n_bootstraps = 10,
+                 n_bootstraps = 100,
                  alpha = 0.05,
                  plot = TRUE)
 ```
 
-## Example of ```mdrical()``` using the both functional forms and two independent thresholds on biomarkers
+### Example of ```mdrical()``` using the both functional forms and two independent thresholds on biomarkers
 
 Here we are also specifying a vector of variables and a vector of paramaters to define recency
 In this case we are using the assay result and the viral load. The paramaters in the vector *c(10,0,1000,1)* mean
@@ -104,7 +104,7 @@ mdrical(data=exampledata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 10,
+                 n_bootstraps = 100,
                  alpha = 0.05,
                  plot = TRUE)
 ```
@@ -125,7 +125,7 @@ mdrical(data=exampledata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 12,
+                 n_bootstraps = 1000,
                  alpha = 0.05,
                  plot = TRUE,
                  parallel = TRUE,
