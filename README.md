@@ -1,5 +1,5 @@
-# ABIE
-Tools for Assay-Based Incidence Estimation
+# inctools
+Incidence Estimation Tools
 
 **This is a development repository. Version 1.0 to appear shortly.**
 
