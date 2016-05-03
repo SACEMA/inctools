@@ -1,6 +1,6 @@
-Package: abie
+Package: inctools
 Type: Package
-Title: Assay-Based Incidence Estimation
+Title: Incidence Estimation Tools
 Version: 0.9
 Date: 2016-04-29
 Authors@R: c(
