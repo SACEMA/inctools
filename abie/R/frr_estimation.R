@@ -36,7 +36,7 @@
 #' below 1.5 AND a viral load reasing above 500 indicates a recent result. Objects with missing values in its
 #'  biomarker readings will be excluded from caculation.
 #' @export
-frr_binomial <- function(data = data, subid_var = "sid", time_var = "time", recency_cutoff_time = 730.5,
+frrcal <- function(data = data, subid_var = "sid", time_var = "time", recency_cutoff_time = 730.5,
                          recency_rule = "binary_data", recency_vars = "recency_status", recency_params = NULL, alpha = 0.05) {
   names(data)[names(data) == subid_var] <- "sid"
   names(data)[names(data) == time_var] <- "time_since_eddi"

@@ -79,7 +79,7 @@
 #' functional forms, the confidence interval will be estimated by means of 10,000
 #' subject-level resampling operations and the fitted model curve will be plotted.
 #' @export
-mdri_ml_binomial <- function(data = data, subid_var = "sid", time_var = "time", functional_forms = c("cloglog_linear", "logit_cubic"),
+mdrical <- function(data = data, subid_var = "sid", time_var = "time", functional_forms = c("cloglog_linear", "logit_cubic"),
                              recency_cutoff_time = 730.5, inclusion_time_threshold = 800, recency_rule = "binary_data", recency_vars = "recency_status",
                              recency_params = NULL, n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4) {
 

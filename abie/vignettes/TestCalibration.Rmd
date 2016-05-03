@@ -1,5 +1,5 @@
 ---
-title: "Recent Infection Test Calibration (estimating MDRI and FRR)"
+title: "Recent Infection Test Calibration (Estimating MDRI and FRR)"
 author: "Eduard Grebe"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
