@@ -26,7 +26,7 @@ Prevalences and relative standard errors. Design effects are assumed negligible 
 Prevalence and Relative Standard Errors by Counts
 }
 \details{
-Type vignette("Inference",package="inctools") into console for more details on this function.
+The package contains a long form vignette that covers the use of this function. Use vignette("Inference",package="inctools") to access the vignette.
 }
 \examples{
 prevcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)

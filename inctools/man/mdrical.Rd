@@ -52,6 +52,8 @@ Models The fitted GLM models for each functional form.
 Estimate MDRI (point estimate and confidence interval) using binomial regression and a maximum likelihood approach
 }
 \details{
+The package contains a long form vignette that covers the use of this function. Use vignette("TestCalibration",package="inctools") to access the vignette.
+
 Expected data frame format: Before calling the function, please import your dataset into R environment.
 
 time_var: Time since infection; Note: this package does not assume any specific time unit. It is important to specify the
