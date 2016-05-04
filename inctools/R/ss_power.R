@@ -36,7 +36,7 @@
 #' @param RSE_FRR Relative standard error of FRR (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
 #' @param BigT Post-infection time cut-off (days). Default 730. If a single value is specified, that value is assumed to be the value for both surveys.
 #' @return Common sample size of two surveys--or the sample size of one survey given the other has already been completed--necessary to achieve a given power level for testing a null hypothesis that the incidence rates are identical between populations; alternatively, the power of said test under a particular sample size scenario. Function also returns implied statistics from input values on paramters, confidence limits, and population counts.
-#' @details The package contains a long form vignette for this function. See package documentation for more details.
+#' @details The package contains a long form vignette that covers the use of this function. Use vignette("SurveyDesign",package="inctools") to access the vignette.
 #'
 #' @examples
 #'sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,

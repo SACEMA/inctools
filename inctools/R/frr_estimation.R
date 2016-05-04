@@ -30,7 +30,8 @@
 #' @param recency_vars Variables to be used in determining recency outcomes
 #' @param recency_params Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule
 #' @param alpha Confidence level, default=0.05.
-#' @details
+#' @details The package contains a long form vignette that covers the use of this function. Use vignette("TestCalibration",package="inctools") to access the vignette.
+#'
 #' recency_rule: binary_data - supply a binary variable with 1=recent and 0=non-recent in recency_vars.
 #'
 #' recency_rule: independent_thresholds: supply one threshold variable per biomarker in recency_vars and the relevant

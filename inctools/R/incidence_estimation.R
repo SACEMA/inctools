@@ -25,7 +25,7 @@
 #' @param DE_R Design effect of recency test (vector/numeric), greater than or equal to 1. If multiple surveys are entered but only one design effect is specified, function assumes entered design effect is identical for both surveys.
 #' @return Prevalences and relative standard errors. Design effects are assumed negligible unless user specifies otherwise.
 #'
-#' @details Type vignette("Inference",package="inctools") into console for more details on this function.
+#' @details The package contains a long form vignette that covers the use of this function. Use vignette("Inference",package="inctools") to access the vignette.
 #'
 #' @examples
 #' prevcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)

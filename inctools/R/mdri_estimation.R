@@ -39,7 +39,7 @@
 #' @return MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
 #' @return Plots A plot of Probability of testing recent over time for each functional form.
 #' @return Models The fitted GLM models for each functional form.
-#' @details
+#' @details The package contains a long form vignette that covers the use of this function. Use vignette("TestCalibration",package="inctools") to access the vignette.
 #'
 #' Expected data frame format: Before calling the function, please import your dataset into R environment.
 #'
