@@ -2,7 +2,7 @@
 title: "Recent Infection Test Calibration (MDRI and FRR)"
 author: "Eduard Grebe"
 date: "2016-05-04"
-output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
 vignette: >
   %\VignetteIndexEntry{TestCalibration}
   %\VignetteEngine{knitr::rmarkdown}

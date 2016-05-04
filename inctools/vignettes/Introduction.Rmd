@@ -2,7 +2,7 @@
 title: "Introduction to the inctools package"
 author: "Alex Welte"
 date: "2016-05-04"
-output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
 fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Introduction}
