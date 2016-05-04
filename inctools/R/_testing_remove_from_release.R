@@ -347,60 +347,60 @@ sspower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH1, n1=n1, n2=n2, alpha=0.05, Po
 
 
 ##################### ---  Test values against spreadsheets (Find Sample Size)---- #######################
-# #See how to break the thing
-# I1 <- 0.01
-# I2 <- 0.011
-# PrevH1 <- .2
-# PrevH2 <- .15
-# Power= .99
-# SS = "out"
-# MDRI     <- 200
-# RSE_MDRI <- 0.05
-# FRR      <- 0.01
-# RSE_FRR  <- 0.2
-# BigT     <- 730
-# CR       <- 1
-# DE_H     <- 1
-# DE_R     <- 1
-# n1       <- "both"
-# n2       <-"both"
-# alpha=0.05
-# BMest="same.test"
-#
-#
-#
-# test.SS <- sspower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
-#                    BMest="same.test", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
-#                    BigT=BigT)
-#
-# test.SS
+#See how to break the thing
+I1 <- 0.01
+I2 <- 0.011
+PrevH1 <- .2
+PrevH2 <- .15
+Power= .99
+SS = "out"
+MDRI     <- 200
+RSE_MDRI <- 0.05
+FRR      <- 0.01
+RSE_FRR  <- 0.2
+BigT     <- 730
+CR       <- 1
+DE_H     <- 1
+DE_R     <- 1
+n1       <- "both"
+n2       <-"both"
+alpha=0.05
+BMest="same.test"
+
+
+
+test.SS <- sspower(I1=I1, I2=I2, PrevH1=PrevH1, PrevH2=PrevH2, n1=n1, n2=n2, alpha=0.05, Power=Power, SS="out", CR=CR, DE_H=DE_H, DE_R=DE_R,
+                   BMest="same.test", MDRI=MDRI, RSE_MDRI=RSE_MDRI, FRR=FRR, RSE_FRR=RSE_FRR,
+                   BigT=BigT)
+
+test.SS
 
 
 
 
 #another error message test: both SS and both n1 and n2 are labeled "out"
-# I1 <- 0.05
-# I2 <- 0.03
-# PrevH1 <- .2
-# PrevH2 <- .15
-# Power= .8
-# SS = "out"
-# MDRI     <- 200
-# RSE_MDRI <- 0.05
-# FRR      <- c(0.01,0.02)
-# RSE_FRR  <- c(0.2,.19)
-# BigT     <- 730
-# CR       <- 1
-# DE_H     <- 1
-# DE_R     <- 1
-# n1       <- "out"
-# n2       <-"out"
-# alpha=0.05
-# BMest="FRR.indep"
-#
-# sspower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2="out", alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
-#         BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
-#         BigT=730)
+I1 <- 0.05
+I2 <- 0.03
+PrevH1 <- .2
+PrevH2 <- .15
+Power= .8
+SS = "out"
+MDRI     <- 200
+RSE_MDRI <- 0.05
+FRR      <- c(0.01,0.02)
+RSE_FRR  <- c(0.2,.19)
+BigT     <- 730
+CR       <- 1
+DE_H     <- 1
+DE_R     <- 1
+n1       <- "out"
+n2       <-"out"
+alpha=0.05
+BMest="FRR.indep"
+
+sspower(I1=0.05, I2=0.03, PrevH1=0.20, PrevH2=0.15, n1="out", n2="out", alpha=0.05, Power=.8, SS="out", CR=1, DE_H=1, DE_R=1,
+        BMest="FRR.indep", MDRI=200, RSE_MDRI=0.05, FRR=FRR, RSE_FRR=RSE_FRR,
+        BigT=730)
 
 
 
@@ -423,84 +423,81 @@ incprops(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1]
 incprops(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[1, 1],
          RSE_PrevH = probs[1, 3], PrevR = probs[1,2], RSE_PrevR = probs[1, 4],
          MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-#
-#
-#
-# ##############################################################################################
-#
-# ################### == Call - BS only ==######################################################
-# incprops(BS_Count = 10000, Boot = TRUE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-#                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-#
-# # boot with a larger sample
-# incprops(BS_Count = 1e+05, Boot = TRUE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-#                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, Covar_HR = 2e-05)
-#
-# # boot with a larger sample and different testing scheme
-# incprops(BS_Count = 1e+05, Boot = TRUE, BMest = "FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-#                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01, 0.008), RSE_FRR = c(0.2, 0.21), BigT = 730, Covar_HR = 2e-05)
-# ##############################################################################################
-#
-#
-#
-# ######## == Check with spread sheets ''''''same.test, three surveys''''''==###########
-# probs <- prevcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 960), N_R = c(100, 70,
-#                                                                                                                 120))
-#
-# incprops(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-#                                                                                                                         2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-#
-# ######## == Check with spread sheets ''''''FRR.indep''''''==###########
-# probs <- prevcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 955), N_R = c(100, 70,
-#                                                                                                                 120))
-#
-# incprops(BS_Count = 10000, Boot = FALSE, BMest = "FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-#                                                                                                                         2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-#
-# ######## == Check with spread sheets ''''''MDRI.FRR.indep''''''==###########
-# probs <- prevcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 980), N_R = c(100, 70,
-#                                                                                                                 120))
-#
-# incprops(BS_Count = 10000, Boot = FALSE, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-#                                                                                                                              2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01, 0.02, 0.001), RSE_FRR = 0.2, BigT = 730)
-#
-#
-# ####### == bootstrap with warining from FRR=0 ==###########
-# probs <- prevcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 990), N_R = c(100, 70,
-#                                                                                                                 120))
-#
-# incprops(BS_Count = 10000, Boot = TRUE, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-#                                                                                                                             2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-#
-# incprops(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
-#                                                                                                                         2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0, RSE_FRR = 0, BigT = 730)
-#
-#
-# ######## == incidence by counts, single survey ==###########
-# inccounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 100, DE_H = 1, DE_R = 1, BS_Count = 10000, Boot = FALSE, BMest = "same.test",
-#             MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, Covar_HR = 0)
-#
-# ######## == incidence by counts, two surveys ==###########
-# inccounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 1000), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
-#             Boot = FALSE, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.06, BigT = 730, Covar_HR = 0)
-#
-# inccounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 1000), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
-#             Boot = TRUE, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.06, BigT = 730, Covar_HR = 0)
-#
-#
-#
-# ######## == incidence by counts, two surveys, FRR independent ==########### == incidence by counts, two surveys, FRR
-# ######## independent ==###########
-# inccounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 950), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
-#             Boot = FALSE, BMest = "MDRI.FRR.indep", MDRI = c(200, 190), RSE_MDRI = c(0.05, 0.07), FRR = c(0.01, 0.02), RSE_FRR = 0.05,
-#             BigT = c(730, 735), Covar_HR = 0)
-#
-# inccounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 950), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
-#             Boot = FALSE, BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05, FRR = 0, RSE_FRR = 0.05, BigT = 730, Covar_HR = 0)
-#
-#
-#
-# # End Examples ------------------------------------------------------------
 
 
 
+##############################################################################################
+
+################### == Call - BS only ==######################################################
+incprops(BS_Count = 10000, Boot = TRUE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+                                                                                                                       2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+
+# boot with a larger sample
+incprops(BS_Count = 1e+05, Boot = TRUE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+                                                                                                                       2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, Covar_HR = 2e-05)
+
+# boot with a larger sample and different testing scheme
+incprops(BS_Count = 1e+05, Boot = TRUE, BMest = "FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+                                                                                                                       2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01, 0.008), RSE_FRR = c(0.2, 0.21), BigT = 730, Covar_HR = 2e-05)
+##############################################################################################
+
+
+
+######## == Check with spread sheets ''''''same.test, three surveys''''''==###########
+probs <- prevcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 960), N_R = c(100, 70,
+                                                                                                                120))
+
+incprops(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+
+######## == Check with spread sheets ''''''FRR.indep''''''==###########
+probs <- prevcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 955), N_R = c(100, 70,
+                                                                                                                120))
+
+incprops(BS_Count = 10000, Boot = FALSE, BMest = "FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+
+######## == Check with spread sheets ''''''MDRI.FRR.indep''''''==###########
+probs <- prevcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 980), N_R = c(100, 70,
+                                                                                                                120))
+
+incprops(BS_Count = 10000, Boot = FALSE, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+                                                                                                                             2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01, 0.02, 0.001), RSE_FRR = 0.2, BigT = 730)
+
+
+####### == bootstrap with warining from FRR=0 ==###########
+probs <- prevcounts(N = c(5000, 5000, 3000), N_H = c(1000, 1000, 1000), N_testR = c(1000, 1000, 990), N_R = c(100, 70,
+                                                                                                                120))
+
+incprops(BS_Count = 10000, Boot = TRUE, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+                                                                                                                            2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+
+incprops(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3], PrevR = probs[,
+                                                                                                                        2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0, RSE_FRR = 0, BigT = 730)
+
+
+######## == incidence by counts, single survey ==###########
+inccounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 100, DE_H = 1, DE_R = 1, BS_Count = 10000, Boot = FALSE, BMest = "same.test",
+            MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, Covar_HR = 0)
+
+######## == incidence by counts, two surveys ==###########
+inccounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 1000), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
+            Boot = FALSE, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.06, BigT = 730, Covar_HR = 0)
+
+inccounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 1000), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
+            Boot = TRUE, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.06, BigT = 730, Covar_HR = 0)
+
+
+
+######## == incidence by counts, two surveys, FRR independent ==########### == incidence by counts, two surveys, FRR
+######## independent ==###########
+inccounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 950), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
+            Boot = FALSE, BMest = "MDRI.FRR.indep", MDRI = c(200, 190), RSE_MDRI = c(0.05, 0.07), FRR = c(0.01, 0.02), RSE_FRR = 0.05,
+            BigT = c(730, 735), Covar_HR = 0)
+
+inccounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 950), N_R = c(100, 70), DE_H = 1, DE_R = 1, BS_Count = 10000,
+            Boot = FALSE, BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05, FRR = 0, RSE_FRR = 0.05, BigT = 730, Covar_HR = 0)
+
+
+
+# End Examples ------------------------------------------------------------
