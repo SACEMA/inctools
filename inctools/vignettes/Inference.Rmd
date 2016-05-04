@@ -42,8 +42,8 @@ Design effects in the above example are assumed negligible for test of positivit
 For two or more surveys, the function input is given in vector form using the concatenation expression `c()`.
 
 ```{r, fig.show='hold'}
-prevcounts (N = c(5000,5000), N_H = c(1000,1000), N_testR = c(1000,1000),
-N_R = c(100,70), DE_H = 1, DE_R = c(1,1.1))
+prevcounts (N = c(5000,5000), N_H = c(1000,1000), N_testR = c(1000,1000), 
+            N_R = c(100,70), DE_H = 1, DE_R = c(1,1.1))
 ```
 Note the construction that survey 1 (the first survey entered) had design effects assumed negligible (=1), while the second survey had an estimated design effect (=1.1). These inputs must be followed sequentially for surveys in multiple entries. 
 

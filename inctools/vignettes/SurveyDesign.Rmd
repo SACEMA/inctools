@@ -23,7 +23,9 @@ library("inctools")
 ```
 
 ```{r, echo=TRUE}
-sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20, n1 = 5000, n2 = 5000, alpha = 0.05, Power = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
+sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20, n1 = 5000, n2 = 5000, alpha = 0.05, 
+        Power = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200, 
+        RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
 ```
 Output is presented in list form, so individual tables can be called by the user. For example, if the function object is defined as `desired.power`, then the implied subject counts deduced from assumed prevalence and given sample size can be called by entering `desired.power$Implied.Subject.Counts` or `desired.power[[5]]` into the console. 
 
@@ -32,14 +34,18 @@ Here the output returns that the power of this particular test given the hypothe
 If instead of power the user wants to know a common sample size for a desired power level, the input parameters are mostly the same as above, except that each variable `n1`, `n1` are to be left unspecified in the function call or both set to `"both"`, and variable `Power` will be set to the desired level. Here we envision the situation where the FRR is independent between tests and will be specified as a tuple in the function. As before there are no design effects or lacking testing coverage. Note also that now the function parameters for sample size is set to `SS = "out"`.
 
 ```{r, echo=TRUE}
-sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.15, n1 = "both", n2 = "both", alpha = 0.05, Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "FRR.indep", MDRI = 200, RSE_MDRI = 0.05, FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.22), BigT = 730)
+sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.15, n1 = "both", n2 = "both", alpha = 0.05, 
+        Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "FRR.indep", MDRI = 200, 
+        RSE_MDRI = 0.05, FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.22), BigT = 730)
 ```
 The function call outputs that the necessary common study sample size is 4122 persons per study to achieve the desired 80\% power given the specified population parameters and assay characteristics. 
 
 Finally, imagine the situation where one study has already been completed, and values have been calculated for that study and for the recency assay in use, and the user wishes to find the sample size for the second to-be completed study needed to have a desired power to detect a difference in incidences. The function call for this situation is similar to the previous call, except the survey for which the sample size generation is to be performed will have the sample size parameter in the function call specified as `"out`. See below for an example of this syntax and output. Again, note that the function parameter for sample size is still set to `SS = "out"`.
 
 ```{r, echo=TRUE}
-sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.15, n1 = 5000, n2 = "out", alpha = 0.05, Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.21, BigT = 730)
+sspower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.15, n1 = 5000, n2 = "out", alpha = 0.05, 
+        Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200, 
+        RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.21, BigT = 730)
 ```
 The function now returns the necessary sample size for survey 2 that will generate power of 80\%, given the hypothetical population parameters for survey 2 and the observed parameter estimates for survey 1 and the assay characteristics MDRI, FRR, and their respective relative standard errors and time cut point T. 
 
@@ -49,7 +55,8 @@ This function summarizes performance of a recent infection test into a standard 
 The function call below returns the necessary sample size to have RSE of the incidence estimator equal to 25\%, given a hypothetical prevalence, coverage rate, and assay tests parameter estimates. Note here the design effects for the test of HIV positivity are set to 1.1 and that sample size is set to `n = "out"`.
 
 ```{r, echo=TRUE}
-ssprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730, DE_H = 1.1, DE_R = 1, n = 'out')
+ssprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, 
+            RSE_FRR = 0.2, BigT = 730, DE_H = 1.1, DE_R = 1, n = 'out')
 ```
 The function call returns that the necessary sample size for the desired precision in the incidence estimator is 3634 persons. Prevalence of being HIV positive and recently infected is 0.8\%, prevalence of being HIV positive and nonrecently infected is 19\%. The RSE of the incidence estimator at infinite sample size is 7.6\%, and the RSE of prevalence of positivity for HIV is 3.4\% and the RSE of prevalence of recency is 3.55\%. 
 
@@ -64,7 +71,8 @@ So for example in the first listed output, the sample size necessary for a given
 
 Finally, for calculating the RSE of incidence over a range of 5 values of prevalence of positivity with a sample size of 5000, the user will set the sample size parameter to a given value, here `n = 5000`. The precision is set to output with option  `RSE_I = "out"`.
 ```{r, echo=TRUE}
-ssprecision(I = 0.017, RSE_I = 'out', PrevH = c(0.10,0.20), CR = 1, MDRI = 211, RSE_MDRI = 0.05, FRR = 0.009, RSE_FRR = 0.2, BigT = 720, n = 5000, step = 5)
+ssprecision(I = 0.017, RSE_I = 'out', PrevH = c(0.10,0.20), CR = 1, MDRI = 211, RSE_MDRI = 0.05, 
+            FRR = 0.009, RSE_FRR = 0.2, BigT = 720, n = 5000, step = 5)
 ```
 
 
