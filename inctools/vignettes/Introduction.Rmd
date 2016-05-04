@@ -14,3 +14,7 @@ vignette: >
 ##Introduction to inctools
 
 **To be written before 1.0.0 release.**
+
+Example reference, Kassanjee et al. *Epidemiology*, 2012.[^1]
+
+[^1]: Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. "A new general biomarker-based incidence estimator." Epidemiology; 2012, 23(5): 721-728; doi:[10.1097/EDE.0b013e3182576c07](http://dx.doi.org/10.1097/EDE.0b013e3182576c07).
