@@ -2,7 +2,7 @@
 title: "Inference with inctools"
 author: "Avery McIntosh"
 date: "2016-05-04"
-output: rmarkdown::pdf_document
+output: rmarkdown::html_vignette
 fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Inference}
