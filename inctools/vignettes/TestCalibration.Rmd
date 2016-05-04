@@ -1,7 +1,7 @@
 ---
 title: "Recent Infection Test Calibration (Estimating MDRI and FRR)"
-author: "Eduard Grebe"
-date: "2016-05-03"
+author: "SACEMA"
+date: "2016-05-05"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{TestCalibration}
@@ -14,7 +14,7 @@ This vignette covers the use of functions ```mdrical()``` and ```frrcal()```.
 
 ## Introduction
 
-Incidence estimates from cross-sectional surveys using biomarkers for 'recent infection' require that the test for recent infection (usually an adapted diagnostic assay) be accurately characterised (which we term calibration). The two critical parameters of test performance are the Mean Duration of Recent Infection (MDRI), denoted $\Omega_T$, (with $T$ the recency cutoff time), and False Recent Rate (FRR), denoted $\beta_T$. The explicit time cutoff $T$ was introduced by Kassanjee et al. $Epidemiology$, 2012.[^1] to differentiate between 'true recent' and 'false recent' results. They state:
+Incidence estimates from cross-sectional surveys using biomarkers for 'recent infection' require that the test for recent infection (usually an adapted diagnostic assay) be accurately characterised. The two critical parameters of test performance are the Mean Duration of Recent Infection (MDRI), denoted $\Omega_T$, (with $T$ the recency cutoff time), and False Recent Rate (FRR), denoted $\beta_T$. The explicit time cutoff $T$ was introduced by Kassanjee et al. $Epidemiology$, 2012.[^1] to differentiate between 'true recent' and 'false recent' results. They state:
 
 >To lead to an informative estimator, this cut-off, though theoretically arbitrary, must be chosen to reflect the temporal dynamic range of the test for recent infection; i.e. at a time T post infection, the overwhelming majority of infected people should no longer be testing “recent”, and furthermore, T should not be larger than necessary to achieve this criterion.[^1]
 
@@ -83,7 +83,7 @@ mdrical(data=exampledata,
                  functional_forms = c("cloglog_linear"),
                  recency_rule = "binary_data",
                  recency_vars = "Recent",
-                 n_bootstraps = 100,
+                 n_bootstraps = 10000,
                  alpha = 0.05,
                  plot = TRUE)
 ```
@@ -104,7 +104,7 @@ mdrical(data=exampledata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 100,
+                 n_bootstraps = 10000,
                  alpha = 0.05,
                  plot = TRUE)
 ```
@@ -125,7 +125,7 @@ mdrical(data=exampledata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 1000,
+                 n_bootstraps = 10000,
                  alpha = 0.05,
                  plot = TRUE,
                  parallel = TRUE,
