@@ -3,6 +3,7 @@ title: "Survey Design (sample size, power, precision)"
 author: "Avery McIntosh"
 date: "2016-05-04"
 output: rmarkdown::html_vignette
+#output: rmarkdown::pdf_document
 vignette: >
   %\VignetteIndexEntry{SurveyDesign}
   %\VignetteEngine{knitr::rmarkdown}
