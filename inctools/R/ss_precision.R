@@ -16,21 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
-
-# Note to self: 'step' is number of steps between minimum I and maximum I in the calculation of a range of output. So
-# supply a vector or max/min theoretical incidences, and the function gives a range of values (step number of values)
-# for the output. This can be done for all input variables. DO WE WANT THIS OPTION??
-
-# Only gives option of n or RSE_I to be 'out' or not. So only gives precision or n. Makes sense. Either give function n
-# to get RSE_I or give it RSE_I to get n.
-
-# This function covers what was made in spreadsheets ABIE_v3_Test_Performance_Calculator (which takes SS and other
-# variables of test, hypothetical data, and gives precision), and what was done in sheet ABIE_v3_Sample_Size_Calculator,
-# which gives SS for a given precision level.
-
-
-# Needs to be defined for function to work:
 DM_FirstOrderTerms <- function(prevH, prevR, mdri, frr, bigt) {
   fot_prevH <- (prevR - frr)/(((1 - prevH)^2) * (mdri - frr * bigt))  #E.G. d(I)/d(P_H)
   fot_prevR <- prevH/((1 - prevH) * (mdri - frr * bigt))
@@ -38,8 +23,6 @@ DM_FirstOrderTerms <- function(prevH, prevR, mdri, frr, bigt) {
   fot_frr <- (prevH * (bigt * prevR - mdri))/((1 - prevH) * ((mdri - frr * bigt)^2))
   return(c(fot_prevH, fot_prevR, fot_mdri, fot_frr))
 }
-
-
 
 #' Sample size or precision calculation
 #'
@@ -162,7 +145,7 @@ ssprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT 
 
 
   ######### THIS WHOLE SECTION HERE IS FOR IF ONE OR MORE OF THE VARIABLES IS ALLOWED TO VARY####### CREATES TWO NULL VALUES, I
-  ######### BELIVE FOR WHICH VARIABLES ARE TO VARY
+  ######### BELIEVE FOR WHICH VARIABLES ARE TO VARY
   vary1 <- NULL
   vary2 <- NULL
   # NOW FOR EACH VARIABLE IN LIST, IF IT'S ALLOWED TO VARY, THEN MAKE A MATRIX OF VALUES FOR THE STEP, FROM BEGINNING TO
@@ -452,52 +435,3 @@ ssprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT 
 
   return(output)
 }
-
-
-
-
-
-
-
-# Examples of function use: default of spreadsheet ABIE_v3_Sample_Size_Calculator.xlsx
-
-ssprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730,
-             DE_H = 1, DE_R = 1, n = "out", step = 5)
-
-#####################################################################################################################
-ssprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
-            BigT = c(530,730), DE_H = 1, DE_R = 1, n = "out", step = 5)
-
-
-ssprecision(I = c(0.015, 0.02), RSE_I = 0.25, PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
-             BigT = c(530, 730), DE_H = 1, DE_R = 1, n = "out", step = 5)
-
-
-
-# doesn't work when FRR goes above 3.7% for these values I comment out because the package will not build with error
-# messages present ssprecision ( I =0.015, RSE_I =0.25, PrevH =0.20, CR =1, MDRI =200, RSE_MDRI =0.05, FRR =0.039,
-# RSE_FRR =0.2, BigT = 730, DE_H = 1, DE_R = 1, n = 'out', step = 5)
-
-#####################################################################################################################
-
-# default of spreadsheet ABIE_v3_Test_Performance_Calculator
-ssprecision(I = 0.015, RSE_I = "out", PrevH = 0.2, CR = 0.7, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730,
-             DE_H = 1, DE_R = 1, n = c(5000, 5500), step = 5)
-
-
-#####################################################################################################################
-ssprecision(I = 0.015, RSE_I = "out", PrevH = 0.2, CR = 0.7, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730,
-             DE_H = 1, DE_R = 1, n = 3622, step = 5)
-
-
-
-#####################################################################################################################
-ssprecision(I = 0.015, RSE_I = "out", PrevH = c(0.2, 0.22), CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
-             BigT = 730, DE_H = c(1, 1.1), DE_R = 1, n = 3622, step = 5)
-
-
-
-
-ssprecision(I = 0.015, RSE_I = "out", PrevH = 0.2, CR = 0.7, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730,
-             DE_H = 1, DE_R = 1, n = 3622, step = 5)
-

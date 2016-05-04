@@ -14,8 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-
 
 #'Estimate MDRI (point estimate and confidence interval) using binomial regression and a maximum likelihood approach
 #'
