@@ -14,7 +14,7 @@ Spreadsheet-based tools for inferring incidence using biomarkers for 'recent inf
 
 These tools are released as an R package by the [DST/NRF Centre of Excellence in Epidemiological Modelling and Analysis (SACEMA)](http://www.sacema.org/) in collaboration with the [Consortium for the Evaluation and Performance of HIV Incidence Assays (CEPHIA)](http://www.incidence-estimation.org/page/cephia) and other partners. The package maintainer can be contacted at [eduardgrebe@sun.ac.za](mailto:eduardgrebe@sun.ac.za).
 
-# Usage terms
+## Usage terms
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
