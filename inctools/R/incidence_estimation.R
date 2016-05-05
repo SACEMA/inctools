@@ -688,8 +688,8 @@ inccounts <- function(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000
  probs <- prevcounts(N = c(5000, 5000), N_H = c(1000, 1000), N_testR = c(1000, 970), N_R = c(100, 70))
 #
 # ################### == Call - DM only ==######################################################
- incprops(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[, 1], RSE_PrevH = probs[, 3],
-          PrevR = probs[,2], RSE_PrevR = probs[, 4], MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+ incprops(BS_Count = 10000, Boot = F, BMest = "MDRI.FRR.indep", PrevH = probs[, 1], RSE_PrevH = probs[, 3],
+          PrevR = probs[,2], RSE_PrevR = probs[, 4], MDRI = c(200,210), RSE_MDRI = c(0.05,0.07), FRR = c(0.01,0.02), RSE_FRR = 0.2, BigT = c730)
 #
 # # (single survey)
  incprops(BS_Count = 10000, Boot = FALSE, BMest = "same.test", PrevH = probs[1, 1],
