@@ -1,10 +1,12 @@
 ---
 title: "Introduction to the inctools package"
 author: "Alex Welte"
-date: "2016-05-03"
+date: "2016-05-04"
 output: rmarkdown::html_vignette
+#output: rmarkdown::pdf_document
+fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteIndexEntry{Integrating TCGA Data}
@@ -12,3 +14,8 @@ vignette: >
 
 ##Introduction to inctools
 
+**To be written before 1.0.0 release.**
+
+Example reference, Kassanjee et al. *Epidemiology*, 2012.[^1]
+
+[^1]: Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. "A new general biomarker-based incidence estimator." Epidemiology; 2012, 23(5): 721-728; doi:[10.1097/EDE.0b013e3182576c07](http://dx.doi.org/10.1097/EDE.0b013e3182576c07).
