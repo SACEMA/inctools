@@ -2,8 +2,8 @@
 
 export(frrcal)
 export(inccounts)
+export(incpower)
+export(incprecision)
 export(incprops)
 export(mdrical)
-export(power)
-export(precision)
 export(prevcounts)
