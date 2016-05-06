@@ -1,6 +1,6 @@
 ---
 title: "Inference with inctools"
-author: "Avery McIntosh"
+author: "Alex Welte and Avery McIntosh"
 date: "2016-05-04"
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document

@@ -1,6 +1,6 @@
 ---
 title: "Recent Infection Test Calibration (MDRI and FRR)"
-author: "Eduard Grebe"
+author: "Alex Welte and Eduard Grebe"
 date: "2016-05-04"
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
