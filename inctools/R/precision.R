@@ -42,22 +42,22 @@ DM_FirstOrderTerms <- function(prevH, prevR, mdri, frr, bigt) {
 #' Up to two parameters can be given as tuple vetors, with the input parameter 'step' giving the number of points analyzed between the endpoints of the vector. This yields output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an illustration of this process. The package contains a long form vignette for this function. See package documentation for more details.
 #'
 #' @examples
-#' precision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
+#' incprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
 #' MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
 #' BigT = 730, DE_H = 1.1, DE_R = 1, n = 'out')
 #'
-#' precision(I = c(0.015,0.02), RSE_I = 0.25, PrevH = c(0.10,0.20),
+#' incprecision(I = c(0.015,0.02), RSE_I = 0.25, PrevH = c(0.10,0.20),
 #' CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.2,
 #' BigT = 700, DE_H = 1, DE_R = 1, n = 'out', step = 5)
 #'
-#' precision(I = 0.017, RSE_I = 'out', PrevH = c(0.10,0.20),
+#' incprecision(I = 0.017, RSE_I = 'out', PrevH = c(0.10,0.20),
 #' CR = 1, MDRI = 211, RSE_MDRI = 0.05, FRR = 0.009, RSE_FRR = 0.2,
 #' BigT = 720, n = 5000, step = 5)
 #' @export
 #'
 # FOR THIS FUNCTION TO RUN, THE FUNCTION DM_FirstOrderTerms MUST BE INVOKED. IT
 # EXISTS IN R SCRIPT recencyI_prev.R
-precision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
+incprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
     DE_H = 1, DE_R = 1, n = "out", step = 5) {
     var_list <- list(I = I, RSE_I = RSE_I, PrevH = PrevH, CR = CR, MDRI = MDRI, RSE_MDRI = RSE_MDRI,
         FRR = FRR, RSE_FRR = RSE_FRR, BigT = BigT, DE_H = DE_H, DE_R = DE_R, n = n,

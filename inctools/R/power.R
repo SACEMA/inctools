@@ -34,19 +34,19 @@
 #' @details The package contains a long form vignette that covers the use of this function. Use vignette('SurveyDesign',package='inctools') to access the vignette.
 #'
 #' @examples
-#'power(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
+#'incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
 #'n1 = 5000, n2 = 5000, alpha = 0.05, Power = 'out', SS = NULL,
 #'DE_H = c(1,1.1), DE_R = 1, BMest = 'same.test', MDRI = 200,
 #'RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
 #'
 #'
-#'power(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
+#'incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
 #'alpha = 0.05, Power = 0.80, SS = 'out', DE_H = 1, DE_R = 1,
 #'BMest = 'FRR.indep', MDRI = 200, RSE_MDRI = 0.05,
 #'FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.21), BigT = 730)
 #'
 #'
-#'power(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
+#'incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
 #'n1 = 5000, n2 = 'out', alpha = 0.05, Power = 0.80, SS ='out',
 #'DE_H = 1, DE_R = 1, BMest = 'MDRI.FRR.indep', MDRI = 200,
 #'RSE_MDRI = c(0.05,0.06), FRR = c(0.01,0.009),
@@ -54,7 +54,7 @@
 #' @export
 
 
-power <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
+incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
     Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI,
     RSE_MDRI, FRR, RSE_FRR, BigT = 730) {
 
