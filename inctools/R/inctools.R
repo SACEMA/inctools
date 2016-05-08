@@ -12,7 +12,7 @@
 
 #' inctools: a package for incidence estimation
 #'
-#' The inctools package uses methods described by Kassanjee, et al. 'A new general biomarker-based incidence estimator,' \emph{Epidemiology} (2012), to implement functions to calculate incidence and tests of incidence difference between two populations, as well as power and sample size constraints for differenct study scenarios.
+#' The inctools package uses methods described by Kassanjee, et al. 'A new general biomarker-based incidence estimator,' \emph{Epidemiology} (2012), to implement functions to calculate incidence and tests of incidence difference between two populations, as well as power and sample size constraints for different study scenarios.
 #' inctools also provides functions for calculation of mean duration of recent infection and false recency rates from assays for recent infection.
 #'
 #' @section inctools Functions:
