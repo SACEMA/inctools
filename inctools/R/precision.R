@@ -54,9 +54,7 @@ DM_FirstOrderTerms <- function(prevH, prevR, mdri, frr, bigt) {
 #' CR = 1, MDRI = 211, RSE_MDRI = 0.05, FRR = 0.009, RSE_FRR = 0.2,
 #' BigT = 720, n = 5000, step = 5)
 #' @export
-#'
-# FOR THIS FUNCTION TO RUN, THE FUNCTION DM_FirstOrderTerms MUST BE INVOKED. IT
-# EXISTS IN R SCRIPT recencyI_prev.R
+
 incprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
     DE_H = 1, DE_R = 1, n = "out", step = 5) {
     var_list <- list(I = I, RSE_I = RSE_I, PrevH = PrevH, CR = CR, MDRI = MDRI, RSE_MDRI = RSE_MDRI,
