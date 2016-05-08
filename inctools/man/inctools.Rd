@@ -11,7 +11,7 @@ inctools also provides functions for calculation of mean duration of recent infe
 }
 \section{inctools Functions}{
 
-inctools has functions \emph{frrcal} to estimate false recency rate; \emph{mdrical} to estimate mean duration or recent infection; \emph{incprops} and \emph{inccounts} to calculate estimates and confidence intervals for incidence and incidence difference, as well as other summary and inferential statistics related to the survey; \emph{power} to calculate sample size needed for a given power in a test of incidence difference, or vice versa; and \emph{precision}, which gives sample size needed for a given precision in the incidence estimate or vice versa.
+inctools has functions \emph{frrcal} to estimate false recency rate; \emph{mdrical} to estimate mean duration or recent infection; \emph{incprops} and \emph{inccounts} to calculate estimates and confidence intervals for incidence and incidence difference, as well as other summary and inferential statistics related to the survey; \emph{incpower} to calculate sample size needed for a given power in a test of incidence difference, or vice versa; and \emph{incprecision}, which gives sample size needed for a given precision in the incidence estimate or vice versa.
 
 For a longer introduction, see the introductory vignette for this package. Use vignette('Introduction',package='inctools') to access the document.
 }
