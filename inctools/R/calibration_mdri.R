@@ -74,7 +74,7 @@
 #'  excluded from caculation.
 #'
 #' @examples
-#'mdri_ml_binomial(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
+#'mdrical(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
 #'  functional_forms=c('cloglog_linear','logit_cubic'), recency_rule='independent_thresholds',
 #'  recency_vars=c('ODn','VL'), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
 #'  plot=TRUE, parallel=FALSE)
@@ -86,32 +86,32 @@
 #' functional forms, the confidence interval will be estimated by means of 10,000
 #' subject-level resampling operations and the fitted model curve will be plotted.
 #' @export
-mdrical <- function(data = data, subid_var = "sid", time_var = "time", functional_forms = c("cloglog_linear", 
-    "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800, 
-    recency_rule = "binary_data", recency_vars = "recency_status", recency_params = NULL, 
+mdrical <- function(data = data, subid_var = "sid", time_var = "time", functional_forms = c("cloglog_linear",
+    "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
+    recency_rule = "binary_data", recency_vars = "recency_status", recency_params = NULL,
     n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4) {
-    
-    
+
+
     if (is.null(data)) {
         stop("No input data has been specified")
     }
-    
+
     if (!exists("data") || !is.data.frame(get("data"))) {
         stop("Specified data is not a dataframe or does not exist")
     }
-    
+
     if (is.null(functional_forms)) {
         stop("Please select at least one functional form to apply to the data")
     }
-    
+
     if (is.null(recency_rule)) {
         stop("Please specify a Recency Rule")
     }
-    
+
     if (is.null(recency_vars)) {
         stop("Please specify at least one Recency Variable")
     }
-    
+
     if (recency_rule == "binary_data") {
         if (length(recency_vars) > 1) {
             stop("Binary data should be specified in one recency (outcome) variable.")
@@ -120,25 +120,25 @@ mdrical <- function(data = data, subid_var = "sid", time_var = "time", functiona
             stop("Input data is not binary")
         }
     }
-    
-    if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 * 
+
+    if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 *
         length(recency_params)) {
         stop("The number of recency variables must match the number of recency paramaters.")
     }
-    
+
     if (is.null(subid_var) | is.null(time_var)) {
         stop("Subject identifier and time variables must be specified.")
     }
-    
+
     if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
         stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
     }
-    
+
     if (parallel == TRUE) {
         check_package("foreach")
         check_package("doMC")
     }
-    
+
     # check that subject id, time and recency variables exist
     variables <- colnames(data)
     if (sum(variables == subid_var) != 1) {
@@ -152,59 +152,59 @@ mdrical <- function(data = data, subid_var = "sid", time_var = "time", functiona
             print(paste("There is no column", recency_vars[i], "in the data frame."))
         }
     }
-    
+
     ## Assign numeric subject ids, recency variables and recency status
-    data <- process_data(data = data, subid_var = subid_var, time_var = time_var, 
+    data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
         recency_vars = recency_vars, inclusion_time_threshold = inclusion_time_threshold)
     data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
-    
+
     tolerance_glm2 = 1e-08
     maxit_glm2 = 50000
     tolerance_integral = 1e-08
     maxit_integral = 10000
-    
+
     n_subjects <- max(data$sid)
-    
+
     mdri_output <- data.frame(matrix(ncol = 4, nrow = 0))
     model_output <- list()
     if (plot == TRUE) {
         plot_output <- list()
     }
-    
+
     for (i in 1:length(functional_forms)) {
         functional_form <- functional_forms[i]
-        
+
         if (parallel == TRUE && n_bootstraps != 0) {
             boot_data <- data
-            model <- fit_binomial_model(data = boot_data, functional_form = functional_form, 
+            model <- fit_binomial_model(data = boot_data, functional_form = functional_form,
                 tolerance = tolerance_glm2, maxit = maxit_glm2)
             parameters <- model$coefficients
-            mdri <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time, 
-                functional_form = functional_form, tolerance = tolerance_integral, 
+            mdri <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
+                functional_form = functional_form, tolerance = tolerance_integral,
                 maxit = maxit_integral)
             mdris <- mdri
             model_output[[functional_forms[i]]] <- model
             if (plot == TRUE) {
                 plot_parameters <- parameters
             }
-            
+
             doMC::registerDoMC(cores)
             chosen_subjects <- vector(mode = "list", length = n_bootstraps)
             # set.seed(123)
             for (j in 1:n_bootstraps) {
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
             }
-            mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind) %dopar% 
+            mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind) %dopar%
                 {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {
                     boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[[j]][k]))
                   }
-                  model <- fit_binomial_model(data = boot_data, functional_form = functional_form, 
+                  model <- fit_binomial_model(data = boot_data, functional_form = functional_form,
                     tolerance = tolerance_glm2, maxit = maxit_glm2)
                   parameters <- model$coefficients
-                  mdri_iterate <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time, 
-                    functional_form = functional_form, tolerance = tolerance_integral, 
+                  mdri_iterate <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
+                    functional_form = functional_form, tolerance = tolerance_integral,
                     maxit = maxit_integral)
                   return(mdri_iterate)
                 }
@@ -220,12 +220,12 @@ mdrical <- function(data = data, subid_var = "sid", time_var = "time", functiona
                 } else {
                   boot_data <- data
                 }
-                
-                model <- fit_binomial_model(data = boot_data, functional_form = functional_form, 
+
+                model <- fit_binomial_model(data = boot_data, functional_form = functional_form,
                   tolerance = tolerance_glm2, maxit = maxit_glm2)
                 parameters <- model$coefficients
-                mdri_iterate <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time, 
-                  functional_form = functional_form, tolerance = tolerance_integral, 
+                mdri_iterate <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
+                  functional_form = functional_form, tolerance = tolerance_integral,
                   maxit = maxit_integral)
                 if (j == 0) {
                   mdri <- mdri_iterate
@@ -239,7 +239,7 @@ mdrical <- function(data = data, subid_var = "sid", time_var = "time", functiona
                 }
             }  # bootstraps
         }
-        
+
         if (n_bootstraps == 0) {
             mdri_sd <- NA
             mdri_ci <- c(NA, NA)
@@ -248,23 +248,23 @@ mdrical <- function(data = data, subid_var = "sid", time_var = "time", functiona
         } else {
             mdri_sd <- sd(mdris)
             mdri_ci <- quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
-            mdri_ff <- data.frame(round(mdri, 4), round(mdri_ci[1], 4), round(mdri_ci[2], 
+            mdri_ff <- data.frame(round(mdri, 4), round(mdri_ci[1], 4), round(mdri_ci[2],
                 4), round(mdri_sd, 4))
             mdri_output <- rbind(mdri_output, mdri_ff)
         }
-        
-        
+
+
         if (plot == TRUE) {
             plot_name <- functional_forms[i]
-            plot_output[[plot_name]] <- plot_probability(functional_form = functional_form, 
-                parameters = plot_parameters, mdri = mdri, mdri_ci = mdri_ci, inclusion_time_threshold = inclusion_time_threshold, 
+            plot_output[[plot_name]] <- plot_probability(functional_form = functional_form,
+                parameters = plot_parameters, mdri = mdri, mdri_ci = mdri_ci, inclusion_time_threshold = inclusion_time_threshold,
                 recency_cutoff_time = recency_cutoff_time)
         }
-        
+
     }  # functional forms
     rownames(mdri_output) <- functional_forms
     colnames(mdri_output) <- c("PE", "CI_LB", "CI_UB", "SD")
-    
+
     if (plot == TRUE) {
         output <- list(MDRI = mdri_output, Plots = plot_output, Models = model_output)
     } else {
@@ -284,13 +284,13 @@ check_package <- function(package) {
         print(paste("Attempting to install dependency", package, sep = " "))
         install.packages(package, dependencies = TRUE)
         if (!require(package, character.only = TRUE)) {
-            stop(paste("Package", package, "could not be automatically installed.", 
+            stop(paste("Package", package, "could not be automatically installed.",
                 sep = " "))
         }
     }
 }
 
-process_data <- function(data = data, subid_var = subid_var, time_var = time_var, 
+process_data <- function(data = data, subid_var = subid_var, time_var = time_var,
     recency_vars = recency_vars, inclusion_time_threshold = inclusion_time_threshold) {
     names(data)[names(data) == subid_var] <- "sid"
     names(data)[names(data) == time_var] <- "time_since_eddi"
@@ -299,7 +299,7 @@ process_data <- function(data = data, subid_var = subid_var, time_var = time_var
         temp_data <- cbind(temp_data, data[, recency_vars[i]])
         colnames(temp_data)[2 + i] <- paste0("recency", i)
     }
-    temp_data <- subset(temp_data, 0 < as.numeric(temp_data$time_since_eddi) & as.numeric(temp_data$time_since_eddi) <= 
+    temp_data <- subset(temp_data, 0 < as.numeric(temp_data$time_since_eddi) & as.numeric(temp_data$time_since_eddi) <=
         inclusion_time_threshold)
     temp_data <- na.omit(temp_data)
     if (nrow(temp_data) < 1) {
@@ -316,38 +316,38 @@ process_data <- function(data = data, subid_var = subid_var, time_var = time_var
 
 # Assign recency status to 0 and 1 using recency_vars and recency_params
 assign_recency_status <- function(data = data, recency_params = recency_params, recency_rule = recency_rule) {
-    
+
     switch(as.character(recency_rule), binary_data = {
         data$recency_status <- data$recency1
     }, independent_thresholds = {
         n_recvars <- length(recency_params)/2
         for (i in 1:n_recvars) {
             if (recency_params[2 * i] == 0) {
-                data$recencytemp <- ifelse(data[, 2 + i] < recency_params[2 * i - 
+                data$recencytemp <- ifelse(data[, 2 + i] < recency_params[2 * i -
                   1], 1, 0)
             }
             if (recency_params[2 * i] == 1) {
-                data$recencytemp <- ifelse(data[, 2 + i] > recency_params[2 * i - 
+                data$recencytemp <- ifelse(data[, 2 + i] > recency_params[2 * i -
                   1], 1, 0)
             }
-            data <- plyr::rename(data, replace = c(recencytemp = paste0("recency_stat", 
+            data <- plyr::rename(data, replace = c(recencytemp = paste0("recency_stat",
                 i)))
         }
-        data$recency_status <- ifelse(rowSums(data[(3 + n_recvars):ncol(data)]) >= 
+        data$recency_status <- ifelse(rowSums(data[(3 + n_recvars):ncol(data)]) >=
             n_recvars, 1, 0)
     })
     return(data)
 }
 
-fit_binomial_model <- function(data = data, functional_form = functional_form, tolerance = tolerance_glm2, 
+fit_binomial_model <- function(data = data, functional_form = functional_form, tolerance = tolerance_glm2,
     maxit = maxit_glm2) {
     data$time_since_eddi <- ifelse(data$time_since_eddi == 0, 1e-10, data$time_since_eddi)
-    
+
     switch(as.character(functional_form), cloglog_linear = {
         fitted <- FALSE
         while (!fitted) {
-            model <- glm2::glm2(formula = (1 - recency_status) ~ 1 + I(log(time_since_eddi)), 
-                family = binomial(link = "cloglog"), data = data, control = glm.control(epsilon = tolerance, 
+            model <- glm2::glm2(formula = (1 - recency_status) ~ 1 + I(log(time_since_eddi)),
+                family = binomial(link = "cloglog"), data = data, control = glm.control(epsilon = tolerance,
                   maxit = maxit, trace = FALSE))
             if (class(model)[1] == "try-error") {
                 tolerance <- tolerance * 10
@@ -358,9 +358,9 @@ fit_binomial_model <- function(data = data, functional_form = functional_form, t
     }, logit_cubic = {
         fitted <- FALSE
         while (!fitted) {
-            model <- glm2::glm2(formula = recency_status ~ 1 + I(time_since_eddi) + 
-                I(time_since_eddi^2) + I(time_since_eddi^3), family = binomial(link = "logit"), 
-                data = data, control = glm.control(epsilon = tolerance, maxit = maxit, 
+            model <- glm2::glm2(formula = recency_status ~ 1 + I(time_since_eddi) +
+                I(time_since_eddi^2) + I(time_since_eddi^3), family = binomial(link = "logit"),
+                data = data, control = glm.control(epsilon = tolerance, maxit = maxit,
                   trace = FALSE))
             if (class(model)[1] == "try-error") {
                 tolerance <- tolerance * 10
@@ -379,72 +379,72 @@ functional_form_clogloglinear <- function(t, parameters) {
 }
 
 functional_form_logitcubic <- function(t, parameters) {
-    1/(1 + exp(-(parameters[1] + parameters[2] * t + parameters[3] * t^2 + parameters[4] * 
+    1/(1 + exp(-(parameters[1] + parameters[2] * t + parameters[3] * t^2 + parameters[4] *
         t^3)))
 }
 
 # A function that integrates from 0 to T in order to obtain MDRI estimate
-integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = recency_cutoff_time, 
+integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
     functional_form = functional_form, tolerance = tolerance_integral, maxit = maxit_integral) {
-    
+
     if (is.nan(functional_form)) {
         stop("functional_form name required in order to evaluate functional form")
     }
-    
+
     switch(as.character(functional_form), cloglog_linear = {
-        answer <- try(cubature::adaptIntegrate(f = functional_form_clogloglinear, 
-            lowerLimit = 0, upperLimit = recency_cutoff_time, parameters = parameters, 
+        answer <- try(cubature::adaptIntegrate(f = functional_form_clogloglinear,
+            lowerLimit = 0, upperLimit = recency_cutoff_time, parameters = parameters,
             tol = tolerance, fDim = 1, maxEval = 0, absError = 0, doChecking = FALSE)$integral)
         if (class(answer) == "try-error") {
             cat("try-error", "\n")
-            answer <- pracma::romberg(f = functional_form_clogloglinear, a = 0, b = recency_cutoff_time, 
+            answer <- pracma::romberg(f = functional_form_clogloglinear, a = 0, b = recency_cutoff_time,
                 parameters = parameters, tol = tolerance, maxit = maxit)$value
         }
     }, logit_cubic = {
-        answer <- try(cubature::adaptIntegrate(f = functional_form_logitcubic, lowerLimit = 0, 
-            upperLimit = recency_cutoff_time, parameters = parameters, tol = tolerance, 
+        answer <- try(cubature::adaptIntegrate(f = functional_form_logitcubic, lowerLimit = 0,
+            upperLimit = recency_cutoff_time, parameters = parameters, tol = tolerance,
             fDim = 1, maxEval = 0, absError = 0, doChecking = FALSE)$integral)
         if (class(answer) == "try-error") {
             cat("try-error", "\n")
-            answer <- pracma::romberg(f = functional_form_logitcubic, a = 0, b = recency_cutoff_time, 
+            answer <- pracma::romberg(f = functional_form_logitcubic, a = 0, b = recency_cutoff_time,
                 parameters = parameters, tol = tolerance, maxit = maxit)$value
         }
     })
     return(answer)
 }
 
-plot_probability <- function(functional_form = functional_form, parameters = parameters, 
-    mdri = mdri, inclusion_time_threshold = inclusion_time_threshold, recency_cutoff_time = recency_cutoff_time, 
+plot_probability <- function(functional_form = functional_form, parameters = parameters,
+    mdri = mdri, inclusion_time_threshold = inclusion_time_threshold, recency_cutoff_time = recency_cutoff_time,
     mdri_ci = mdri_ci) {
     plot_time <- seq(from = 0, to = inclusion_time_threshold, by = 0.01)
     switch(as.character(functional_form), cloglog_linear = {
-        plotdata <- data.frame(plot_time, exp(-exp(parameters[1] + (parameters[2]) * 
+        plotdata <- data.frame(plot_time, exp(-exp(parameters[1] + (parameters[2]) *
             log(plot_time))))
         colnames(plotdata) <- c("time_since_eddi", "probability")
     }, logit_cubic = {
-        plotdata <- data.frame(plot_time, 1/(1 + exp(-(parameters[1] + parameters[2] * 
+        plotdata <- data.frame(plot_time, 1/(1 + exp(-(parameters[1] + parameters[2] *
             plot_time + parameters[3] * plot_time^2 + parameters[4] * plot_time^3))))
         colnames(plotdata) <- c("time_since_eddi", "probability")
     })
-    
-    plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = time_since_eddi, 
+
+    plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = time_since_eddi,
         y = probability))
     plotout <- plotout + ggplot2::labs(x = "Time (since detectable infection)", y = "Probability of testing recent")
     plotout <- plotout + ggplot2::geom_vline(xintercept = mdri, colour = "blue")
-    plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[1], colour = "blue", 
+    plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[1], colour = "blue",
         alpha = 0.7, linetype = "dashed")
-    plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[2], colour = "blue", 
+    plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[2], colour = "blue",
         alpha = 0.7, linetype = "dashed")
-    plotout <- plotout + ggplot2::annotate("text", label = "MDRI", x = mdri + 50, 
+    plotout <- plotout + ggplot2::annotate("text", label = "MDRI", x = mdri + 50,
         y = 0.95, colour = "blue")
     plotout <- plotout + ggplot2::geom_vline(xintercept = recency_cutoff_time, colour = "red")
-    plotout <- plotout + ggplot2::annotate("text", label = "T", x = recency_cutoff_time + 
+    plotout <- plotout + ggplot2::annotate("text", label = "T", x = recency_cutoff_time +
         20, y = 0.95, colour = "red")
-    plotout <- plotout + ggplot2::theme(panel.background = ggplot2::element_blank(), 
+    plotout <- plotout + ggplot2::theme(panel.background = ggplot2::element_blank(),
         panel.grid.major = ggplot2::element_line(colour = "dark grey"))
-    plot_title <- paste0("Probability of testing recent over time (", functional_form, 
+    plot_title <- paste0("Probability of testing recent over time (", functional_form,
         ")")
     plotout <- plotout + ggplot2::ggtitle(plot_title)
-    
+
     return(plotout)
-} 
+}
