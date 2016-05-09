@@ -74,11 +74,6 @@
 #'  excluded from caculation.
 #'
 #' @examples
-#'mdrical(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
-#'  functional_forms=c('cloglog_linear','logit_cubic'), recency_rule='independent_thresholds',
-#'  recency_vars=c('ODn','VL'), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
-#'  plot=TRUE, parallel=FALSE)
-#'
 #' mdrical(data=excalibdata,
 #'         subid_var = "SubjectID",
 #'         time_var = "DaysSinceEDDI",
