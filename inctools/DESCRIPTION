@@ -1,3 +1,4 @@
+Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
@@ -7,7 +8,7 @@ Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
   person("Avery","McIntosh",email="avery.i.mcintosh@gmail.com",role="aut"),
-  person("Petra","Baeumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
+  person("Petra","Bäumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
   person("Reshma","Kassanjee", role="ctb"),
   person("Hilmarie","Brand", role="ctb"),
   person("Yuruo","Li",email="yul123@pitt.edu", role="ctb"),
@@ -18,7 +19,7 @@ Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys and for calibrating tests for recent infection.
 Depends:
     R (>= 3.2.1)
-License: GPL (>= 3)
+License: GPL-3
 LazyData: True
 Imports:
     cubature,
