@@ -1,7 +1,6 @@
 ---
-title: "Recent Infection Test Calibration (MDRI and FRR)"
-author: "Alex Welte and Eduard Grebe"
-date: "2016-05-04"
+title: "Calibrating tests for recent infection"
+date: Sys.Date()
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >

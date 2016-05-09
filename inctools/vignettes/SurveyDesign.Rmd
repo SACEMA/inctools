@@ -1,7 +1,6 @@
 ---
-title: "Survey Design (sample size, power, precision)"
-author: "Alex Welte and Avery McIntosh"
-date: "2016-05-04"
+title: "Survey design: power, precision and sample size"
+date: Sys.Date()
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >

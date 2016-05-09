@@ -9,7 +9,30 @@
 # # Public License for more details.  You should have received a copy of the GNU
 # # General Public License along with this program.  If not, see
 # # <http://www.gnu.org/licenses/>.
-#
+
+library(inctools)
+incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20, n1 = 5000, n2 = 5000, alpha = 0.05,
+         Power = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200,
+         RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
+
+incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20, n1 = 5000, n2 = "out", alpha = 0.05,
+         Power = 0.858, CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200,
+         RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
+
+incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20, n1 = 5000, n2 = 5000, alpha = 0.05,
+         Power = 0.858, CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = "out",
+         RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
+
+incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20, alpha = 0.05,
+         Power = 0.858, CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200,
+         RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
+
+
+
+incprecision(I = 0.015, RSE_I = "out", PrevH = 0.2, CR = 1, MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01,
+             RSE_FRR = 0.2, BigT = 730, DE_H = 1.1, DE_R = 1, n = 10000)
+
+
 #
 # ### ss_precision
 #
