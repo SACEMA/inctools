@@ -75,7 +75,7 @@ exampledata <- read.csv("../data/exampledata_testcalibration.csv")
 
 In the first example, we will use a variable that has pre-classified results are recent or non-recent. We will use the complementary log-log functional form only.
 
-*Note: To keep compute time reasonable during execution of the example code, only 100 bootstraps are performed. We recommend 10,000 to get reasonable standard errors and confidence intervals.*
+*Note: To keep compute time reasonable during execution of the example code, only 1000 bootstraps are performed. We recommend 10,000 to get reasonable standard errors and confidence intervals.*
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
 mdrical(data=exampledata,
@@ -86,7 +86,7 @@ mdrical(data=exampledata,
                  functional_forms = c("cloglog_linear"),
                  recency_rule = "binary_data",
                  recency_vars = "Recent",
-                 n_bootstraps = 100,
+                 n_bootstraps = 1000,
                  alpha = 0.05,
                  plot = TRUE)
 ```
@@ -109,7 +109,7 @@ mdrical(data=exampledata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 100,
+                 n_bootstraps = 1000,
                  alpha = 0.05,
                  plot = TRUE)
 ```
@@ -118,11 +118,9 @@ mdrical(data=exampledata,
 
 As above, but asking for both functional forms and parellelising the bootstrapping. In this case, split the job over four cores.
 
-**Note: This only works on Unix (Mac or Linux). On Windows this will result in error messages.**
+**Note: This option only works on Unix (Mac or Linux). On Windows this will result in error messages. To make sure this vignette builds on all platforms, we show the example code, but not the output.**
 
-*Note: To keep compute time reasonable during execution of the example code, only 1000 bootstraps are performed. We recommend 10,000 to get reasonable standard errors and confidence intervals.*
-
-```{r, fig.width=7, fig.height=5, fig.align="center"}
+```{r, eval = FALSE}
 mdrical(data=exampledata,
                  subid_var = "SubjectID",
                  time_var = "DaysSinceEDDI",
@@ -132,7 +130,7 @@ mdrical(data=exampledata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 1000,
+                 n_bootstraps = 10000,
                  alpha = 0.05,
                  plot = TRUE,
                  parallel = TRUE,
