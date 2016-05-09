@@ -38,39 +38,48 @@
 #' recency_vars = c('ODn','ViralLoad') you may specify recency_params = c(1.5,0,500,1), meaning that an ODn reading
 #' below 1.5 AND a viral load reasing above 500 indicates a recent result. Objects with missing values in its
 #'  biomarker readings will be excluded from caculation.
+#' @examples
+#' frrcal(data=excalibdata,
+#'        subid_var = "SubjectID",
+#'        time_var = "DaysSinceEDDI",
+#'        recency_cutoff_time = 730.5,
+#'        recency_rule = "independent_thresholds",
+#'        recency_vars = c("Result","VL"),
+#'        recency_params = c(10,0,1000,1),
+#'        alpha = 0.05)
 #' @export
-frrcal <- function(data = data, subid_var = "sid", time_var = "time", recency_cutoff_time = 730.5, 
-    recency_rule = "binary_data", recency_vars = "recency_status", recency_params = NULL, 
+frrcal <- function(data = data, subid_var = "sid", time_var = "time", recency_cutoff_time = 730.5,
+    recency_rule = "binary_data", recency_vars = "recency_status", recency_params = NULL,
     alpha = 0.05) {
     names(data)[names(data) == subid_var] <- "sid"
     names(data)[names(data) == time_var] <- "time_since_eddi"
     # Keep only observations after the cuttoff
     data <- subset(data, as.numeric(time_since_eddi) > recency_cutoff_time)
-    data <- process_data(data = data, subid_var = subid_var, time_var = time_var, 
+    data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
         recency_vars = recency_vars, inclusion_time_threshold = 1e+06)
     data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
     subjectdata <- data.frame(sid = NA, recent = NA)
     for (subjectid in unique(data$sid)) {
-        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid == 
+        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
             subjectid, ]) == 0.5) {
             subjectdata <- rbind(subjectdata, c(subjectid, 0.5))
         }
-        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid == 
+        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
             subjectid, ]) < 0.5) {
             subjectdata <- rbind(subjectdata, c(subjectid, 0))
         }
-        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid == 
+        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
             subjectid, ]) > 0.5) {
             subjectdata <- rbind(subjectdata, c(subjectid, 1))
         }
     }
     subjectdata <- subset(subjectdata, !is.na(sid))
-    binomprob <- binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata), 
+    binomprob <- binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
         p = 0, conf.level = 1 - alpha)
-    FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1], 
-        4), round(binomprob$conf.int[2], 4), alpha, binomprob$statistic, binomprob$parameter[[1]], 
+    FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1],
+        4), round(binomprob$conf.int[2], 4), alpha, binomprob$statistic, binomprob$parameter[[1]],
         nrow(data))
     colnames(FRR) <- c("FRRest", "LB", "UB", "alpha", "n_recent", "n_subjects", "n_observations")
     rownames(FRR) <- ""
     return(FRR)
-} 
+}

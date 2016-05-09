@@ -1,24 +1,25 @@
+Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 0.9.9
-Date: 2016-05-04
+Version: 1.0.0
+Date: 2016-05-09
 Authors@R: c(
-  person("Avery","McIntosh",email="avery.i.mcintosh@gmail.com",role="aut"),
+  person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
-  person("Petra","Baeumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
+  person("Avery","McIntosh",email="avery.i.mcintosh@gmail.com",role="aut"),
+  person("Petra","Bäumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
   person("Reshma","Kassanjee", role="ctb"),
   person("Hilmarie","Brand", role="ctb"),
   person("Yuruo","Li",email="yul123@pitt.edu", role="ctb"),
   person("Simon","Daniel",email="skjdaniel@gmail.com", role="ctb"),
-  person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="ctb"),
-  person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut")
+  person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="ctb")
   )
 Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys and for calibrating tests for recent infection.
 Depends:
     R (>= 3.2.1)
-License: GPL (>= 3)
+License: file LICENSE
 LazyData: True
 Imports:
     cubature,
@@ -34,4 +35,4 @@ Suggests:
     knitr,
     rmarkdown
 RoxygenNote: 5.0.1
-VignetteBuilder: knitr
+VignetteBuilder: rmarkdown

@@ -31,7 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Contributors
 
-Several people contributed to this package. We encourage contributions from the community of users. Developers include Avery McIntosh, Eduard Grebe, Simon Daniel, Yuruo Li, Stefano Ongarello, with contributions by several other persons listed in the package metadata.
+Several people contributed to this package. We encourage contributions from the community of users. 
+
+Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, Simon Daniel and Yuruo Li, with contributions by Reshma Kassanjee, Hilmarie Brand, and Stefano Ongarello.
 
 ## Contact
 

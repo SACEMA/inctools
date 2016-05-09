@@ -74,11 +74,25 @@
 #'  excluded from caculation.
 #'
 #' @examples
+<<<<<<< HEAD
 #'mdrical(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
 #'  functional_forms=c('cloglog_linear','logit_cubic'), recency_rule='independent_thresholds',
 #'  recency_vars=c('ODn','VL'), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
 #'  plot=TRUE, parallel=FALSE)
 #'
+=======
+#' mdrical(data=excalibdata,
+#'         subid_var = "SubjectID",
+#'         time_var = "DaysSinceEDDI",
+#'         recency_cutoff_time = 730.5,
+#'         inclusion_time_threshold = 800,
+#'         functional_forms = c("cloglog_linear"),
+#'         recency_rule = "binary_data",
+#'         recency_vars = "Recent",
+#'         n_bootstraps = 100,
+#'         alpha = 0.05,
+#'         plot = TRUE)
+>>>>>>> origin/master
 #' @export
 mdrical <- function(data = data, subid_var = "sid", time_var = "time", functional_forms = c("cloglog_linear",
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
