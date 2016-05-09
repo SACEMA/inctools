@@ -1,6 +1,6 @@
 ---
 title: "Introduction to the inctools package"
-date: Sys.Date()
+#date: Sys.Date()
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 fig_caption: yes

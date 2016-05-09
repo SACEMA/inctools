@@ -1,6 +1,6 @@
 ---
 title: "Survey design: power, precision and sample size"
-date: Sys.Date()
+#date: Sys.Date()
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >
