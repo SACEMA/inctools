@@ -94,12 +94,5 @@ mdrical(data=data, subid_var='PT_ID', time_var='DaysSinceEDDI',
  functional_forms=c('cloglog_linear','logit_cubic'), recency_rule='independent_thresholds',
  recency_vars=c('ODn','VL'), recency_params=c(1.5,0,400,1), n_bootstraps = 10000, alpha=0.05,
  plot=TRUE, parallel=FALSE)
-
-In this example the MDRI and 95\% confidence interval would be calculated by determining
-recency for each data point by evaluating whether normalised optical density (ODn) is
-below 1.5 and Viral Load above 400 copies/ml. The probability of testing recent as a
-function of time will be modelled using the loglog binomial (linear) and logit cubic polynomial
-functional forms, the confidence interval will be estimated by means of 10,000
-subject-level resampling operations and the fitted model curve will be plotted.
 }
 
