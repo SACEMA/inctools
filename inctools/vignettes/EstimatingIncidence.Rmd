@@ -11,6 +11,8 @@ vignette: >
   %\VignetteIndexEntry{Integrating TCGA Data}
 ---
 
+This vignette covers the use of the functions `incprops`, `inccounts`, and `prevcounts`.
+
 The *inctools* package provides two functions for HIV incidence estimation: $incprops$ and $inccounts$, and ancillary function $prevcounts$. These functions take as argument user-defined parameters and estimates taken from assays of recent HIV infection and output estimates for inference, incidence difference in the situation of multiple cross-sectional surveys (and possibly multiple assays), and confidence intervals, among other output. See the function help pages for specific examples of running the code. The principal reference for the methods behind this implementation is given by Kassanjee et al. *Epidemiology*, 2012.[^1] Further guidance is provided in Kassanjee, McWalter, Welte. *AIDS Research and Human Retroviruses*, 2014.[^2]
 
 This vignette will describe the use of necessary functions and some background on methods specific to this package.
