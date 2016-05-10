@@ -27,10 +27,10 @@ Imports:
     glm2,
     MASS,
     plyr,
-    pracma,
-    doMC,
-    foreach
+    pracma
 Suggests:
+    doMC,
+    foreach,
     testthat,
     knitr,
     rmarkdown
