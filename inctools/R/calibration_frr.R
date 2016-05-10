@@ -48,9 +48,15 @@
 #'        recency_params = c(10,0,1000,1),
 #'        alpha = 0.05)
 #' @export
-frrcal <- function(data = data, subid_var = "sid", time_var = "time", recency_cutoff_time = 730.5,
-    recency_rule = "binary_data", recency_vars = "recency_status", recency_params = NULL,
+frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cutoff_time = 730.5,
+    recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
     alpha = 0.05) {
+
+    if (is.null(data)) {stop("Error: No dataframe provided.")}
+    if (is.null(subid_var)) {stop("Error: No subject identifier variable provided.")}
+    if (is.null(time_var)) {stop("Error: No time variable provided.")}
+    if (is.null(time_var)) {stop("Error: No recency variables provided variable provided.")}
+
     names(data)[names(data) == subid_var] <- "sid"
     names(data)[names(data) == time_var] <- "time_since_eddi"
     # Keep only observations after the cuttoff
