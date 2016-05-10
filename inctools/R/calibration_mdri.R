@@ -86,79 +86,81 @@
 #'         alpha = 0.05,
 #'         plot = TRUE)
 #' @export
-mdrical <- function(data = data, subid_var = "sid", time_var = "time", functional_forms = c("cloglog_linear",
+mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_forms = c("cloglog_linear",
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
-    recency_rule = "binary_data", recency_vars = "recency_status", recency_params = NULL,
+    recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
     n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4) {
 
+  if (is.null(data)) {
+    stop("No input data has been specified")
+  }
+  if (is.null(subid_var)) {
+    stop("No subject identifier has been specified")
+  }
+  if (is.null(time_var)) {
+    stop("No time variable has been specified")
+  }
 
-  # In this example the MDRI and 95% confidence interval would be calculated by determining
-  # recency for each data point by evaluating whether normalised optical density (ODn) is
-  # below 1.5 and Viral Load above 400 copies/ml. The probability of testing recent as a
-  # function of time will be modelled using the loglog binomial (linear) and logit cubic polynomial
-  # functional forms, the confidence interval will be estimated by means of 10,000
-  # subject-level resampling operations and the fitted model curve will be plotted.
+  if (is.null(recency_vars)) {
+    stop("No recency variables have been specified")
+  }
 
-    if (is.null(data)) {
-        stop("No input data has been specified")
-    }
+  if (!exists("data") || !is.data.frame(get("data"))) {
+    stop("Specified data is not a dataframe or does not exist")
+  }
 
-    if (!exists("data") || !is.data.frame(get("data"))) {
-        stop("Specified data is not a dataframe or does not exist")
-    }
+  if (is.null(functional_forms)) {
+    stop("Please select at least one functional form to apply to the data")
+  }
 
-    if (is.null(functional_forms)) {
-        stop("Please select at least one functional form to apply to the data")
-    }
+  if (is.null(recency_rule)) {
+    stop("Please specify a Recency Rule")
+  }
 
-    if (is.null(recency_rule)) {
-        stop("Please specify a Recency Rule")
-    }
+  if (is.null(recency_vars)) {
+    stop("Please specify at least one Recency Variable")
+  }
 
-    if (is.null(recency_vars)) {
-        stop("Please specify at least one Recency Variable")
+  if (recency_rule == "binary_data") {
+    if (length(recency_vars) > 1) {
+      stop("Binary data should be specified in one recency (outcome) variable.")
     }
+    if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
+      stop("Input data is not binary")
+    }
+  }
 
-    if (recency_rule == "binary_data") {
-        if (length(recency_vars) > 1) {
-            stop("Binary data should be specified in one recency (outcome) variable.")
-        }
-        if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
-            stop("Input data is not binary")
-        }
-    }
+  if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 *
+      length(recency_params)) {
+    stop("The number of recency variables must match the number of recency paramaters.")
+  }
 
-    if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 *
-        length(recency_params)) {
-        stop("The number of recency variables must match the number of recency paramaters.")
-    }
+  if (is.null(subid_var) | is.null(time_var)) {
+    stop("Subject identifier and time variables must be specified.")
+  }
 
-    if (is.null(subid_var) | is.null(time_var)) {
-        stop("Subject identifier and time variables must be specified.")
-    }
+  if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
+    stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
+  }
 
-    if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
-        stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
-    }
+  if (parallel == TRUE) {
+    check_package("foreach")
+    check_package("doMC")
+  }
 
-    if (parallel == TRUE) {
-        check_package("foreach")
-        check_package("doMC")
+  # check that subject id, time and recency variables exist
+  variables <- colnames(data)
+  if (sum(variables == subid_var) != 1) {
+    print(paste("There is no column", subid_var, "in the data frame."))
+  }
+  if (sum(variables == time_var) != 1) {
+    print(paste("There is no column", time_var, "in the data frame."))
+  }
+  for (i in 1:length(recency_vars)) {
+    if (sum(variables == recency_vars[i]) != 1) {
+      print(paste("There is no column", recency_vars[i], "in the data frame."))
     }
-
-    # check that subject id, time and recency variables exist
-    variables <- colnames(data)
-    if (sum(variables == subid_var) != 1) {
-        print(paste("There is no column", subid_var, "in the data frame."))
-    }
-    if (sum(variables == time_var) != 1) {
-        print(paste("There is no column", time_var, "in the data frame."))
-    }
-    for (i in 1:length(recency_vars)) {
-        if (sum(variables == recency_vars[i]) != 1) {
-            print(paste("There is no column", recency_vars[i], "in the data frame."))
-        }
-    }
+  }
 
     ## Assign numeric subject ids, recency variables and recency status
     data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
@@ -346,8 +348,7 @@ assign_recency_status <- function(data = data, recency_params = recency_params, 
     return(data)
 }
 
-fit_binomial_model <- function(data = data, functional_form = functional_form, tolerance = tolerance_glm2,
-    maxit = maxit_glm2) {
+fit_binomial_model <- function(data = data, functional_form = functional_form, tolerance, maxit) {
     data$time_since_eddi <- ifelse(data$time_since_eddi == 0, 1e-10, data$time_since_eddi)
 
     switch(as.character(functional_form), cloglog_linear = {
@@ -392,7 +393,7 @@ functional_form_logitcubic <- function(t, parameters) {
 
 # A function that integrates from 0 to T in order to obtain MDRI estimate
 integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
-    functional_form = functional_form, tolerance = tolerance_integral, maxit = maxit_integral) {
+    functional_form = functional_form, tolerance, maxit) {
 
     if (is.nan(functional_form)) {
         stop("functional_form name required in order to evaluate functional form")

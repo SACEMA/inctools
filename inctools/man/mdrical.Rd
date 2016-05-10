@@ -4,10 +4,10 @@
 \alias{mdrical}
 \title{Estimate MDRI (point estimate and confidence interval) using binomial regression and a maximum likelihood approach}
 \usage{
-mdrical(data = data, subid_var = "sid", time_var = "time",
+mdrical(data = NULL, subid_var = NULL, time_var = NULL,
   functional_forms = c("cloglog_linear", "logit_cubic"),
   recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
-  recency_rule = "binary_data", recency_vars = "recency_status",
+  recency_rule = "binary_data", recency_vars = NULL,
   recency_params = NULL, n_bootstraps = 100, alpha = 0.05, plot = TRUE,
   parallel = FALSE, cores = 4)
 }

@@ -10,9 +10,9 @@ The function performs an exact binomial test and reports the estimated probabili
 cutoff, a confidence interval for the proportion, the number of recent results ('successes'),
 number of subjects ('trials') and the number of data points contributing to the subject-level estimate.}
 \usage{
-frrcal(data = data, subid_var = "sid", time_var = "time",
+frrcal(data = NULL, subid_var = NULL, time_var = NULL,
   recency_cutoff_time = 730.5, recency_rule = "binary_data",
-  recency_vars = "recency_status", recency_params = NULL, alpha = 0.05)
+  recency_vars = NULL, recency_params = NULL, alpha = 0.05)
 }
 \arguments{
 \item{data}{A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)}
