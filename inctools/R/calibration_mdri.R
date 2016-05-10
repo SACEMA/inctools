@@ -143,8 +143,9 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
     stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
   }
 
-  if (parallel == TRUE && Platform$OS.type=="windows") {
-    stop("Paralllel processing is not possible on Windows.")
+  if (parallel == TRUE) {
+    check_package("foreach")
+    check_package("doMC")
   }
 
   # check that subject id, time and recency variables exist
