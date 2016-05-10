@@ -28,7 +28,7 @@ Imports:
     MASS,
     plyr,
     pracma,
-    doSNOW,
+    doMC,
     foreach
 Suggests:
     testthat,
