@@ -31,7 +31,7 @@
 # ADD OPTION TO GET FULL LIST OF MDRIs from the bootstrapping procedure or the
 # shape of the distribution or something
 #' @param plot Specifies whether a plot of the probability of testing recent over time should be produced
-#' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste. Not available on Windows.
+#' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste.
 #' @param cores Set number of cores for parallel processing when parallel=TRUE. This defaults to four.
 #' @return MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
 #' @return Plots A plot of Probability of testing recent over time for each functional form.
@@ -139,10 +139,6 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
     stop("Subject identifier and time variables must be specified.")
   }
 
-  if (parallel == TRUE && .Platform$OS.type=="windows") {
-    stop("Paralllel processing is not supported on Windows.")
-  }
-
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
   if (sum(variables == subid_var) != 1) {
@@ -191,14 +187,14 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             if (plot == TRUE) {
                 plot_parameters <- parameters
             }
-
-            doMC::registerDoMC(cores)
+            cluster <- snow::makeCluster(cores, type = "SOCK")
+            doSNOW::registerDoSNOW(cluster)
             chosen_subjects <- vector(mode = "list", length = n_bootstraps)
-            # set.seed(123)
             for (j in 1:n_bootstraps) {
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
             }
-            mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind) %dopar%
+            library(foreach)
+            mdris <- foreach(j = 1:n_bootstraps, .combine = rbind) %dopar%
                 {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {
@@ -212,8 +208,8 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                     maxit = maxit_integral)
                   return(mdri_iterate)
                 }
+            snow::stopCluster(cluster)
         } else {
-            # set.seed(123)
             for (j in 0:n_bootstraps) {
                 chosen_subjects <- sample(1:n_subjects, n_subjects, replace = T)
                 if (j != 0) {
