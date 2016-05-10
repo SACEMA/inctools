@@ -139,8 +139,12 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
     stop("Subject identifier and time variables must be specified.")
   }
 
-  if (parallel == TRUE && .Platform$OS.type=="windows") {
-    stop("Paralllel processing is not supported on Windows.")
+  if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
+    stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
+  }
+
+  if (parallel == TRUE && Platform$OS.type=="windows") {
+    stop("Paralllel processing is not possible on Windows.")
   }
 
   # check that subject id, time and recency variables exist
@@ -283,16 +287,16 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
 
 
 
-# check_package <- function(package) {
-#     if (!require(package, character.only = TRUE)) {
-#         print(paste("Attempting to install dependency", package, sep = " "))
-#         install.packages(package, dependencies = TRUE)
-#         if (!require(package, character.only = TRUE)) {
-#             stop(paste("Package", package, "could not be automatically installed.",
-#                 sep = " "))
-#         }
-#     }
-# }
+check_package <- function(package) {
+    if (!require(package, character.only = TRUE)) {
+        print(paste("Attempting to install dependency", package, sep = " "))
+        install.packages(package, dependencies = TRUE)
+        if (!require(package, character.only = TRUE)) {
+            stop(paste("Package", package, "could not be automatically installed.",
+                sep = " "))
+        }
+    }
+}
 
 process_data <- function(data = data, subid_var = subid_var, time_var = time_var,
     recency_vars = recency_vars, inclusion_time_threshold = inclusion_time_threshold) {
