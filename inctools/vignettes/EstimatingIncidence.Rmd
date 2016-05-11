@@ -1,6 +1,6 @@
 ---
 title: "Estimating incidence from cross-sectional data"
-date: Sys.Date()
+date: 2016-05-12
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 fig_caption: yes
