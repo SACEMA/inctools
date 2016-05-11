@@ -13,7 +13,8 @@ Authors@R: c(
   person("Hilmarie","Brand", role="ctb"),
   person("Yuruo","Li",email="yul123@pitt.edu", role="ctb"),
   person("Simon","Daniel",email="skjdaniel@gmail.com", role="ctb"),
-  person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="ctb")
+  person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="ctb"),
+  person("Yusuke","Asai", email="yusuke.asai@yahoo.de", role="ctb")
   )
 Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys and for calibrating tests for recent infection.
