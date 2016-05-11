@@ -8,13 +8,88 @@ vignette: >
   %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{Integrating TCGA Data}
 ---
 
 ##Introduction to inctools
 
 **To be written before 1.0.0 release.**
+(Is this a comment?)
+(what level of heading is a single hash?)
 
-Example reference, Kassanjee et al. *Epidemiology*, 2012.[^1]
+## fragment
 
-[^1]: Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. "A new general biomarker-based incidence estimator." Epidemiology; 2012, 23(5): 721-728; doi:[10.1097/EDE.0b013e3182576c07](http://dx.doi.org/10.1097/EDE.0b013e3182576c07).
+Case 1: Surveys share a single estimate for MDRI and a single estimate for FRR
+\begin{align}
+V[\Delta \mathbb{I}]_1 \approx &
+\Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
+&\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
+  & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\ PrevR_1)^2) + \\     & \frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))\ (RSE_{PrevR_2}PrevR_2)^2) +\\
+    &\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
+&\Big(\big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{(1 - PrevH_1)} -\frac{PrevH_2(T\ PrevR_2 -\Omega)}{(1 - PrevH_2)}\big)(\Omega - \beta T)^2 \Big)^2 RSE_{\beta}\ \beta\\
+\end{align}
+
+
+
+Case 2: Surveys share a single estimate for MDRI, but have independent FRR estimates
+\begin{align}
+V[\Delta \mathbb{I}]_2 \approx &
+ \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
+&\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
+      & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\ PrevR_1)^2)  +\\     &\frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))(RSE_{PrevR_2}PrevR_2)^2) +\\
+&\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
+      &\Big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{1 - PrevH_1}(\Omega - \beta_1 \ T)^2\Big)^2 RSE_{\beta_1}\ \beta_1 + \\  
+      &\Big(\frac{PrevH_2(T\ PrevR_2 - \Omega)}{1 - PrevH_2}(\Omega - \beta_2 \ T)^2)\Big)^2 RSE_{\beta_2}\ \beta_2
+\end{align}
+
+
+Case 3: Both MDRI and FRR are independent estimated in each survey
+\begin{align}
+V[\Delta \mathbb{I}]_3 \approx &
+ \Big(\frac{(PrevR_1 - \beta_1)}{(1 - PrevH_1)^2} (\Omega_1 - \beta_1 T_1)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
+&\Big(\frac{(PrevR_2 - \beta_2)}{(1 - PrevH_2)^2} (\Omega_2 - \beta_2 T_2)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
+      & \frac{PrevH_1}{1 - PrevH_1}(\Omega_1 - \beta_1 T_1))\ (RSE_{PrevR_1}\ PrevR_1)^2)  +\\     &\frac{PrevH_2}{1 - PrevH_2}(\Omega_2 - \beta_2 T_2))(RSE_{PrevR_2}PrevR_2)^2) +\\
+      &\Big(\frac{\beta_1\ PrevH_1 - PrevR_1\ PrevH_1}{1 - PrevH_1}\ (\Omega_1 - \beta_1\ T_1)^2\Big)^2 RSE_{MDRI_1}\ MDRI_1 + \\
+    &\Big(\frac{\beta_2\ PrevH_2 - PrevR_2\ PrevH_2}{1 - PrevH_2}\ (\Omega_2 - \beta_2\ T_2)^2\Big)^2 RSE_{MDRI_2}\ MDRI_2    +\\
+      &\Big(\frac{PrevH_1(T_1\ PrevR_1 - \Omega_1}{1 - PrevH_1}(\Omega_1 -\beta_1\ T_1)^2\Big)^2  RSE_{\beta_1}\ \beta_1 + \\     
+      &\Big(\frac{PrevH_2(T_2\ PrevR_2 - \Omega_2}{1 - PrevH_2}(\Omega_2 -\beta_2\ T_2)^2\Big)^2  RSE_{\beta_2}\ \beta_2
+\end{align}
+
+
+## The Empirical Bootstrapping Option
+
+Functions `incprops` and `inccounts` both admit the option of bootstrapping. The default multivariate delta method approximation to the variance of the incidence estimator is adequate for inputs that are normal, however the method is still only a linear approximation. Since there are situations where the higher order terms in the Taylor expansion of variance may contribute non-negligibly to the variance estimator, and since it may be the case that both FRR and structured survey data may not be exactly normally distributed, we have programmed an empirical bootstrapping option for users wishing to make non-parametric inference on differences in proportions.
+
+This method is called in `incprops` and `inccounts` by adding the option `Boot = TRUE`. The method is described below.
+
+We start with estimates on parameters that are derived from data. So we have estimates:
+
+* $\widehat{\text{PrevH}}$,
+* $\widehat{\text{PrevR}}$,
+* $\widehat{\Omega}$,
+* $\widehat{\beta}$,
+
+along with their respective estimates of variance.
+
+We resample a multivariate normal distribution with argument `EMPIRICAL = TRUE` to the function `mvrnorm` from the *MASS* package, which coerces the samples such that if we take the mean and variance of any number of samples of $\Omega_T$, say, we will get the exact mean and variance we entered into the multivariate normal sampler as parameters from the distribution. Each unique re-sample for each estimator $\varphi$ is a B-tuple of values such that the B-tuple mean equals $\widehat{\varphi}$ and its variance exactly equals the variance of the original estimator. Corresponding to each column of this matrix is a single "bootstrap" estimate $\mathbb{I}$, the estimate of incidence.
+
+\noindent
+So we have sample matrix
+\[ \mathbf{B} = \left( \begin{array}{ccccc}
+\text{PrevH}_\text{1} & \text{PrevH}_\text{2} & \text{PrevH}_\text{3} & \cdots & \text{PrevH}_\text{B}\\
+\text{PrevR}_\text{1} & \text{PrevR}_\text{2} & \text{PrevR}_\text{3} & \cdots & \text{PrevR}_\text{B}\\
+\Omega_1 & \Omega_2 & \Omega_3 & \cdots&\Omega_B \\
+\beta_1 & \beta_2 & \beta_3 &\cdots & \beta_B
+\end{array} \right)\]
+$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \  \ \ \  \ \  \downarrow\ \ \ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \ \  \cdots\ \ \ \ \  \ \downarrow \ \ \ \ \ \ \  \ \
+$$
+$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \ \ \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \  \ \ \ \ \ \  \ \ \  \  \mathbb{I}_3\ \ \  \  \  \ \ \ \cdots\ \ \ \ \ \  \ \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
+$$
+which is sampled in such a way that, for example, for empirical bootstrap sample $\Omega_B$
+$$
+\sum_{b=1}^B\Omega_b = \widehat{\Omega}\ \ \text{(the $observed$ value of the estimator)}
+$$
+and
+$$
+\frac{1}{B-1}\sum_{b=1}^B\Omega_b = s^2_{\Omega}\ \ \text{(the $observed$ SD of the estimator)}
+$$
+The bootstrap option produces most of the statistics given by running the functions using a delta method approximation, however the estimate of RSE of the incidence estimator at infinite sample size, which is calculated by letting sample size $n$ tend toward infinity in the limit in the components of the variance of incidence estimator, is not produced.
