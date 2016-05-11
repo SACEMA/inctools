@@ -42,10 +42,13 @@ The lack of any formal warranty notwithstanding, users are invited to contact th
 ##Historical context
 
 Amongst other features, Version 1 of *inctools* makes available the functionality of a spreadsheet based tool set previous circulated in three major versions under the name ABIE (*Assay Based Incidence Estimation*). Version 3 of ABIE is still available and may for a little while retain some advantages over an R package, for some users, such as the automatic generation of plots as part of some calculations, the production of which, in the initial R package, would require some R programmer intervention. However, the ABIE spreadsheet tools family is now technically obsolete and superseded, but will be supported for a while on [www.incidence-estimation.org]  (http://www.incidence-estimation.org/page/tools-for-incidence-from-biomarkers-for-recent-infection). The ABIE feature set forms the basis of two components of *inctools*:
-[^1]:	Analysis in support of survey design
-[^2]:	Analysis of survey data
+
+1.	Analysis in support of survey design
+2.	Analysis of survey data
+
 Additionally, *inctools*  incorporates the heart of a little known, now deprecated, R package called ritcalib, which provides
-[^3]:	Estimation of key performance characteristics of tests for ‘recent infection’
+
+3.	Estimation of key performance characteristics of tests for ‘recent infection’
 
 
 ##Overview of Functionality and Use
@@ -99,7 +102,7 @@ It is usually the responsibility of the developers of recent infection tests to 
 The core functionality in this section of the package is provided by function *mdrical*, which produces estimates of mean duration of recent infection and function *frrcal* which produces estimates of false recent rate, both from data typically only available to test developers i.e. patient level test results from a putative recent infection test, applied at various times relative to relatively precisely estimated infection/seroconversion times.  
 
 
-##Glossary
+## Glossary
 
 The package inctools, and natural discussion of its application, implies use of some common or specialised (to this sub-field) terms which it may be prudent to define here. These are not detailed technical definitions, but are intended to serve as reminders, or, should they be unclear, would serve to highlight the need to investigate primary sources.
 
@@ -155,8 +158,8 @@ It should be noted that:
 
 
 ##Citation
+When using ABIE v3 tools, please cite the source of the tools (the URL above) and the following article, which provides the theoretical foundations and derives the underlying formulae used: Kassanjee R, McWalter TA, Bärnighausen T, Welte A. A new general biomarker-based incidence estimator. Epidemiology. 2012; 23(5): 721-728.
 
-HMM
 
 ##Acknowledgements
 Funding support for the development of these tools has historically been variously provided by the South African National Research Foundation, the Bill and Melinda Gates Foundation, the (erstwhile) Canadian International Development Agency, UNAIDS, and the World Health Organisation.
@@ -231,7 +234,7 @@ So we have sample matrix
 \Omega_1 & \Omega_2 & \Omega_3 & \cdots&\Omega_B \\
 \beta_1 & \beta_2 & \beta_3 &\cdots & \beta_B
 \end{array} \right)\]
-$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \  \ \ \  \ \  \downarrow\ \ \ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \\   \ \ \  \cdots\ \ \ \ \ \  \ \downarrow \ \ \ \ \ \ \  \ \
+$$  \   \ \  \downarrow\ \ \ \ \ \ \  \ \ \  \ \  \downarrow\ \ \ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \\   \ \ \  \cdots\ \ \ \ \ \  \ \downarrow
 $$
 $$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \ \ \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \  \ \ \ \ \ \  \ \ \  \  \mathbb{I}_3\ \ \  \  \ \ \ \cdots\ \ \ \ \  \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
 $$
