@@ -1,6 +1,6 @@
 ---
 title: "Overview of Incidence Estimation Package *inctools*"
-date: 2016-05-11
+date: 2016-05-12
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 fig_caption: yes

@@ -1,6 +1,6 @@
 ---
 title: "Calibrating tests for recent infection"
-date: 2016-05-11
+date: 2016-05-12
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >
