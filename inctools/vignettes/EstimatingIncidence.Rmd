@@ -35,7 +35,9 @@ The output for a single survey is an estimate of incidence along with confidence
 
 The output for multiple surveys is the same output as for a single survey, along with pairwise comparisons of incidence rates, confidence intervals of differences, and tests of equality with p-values and RSE of differences.
 
-
+```{r echo=FALSE}
+library(inctools)
+```
 
 ```{r, fig.show='hold'}
 prevcounts (N = c(5000,6000), N_H = c(1000,1100), N_testR = c(950,1060),
