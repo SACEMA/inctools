@@ -32,8 +32,6 @@ Imports:
 Suggests:
     doMC,
     foreach,
-    testthat,
-    knitr,
-    rmarkdown
+    survey
 RoxygenNote: 5.0.1
 VignetteBuilder: rmarkdown
