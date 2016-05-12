@@ -14,6 +14,22 @@ Older spreadsheet-based tools for inferring incidence using biomarkers for 'rece
 
 These tools are released as an R package by the [DST/NRF Centre of Excellence in Epidemiological Modelling and Analysis (SACEMA)](http://www.sacema.org/) in collaboration with the [Consortium for the Evaluation and Performance of HIV Incidence Assays (CEPHIA)](http://www.incidence-estimation.org/page/cephia) and other partners. The package maintainer can be contacted at [eduardgrebe@sun.ac.za](mailto:eduardgrebe@sun.ac.za).
 
+## Installation
+
+Install directly from CRAN once the package becomes available.
+
+Otherwise, download the source or binary package for your platform, and install dependencies manually first:
+
+```
+install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma"))
+```
+
+If you're on Mac or Linux, additionally,
+
+```
+install.packages(c("doMC","foreach"))
+```
+
 ## Usage terms
 
 This program is free software: you can redistribute it and/or modify
