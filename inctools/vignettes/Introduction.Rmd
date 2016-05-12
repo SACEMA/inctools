@@ -5,7 +5,7 @@ output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{Introduction}
+  %\VignetteIndexEntry{Overview of inctools}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -54,7 +54,7 @@ Fleshing out the three primary components just noted above:
 
 ###Analysis in support of survey design
 
-Two primary exposed functions (*incprecision* and *incpower*) provide permutations on the relationship between
+Two primary exposed functions (`incprecision` and `incpower`) provide permutations on the relationship between
 
 * epidemiological context,
 
@@ -71,7 +71,7 @@ The primary (and currently implemented) uses are expected to be
 
 *	the calculation of a sample size from the other contextual factors, including desired precision or power
 
-Users of *incprecision* and *incpower* will need to make significant efforts to assess the context of intended use, but require no detailed knowledge of the statistical theory underpinning the details of the calculations. The two primary functions each offer their various respective permutations on usage by having the user provide the value “out” for the parameter which is requested as output, while all the other logically necessary parameters will need to be supplied, in order to avoid an error.
+Users of `incprecision` and `incpower` will need to make significant efforts to assess the context of intended use, but require no detailed knowledge of the statistical theory underpinning the details of the calculations. The two primary functions each offer their various respective permutations on usage by having the user provide the value “out” for the parameter which is requested as output, while all the other logically necessary parameters will need to be supplied, in order to avoid an error.
 
 ###Analysis of survey data
 
@@ -82,9 +82,9 @@ In order to accommodate arbitrarily sophisticated analysis of such complex data 
 *	an estimate of the prevalence of ‘recent infection’ amongst those who are HIV positive.
 *	A variance/covariance matrix for these two prevalence estimates
 
-While *inctools*  makes no firm statements about how these estimates are to be obtained, it is recommended that they be provided in the specified form, and that function *incprops* be used as the primary entrypoint. Note that:
+While *inctools*  makes no firm statements about how these estimates are to be obtained, it is recommended that they be provided in the specified form, and that function `incprops` be used as the primary entrypoint. Note that:
 
-*	To facilitate “naïve” analysis, the function *prevcounts* is provided, which turns simple sample case counts (number of people tested for HIV, number classified HIV positive, number of HIV positives tested for recency, number classified as recently infected) into the prevalence estimates required by function incprops, under the assumptions of independent (unstructured) sampling.
+*	To facilitate “naïve” analysis, the function `prevcounts` is provided, which turns simple sample case counts (number of people tested for HIV, number classified HIV positive, number of HIV positives tested for recency, number classified as recently infected) into the prevalence estimates required by function incprops, under the assumptions of independent (unstructured) sampling.
 *	Function inccounts incorporates a detour through function prevcounts, followed by a call to incprops, thereby provide a high level interface to incidence estimation based directly on total sample counts, contextual factors, and recency test properties.
 *	The package *inctools*  lists package survey in its dependencies, thereby assuring access to at least one robust flexible tool set to facilitate the estimation of the relevant sample proportions from structured survey data.
 
@@ -92,7 +92,7 @@ While *inctools*  makes no firm statements about how these estimates are to be o
 
 It is usually the responsibility of the developers of recent infection tests to decide on laboratory procedures and to estimate the MDRIs and (population group level) FRRs of emerging assays. Most users of such tests who are conducting field work will access these estimates from the literature. However, the process of test development is ongoing, developers at key agencies (such as NIH and CDC) are also involved in survey design and execution, and the methods applicable to survey execution are very tightly aligned to the analysis of test properties. Thus, both developers and users of recent infection tests (as well as of the analytical methodology supporting their use) are essentially part of a single broad community engaged in large scale surveillance. Therefore, it makes sense to co-locate the developers' tools with the surveillance tools.
 
-The core functionality in this section of the package is provided by function *mdrical*, which produces estimates of mean duration of recent infection and function *frrcal* which produces estimates of false recent rate, both from data typically only available to test developers i.e. patient level test results from a putative recent infection test, applied at various times relative to relatively precisely estimated infection/seroconversion times.  
+The core functionality in this section of the package is provided by function `mdrical`, which produces estimates of mean duration of recent infection and function `frrcal` which produces estimates of false recent rate, both from data typically only available to test developers i.e. patient level test results from a putative recent infection test, applied at various times relative to relatively precisely estimated infection/seroconversion times.  
 
 
 ##Glossary
@@ -214,10 +214,10 @@ V[\Delta \mathbb{I}]_3 \approx &
 \end{align}
 
 
-**Note:**
+Note:
 
 * The option for the assay characteristic scheme is specified by function parameter `BMest`. Subscripts 1 and 2 in the parameter notation denote associated survey or test parameters. The variances of the three cases follow.
-* To avoid unnecessarily confusing complexity in the specification of multiple *recency-test-property-estimate-sharing* rules for different subsets of a global set of surveys, only a single *recency-test-property-estimate-sharing* rule is allowed in any set of surveys submitted in one invocation of the functions *incprops* and *inccounts*.
+* To avoid unnecessarily confusing complexity in the specification of multiple *recency-test-property-estimate-sharing* rules for different subsets of a global set of surveys, only a single *recency-test-property-estimate-sharing* rule is allowed in any set of surveys submitted in one invocation of the functions `incprops` and `inccounts`.
 * If different recency tests are used in separate surveys, but they happen to have any numerically identical test property estimates, this will still need to be specified as independent test properties, as these estimates would be *statistically independent*.
 
 

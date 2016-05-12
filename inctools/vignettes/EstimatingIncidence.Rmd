@@ -5,7 +5,7 @@ output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{Estimating Incidence}
+  %\VignetteIndexEntry{Estimating incidence}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
