@@ -75,24 +75,95 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>This vignette covers the use of the functions <code>incprops</code>, <code>inccounts</code>, and <code>prevcounts</code>. It is strongly recommended that the vignette “Introduction” be read before any use of this package.</p>
-<p>The two primary functions for HIV incidence estimation are <span class="math inline">\(incprops\)</span> and <span class="math inline">\(inccounts\)</span>. These take as arguments a summary of arbitrarily complex survey data sets capturing HIV prevalence and prevalence of recent HIV infection among HIV positive subjects. They return estimates of incidence, and, if specification of multiple cross-sectional surveys is provided, incidence differences (point estimates, confidence intervals, p values, and subsidiary output). The principal reference for the methodology underlying this implementation is Kassanjee et al. <em>Epidemiology</em>, 2012.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> Further guidance is provided in Kassanjee, McWalter, Welte. <em>AIDS Research and Human Retroviruses</em>, 2014.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>, and some hitherto unpublished technical details are in the appendix of vignette “Introduction”.</p>
+<p>The two primary functions for HIV incidence estimation are <code>incprops</code> and <code>inccounts</code>. These take as arguments a summary of arbitrarily complex survey data sets capturing HIV prevalence and prevalence of recent HIV infection among HIV positive subjects. They return estimates of incidence, and, if specification of multiple cross-sectional surveys is provided, incidence differences (point estimates, confidence intervals, p values, and subsidiary output). The principal reference for the methodology underlying this implementation is Kassanjee et al. <em>Epidemiology</em>, 2012.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> Further guidance is provided in Kassanjee, McWalter, Welte. <em>AIDS Research and Human Retroviruses</em>, 2014.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>, and some hitherto unpublished technical details are in the appendix of vignette “Introduction”.</p>
 </div>
 <div id="analytical-paradigm" class="section level2">
 <h2>Analytical Paradigm</h2>
-<p>A fundamental element in the conception of the <em>inctools</em> is that the primary entry point into the critical methodology which <em>inctools</em> implements is the function <span class="math inline">\(incprops\)</span>, which takes, as summary of the population state, estimates of HIV prevalence and the prevalence of <em>recent infection</em> amongst HIV positive subjects (including variance and covariance). These estimates, in turn, would usually be best derived by (potentially complex) preliminary analysis of the raw survey data documenting individual subjects’ status ascertainment, cluster and strata membership, weighting, etc.</p>
-<p>The derivation of these prevalence estimates from raw data is in principle facilitated by various algorithms which are implemented in other packages, and are essentially independent of any of the innovation captured in this package. Use of <em>inctools</em> does not imply any specific approach to the preliminary analytical methodology, but the widely used package <em>survey</em> (totally independently maintained, with no link to <em>inctools</em>) may be suitable for many typical data sets. Additionally, to facilitate ‘naive’, self contained within the package, analysis, the ancilliary function <em>prevcounts</em> is provided. This takes survey counts and produces prevalence estimates (for both HIV and recent infection, including variance) under the simplifying assumption of individual level random selection of subjects from a single population group.</p>
+<p>A fundamental element in the conception of the <em>inctools</em> is that the primary entry point into the critical methodology which <em>inctools</em> implements is the function <code>incprops</code>, which takes, as summary of the population state, estimates of HIV prevalence and the prevalence of <em>recent infection</em> amongst HIV positive subjects (including variance and covariance). These estimates, in turn, would usually be best derived by (potentially complex) preliminary analysis of the raw survey data documenting individual subjects’ status ascertainment, cluster and strata membership, weighting, etc.</p>
+<p>The derivation of these prevalence estimates from raw data is in principle facilitated by various algorithms which are implemented in other packages, and are essentially independent of any of the innovation captured in this package. Use of <em>inctools</em> does not imply any specific approach to the preliminary analytical methodology, but the widely used package <em>survey</em> (totally independently maintained, with no link to <em>inctools</em>) may be suitable for many typical data sets. Additionally, to facilitate ‘naive’, self contained within the package, analysis, the ancilliary function <code>prevcounts</code> is provided. This takes survey counts and produces prevalence estimates (for both HIV and recent infection, including variance) under the simplifying assumption of individual level random selection of subjects from a single population group.</p>
 </div>
 <div id="using-functions-incprops-and-inccounts" class="section level2">
-<h2>Using functions <em>incprops</em> and <em>inccounts</em></h2>
+<h2>Using functions <code>incprops</code> and <code>inccounts</code></h2>
 <p>The functions <code>incprops</code> and <code>inccounts</code> provide a near-identical interface, as further detailed in the help pages. Both functions take considerably pre-processed data specifying a recent infection test and a survey in which it is used: * estimates of false recency rate (FRR–<span class="math inline">\(\beta\)</span>) and mean duration of recent infection (MDRI–<span class="math inline">\(\Omega_T\)</span>) and their respective relative standard errors and recency time cutoff (T) * and survey data: proportions (counts, if using function <code>inccounts</code>) of HIV positives (PrevH) and positives for recency (PrevR) and their relative standard errors.</p>
-<p>A critical distinction is that with the use of <em>incprops</em>, variance of prevalences, including covariance, is explicitly supplied, and with the use of <em>inccounts</em>, variance emerges from counts and design effects, and there is no covariance.</p>
+<p>A critical distinction is that with the use of <code>incprops</code>, variance of prevalences, including covariance, is explicitly supplied, and with the use of <code>inccounts</code>, variance emerges from counts and design effects, and there is no covariance.</p>
 <p>The output for a single survey is an estimate of incidence along with confidence intervals and RSE, estimated annual rate of infection and associated confidence intervals, and confidence intervals for parameters MDRI and FRR, which are deduced from input parameters.</p>
 <p>The output for multiple surveys is the same output as for a single survey, along with pairwise comparisons of incidence rates, confidence intervals of differences, and tests of equality with p-values and RSE of differences.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prevcounts</span> (<span class="dt">N =</span> <span class="kw">c</span>(<span class="dv">5000</span>,<span class="dv">6000</span>), <span class="dt">N_H =</span> <span class="kw">c</span>(<span class="dv">1000</span>,<span class="dv">1100</span>), <span class="dt">N_testR =</span> <span class="kw">c</span>(<span class="dv">950</span>,<span class="dv">1060</span>),
-            <span class="dt">N_R =</span> <span class="kw">c</span>(<span class="dv">100</span>,<span class="dv">70</span>), <span class="dt">DE_H =</span> <span class="kw">c</span>(<span class="fl">1.1</span>,<span class="fl">1.2</span>), <span class="dt">DE_R =</span> <span class="kw">c</span>(<span class="fl">1.2</span>,<span class="fl">1.3</span>))</code></pre></div>
-<pre><code>##       PrevH      PrevR  RSE_PrevH RSE_PrevR
-## 1 0.2000000 0.10526316 0.02966479 0.1036187
-## 2 0.1833333 0.06603774 0.02984810 0.1317005</code></pre>
+<div id="examples" class="section level3">
+<h3>Examples</h3>
+<p>Consider a single cross sectional survey summarised by:</p>
+<ul>
+<li>An HIV prevalence of 20% estimated with a relative standard error of 2.8%</li>
+<li>An estimated prevalence of recent infection, amongst HIV positives, of 10%, with a relative standard error of 9%</li>
+<li>an MDRI of 200 days estimated with a relative standard error of 5%</li>
+<li>an FRR of 5% estimated with a relative standard error of 20%</li>
+</ul>
+<p>and proposed to be processed by 10,000 bootstap iterations. Function <code>incprops</code> will calculate:</p>
+<ul>
+<li>an incidence point estimate, confidence interval, and relative standard error</li>
+<li>the equivalent annualised risk of infection (which is usually numerically very similar)</li>
+<li>implied confidence intervals on MDRi and FRR derived from input parameters</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprops</span>(<span class="dt">PrevH =</span> <span class="fl">0.20</span>, <span class="dt">RSE_PrevH =</span> <span class="fl">0.028</span>, <span class="dt">PrevR =</span> <span class="fl">0.10</span>, <span class="dt">RSE_PrevR =</span> <span class="fl">0.09</span>,
+<span class="dt">BS_Count =</span> <span class="dv">10000</span>, <span class="dt">Boot =</span> <span class="ot">TRUE</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>,
+<span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
+<pre><code>## $Incidence.Statistics
+##   Incidence  CI.low   CI.up     RSE
+## 1   0.04265 0.03334 0.05316 0.11959
+## 
+## $Annual.Risk.of.Infection
+##      ARI ARI.CI.low ARI.CI.up
+## 1 0.0418     0.0328    0.0518
+## 
+## $MDRI.CI
+##   CI.low CI.up
+## 1  180.4 219.6
+## 
+## $FRR.CI
+##   CI.low  CI.up
+## 1 0.0061 0.0139</code></pre>
+<p>Multiple surveys can be processed in a single call to <code>incprops</code> by supplying vectors of the parameters. Note that:</p>
+<ul>
+<li>A single value of recency cut off time <span class="math inline">\(T\)</span> is required for all surveys, even if the tests are different and have independently estimates MDRI and FRR, as in the example below</li>
+<li>In addition to the results returned for the single survey case (replicated for each survey), <code>incprops</code> also calculates all pairwise incidence differences and p values.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprops</span>(<span class="dt">PrevH =</span> <span class="kw">c</span>(<span class="fl">0.20</span>,<span class="fl">0.21</span>,<span class="fl">0.18</span>), <span class="dt">RSE_PrevH =</span> <span class="kw">c</span>(<span class="fl">0.028</span>,<span class="fl">0.03</span>,<span class="fl">0.022</span>),
+<span class="dt">PrevR =</span> <span class="kw">c</span>(<span class="fl">0.10</span>,<span class="fl">0.13</span>,<span class="fl">0.12</span>), <span class="dt">RSE_PrevR =</span> <span class="kw">c</span>(<span class="fl">0.094</span>,<span class="fl">0.095</span>,<span class="fl">0.05</span>),
+<span class="dt">BS_Count =</span> <span class="dv">10000</span>, <span class="dt">Boot =</span> <span class="ot">FALSE</span>, <span class="dt">BMest =</span> <span class="st">'MDRI.FRR.indep'</span>, <span class="dt">MDRI =</span> <span class="kw">c</span>(<span class="dv">200</span>,<span class="dv">180</span>,<span class="dv">180</span>),
+<span class="dt">RSE_MDRI =</span> <span class="kw">c</span>(<span class="fl">0.05</span>,<span class="fl">0.07</span>,<span class="fl">0.06</span>), <span class="dt">FRR =</span> <span class="kw">c</span>(<span class="fl">0.01</span>,<span class="fl">0.009</span>,<span class="fl">0.02</span>), <span class="dt">RSE_FRR =</span> <span class="kw">c</span>(<span class="fl">0.2</span>,<span class="fl">0.2</span>,<span class="fl">0.1</span>), <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
+<pre><code>## $Incidence.Statistics
+##   survey Incidence  CI.low   CI.up     RSE RSE.Inf.SS
+## 1      1   0.04265  0.0324  0.0529 0.12264    0.05392
+## 2      2   0.06774 0.05033 0.08515 0.13111    0.07302
+## 3      3   0.04847 0.03961 0.05734 0.09332    0.06625
+## 
+## $Incidence.Difference.Statistics
+##   compare     Diff CI.Diff.low CI.Diff.up RSE.Diff RSE.Diff.Inf.SS p.value
+## 1  1 vs 2 -0.02509    -0.04529   -0.00489  0.41077         0.21738 0.01492
+## 2  1 vs 3 -0.00583    -0.01938    0.00773  1.18669         0.67779 0.39941
+## 3  2 vs 1  0.02509     0.00489    0.04529  0.41077         0.21738 0.01492
+## 4  2 vs 3  0.01927    -0.00027    0.03880  0.51737         0.30610 0.05326
+## 5  3 vs 1  0.00583    -0.00773    0.01938  1.18669         0.67779 0.39941
+## 6  3 vs 2 -0.01927    -0.03880    0.00027  0.51737         0.30610 0.05326
+##   p.value.Inf.SS
+## 1        &lt;0.0001
+## 2        0.14011
+## 3        &lt;0.0001
+## 4        0.00109
+## 5        0.14011
+## 6        0.00109
+## 
+## $MDRI.CI
+##    CI.low   CI.up
+## 1 180.400 219.600
+## 2 155.304 204.696
+## 3 158.832 201.168
+## 
+## $FRR.CI
+##   CI.low  CI.up
+## 1 0.0061 0.0139
+## 2 0.0055 0.0125
+## 3 0.0161 0.0239</code></pre>
+</div>
 </div>
 <div id="function-prevcounts" class="section level2">
 <h2>Function <code>prevcounts</code></h2>
@@ -103,8 +174,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Number of HIV positive subjects tested for recent infections</li>
 <li>Number of HIV positive subjects who tested positive for recent infections</li>
 </ul>
-<p>into (point) estimates (and variance) of prevalence of HIV and prevalence of recent infection among HIV the positives. At heart, this is a relatively simple multinomial distribution analysis (trinomial, in the case of complete coverage of recency testing amongst HIV positives) and could be accomplished without any significant innovation directly arising out of the core methods of this package, but function <em>prevcounts</em> at least provides a consistent entry point into this analysis, using arguments consistently named to align to the other functions, including appropriate design effects. The most likely use of <em>prevcounts</em> is probably indirectly through <em>inccounts</em>, but it is provided in user-exposed form for its intuitive supportive value and for recycling into user customisations beyond routine primary incidence estimation.</p>
-<p><strong>The use of <em>prevcounts</em> implies an interpretation of these counts which precludes non-null covariance of the prevalence of HIV and the prevalence of recency.</strong></p>
+<p>into (point) estimates (and variance) of prevalence of HIV and prevalence of recent infection among HIV the positives. At heart, this is a relatively simple multinomial distribution analysis (trinomial, in the case of complete coverage of recency testing amongst HIV positives) and could be accomplished without any significant innovation directly arising out of the core methods of this package, but function <code>prevcounts</code> at least provides a consistent entry point into this analysis, using arguments consistently named to align to the other functions, including appropriate design effects. The most likely use of <code>prevcounts</code> is probably indirectly through <code>inccounts</code>, but it is provided in user-exposed form for its intuitive supportive value and for recycling into user customisations beyond routine primary incidence estimation. Note that the use of <code>prevcounts</code> implies an interpretation of these counts which precludes non-null covariance of the prevalence of HIV and the prevalence of recency.</p>
 <p>For a single survey:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prevcounts</span>(<span class="dt">N =</span> <span class="dv">5000</span>, <span class="dt">N_H =</span> <span class="dv">1000</span>, <span class="dt">N_testR =</span> <span class="dv">1000</span>, <span class="dt">N_R =</span> <span class="dv">70</span>, <span class="dt">DE_H =</span> <span class="fl">1.1</span>, <span class="dt">DE_R =</span> <span class="fl">1.5</span>)</code></pre></div>
 <pre><code>##   PrevH PrevR  RSE_PrevH RSE_PrevR
@@ -114,7 +184,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><p>It is spelled out that in this instance all HIV positive subjects were tested for recent infection</p></li>
 <li><p>A design effect is provided for adjusting the variance of the prevalence of HIV</p></li>
 <li><p>An independent design effect is provided for adjusting the variance of the prevalence of recent infection amongst HIV positives</p></li>
-<li><p>There is no mention of a total sample size in excess of the number of individuals in the underlying survey, on whom there is no HIV status information. A more sophisticated analysis might well use this larger sample size, and additionally account for the frequency, and risk-factor distribution, of missingness, but the conception <em>prevcounts</em> does not require this data. The use of design effects, though limited and ultimately problematic, is the appropriate way to insert distributional information beyond the implied two independent binomial distributions for each prevalence.</p></li>
+<li><p>There is no mention of a total sample size in excess of the number of individuals in the underlying survey, on whom there is no HIV status information. A more sophisticated analysis might well use this larger sample size, and additionally account for the frequency, and risk-factor distribution, of missingness, but the conception <code>prevcounts</code> does not require this data. The use of design effects, though limited and ultimately problematic, is the appropriate way to insert distributional information beyond the implied two independent binomial distributions for each prevalence.</p></li>
 </ul>
 <p>Input can be provided for two or more surveys in vector form, using the concatenation expression <code>c()</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prevcounts</span> (<span class="dt">N =</span> <span class="kw">c</span>(<span class="dv">5000</span>,<span class="dv">6000</span>), <span class="dt">N_H =</span> <span class="kw">c</span>(<span class="dv">1000</span>,<span class="dv">1100</span>), <span class="dt">N_testR =</span> <span class="kw">c</span>(<span class="dv">950</span>,<span class="dv">1060</span>),
@@ -122,14 +192,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>##       PrevH      PrevR  RSE_PrevH RSE_PrevR
 ## 1 0.2000000 0.10526316 0.02966479 0.1036187
 ## 2 0.1833333 0.06603774 0.02984810 0.1317005</code></pre>
-<p>Note the construction that both surveys are declared to have the same design effect on the variance of HIV prevalence, which can be captured in a non-vectorised specification of <span class="math inline">\(DE_H\)</span>.</p>
-</div>
-<div id="fragments" class="section level2">
-<h2>fragments</h2>
-<p>while taking into account of design effects, which factor into the relative standard error of prevalence of HIV positivity and recenecy. <code>inccounts</code> has an option for design effects. The function <code>prevcounts</code> takes count data from a prevalence survey and produces estimates of prevalences and relative standard errors. Design effects are assumed</p>
-<p>Note that the use of <em>prevcounts</em> implies an interpretation of these counts which precludes non-null covariance of the prevalence of HIV and recency.</p>
-<p>as well a test rejection threshold <span class="math inline">\(\alpha\)</span> (default=0.05)</p>
-<p>allows for the use function <code>incprops</code> negligible unless the user specifies otherwise. Note that the input values for design effects are assumed to be known by the user.</p>
 </div>
 <div class="footnotes">
 <hr />

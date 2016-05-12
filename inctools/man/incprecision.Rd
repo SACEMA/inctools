@@ -10,7 +10,7 @@ incprecision(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
 \arguments{
 \item{I}{Expected Incidence.}
 
-\item{RSE_I}{Relative Standard Error of Incidence Estimate.}
+\item{RSE_I}{Relative Standard Error of Incidence Estimate. If this is the desired output, set to "out".}
 
 \item{PrevH}{Prevalence of HIV.}
 
@@ -30,7 +30,7 @@ incprecision(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
 
 \item{DE_R}{Design effect of recency test (vector/integer).}
 
-\item{n}{Sample Size: either a given hypothetical value, or to be determined by function, which is the default.}
+\item{n}{Sample Size: Set to a hypothetical value if the desired output is RSE_I, othewise set to "out" to obtain required sample size.}
 
 \item{step}{number of steps between minimum I and maximum I in the calculation of a range of output.}
 }
@@ -43,10 +43,13 @@ Sample size or precision calculation
 \details{
 The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 
-Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSE of incidence) and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision.
-Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained solely by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.
+This function summarizes performance of a recent infection test into a standard error of the incidence estimate, given the
+estimated test properties and hypothetical survey context or the sample size necessary for a given level of precision.
 
-Up to two parameters can be given as tuple vetors, with the input parameter 'step' giving the number of points analyzed between the endpoints of the vector. This yields output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an illustration of this process. The package contains a long form vignette for this function. See package documentation for more details.
+Up to two arguments can be specified as tuples, with the input parameter `step` specifying the number of points
+analyzed between the endpoints of the given tuple. This specification will yield output for each value in the step
+for the output parameters that take as argument one of the varying inputs. See the second and third example below
+for an illustration of this output.
 }
 \examples{
 incprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
