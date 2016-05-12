@@ -11,6 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
+<meta name="date" content="2016-05-12" />
 
 <title>Survey design: power, precision and sample size</title>
 
@@ -67,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Survey design: power, precision and sample size</h1>
-<h4 class="date"><em>Sys.Date()</em></h4>
+<h4 class="date"><em>2016-05-12</em></h4>
 
 
 
@@ -82,12 +83,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </li>
 <li>expected survey counts, assuming a non structured sampling frame.</li>
 </ul>
-<div id="example" class="section level3">
-<h3>Example</h3>
-<p>We wish to know the power to infer the correct ordering of an incidence of 5% and one of 3%, at a shared prevalences of 20%, given a single set of recency test property estimates i.e. one value for each of MDRI, the RSE of MDRI, FRR, the RSE of FRR, and time cutoff T namely, in order: 200 days, 5%, 1%, 20%, and 730 days. We envision complete coverage of recency status ascertainment, and no survey design effects. Finally, we envision a common study sample size of 5000 persons and set <span class="math inline">\(\alpha\)</span> to 5%. Note that here function parameter for sample size is listed as <code>SS = NULL</code>, or it is omitted in the function call.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incpower</span>(<span class="dt">I1 =</span> <span class="fl">0.05</span>, <span class="dt">I2 =</span> <span class="fl">0.03</span>, <span class="dt">PrevH1 =</span> <span class="fl">0.20</span>, <span class="dt">PrevH2 =</span> <span class="fl">0.20</span>, <span class="dt">n1 =</span> <span class="dv">5000</span>, <span class="dt">n2 =</span> <span class="dv">5000</span>, <span class="dt">alpha =</span> <span class="fl">0.05</span>,
-        <span class="dt">Power =</span> <span class="st">&quot;out&quot;</span>, <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">DE_H =</span> <span class="dv">1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">BMest =</span> <span class="st">&quot;same.test&quot;</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>,
-        <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.20</span>, <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
+<div id="examples" class="section level3">
+<h3>Examples</h3>
+<p>Consider calculating the power to infer the correct ordering of an incidence of 5% and one of 3%, at a shared prevalences of 20%, given a single set of recency test property estimates i.e. one value for each of MDRI, the RSE of MDRI, FRR, the RSE of FRR, and time cutoff T namely, in order: 200 days, 5%, 1%, 20%, and 730 days. Assume complete coverage of recency status ascertainment, and no survey design effects. Finally, envision a common study sample size of 5000 persons and set <span class="math inline">\(\alpha\)</span> to 5%. That power, as opposed to sample size (the default) is the desired output, is captured in the specification of the argument <code>Power = &quot;out&quot;</code> and <code>SS = NULL</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incpower</span>(<span class="dt">I1 =</span> <span class="fl">0.05</span>, <span class="dt">I2 =</span> <span class="fl">0.03</span>, <span class="dt">PrevH1 =</span> <span class="fl">0.20</span>, <span class="dt">PrevH2 =</span> <span class="fl">0.20</span>, <span class="dt">n1 =</span> <span class="dv">5000</span>,
+        <span class="dt">n2 =</span> <span class="dv">5000</span>, <span class="dt">alpha =</span> <span class="fl">0.05</span>,<span class="dt">Power =</span> <span class="st">&quot;out&quot;</span>, <span class="dt">SS =</span> <span class="ot">NULL</span>, <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">DE_H =</span> <span class="dv">1</span>,
+        <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">BMest =</span> <span class="st">&quot;same.test&quot;</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.01</span>,
+        <span class="dt">RSE_FRR =</span> <span class="fl">0.20</span>, <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
 <pre><code>## $Inc.Difference.Statistics
 ##   deltaI_Est RSE_deltaI RSE_deltaI.infSS Power Power.infSS CI.low  CI.up
 ## 1       0.02       0.33            0.052 0.858       &gt;0.99 0.0071 0.0329
@@ -111,12 +113,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## HIV.positive                   1000     1000
 ## HIV.post.tested.for.recent     1000     1000
 ## Recency.test.pos                116       73</code></pre>
-<p>Output is presented in list form, so individual tables can be called by the user. For example, if the returned function object is named <code>desired.power</code>, then the implied subject counts deduced from assumed prevalence and given sample size can be accessed with <code>desired.power$Implied.Subject.Counts</code> or <code>desired.power[[5]]</code>.</p>
-<p>Here the output returns that the power of this particular test given the hypothetical study parameters and sample size is 0.858. In the event that we had an infinite sample size, which of course is impossible, but which is instructive to understand what amount of power is a function of sample size alone and not test characteristics, we would have a power approaching unity.</p>
-<p>If instead of power the user wants to know a common sample size for a desired power level, the input parameters are mostly the same as above, except that each variable <code>n1</code>, <code>n1</code> are to be left unspecified in the function call or both set to <code>&quot;both&quot;</code>, and variable <code>Power</code> will be set to the desired level. Here we envision the situation where the FRR is independent between tests and will be specified as a tuple in the function. As before there are no design effects or lacking testing coverage. Note also that now the function parameters for sample size is set to <code>SS = &quot;out&quot;</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incpower</span>(<span class="dt">I1 =</span> <span class="fl">0.05</span>, <span class="dt">I2 =</span> <span class="fl">0.03</span>, <span class="dt">PrevH1 =</span> <span class="fl">0.20</span>, <span class="dt">PrevH2 =</span> <span class="fl">0.15</span>, <span class="dt">n1 =</span> <span class="st">&quot;both&quot;</span>, <span class="dt">n2 =</span> <span class="st">&quot;both&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.05</span>,
-        <span class="dt">Power =</span> <span class="fl">0.8</span>, <span class="dt">SS =</span> <span class="st">&quot;out&quot;</span>, <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">DE_H =</span> <span class="dv">1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">BMest =</span> <span class="st">&quot;FRR.indep&quot;</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>,
-        <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="kw">c</span>(<span class="fl">0.01</span>,<span class="fl">0.009</span>), <span class="dt">RSE_FRR =</span> <span class="kw">c</span>(<span class="fl">0.20</span>,<span class="fl">0.22</span>), <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
+<p>Here the output returns that the power of this particular test is 0.858. In the limit of infinite sample size power approaches one.</p>
+<p>For the benefit of survey planning (such as costing) the returned <code>Implied.Subject.Counts</code> object captures demonstrative survey counts in the case that expectation values are precisely attained.</p>
+<p>To calculate the required (common) sample size for two surveys, to obtain a desired power:</p>
+<ul>
+<li>omit <code>n1</code> and <code>n2</code> or set both to <code>&quot;both&quot;</code></li>
+<li>set <code>SS = &quot;out&quot;</code></li>
+<li>set <code>Power</code> to the desired value.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incpower</span>(<span class="dt">I1 =</span> <span class="fl">0.05</span>, <span class="dt">I2 =</span> <span class="fl">0.03</span>, <span class="dt">PrevH1 =</span> <span class="fl">0.20</span>, <span class="dt">PrevH2 =</span> <span class="fl">0.15</span>, <span class="dt">alpha =</span> <span class="fl">0.05</span>,
+        <span class="dt">Power =</span> <span class="fl">0.8</span>, <span class="dt">SS =</span> <span class="st">&quot;out&quot;</span>, <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">DE_H =</span> <span class="dv">1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>,
+        <span class="dt">BMest =</span> <span class="st">&quot;FRR.indep&quot;</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="kw">c</span>(<span class="fl">0.01</span>,<span class="fl">0.009</span>),
+        <span class="dt">RSE_FRR =</span> <span class="kw">c</span>(<span class="fl">0.20</span>,<span class="fl">0.22</span>), <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
 <pre><code>## $Minimum.Common.SS
 ## [1] 4122
 ## 
@@ -145,45 +153,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## HIV.post.tested.for.recent      824      618
 ## Recency.test.pos                 95       61</code></pre>
 <p>The function call outputs that the necessary common study sample size is 4122 persons per study to achieve the desired 80% power given the specified population parameters and assay characteristics.</p>
-<p>Finally, imagine the situation where one study has already been completed, and values have been calculated for that study and for the recency assay in use, and the user wishes to find the sample size for the second to-be completed study needed to have a desired power to detect a difference in incidences. The function call for this situation is similar to the previous call, except the survey for which the sample size generation is to be performed will have the sample size parameter in the function call specified as <code>&quot;out</code>. See below for an example of this syntax and output. Again, note that the function parameter for sample size is still set to <code>SS = &quot;out&quot;</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incpower</span>(<span class="dt">I1 =</span> <span class="fl">0.05</span>, <span class="dt">I2 =</span> <span class="fl">0.03</span>, <span class="dt">PrevH1 =</span> <span class="fl">0.20</span>, <span class="dt">PrevH2 =</span> <span class="fl">0.15</span>, <span class="dt">n1 =</span> <span class="dv">5000</span>, <span class="dt">n2 =</span> <span class="st">&quot;out&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.05</span>,
-        <span class="dt">Power =</span> <span class="fl">0.8</span>, <span class="dt">SS =</span> <span class="st">&quot;out&quot;</span>, <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">DE_H =</span> <span class="dv">1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">BMest =</span> <span class="st">&quot;same.test&quot;</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>,
-        <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.21</span>, <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
-<pre><code>## $Minimum.SS
-## [1] 3110
-## 
-## $Inc.Difference.Statistics
-##   deltaI_Est RSE_deltaI RSE_deltaI.infSS Power Power.infSS CI.low CI.up
-## 1       0.02      0.357            0.052   0.8       &gt;0.99  0.006 0.034
-## 
-## $Implied.Incidence.Statistics
-##   Survey Given.I RSE_I CI.low CI.up
-## 1      1    0.05 0.115  0.039 0.061
-## 2      2    0.03 0.171  0.020 0.040
-## 
-## $Implied.MDRI.Statistics
-##   Given.MDRI CI.low CI.up
-## 1        200  180.4 219.6
-## 
-## $Implied.FRR.Statistics
-##   Given.FRR CI.low  CI.up
-## 1      0.01 0.0059 0.0141
-## 
-## $Implied.Subject.Counts
-##                            Survey.1 Survey.2
-## HIV.negative                   4000     2644
-## HIV.positive                   1000      466
-## HIV.post.tested.for.recent     1000      466
-## Recency.test.pos                116       47</code></pre>
-<p>The function now returns the necessary sample size for survey 2 that will generate power of 80%, given the hypothetical population parameters for survey 2 and the observed parameter estimates for survey 1 and the assay characteristics MDRI, FRR, and their respective relative standard errors and time cut point T.</p>
 </div>
 </div>
-<div id="sample-size-for-precision-incprecision" class="section level2">
-<h2>Sample size for precision: <code>incprecision</code></h2>
-<p>This function summarizes performance of a recent infection test into a standard error of the incidence estimate given estimated test properties and the prevalence and incidence in a hypothetical context. Alternatively the function can return the sample size necessary for a given level of estimator precision. Up to two parameters can be given as tuple vectors, with the input parameter <code>step</code> specifying the number of points analyzed between the endpoints of the given tuple. This specification will yield output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an illustration of this output.</p>
+<div id="function-incprecision" class="section level2">
+<h2>Function <code>incprecision</code></h2>
+<p>This function summarizes performance of a recent infection test into a standard error of the incidence estimate, given the estimated test properties and hypothetical survey context or the sample size necessary for a given level of precision.</p>
+<p>Up to two arguments can be specified as tuples, with the input parameter <code>step</code> specifying the number of points analyzed between the endpoints of the given tuple. This specification will yield output for each value in the step for the output parameters that take as argument one of the varying inputs. See the second and third example below for an illustration of this output.</p>
+<div id="examples-1" class="section level3">
+<h3>Examples</h3>
 <p>The function call below returns the necessary sample size to have RSE of the incidence estimator equal to 25%, given a hypothetical prevalence, coverage rate, and assay tests parameter estimates. Note here the design effects for the test of HIV positivity are set to 1.1 and that sample size is set to <code>n = &quot;out&quot;</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprecision</span>(<span class="dt">I =</span> <span class="fl">0.015</span>, <span class="dt">RSE_I =</span> <span class="fl">0.25</span>, <span class="dt">PrevH =</span> <span class="fl">0.2</span>, <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.01</span>,
-            <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">730</span>, <span class="dt">DE_H =</span> <span class="fl">1.1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">n =</span> <span class="st">'out'</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprecision</span>(<span class="dt">I =</span> <span class="fl">0.015</span>, <span class="dt">RSE_I =</span> <span class="fl">0.25</span>, <span class="dt">PrevH =</span> <span class="fl">0.2</span>, <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>,
+            <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">730</span>,
+            <span class="dt">DE_H =</span> <span class="fl">1.1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">n =</span> <span class="st">'out'</span>)</code></pre></div>
 <pre><code>## $sample.size
 ## [1] 3634
 ## 
@@ -203,7 +184,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [1] 0.03558</code></pre>
 <p>The function call returns that the necessary sample size for the desired precision in the incidence estimator is 3634 persons. Prevalence of being HIV positive and recently infected is 0.8%, prevalence of being HIV positive and nonrecently infected is 19%. The RSE of the incidence estimator at infinite sample size is 7.6%, and the RSE of prevalence of positivity for HIV is 3.4% and the RSE of prevalence of recency is 3.55%.</p>
 <p>Next consider the function call for a tuple of prevalence of HIV positivity values and incidence estimates that range in value between 10 and 20% and 1.5 and 2% respectively. The function now outputs a range of values 3 values for each output parameter that is dependent upon these two varying quantities, as well as the normal output from a single parameter function call when the output does not depend on the varying parameters. Note again that sample size is set to <code>n = &quot;out&quot;</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprecision</span>(<span class="dt">I =</span> <span class="kw">c</span>(<span class="fl">0.015</span>,<span class="fl">0.02</span>), <span class="dt">RSE_I =</span> <span class="fl">0.25</span>, <span class="dt">PrevH =</span> <span class="kw">c</span>(<span class="fl">0.10</span>,<span class="fl">0.20</span>), <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">700</span>, <span class="dt">DE_H =</span> <span class="dv">1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">n =</span> <span class="st">'out'</span>, <span class="dt">step =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprecision</span>(<span class="dt">I =</span> <span class="kw">c</span>(<span class="fl">0.015</span>,<span class="fl">0.02</span>), <span class="dt">RSE_I =</span> <span class="fl">0.25</span>, <span class="dt">PrevH =</span> <span class="kw">c</span>(<span class="fl">0.10</span>,<span class="fl">0.20</span>), <span class="dt">CR =</span> <span class="dv">1</span>,
+             <span class="dt">MDRI =</span> <span class="dv">200</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">700</span>,
+             <span class="dt">DE_H =</span> <span class="dv">1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">n =</span> <span class="st">'out'</span>, <span class="dt">step =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>## $sample.size
 ##            PrevH = 0.1 PrevH = 0.15 PrevH = 0.2
 ## I = 0.015         2660         2660        2660
@@ -241,8 +224,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## I = 0.02       0.03817      0.03817     0.03817</code></pre>
 <p>So for example in the first listed output, the sample size necessary for a given precision in the incidence estimator, the output shows that for hypothetical values of PrevH = 0.15 and I = 0.0175, midway in the step between 10 and 20% and 1.5 and 2% respectively, the necessary sample size for RSE_I = 0.25 is 2547 persons enrolled.</p>
 <p>Finally, for calculating the RSE of incidence over a range of 5 values of prevalence of positivity with a sample size of 5000, the user will set the sample size parameter to a given value, here <code>n = 5000</code>. The precision is set to output with option <code>RSE_I = &quot;out&quot;</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprecision</span>(<span class="dt">I =</span> <span class="fl">0.017</span>, <span class="dt">RSE_I =</span> <span class="st">'out'</span>, <span class="dt">PrevH =</span> <span class="kw">c</span>(<span class="fl">0.10</span>,<span class="fl">0.20</span>), <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">MDRI =</span> <span class="dv">211</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>,
-            <span class="dt">FRR =</span> <span class="fl">0.009</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">720</span>, <span class="dt">n =</span> <span class="dv">5000</span>, <span class="dt">step =</span> <span class="dv">5</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprecision</span>(<span class="dt">I =</span> <span class="fl">0.017</span>, <span class="dt">RSE_I =</span> <span class="st">'out'</span>, <span class="dt">PrevH =</span> <span class="kw">c</span>(<span class="fl">0.10</span>,<span class="fl">0.20</span>), <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">MDRI =</span> <span class="dv">211</span>,
+             <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.009</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">720</span>, <span class="dt">n =</span> <span class="dv">5000</span>,
+             <span class="dt">step =</span> <span class="dv">5</span>)</code></pre></div>
 <pre><code>## $RSE_I
 ##           PrevH   RSE_I
 ## 1   PrevH = 0.1 0.16868
@@ -290,6 +274,52 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 3  PrevH = 0.15   0.02113
 ## 4 PrevH = 0.175   0.02479
 ## 5   PrevH = 0.2   0.02845</code></pre>
+<!-- #not-for-release -->
+<!--
+If one study has already been completed, one may calculate sample size requirements for a second survey, to obtain desired power:
+
+* `n1` is set to the sample size of the completed  The function call for this situation is similar to the previous call, except the survey for which the sample size generation is to be performed will have the sample size parameter in the function call specified as `"out`. See below for an example of this syntax and output. Again, note that the function parameter for sample size is still set to `SS = "out"`.
+
+
+```r
+incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.15, n1 = 5000,
+        n2 = "out", alpha = 0.05, Power = 0.8, SS = "out", CR = 1, DE_H = 1,
+        DE_R = 1, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01,
+        RSE_FRR = 0.21, BigT = 730)
+```
+
+```
+## $Minimum.SS
+## [1] 3110
+## 
+## $Inc.Difference.Statistics
+##   deltaI_Est RSE_deltaI RSE_deltaI.infSS Power Power.infSS CI.low CI.up
+## 1       0.02      0.357            0.052   0.8       >0.99  0.006 0.034
+## 
+## $Implied.Incidence.Statistics
+##   Survey Given.I RSE_I CI.low CI.up
+## 1      1    0.05 0.115  0.039 0.061
+## 2      2    0.03 0.171  0.020 0.040
+## 
+## $Implied.MDRI.Statistics
+##   Given.MDRI CI.low CI.up
+## 1        200  180.4 219.6
+## 
+## $Implied.FRR.Statistics
+##   Given.FRR CI.low  CI.up
+## 1      0.01 0.0059 0.0141
+## 
+## $Implied.Subject.Counts
+##                            Survey.1 Survey.2
+## HIV.negative                   4000     2644
+## HIV.positive                   1000      466
+## HIV.post.tested.for.recent     1000      466
+## Recency.test.pos                116       47
+```
+The function now returns the necessary sample size for survey 2 that will generate power of 80\%, given the hypothetical population parameters for survey 2 and the observed parameter estimates for survey 1 and the assay characteristics MDRI, FRR, and their respective relative standard errors and time cut point T.
+
+-->
+</div>
 </div>
 
 

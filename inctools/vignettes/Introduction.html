@@ -57,7 +57,7 @@
 <p>Fleshing out the three primary components just noted above:</p>
 <div id="analysis-in-support-of-survey-design" class="section level3">
 <h3>Analysis in support of survey design</h3>
-<p>Two primary exposed functions (<em>incprecision</em> and <em>incpower</em>) provide permutations on the relationship between</p>
+<p>Two primary exposed functions (<code>incprecision</code> and <code>incpower</code>) provide permutations on the relationship between</p>
 <ul>
 <li><p>epidemiological context,</p></li>
 <li><p>sampling frame,</p></li>
@@ -69,7 +69,7 @@
 <li><p>the calculation of either precision or power from the other contextual factors</p></li>
 <li><p>the calculation of a sample size from the other contextual factors, including desired precision or power</p></li>
 </ul>
-<p>Users of <em>incprecision</em> and <em>incpower</em> will need to make significant efforts to assess the context of intended use, but require no detailed knowledge of the statistical theory underpinning the details of the calculations. The two primary functions each offer their various respective permutations on usage by having the user provide the value “out” for the parameter which is requested as output, while all the other logically necessary parameters will need to be supplied, in order to avoid an error.</p>
+<p>Users of <code>incprecision</code> and <code>incpower</code> will need to make significant efforts to assess the context of intended use, but require no detailed knowledge of the statistical theory underpinning the details of the calculations. The two primary functions each offer their various respective permutations on usage by having the user provide the value “out” for the parameter which is requested as output, while all the other logically necessary parameters will need to be supplied, in order to avoid an error.</p>
 </div>
 <div id="analysis-of-survey-data" class="section level3">
 <h3>Analysis of survey data</h3>
@@ -79,9 +79,9 @@
 <li>an estimate of the prevalence of ‘recent infection’ amongst those who are HIV positive.</li>
 <li>A variance/covariance matrix for these two prevalence estimates</li>
 </ul>
-<p>While <em>inctools</em> makes no firm statements about how these estimates are to be obtained, it is recommended that they be provided in the specified form, and that function <em>incprops</em> be used as the primary entrypoint. Note that:</p>
+<p>While <em>inctools</em> makes no firm statements about how these estimates are to be obtained, it is recommended that they be provided in the specified form, and that function <code>incprops</code> be used as the primary entrypoint. Note that:</p>
 <ul>
-<li>To facilitate “naïve” analysis, the function <em>prevcounts</em> is provided, which turns simple sample case counts (number of people tested for HIV, number classified HIV positive, number of HIV positives tested for recency, number classified as recently infected) into the prevalence estimates required by function incprops, under the assumptions of independent (unstructured) sampling.</li>
+<li>To facilitate “naïve” analysis, the function <code>prevcounts</code> is provided, which turns simple sample case counts (number of people tested for HIV, number classified HIV positive, number of HIV positives tested for recency, number classified as recently infected) into the prevalence estimates required by function incprops, under the assumptions of independent (unstructured) sampling.</li>
 <li>Function inccounts incorporates a detour through function prevcounts, followed by a call to incprops, thereby provide a high level interface to incidence estimation based directly on total sample counts, contextual factors, and recency test properties.</li>
 <li>The package <em>inctools</em> lists package survey in its dependencies, thereby assuring access to at least one robust flexible tool set to facilitate the estimation of the relevant sample proportions from structured survey data.</li>
 </ul>
@@ -89,7 +89,7 @@
 <div id="estimation-of-key-performance-characteristics-of-tests-for-recent-infection" class="section level3">
 <h3>Estimation of key performance characteristics of <em>Tests for Recent Infection</em></h3>
 <p>It is usually the responsibility of the developers of recent infection tests to decide on laboratory procedures and to estimate the MDRIs and (population group level) FRRs of emerging assays. Most users of such tests who are conducting field work will access these estimates from the literature. However, the process of test development is ongoing, developers at key agencies (such as NIH and CDC) are also involved in survey design and execution, and the methods applicable to survey execution are very tightly aligned to the analysis of test properties. Thus, both developers and users of recent infection tests (as well as of the analytical methodology supporting their use) are essentially part of a single broad community engaged in large scale surveillance. Therefore, it makes sense to co-locate the developers’ tools with the surveillance tools.</p>
-<p>The core functionality in this section of the package is provided by function <em>mdrical</em>, which produces estimates of mean duration of recent infection and function <em>frrcal</em> which produces estimates of false recent rate, both from data typically only available to test developers i.e. patient level test results from a putative recent infection test, applied at various times relative to relatively precisely estimated infection/seroconversion times.</p>
+<p>The core functionality in this section of the package is provided by function <code>mdrical</code>, which produces estimates of mean duration of recent infection and function <code>frrcal</code> which produces estimates of false recent rate, both from data typically only available to test developers i.e. patient level test results from a putative recent infection test, applied at various times relative to relatively precisely estimated infection/seroconversion times.</p>
 </div>
 </div>
 <div id="glossary" class="section level2">
@@ -208,10 +208,10 @@ V[\Delta \mathbb{I}]_3 \approx &amp;
       &amp;\Big(\frac{PrevH_1(T_1\ PrevR_1 - \Omega_1}{1 - PrevH_1}(\Omega_1 -\beta_1\ T_1)^2\Big)^2  RSE_{\beta_1}\ \beta_1 + \\     
       &amp;\Big(\frac{PrevH_2(T_2\ PrevR_2 - \Omega_2}{1 - PrevH_2}(\Omega_2 -\beta_2\ T_2)^2\Big)^2  RSE_{\beta_2}\ \beta_2
 \end{align}
-<p><strong>Note:</strong></p>
+<p>Note:</p>
 <ul>
 <li>The option for the assay characteristic scheme is specified by function parameter <code>BMest</code>. Subscripts 1 and 2 in the parameter notation denote associated survey or test parameters. The variances of the three cases follow.</li>
-<li>To avoid unnecessarily confusing complexity in the specification of multiple <em>recency-test-property-estimate-sharing</em> rules for different subsets of a global set of surveys, only a single <em>recency-test-property-estimate-sharing</em> rule is allowed in any set of surveys submitted in one invocation of the functions <em>incprops</em> and <em>inccounts</em>.</li>
+<li>To avoid unnecessarily confusing complexity in the specification of multiple <em>recency-test-property-estimate-sharing</em> rules for different subsets of a global set of surveys, only a single <em>recency-test-property-estimate-sharing</em> rule is allowed in any set of surveys submitted in one invocation of the functions <code>incprops</code> and <code>inccounts</code>.</li>
 <li>If different recency tests are used in separate surveys, but they happen to have any numerically identical test property estimates, this will still need to be specified as independent test properties, as these estimates would be <em>statistically independent</em>.</li>
 </ul>
 <div id="crucial-note-on-choice-of-null-hypothesis-calculation-of-p-values-and-meaning-of-statistical-power" class="section level3">

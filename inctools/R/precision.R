@@ -39,10 +39,12 @@ DM_FirstOrderTerms <- function(prevH, prevR, mdri, frr, bigt) {
 #' This function summarizes performance of a recent infection test into a standard error of the incidence estimate, given the
 #' estimated test properties and hypothetical survey context or the sample size necessary for a given level of precision.
 #'
-#' Up to two arguments can be specified as tuples, with the input parameter `step` specifying the number of points
-#' analyzed between the endpoints of the given tuple. This specification will yield output for each value in the step
-#' for the output parameters that take as argument one of the varying inputs. See the second and third example below
+#' Up to two arguments can be specified as ranges, with the input parameter `step` specifying the number of increments
+#' between the endpoints of the two ranges supplied under the argument name. This yields output for each step.
+#' See the second and third example below
 #' for an illustration of this output.
+#'
+#' Either the argument RSE_I or the argument n must be set to "out".
 #'
 #' @examples
 #' incprecision(I = 0.015, RSE_I = 0.25, PrevH = 0.2, CR = 1,
