@@ -41,7 +41,7 @@ Either sample size necessary for a given precision under a given set of testing 
 Sample size or precision calculation
 }
 \details{
-The package contains a long form vignette that covers the use of this function. Use vignette('SurveyDesign',package='inctools') to access the vignette.
+The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 
 Summarizes performance of a recent infection test (into a standard error of the incidence estimate), given estimated test properties (RSE of incidence) and the prevalence/incidence in a hypothetical context; or gives sample size necessary for a given level of estimator precision.
 Returns: proportion of sample categorized as HIV positive and recently infected; proportion of sample categorized as HIV positive and non-recently infected; the relative standard error of the incidence estimator at infinite sample size, which is the component of variability explained solely by the assay characteristics; the relative standard error of the estimate of prevalence; the relative standard error of the estimate of proportion of HIV positive that are recent.

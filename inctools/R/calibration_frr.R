@@ -25,7 +25,7 @@
 #' @param recency_vars Variables to be used in determining recency outcomes
 #' @param recency_params Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule
 #' @param alpha Confidence level, default=0.05.
-#' @details The package contains a long form vignette that covers the use of this function. Use vignette('TestCalibration',package='inctools') to access the vignette.
+#' @details The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 #'
 #' recency_rule: binary_data - supply a binary variable with 1=recent and 0=non-recent in recency_vars.
 #'

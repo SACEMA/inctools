@@ -38,7 +38,7 @@ incprops(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
 \item{Covar_HR}{Covariance of probability of being positive and being categorized recent from survey (vector/integer). Note that as the variances of PrevH and PrevR are often quite small, only a suitably commensurate covariance will enable the inversion of the bootstrap covariance matrix for random number generation to proceed without error.}
 }
 \value{
-Incidence estimate, annual risk of infection, confidence interval, relative standard error of estimate and of assay characteristics MDRI and FRR. If multiple surveys are entered, function returns said results, as well as estimates of incidence  differences, confidence intervals of differences, difference relative standard errors, and p-values testing the hypothesis that the difference in incidence measures are zero. Theoretical relative standard error of incidence and incidence difference at infinite sample size is returned only if Boot = FALSE, as that calculation relies on the asymptotic behavior of components of the Delta method approximation, and is not calculable from bootstrapped values.
+The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 }
 \description{
 Incidence and incidence difference statistics from trinomial prevalences of HIV and recency
