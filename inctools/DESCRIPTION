@@ -32,6 +32,7 @@ Imports:
 Suggests:
     doMC,
     foreach,
+    knitr,
     survey
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
