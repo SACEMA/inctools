@@ -1,6 +1,6 @@
 ---
 title: "Calibrating tests for recent infection"
-date: 2016-05-12
+date: Sys.Date()
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >
@@ -14,19 +14,19 @@ This vignette covers the use of functions `mdrical` and `frrcal`.
 
 ## Introduction
 
-Incidence estimates from cross-sectional surveys using biomarkers for 'recent infection' require that the test for recent infection (usually an adapted diagnostic assay) be accurately characterised. The two critical parameters of test performance are the Mean Duration of Recent Infection (MDRI), denoted $\Omega_T$, (with $T$ the recency cutoff time), and False Recent Rate (FRR), denoted $\beta_T$. The explicit time cutoff $T$ was introduced by Kassanjee et al. *Epidemiology*, 2012.[^1] to differentiate between 'true recent' and 'false recent' results. Also see Kassanjee, McWalter, Welte. *AIDS Research and Human Retroviruses*, 2014.[^2]They state:
+Incidence estimates from cross-sectional surveys using biomarkers for 'recent infection' require that the test for recent infection (usually an adapted diagnostic assay) be accurately characterised. The two critical parameters of test performance are the Mean Duration of Recent Infection (MDRI), denoted $\Omega_T$, (with $T$ the recency cutoff time), and False Recent Rate (FRR), denoted $\beta_T$. The explicit time cutoff $T$ was introduced by Kassanjee et al. *Epidemiology*, 2012.[^1] to differentiate between 'true recent' and 'false recent' results. Also see Kassanjee, McWalter, Welte. *AIDS Research and Human Retroviruses*, 2014.[^2], which notes:
 
 >To lead to an informative estimator, this cut-off, though theoretically arbitrary, must be chosen to reflect the temporal dynamic range of the test for recent infection; i.e. at a time T post infection, the overwhelming majority of infected people should no longer be testing “recent”, and furthermore, T should not be larger than necessary to achieve this criterion.[^1]
 
-MDRI is defined as the average time alive and returning a ‘recent’ result, while infected for times less than $T$. FRR is defined as the proportion of subjects returning a 'recent' result while infected for longer than $T$.
+MDRI is defined as the average time alive and returning a ‘recent’ result, while infected for times less than $T$. FRR is defined as a cross sectional context specific proportion of subjects returning a 'recent' result while infected for longer than $T$.
 
-Test performance may be context-specific, and therefore, where available, local data should be used to calibrate tests. However, should published estimates be used, these may need to be adapted to the local context. Often cross-sectional incidence surveys incorporate recency testing using a Recent Infection Testing Algorithms (RITAs) and it is important to realise that the entire RITA must be appropriately calibrated. This may involve adapting MDRI estimates for more sensitive screening tests (depending on the case definition of 'recent'), or adapting FRR estimates based on weighted estimates from specimen subsets appropriate to the local population (e.g. large numbers of treated individuals). Where possible calibration should be performed using the same set of biomarkers used in a RITA, such as by including a viral load threshold in the calibration step.
+Test performance may be context-specific, and therefore, where available, local data should be used to calibrate tests. Often cross-sectional incidence surveys use a multi-step Recent Infection Testing Algorithm (RITA) and then the entire RITA must be appropriately calibrated. This may involve adapting MDRI estimates to account for the sensitivity of screening tests, or adapting FRR estimates based on weighted estimates for subpopulations such as treated individuals. Calibration should be performed using the same set of biomarkers used in a RITA, such as a viral load threshold to reduce false recency.
 
 ## Estimating MDRI using binomial regression
 
-This package provides the function `mdrical` to estimate MDRI for a given biomarker or set of biomarkers from a dataset of based on the test being applied to well-characterised specimens and subjects. That is, time since 'infection' should be well-known, as well as test result(s). Note that 'infection' can be arbitrarily defined as the reference time (e.g. the exposure event, date of first detectability on an RNA assay, Western Blot seroconversion, etc.) but should be consistently used. If the reference time used in test calibration differs from the screening assay or algorithm that is used define someone as HIV-positive in a RITA, MDRI needs to be appropriately adapted to cater for this difference.
+This package provides the function `mdrical` to estimate MDRI for a given biomarker or set of biomarkers from a dataset of based on the test being applied to well-characterised specimens and subjects. That is, time since 'infection' should be well-known, as well as test result(s). While 'infection time' can be variously defined as refering to the exposure event, date of first detectability on an RNA assay, Western Blot seroconversion, etc., it should be consistently used. If the reference event used in test calibration differs from test conversion on the screening assay or algorithm that is used define someone as HIV-positive in a RITA, then the MDRI needs to be appropriately adapted to cater for this difference.
 
-*mdrical* estimates MDRI by fitting a model for the probability of testing 'recent' as a function of time since infection $P_R(t)$. As an option, one of two functional forms (parameterisations) can be selected by the user. Fitting is performed using a generalised linear model (as implemented in the *glm2* package) to estimate parameters, with two separate link functions, the complementary log-log link or the logit link.
+*mdrical* estimates MDRI by fitting a model for the probability of testing 'recent' as a function of time since infection $P_R(t)$. As an option, one of two functional forms (with their associated link functions) can be selected by the user. Fitting is performed using a generalised linear model (as implemented in the *glm2* package) to estimate parameters.
 
 The linear binomial regression model takes the following form, with $g()$ the link function
 
@@ -54,11 +54,11 @@ In both cases, MDRI is the integral of $P_R(t)$ from $0$ to $T$.
 
 The default behaviour is to implement both model forms if the argument *functional_forms* omitted.
 
-Confidence intervals are computed by means of subject-level bootstrapping. Because measurements from subjects with more than one measurement in the dataset cannot be considered indpendent observations, subjects (rather than data points) are resampled, with replacement. An MDRI estimate is then computed using the resampled data. The number of bootstraps is specified using the argument *n_bootstraps*. We recommend 10,000 for reproducable confidence intervals and standard errors. It is further necessary to identify the subject identifier in the dataset using the `subid_var` argument.
+Confidence intervals are computed by means of subject-level bootstrapping, as  measurements from subjects with more than one measurement in the dataset cannot be considered indpendent observations. An MDRI estimate is then computed using the resampled data. The number of bootstraps is specified using the argument *n_bootstraps*. We recommend 10,000 for reproducible confidence intervals and standard errors. To support subject level resampling, the subject identifier in the dataset nust be specified using the `subid_var` argument.
 
-It is necessary to specify the value of $T$ (using the argument `recency_cutoff_time`) and a time exclusion rule (i.e. to exclude data points beyond a certain time so that falsely recent measurements do not affect the fit between $0$ and $T$ unduly) using the argument `inclusion_time_threshold`. This should typically be a value somewhat (but not too much) larger than $T$. Remember to always use the same unit of time in all options.
+In addition to specifying the value of $T$ (using the argument `recency_cutoff_time`) a `inclusion_time_threshold` is required, to *exclude* data points beyond a certain time (post infection). This is to prevent falsely recent measurements from unduly affecting the fit between $0$ and $T$. This should typically be a value somewhat (but not too much) larger than $T$.
 
-You can either supply a list of variables and thresholds (indicating in whether a result above or below the thresholds signify recency) or specify the `recency_rule` as `"binary_data"`, in which case you need a variable with a 1 for recent results and a 0 for non-recent results.
+To specify recency status, one can either supply a list of variables and thresholds (indicating in whether a result above or below the thresholds signifies recency) or specify the `recency_rule` as `"binary_data"`, in which case a 1 indicates recency.
 
 ### Example of `mdrical` using the complementary log-log functional form and pre-classified data
 
@@ -70,9 +70,9 @@ library(inctools)
 
 The dataset `excalibdata` contains example data from an evaluation of an assay measuring recency of infection. At an assay result of <10, the specimen is considered to be recently infected. It further contains viral load data, which is commonly used to reduce false recency. For example, when recency is defined as assay result <10 and viral load > 1000, the FRR is substantially lower (but the MDRI is also reduced).
 
-In the first example, we will use a variable that has pre-classified results are recent or non-recent. We will use the complementary log-log functional form only.
+The first example provides a variable that has pre-classified results, and uses only the complementary log-log functional form.
 
-*Note: To keep compute time reasonable during execution of the example code, only 1000 bootstraps are performed. We recommend 10,000 to get reasonable standard errors and confidence intervals.*
+*Note: To keep compute time reasonable during execution of the example code, only 100 bootstraps are performed. To obtain reasonable standard errors and confidence intervals, 10,000 bootstraps are recommended.*
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
 mdrical(data=excalibdata,
@@ -83,18 +83,16 @@ mdrical(data=excalibdata,
                  functional_forms = c("cloglog_linear"),
                  recency_rule = "binary_data",
                  recency_vars = "Recent",
-                 n_bootstraps = 1000,
+                 n_bootstraps = 100,
                  alpha = 0.05,
                  plot = TRUE)
 ```
 
 ### Example of `mdrical` using the logit cubic functional form and two independent thresholds on biomarkers
 
-Here we are also specifying a vector of variables and a vector of paramaters to define recency
-In this case we are using the assay result and the viral load. The paramaters in the vector *c(10,0,1000,1)* mean
-that recency is defined as an assay biomarker reading below 10 and a viral load reading above 1000.
+This example also specifies a vector of variables and a vector of paramaters to define recency, using the assay result and the viral load. The paramaters in the vector `c(10,0,1000,1)` mean that recency is defined as an assay biomarker reading below 10 and a viral load reading above 1000.
 
-*Note: To keep compute time reasonable during execution of the example code, only 100 bootstraps are performed. We recommend 10,000 to get reasonable standard errors and confidence intervals.*
+*Note: To keep compute time reasonable during execution of the example code, only 100 bootstraps are performed. To obtain reasonable standard errors and confidence intervals, 10,000 bootstraps are recommended.*
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
 mdrical(data=excalibdata,
@@ -106,16 +104,16 @@ mdrical(data=excalibdata,
                  recency_rule = "independent_thresholds",
                  recency_vars = c("Result","VL"),
                  recency_params = c(10,0,1000,1),
-                 n_bootstraps = 1000,
+                 n_bootstraps = 100,
                  alpha = 0.05,
                  plot = TRUE)
 ```
 
 ### Example of `mdrical` in which bootstraps are run in parallel
 
-As above, but asking for both functional forms and parellelising the bootstrapping. In this case, split the job over four cores.
+As above, but asking for both functional forms and parellelising the bootstrapping. In this case, the job is split over four cores.
 
-**Note: This option only works on Unix (Mac or Linux). On Windows this will result in error messages. To make sure this vignette builds on all platforms, we show the example code, but not the output.**
+**Note: This option only works on Unix (Mac or Linux). On Windows this will result in error messages. To make sure this vignette builds on all platforms, the example code, but not the output, is shown.**
 
 ```{r, eval = FALSE}
 mdrical(data=excalibdata,
@@ -136,7 +134,7 @@ mdrical(data=excalibdata,
 
 ## Estimating FRR using binomial proportions with `frrcal`
 
-FRR is simply the binomially estimated probability of a *subject's* measurements post-$T$ being 'recent' on the recency test. A binomial exact test is performed using `binom.test`. All of a subject's measurements post-$T$ are evaluated and if the majority are recent, the subject is considered to have measured falsely recent. Inversely, if a majority are non-recent, the subject contritbutes a 'true recent' result. Each subject represents one trial. In the case that exactly half of a subject's measurements are recent, they contribute 0.5 to the outcomes (which are rounded up to the nearest integer over all subjects).
+FRR is simply the binomially estimated probability of a *subject's* measurements post-$T$ being 'recent' on the recency test. A binomial exact test is performed using `binom.test`. All of a subject's measurements post-$T$ are evaluated and if the majority are recent, the subject is considered to have measured falsely recent. Inversely, if a majority are non-recent, the subject contributes a 'true recent' result. Each subject represents one trial. In the case that exactly half of a subject's measurements are recent, they contribute 0.5 to the outcomes (which are rounded up to the nearest integer over all subjects).
 
 This example calculates a false-recent rate, treating the data at subject level:
 

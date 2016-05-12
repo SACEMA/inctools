@@ -79,17 +79,13 @@ Once a population level survey has been carried out, the fully specified data se
 In order to accommodate arbitrarily sophisticated analysis of such complex data sets, the conception of *inctools*  is that a substantial layer of ‘pre-processing’ is expected to routinely precede any invocation of *inctools*  functionality. Use of the primary, preferred entry point into incidence estimate (function incprops) requires survey data to be reduced to:
 
 *	an estimate of HIV prevalence
-
 *	an estimate of the prevalence of ‘recent infection’ amongst those who are HIV positive.
-
 *	A variance/covariance matrix for these two prevalence estimates
 
 While *inctools*  makes no firm statements about how these estimates are to be obtained, it is recommended that they be provided in the specified form, and that function *incprops* be used as the primary entrypoint. Note that:
 
 *	To facilitate “naïve” analysis, the function *prevcounts* is provided, which turns simple sample case counts (number of people tested for HIV, number classified HIV positive, number of HIV positives tested for recency, number classified as recently infected) into the prevalence estimates required by function incprops, under the assumptions of independent (unstructured) sampling.
-
 *	Function inccounts incorporates a detour through function prevcounts, followed by a call to incprops, thereby provide a high level interface to incidence estimation based directly on total sample counts, contextual factors, and recency test properties.
-
 *	The package *inctools*  lists package survey in its dependencies, thereby assuring access to at least one robust flexible tool set to facilitate the estimation of the relevant sample proportions from structured survey data.
 
 ### Estimation of key performance characteristics of *Tests for Recent Infection*
@@ -140,23 +136,22 @@ The total number of individuals whose HIV status has been, or is proposed to be,
 This parameter captures the impact of complexities in sampling which arise from the fact that individuals surveyed are not independently selected from the total population nominally ‘represented’. These complexities include hierarchical (clustered) sampling, stratification, weighting, etc. A Design effect captures the ratio of the actual variance of a metric (such as a prevalence of some defined condition) to the variance that would be obtained for the same metric if the analysis were conducted on the simplifying assumption that the individuals surveyed have been drawn independently from a large population.
 
 There is provision for users to provide scale factors adjusting the uncertainty in estimates of
-[^1]:	the proportion of HIV infected individuals (i.e. prevalence) and
-[^1]:	the proportion of “recent” results among HIV positive individuals tested for recent infection.
+
+1.	the proportion of HIV infected individuals (i.e. prevalence) and
+2.	the proportion of “recent” results among HIV positive individuals tested for recent infection.
 
 It should be noted that:
 
 *	There is no clear consensus on approach, and there are no mature tools, for estimating the design effect parameters for population based HIV surveys.
-
 *	The two design effects are logically independent parameters, which capture the effects of statistically independent processes.
-
 *	This package does not provide any functionality to derive or justify design effect estimates.
-
 *	It is not appropriate to scale the variances of the test property (MDRI and FRR) estimates, as these are not estimated in the incidence survey, but rather arise in the recency test development process.
 
 
 ##Citation
 
-HMM
+The use of package *inctools* implies the use of the methodology derived in the following article, which: Kassanjee R, McWalter TA, Bärnighausen T, Welte A. A new general biomarker-based incidence estimator. Epidemiology. 2012; 23(5): 721-728. Some features implemented in *inctools* are currently not published outside the package contents, and hence some additional technical details are documented in the appendix of this vignette.
+
 
 ##Acknowledgements
 Funding support for the development of these tools has historically been variously provided by the South African National Research Foundation, the Bill and Melinda Gates Foundation, the (erstwhile) Canadian International Development Agency, UNAIDS, and the World Health Organisation.
@@ -168,6 +163,19 @@ Many people have contributed indirectly to this work by providing feedback on ma
 
 
 ##Appendix: Technical details
+
+The critical core of all the functionality of package *inctools* is the incidence estimator of *Kassanjee et al* and some hitherto unpublished generalisations to accomodate structured survey design, including incomplete coverage of recency ascertainment. In essence, this generalisation involves the replacement of simple survey counts, assumed in *Kassanjee et al* to be trinomially distributed, by estimated prevalences of HIV and of recent infection amongst HIV positives (including covariance, which does not arise in the trinomial distribution case). Additionally, the variance of the difference of incidence estimators raises further issues such as
+
+* the full specification of the Null Hypothesis of equal incidence that is required for the calculatino of p values, and
+* the sharing of test property estimates between surveys, which induces some correlation between the incidence estimators calculated from those surveys.
+
+Three cases of test property sharing can feasibly arise:
+
+1. A single estimate of MDRI, and a single estimate of FRR, is available for the recency tests used in multiple surveys. This is probably the result of the same test being used, *and* there being no reason to distinguish its FRR between the two contexts.
+2. A single estimate of MDRI is shared between two surveys, but the FRRs are independently estimated. This is probably the result of the same test being used, *but* there being data to distinguish its FRR between the two contexts.
+3. Both MDRI and FRR are independently estimated in each survey.
+
+Below are the variances of the incidence difference estimator for the three cases
 
 Case 1: Surveys share a single estimate for MDRI and a single estimate for FRR
 \begin{align}
@@ -193,7 +201,7 @@ V[\Delta \mathbb{I}]_2 \approx &
 \end{align}
 
 
-Case 3: Both MDRI and FRR are independent estimated in each survey
+Case 3: Both MDRI and FRR are independently estimated in each survey
 \begin{align}
 V[\Delta \mathbb{I}]_3 \approx &
  \Big(\frac{(PrevR_1 - \beta_1)}{(1 - PrevH_1)^2} (\Omega_1 - \beta_1 T_1)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
@@ -206,9 +214,38 @@ V[\Delta \mathbb{I}]_3 \approx &
 \end{align}
 
 
+**Note:**
+
+* The option for the assay characteristic scheme is specified by function parameter `BMest`. Subscripts 1 and 2 in the parameter notation denote associated survey or test parameters. The variances of the three cases follow.
+* To avoid unnecessarily confusing complexity in the specification of multiple *recency-test-property-estimate-sharing* rules for different subsets of a global set of surveys, only a single *recency-test-property-estimate-sharing* rule is allowed in any set of surveys submitted in one invocation of the functions *incprops* and *inccounts*.
+* If different recency tests are used in separate surveys, but they happen to have any numerically identical test property estimates, this will still need to be specified as independent test properties, as these estimates would be *statistically independent*.
+
+
+
+### Crucial note on choice of null hypothesis, calculation of p-values and meaning of “statistical power”
+
+It is not uncommon for a null hypothesis to be underspecified until the final data is available, i.e. for certain details (such as a hypothetically shared value of a test statistic) to be specified (estimated) in light of the data (such as by a "pooled estimate").  In the present situation, the hypothetically common value of incidence, as well as the (potentially different by context) values of prevalence, cannot be reasonably supplied without seeing the data.  Once data is available, there is further no unique, obviously correct, approach to deriving these parameters, and different choices can be entertained.  The simplest, but not necessarily optimal, (indeed potentially problematic) approach is to hypothesize that the two survey populations are identical in terms of incidence AND prevalence, as this suggests a naïve pooling of all data to provide the hypothetically common values.  However, a simple test for difference of prevalence would be expected to lead to the rejection of the null hypothesis (of equal prevalence) in many, if not most, cases, as prevalence will be relatively precisely estimatable in any survey remotely powered to estimate incidence. Hence, a more flexible approach to the null hypothesis is required.
+ 
+The approach taken here is to:
+
+* hypothesize that the incidence is the same in the two contexts
+* be agnostic on the matter of the value of this shared incidence
+* hypothesize that the estimated value of the variance of the incidence difference estimate (calculated carefully in accordance with the choice of how test properties are shared between the surveys) is a good estimate of the actual variance of the incidence difference. (This is equivalent to a routinely made assumption in less complex situations)
+* allow the prevalence for each context to be independently estimated from the data from that context.  (Note that even if the data does not support the rejection of the hypothesis that the prevalences are identical, benchmarking indicates that there is little or no advantage in constructing the null hypothesis to include equal prevalence.)
+
+The preceding assumptions allow the calculation of a p-value, which is done according to a two-tailed test, capturing the point that the experimenter has no basis to pre-determine the acceptable direction of any incidence difference.
+ 
+Note that while it is common to report “power” as simply the probability of correctly rejecting a null hypothesis, without regard to whether the inferred direction of difference is in correspondence with the underlying reality, the present construction specifically presumes a two-tailed test, where the direction of any particular inferred difference will be either correct or incorrect.  Hence, *inctools* calculates the probability of *correctly* detecting the sign of the incidence difference through the rejection of the null hypothesis throug the attainment of a below-threshold *p value*.  Numerically, the probability of rejecting the null hypothesis, but with the incorrect direction for the inferred effect, will usually be *very* small, unless the study design has no useful statistical power in any case. The primary difference between this implementation and an alternative likely to be proposed, is in the insistence on a two tailed test, which should not be controversial in this situation as it would be difficult to defend the claim that survey implementers can claim to know the change in
+
+
+
+<!--   #not-for-release -->
+<!--
 ## The Empirical Bootstrapping Option
 
-Functions `incprops` and `inccounts` both admit the option of bootstrapping. The default multivariate delta method approximation to the variance of the incidence estimator is adequate for inputs that are normal, however the method is still only a linear approximation. Since there are situations where the higher order terms in the Taylor expansion of variance may contribute non-negligibly to the variance estimator, and since it may be the case that both FRR and structured survey data may not be exactly normally distributed, we have programmed an empirical bootstrapping option for users wishing to make non-parametric inference on differences in proportions.
+Functions `incprops` and `inccounts` both admit the option of bootstrapping. The default multivariate delta method approximation to the variance of the incidence estimator is likely to be more than adequate for most cases where reasonably informative incidence estimate are possible.
+
+inputs that are normal, however the method is still only a linear approximation. Since there are situations where the higher order terms in the Taylor expansion of variance may contribute non-negligibly to the variance estimator, and since it may be the case that both FRR and structured survey data may not be exactly normally distributed, we have programmed an empirical bootstrapping option for users wishing to make non-parametric inference on differences in proportions.
 
 This method is called in `incprops` and `inccounts` by adding the option `Boot = TRUE`. The method is described below.
 
@@ -245,3 +282,4 @@ $$
 $$
 
 The bootstrap option produces most of the statistics given by running the functions using a delta method approximation, however the estimate of RSE of the incidence estimator at infinite sample size, which is calculated by letting sample size $n$ tend toward infinity in the limit in the components of the variance of incidence estimator, is not produced.
+-->

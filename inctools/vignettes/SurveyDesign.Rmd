@@ -1,10 +1,10 @@
 ---
 title: "Survey design: power, precision and sample size"
-date: 2016-05-12
+date: Sys.Date()
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >
-  %\VignetteIndexEntry{SurveyDesign}
+  %\VignetteIndexEntry{Survey Design}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,18 +13,19 @@ This vignette covers the use of functions `incpower` and `incprecision`.
 
 ## Function `incpower`
 
-For this related set of calculations, we use the term "power" to mean the probability of obtaining a "statistically significant" result, *of the correct sign* in the estimation of an incidence difference, given some assumptions on effect size and sample size.
+For this related set of calculations, we use the term "power" to mean the probability of obtaining a "statistically significant" result, *of the correct sign* in the estimation of an incidence difference, given some assumptions on effect size, recency test properties, and sample specification. See the vignette "introduction", especially the glossary, for some crucial details.
 
 Function `incpower` primarily calculates samples sizes required to achieve desired power, or the power available at specified sample size(s).
-requires study context defining parameter values--such as hypothetical incidence rates, prevalences, coverage rates, design effects, and the assay characteristics known as *mean duration of recent infection* (MDRI) and *false recent rate* (FRR)--and returns .
+This requires study context defining parameter values--such as hypothetical incidence rates, prevalences, coverage rates, design effects, and the assay characteristics known as *mean duration of recent infection* (MDRI) and *false recent rate* (FRR)--and returns .
 
 A number of supplementary outputs are also supplied, such as
+
 * demonstrative relative standard errors and confidence limits, in the case that point estimates attain the true/expected values.  
 * expected survey counts, assuming a non structured sampling frame.
 
 ### Example
 
-We wish to know the power to infer the correct ordering of an incidence of 5\% and one of 3\% given shared prevalences of 20\%, given a single set of recency test property estimates i.e. one value for each of MDRI, the RSE of MDRI, FRR, the RSE of FRR, and time cutoff T, namely 200 days, 5\%, 1\%, 20\%, and 730 days. We envision complete coverage of recency status ascertainment, and no survey design effects. Finally, we envision a common study sample size of 5000 persons and set $\alpha$ to 5\%. Note that here function parameter for sample size is listed as `SS = NULL`, or it is omitted in the function call.  
+We wish to know the power to infer the correct ordering of an incidence of 5\% and one of 3\%, at a shared prevalences of 20\%, given a single set of recency test property estimates i.e. one value for each of MDRI, the RSE of MDRI, FRR, the RSE of FRR, and time cutoff T namely, in order: 200 days, 5\%, 1\%, 20\%, and 730 days. We envision complete coverage of recency status ascertainment, and no survey design effects. Finally, we envision a common study sample size of 5000 persons and set $\alpha$ to 5\%. Note that here function parameter for sample size is listed as `SS = NULL`, or it is omitted in the function call.  
 ```{r, echo=FALSE}
 library("inctools")
 ```
@@ -34,7 +35,7 @@ incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20, n1 = 5000, n2 = 500
         Power = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI = 200,
         RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
 ```
-Output is presented in list form, so individual tables can be called by the user. For example, if the function object is defined as `desired.power`, then the implied subject counts deduced from assumed prevalence and given sample size can be called by entering `desired.power$Implied.Subject.Counts` or `desired.power[[5]]` into the console.
+Output is presented in list form, so individual tables can be called by the user. For example, if the returned function object is named `desired.power`, then the implied subject counts deduced from assumed prevalence and given sample size can be accessed with `desired.power$Implied.Subject.Counts` or `desired.power[[5]]`.
 
 Here the output returns that the power of this particular test given the hypothetical study parameters and sample size is 0.858. In the event that we had an infinite sample size, which of course is impossible, but which is instructive to understand what amount of power is a function of sample size alone and not test characteristics, we would have a power approaching unity.
 
