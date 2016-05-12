@@ -41,7 +41,7 @@ cutoff, a confidence interval for the proportion, the number of recent results (
 number of subjects ('trials') and the number of data points contributing to the subject-level estimate.
 }
 \details{
-The package contains a long form vignette that covers the use of this function. Use vignette('TestCalibration',package='inctools') to access the vignette.
+The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 
 recency_rule: binary_data - supply a binary variable with 1=recent and 0=non-recent in recency_vars.
 

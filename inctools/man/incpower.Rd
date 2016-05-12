@@ -52,7 +52,7 @@ Common sample size of two surveys--or the sample size of one survey given the ot
 Power and sample size calculation for assay-based incidence estimation
 }
 \details{
-The package contains a long form vignette that covers the use of this function. Use vignette('SurveyDesign',package='inctools') to access the vignette.
+The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 }
 \examples{
 incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,

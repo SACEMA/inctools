@@ -34,4 +34,4 @@ Suggests:
     foreach,
     survey
 RoxygenNote: 5.0.1
-VignetteBuilder: rmarkdown
+VignetteBuilder: knitr
