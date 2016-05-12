@@ -173,15 +173,17 @@ DM_VAR_deltaI.infSS <- function(BMest, fot_mdri1, fot_frr1, fot_mdri2, fot_frr2,
 #' @return The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 #'
 #' @examples
-#' incprops(PrevH = 0.20, RSE_PrevH = 0.028, PrevR = 0.10, RSE_PrevR = 0.094,
-#' BS_Count = 10000, Boot = TRUE, BMest = 'same.test', MDRI = 200, RSE_MDRI = 0.05,
-#' FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+#' incprops(PrevH = 0.20, RSE_PrevH = 0.028, PrevR = 0.10, RSE_PrevR = 0.09,
+#'          BS_Count = 10000, Boot = TRUE, MDRI = 200, RSE_MDRI = 0.05,
+#'          FRR = 0.01,
+#'          RSE_FRR = 0.2, BigT = 730)
 #'
 #'
-#'incprops(PrevH = c(0.20,0.21,0.18), RSE_PrevH = c(0.028,0.03,0.022),
-#'PrevR = c(0.10,0.13,0.12), RSE_PrevR = c(0.094,0.095,0.05),
-#'BS_Count = 10000, Boot = FALSE, BMest = 'MDRI.FRR.indep', MDRI = 200,
-#'RSE_MDRI = 0.05, FRR = c(0.01,0.009,0.02), RSE_FRR = 0.2, BigT = 730)
+#' incprops(PrevH = c(0.20,0.21,0.18), RSE_PrevH = c(0.028,0.03,0.022),
+#'          PrevR = c(0.10,0.13,0.12), RSE_PrevR = c(0.094,0.095,0.05),
+#'          BS_Count = 10000, Boot = FALSE, BMest = 'MDRI.FRR.indep', MDRI = c(200,180,180),
+#'          RSE_MDRI = c(0.05,0.07,0.06), FRR = c(0.01,0.009,0.02), RSE_FRR = c(0.2,0.2,0.1),
+#'          BigT = 730)
 #' @export
 
 incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,

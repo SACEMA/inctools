@@ -11,7 +11,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2016-05-12" />
 
 <title>Survey design: power, precision and sample size</title>
 
@@ -68,20 +67,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Survey design: power, precision and sample size</h1>
-<h4 class="date"><em>2016-05-12</em></h4>
+<h4 class="date"><em>Sys.Date()</em></h4>
 
 
 
 <p>This vignette covers the use of functions <code>incpower</code> and <code>incprecision</code>.</p>
 <div id="function-incpower" class="section level2">
 <h2>Function <code>incpower</code></h2>
-<p>For this related set of calculations, we use the term “power” to mean the probability of obtaining a “statistically significant” result, <em>of the correct sign</em> in the estimation of an incidence difference, given some assumptions on effect size and sample size.</p>
-<p>Function <code>incpower</code> primarily calculates samples sizes required to achieve desired power, or the power available at specified sample size(s). requires study context defining parameter values–such as hypothetical incidence rates, prevalences, coverage rates, design effects, and the assay characteristics known as <em>mean duration of recent infection</em> (MDRI) and <em>false recent rate</em> (FRR)–and returns .</p>
-<p>A number of supplementary outputs are also supplied, such as * demonstrative relative standard errors and confidence limits, in the case that point estimates attain the true/expected values.<br />
-* expected survey counts, assuming a non structured sampling frame.</p>
+<p>For this related set of calculations, we use the term “power” to mean the probability of obtaining a “statistically significant” result, <em>of the correct sign</em> in the estimation of an incidence difference, given some assumptions on effect size, recency test properties, and sample specification. See the vignette “introduction”, especially the glossary, for some crucial details.</p>
+<p>Function <code>incpower</code> primarily calculates samples sizes required to achieve desired power, or the power available at specified sample size(s). This requires study context defining parameter values–such as hypothetical incidence rates, prevalences, coverage rates, design effects, and the assay characteristics known as <em>mean duration of recent infection</em> (MDRI) and <em>false recent rate</em> (FRR)–and returns .</p>
+<p>A number of supplementary outputs are also supplied, such as</p>
+<ul>
+<li>demonstrative relative standard errors and confidence limits, in the case that point estimates attain the true/expected values.<br />
+</li>
+<li>expected survey counts, assuming a non structured sampling frame.</li>
+</ul>
 <div id="example" class="section level3">
 <h3>Example</h3>
-<p>We wish to know the power to infer the correct ordering of an incidence of 5% and one of 3% given shared prevalences of 20%, given a single set of recency test property estimates i.e. one value for each of MDRI, the RSE of MDRI, FRR, the RSE of FRR, and time cutoff T, namely 200 days, 5%, 1%, 20%, and 730 days. We envision complete coverage of recency status ascertainment, and no survey design effects. Finally, we envision a common study sample size of 5000 persons and set <span class="math inline">\(\alpha\)</span> to 5%. Note that here function parameter for sample size is listed as <code>SS = NULL</code>, or it is omitted in the function call.</p>
+<p>We wish to know the power to infer the correct ordering of an incidence of 5% and one of 3%, at a shared prevalences of 20%, given a single set of recency test property estimates i.e. one value for each of MDRI, the RSE of MDRI, FRR, the RSE of FRR, and time cutoff T namely, in order: 200 days, 5%, 1%, 20%, and 730 days. We envision complete coverage of recency status ascertainment, and no survey design effects. Finally, we envision a common study sample size of 5000 persons and set <span class="math inline">\(\alpha\)</span> to 5%. Note that here function parameter for sample size is listed as <code>SS = NULL</code>, or it is omitted in the function call.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incpower</span>(<span class="dt">I1 =</span> <span class="fl">0.05</span>, <span class="dt">I2 =</span> <span class="fl">0.03</span>, <span class="dt">PrevH1 =</span> <span class="fl">0.20</span>, <span class="dt">PrevH2 =</span> <span class="fl">0.20</span>, <span class="dt">n1 =</span> <span class="dv">5000</span>, <span class="dt">n2 =</span> <span class="dv">5000</span>, <span class="dt">alpha =</span> <span class="fl">0.05</span>,
         <span class="dt">Power =</span> <span class="st">&quot;out&quot;</span>, <span class="dt">CR =</span> <span class="dv">1</span>, <span class="dt">DE_H =</span> <span class="dv">1</span>, <span class="dt">DE_R =</span> <span class="dv">1</span>, <span class="dt">BMest =</span> <span class="st">&quot;same.test&quot;</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>,
         <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>, <span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.20</span>, <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
@@ -108,7 +111,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## HIV.positive                   1000     1000
 ## HIV.post.tested.for.recent     1000     1000
 ## Recency.test.pos                116       73</code></pre>
-<p>Output is presented in list form, so individual tables can be called by the user. For example, if the function object is defined as <code>desired.power</code>, then the implied subject counts deduced from assumed prevalence and given sample size can be called by entering <code>desired.power$Implied.Subject.Counts</code> or <code>desired.power[[5]]</code> into the console.</p>
+<p>Output is presented in list form, so individual tables can be called by the user. For example, if the returned function object is named <code>desired.power</code>, then the implied subject counts deduced from assumed prevalence and given sample size can be accessed with <code>desired.power$Implied.Subject.Counts</code> or <code>desired.power[[5]]</code>.</p>
 <p>Here the output returns that the power of this particular test given the hypothetical study parameters and sample size is 0.858. In the event that we had an infinite sample size, which of course is impossible, but which is instructive to understand what amount of power is a function of sample size alone and not test characteristics, we would have a power approaching unity.</p>
 <p>If instead of power the user wants to know a common sample size for a desired power level, the input parameters are mostly the same as above, except that each variable <code>n1</code>, <code>n1</code> are to be left unspecified in the function call or both set to <code>&quot;both&quot;</code>, and variable <code>Power</code> will be set to the desired level. Here we envision the situation where the FRR is independent between tests and will be specified as a tuple in the function. As before there are no design effects or lacking testing coverage. Note also that now the function parameters for sample size is set to <code>SS = &quot;out&quot;</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incpower</span>(<span class="dt">I1 =</span> <span class="fl">0.05</span>, <span class="dt">I2 =</span> <span class="fl">0.03</span>, <span class="dt">PrevH1 =</span> <span class="fl">0.20</span>, <span class="dt">PrevH2 =</span> <span class="fl">0.15</span>, <span class="dt">n1 =</span> <span class="st">&quot;both&quot;</span>, <span class="dt">n2 =</span> <span class="st">&quot;both&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.05</span>,
