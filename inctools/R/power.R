@@ -17,9 +17,6 @@
 #' @param PrevH1 Predicted prevalence of HIV in survey 1.
 #' @param PrevH2 Predicted prevalence of HIV in survey 2.
 #' @param n1 Sample size for survey 1. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value 'both', which is the default.
-#not-for-release
-# If necessary sample size at a given power level for survey 1 is desired and survey 2 has been completed, n1 must be set to 'out' along with SS.
-# If necessary sample size at a given power level for survey 2 is desired and survey 1 has been completed, n2 must be set to 'out' along with SS.
 #' @param n2 Sample size for survey 2. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value 'both', which is the default.
 #' @param alpha Significance level for test (default alpha=0.05).
 #' @param Power Desired power used to calculate a sample size for the surveys. Default is 0.80, meaning the function outputs the necessary sample size to achieve stated power for a test of differences in incidence. If Power is set to 'out', function will return power of detecting a difference in incidences for given sample size inputs.
@@ -48,16 +45,7 @@
 #'BMest = 'FRR.indep', MDRI = 200, RSE_MDRI = 0.05,
 #'FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.21), BigT = 730)
 #'
-#'
-#not-for-release
-# #'incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
-# #'n1 = 5000, n2 = 'out', alpha = 0.05, Power = 0.80, SS ="out",
-# #'DE_H = 1, DE_R = 1, BMest = 'MDRI.FRR.indep', MDRI = 200,
-# #'RSE_MDRI = c(0.05,0.06), FRR = c(0.01,0.009),
-# #'RSE_FRR = c(0.20,0.21), BigT = 730)
 #' @export
-
-
 incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
     Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI,
     RSE_MDRI, FRR, RSE_FRR, BigT = 730) {
