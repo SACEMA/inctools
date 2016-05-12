@@ -59,19 +59,12 @@ into (point) estimates (and variance) of prevalence of HIV and prevalence of rec
 
 **The use of *prevcounts* implies an interpretation of these counts which precludes non-null covariance of the prevalence of HIV and the prevalence of recency.**
 
-
-
 For a single survey:
 
 ```{r, fig.show='hold'}
-library("inctools")
+prevcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_H = 1.1, DE_R = 1.5)
 ```
 
-
-
-```{r, fig.show='hold'}
-prevcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_H = 1.1 DE_R = 1.5)
-```
 Note that:
 
 * It is spelled out that in this instance all HIV positive subjects were tested for recent infection
