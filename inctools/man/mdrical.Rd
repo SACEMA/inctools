@@ -98,7 +98,7 @@ mdrical(data=excalibdata,
         functional_forms = c("cloglog_linear"),
         recency_rule = "binary_data",
         recency_vars = "Recent",
-        n_bootstraps = 100,
+        n_bootstraps = 10,
         alpha = 0.05,
         plot = TRUE)
 }

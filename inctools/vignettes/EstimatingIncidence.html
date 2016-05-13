@@ -104,15 +104,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>implied confidence intervals on MDRi and FRR derived from input parameters</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprops</span>(<span class="dt">PrevH =</span> <span class="fl">0.20</span>, <span class="dt">RSE_PrevH =</span> <span class="fl">0.028</span>, <span class="dt">PrevR =</span> <span class="fl">0.10</span>, <span class="dt">RSE_PrevR =</span> <span class="fl">0.09</span>,
-<span class="dt">BS_Count =</span> <span class="dv">10000</span>, <span class="dt">Boot =</span> <span class="ot">TRUE</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>,
-<span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
+         <span class="dt">BS_Count =</span> <span class="dv">10000</span>, <span class="dt">Boot =</span> <span class="ot">TRUE</span>, <span class="dt">MDRI =</span> <span class="dv">200</span>, <span class="dt">RSE_MDRI =</span> <span class="fl">0.05</span>,
+         <span class="dt">FRR =</span> <span class="fl">0.01</span>, <span class="dt">RSE_FRR =</span> <span class="fl">0.2</span>, <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
 <pre><code>## $Incidence.Statistics
-##   Incidence  CI.low   CI.up     RSE
-## 1   0.04265 0.03334 0.05316 0.11959
+##   Incidence  CI.low   CI.up    RSE
+## 1   0.04265 0.03324 0.05322 0.1196
 ## 
 ## $Annual.Risk.of.Infection
 ##      ARI ARI.CI.low ARI.CI.up
-## 1 0.0418     0.0328    0.0518
+## 1 0.0418     0.0327    0.0518
 ## 
 ## $MDRI.CI
 ##   CI.low CI.up
@@ -127,9 +127,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>In addition to the results returned for the single survey case (replicated for each survey), <code>incprops</code> also calculates all pairwise incidence differences and p values.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">incprops</span>(<span class="dt">PrevH =</span> <span class="kw">c</span>(<span class="fl">0.20</span>,<span class="fl">0.21</span>,<span class="fl">0.18</span>), <span class="dt">RSE_PrevH =</span> <span class="kw">c</span>(<span class="fl">0.028</span>,<span class="fl">0.03</span>,<span class="fl">0.022</span>),
-<span class="dt">PrevR =</span> <span class="kw">c</span>(<span class="fl">0.10</span>,<span class="fl">0.13</span>,<span class="fl">0.12</span>), <span class="dt">RSE_PrevR =</span> <span class="kw">c</span>(<span class="fl">0.094</span>,<span class="fl">0.095</span>,<span class="fl">0.05</span>),
-<span class="dt">BS_Count =</span> <span class="dv">10000</span>, <span class="dt">Boot =</span> <span class="ot">FALSE</span>, <span class="dt">BMest =</span> <span class="st">'MDRI.FRR.indep'</span>, <span class="dt">MDRI =</span> <span class="kw">c</span>(<span class="dv">200</span>,<span class="dv">180</span>,<span class="dv">180</span>),
-<span class="dt">RSE_MDRI =</span> <span class="kw">c</span>(<span class="fl">0.05</span>,<span class="fl">0.07</span>,<span class="fl">0.06</span>), <span class="dt">FRR =</span> <span class="kw">c</span>(<span class="fl">0.01</span>,<span class="fl">0.009</span>,<span class="fl">0.02</span>), <span class="dt">RSE_FRR =</span> <span class="kw">c</span>(<span class="fl">0.2</span>,<span class="fl">0.2</span>,<span class="fl">0.1</span>), <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
+         <span class="dt">PrevR =</span> <span class="kw">c</span>(<span class="fl">0.10</span>,<span class="fl">0.13</span>,<span class="fl">0.12</span>), <span class="dt">RSE_PrevR =</span> <span class="kw">c</span>(<span class="fl">0.094</span>,<span class="fl">0.095</span>,<span class="fl">0.05</span>),
+         <span class="dt">BS_Count =</span> <span class="dv">10000</span>, <span class="dt">Boot =</span> <span class="ot">FALSE</span>, <span class="dt">BMest =</span> <span class="st">'MDRI.FRR.indep'</span>,
+         <span class="dt">MDRI =</span> <span class="kw">c</span>(<span class="dv">200</span>,<span class="dv">180</span>,<span class="dv">180</span>), <span class="dt">RSE_MDRI =</span> <span class="kw">c</span>(<span class="fl">0.05</span>,<span class="fl">0.07</span>,<span class="fl">0.06</span>),
+         <span class="dt">FRR =</span> <span class="kw">c</span>(<span class="fl">0.01</span>,<span class="fl">0.009</span>,<span class="fl">0.02</span>), <span class="dt">RSE_FRR =</span> <span class="kw">c</span>(<span class="fl">0.2</span>,<span class="fl">0.2</span>,<span class="fl">0.1</span>), <span class="dt">BigT =</span> <span class="dv">730</span>)</code></pre></div>
 <pre><code>## $Incidence.Statistics
 ##   survey Incidence  CI.low   CI.up     RSE RSE.Inf.SS
 ## 1      1   0.04265  0.0324  0.0529 0.12264    0.05392
@@ -176,7 +177,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p>into (point) estimates (and variance) of prevalence of HIV and prevalence of recent infection among HIV the positives. At heart, this is a relatively simple multinomial distribution analysis (trinomial, in the case of complete coverage of recency testing amongst HIV positives) and could be accomplished without any significant innovation directly arising out of the core methods of this package, but function <code>prevcounts</code> at least provides a consistent entry point into this analysis, using arguments consistently named to align to the other functions, including appropriate design effects. The most likely use of <code>prevcounts</code> is probably indirectly through <code>inccounts</code>, but it is provided in user-exposed form for its intuitive supportive value and for recycling into user customisations beyond routine primary incidence estimation. Note that the use of <code>prevcounts</code> implies an interpretation of these counts which precludes non-null covariance of the prevalence of HIV and the prevalence of recency.</p>
 <p>For a single survey:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prevcounts</span>(<span class="dt">N =</span> <span class="dv">5000</span>, <span class="dt">N_H =</span> <span class="dv">1000</span>, <span class="dt">N_testR =</span> <span class="dv">1000</span>, <span class="dt">N_R =</span> <span class="dv">70</span>, <span class="dt">DE_H =</span> <span class="fl">1.1</span>, <span class="dt">DE_R =</span> <span class="fl">1.5</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prevcounts</span>(<span class="dt">N =</span> <span class="dv">5000</span>, <span class="dt">N_H =</span> <span class="dv">1000</span>, <span class="dt">N_testR =</span> <span class="dv">1000</span>, <span class="dt">N_R =</span> <span class="dv">70</span>, <span class="dt">DE_H =</span> <span class="fl">1.1</span>,
+           <span class="dt">DE_R =</span> <span class="fl">1.5</span>)</code></pre></div>
 <pre><code>##   PrevH PrevR  RSE_PrevH RSE_PrevR
 ## 1   0.2  0.07 0.02966479 0.1411686</code></pre>
 <p>Note that:</p>
@@ -196,8 +198,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. “A new general biomarker-based incidence estimator.” Epidemiology; 2012, 23(5): 721-728; <a href="doi:%5B10.1097/EDE.0b013e3182576c07%5D(http://dx.doi.org/10.1097/EDE.0b013e3182576c07)" class="uri">doi:[10.1097/EDE.0b013e3182576c07](http://dx.doi.org/10.1097/EDE.0b013e3182576c07)</a>; <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3500970/">PubMed</a>.<a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p>Kassanjee, R., McWalter, T.A. and Welte, A. “Short Communication: Defining Optimality of a Test for Recent Infection for HIV Incidence Surveillance.” AIDS Research and Human Retroviruses; 2014, 30(1): 45-49; <a href="doi:%5B10.1089/aid.2013.0113%5D(http://dx.doi.org/10.1089/aid.2013.0113)" class="uri">doi:[10.1089/aid.2013.0113](http://dx.doi.org/10.1089/aid.2013.0113)</a>; <a href="http://www.ncbi.nlm.nih.gov/pubmed/24090052">PubMed</a>.<a href="#fnref2">↩</a></p></li>
+<li id="fn1"><p>Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. “A new general biomarker-based incidence estimator.” Epidemiology; 2012, 23(5): 721-728; <a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>Kassanjee, R., McWalter, T.A. and Welte, A. “Short Communication: Defining Optimality of a Test for Recent Infection for HIV Incidence Surveillance.” AIDS Research and Human Retroviruses; 2014, 30(1): 45-49; <a href="#fnref2">↩</a></p></li>
 </ol>
 </div>
 

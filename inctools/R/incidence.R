@@ -374,7 +374,7 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
                 (i * 4 - 2)], mdri = BS_RootEstMat[, (i * 4 - 1)], frr = BS_RootEstMat[,
                 (i * 4)], bigt = BigT[i])
             I_BSMat[, i] <- I_BSVec
-            BS_Var_I[i] <- var(I_BSMat[, i])
+            BS_Var_I[i] <- stats::var(I_BSMat[, i])
         }
 
 
@@ -395,7 +395,7 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
         BS_Var_deltaI <- vector(length = no_s^2)
         for (i in c(1:(no_s^2))) {
             deltaI_BSMat[, i] <- sort(deltaI_BSMat[, i], decreasing = FALSE)
-            BS_Var_deltaI[i] <- var(deltaI_BSMat[, i])
+            BS_Var_deltaI[i] <- stats::var(deltaI_BSMat[, i])
         }  #above sorts bootstrap differences and gets an estimate of the variance of each difference (some redundancy here)
 
     } else {
@@ -469,8 +469,8 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
     CI_BSandDM <- function(BSMat, DM_SD, Est) {
         if (sum(DM_Var_I) > 0) {
             for (i in c(1:length(Est))) {
-                CI_Mat[i, 1] <- qnorm(alpha/2, mean = Est[i], sd = DM_SD[i])
-                CI_Mat[i, 2] <- qnorm(1 - alpha/2, mean = Est[i], sd = DM_SD[i])
+                CI_Mat[i, 1] <- stats::qnorm(alpha/2, mean = Est[i], sd = DM_SD[i])
+                CI_Mat[i, 2] <- stats::qnorm(1 - alpha/2, mean = Est[i], sd = DM_SD[i])
             }
         } else {
             for (i in c(1:ncol(BSMat))) {
@@ -492,9 +492,9 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
     # Below gives p-value of tests of differences, and if Boot = FALSE, p-values of
     # test of differences when SS=infinity gives 4 p-values for 2 surveys
     # (redundant). Later this will be reduced down for outputing results.
-    p_value <- pnorm((-abs(deltaI_Est_Vec)/SD_deltaI), mean = 0, sd = 1) * 2
+    p_value <- stats::pnorm((-abs(deltaI_Est_Vec)/SD_deltaI), mean = 0, sd = 1) * 2
     if (Boot == F) {
-        p_value.infSS <- pnorm((-abs(deltaI_Est_Vec)/sqrt(DM_Var_deltaI.infSS)),
+        p_value.infSS <- stats::pnorm((-abs(deltaI_Est_Vec)/sqrt(DM_Var_deltaI.infSS)),
             mean = 0, sd = 1) * 2
     }
 
@@ -589,10 +589,10 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
     out_CI_deltaI_Mat <- round(CI_deltaI_Mat, digits = 5)
     out_p_value <- ifelse(p_value < 0.001, "<0.0001", round(p_value, digits = 5))
 
-    MDRI.CI <- round(365.25 * data.frame(CI.low = qnorm(alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)),
-        CI.up = qnorm(1 - alpha/2, mean = MDRI, sd = sqrt(Var_MDRI))), digits = 3)
-    FRR.CI <- round(data.frame(CI.low = qnorm(alpha/2, mean = FRR, sd = sqrt(Var_FRR)),
-        CI.up = qnorm(1 - alpha/2, mean = FRR, sd = sqrt(Var_FRR))), digits = 4)
+    MDRI.CI <- round(365.25 * data.frame(CI.low = stats::qnorm(alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)),
+        CI.up = stats::qnorm(1 - alpha/2, mean = MDRI, sd = sqrt(Var_MDRI))), digits = 3)
+    FRR.CI <- round(data.frame(CI.low = stats::qnorm(alpha/2, mean = FRR, sd = sqrt(Var_FRR)),
+        CI.up = stats::qnorm(1 - alpha/2, mean = FRR, sd = sqrt(Var_FRR))), digits = 4)
 
     if (BMest == "same.test") {
         MDRI.CI <- MDRI.CI[1, ]
