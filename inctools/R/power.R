@@ -173,10 +173,10 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
     DM_Var_MDRI <- (MDRI * RSE_MDRI)^2
     DM_Var_FRR <- (FRR * RSE_FRR)^2
 
-    MDRI.CI <- 365.25 * data.frame(CI.low = qnorm(alpha/2, mean = MDRI, sd = sqrt(DM_Var_MDRI)),
-        CI.up = qnorm(1 - alpha/2, mean = MDRI, sd = sqrt(DM_Var_MDRI)))
-    FRR.CI <- data.frame(CI.low = qnorm(alpha/2, mean = FRR, sd = sqrt(DM_Var_FRR)),
-        CI.up = qnorm(1 - alpha/2, mean = FRR, sd = sqrt(DM_Var_FRR)))
+    MDRI.CI <- 365.25 * data.frame(CI.low = stats::qnorm(alpha/2, mean = MDRI, sd = sqrt(DM_Var_MDRI)),
+        CI.up = stats::qnorm(1 - alpha/2, mean = MDRI, sd = sqrt(DM_Var_MDRI)))
+    FRR.CI <- data.frame(CI.low = stats::qnorm(alpha/2, mean = FRR, sd = sqrt(DM_Var_FRR)),
+        CI.up = stats::qnorm(1 - alpha/2, mean = FRR, sd = sqrt(DM_Var_FRR)))
 
 
     # Instead of trying to get the 'fot' function to work, I explicitly wrote out the
@@ -228,15 +228,15 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
 
 
-        CI.low <- qnorm(alpha/2, mean = I, sd = sqrt(Var_I))
-        CI.up <- qnorm(1 - alpha/2, mean = I, sd = sqrt(Var_I))
+        CI.low <- stats::qnorm(alpha/2, mean = I, sd = sqrt(Var_I))
+        CI.up <- stats::qnorm(1 - alpha/2, mean = I, sd = sqrt(Var_I))
 
         deltaI_CI <- NULL
-        deltaI_CI[1] <- qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
-        deltaI_CI[2] <- qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
+        deltaI_CI[1] <- stats::qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
+        deltaI_CI[2] <- stats::qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
 
-        ss.power <- 1 - pnorm(q = qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
-        Power.infSS <- 1 - pnorm(q = qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
+        ss.power <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
+        Power.infSS <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
             sd = 1)
 
         # if(ss.power<0.7){warning('Probability of correct inference less than 70%')}
@@ -309,7 +309,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         if (BMest == "same.test") {
             SS <- ceiling(I[1]^2 * ((1/PrevH[1]) * (DE_H[1]/(1 - PrevH[1]) + (DE_R[1]/CR[1]) *
                 (PrevR[1]/PrevH[1]) * (1 - PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1] -
-                FRR[1])^2)))/((deltaI_Est/(qnorm(1 - Power) - qnorm(1 - alpha/2)))^2 -
+                FRR[1])^2)))/((deltaI_Est/(stats::qnorm(1 - Power) - stats::qnorm(1 - alpha/2)))^2 -
                 ((RSE_MDRI[1] * MDRI[1])/(MDRI[1] - FRR[1] * BigT))^2 * (deltaI_Est^2) -
                 ((FRR[1] * RSE_FRR[1])^2/((MDRI[1] - FRR[1] * BigT)^4) * (PrevH[2] *
                   (MDRI[1] - PrevR[2]/PrevH[2] * BigT)/(1 - PrevH[2]) - PrevH[1] *
@@ -320,7 +320,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         } else if (BMest == "FRR.indep") {
             SS <- ceiling(I[1]^2 * ((1/PrevH[1]) * (DE_H[1]/(1 - PrevH[1]) + (DE_R[1]/CR[1]) *
                 (PrevR[1]/PrevH[1]) * (1 - PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1] -
-                FRR[1])^2)))/((deltaI_Est/(qnorm(1 - Power) - qnorm(1 - alpha/2)))^2 -
+                FRR[1])^2)))/((deltaI_Est/(stats::qnorm(1 - Power) - stats::qnorm(1 - alpha/2)))^2 -
                 ((MDRI[1] * RSE_MDRI[1])^2) * (I[1]/(MDRI[1] - FRR[1] * BigT) - I[2]/(MDRI[1] -
                   FRR[2] * BigT))^2 - sum(I^2 * (RSE_FRR * FRR * (MDRI - (PrevR/PrevH) *
                 BigT)/((MDRI - FRR * BigT) * (PrevR/PrevH - FRR)))^2) - 1/n2 * I[2]^2 *
@@ -329,7 +329,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         } else if (BMest == "MDRI.FRR.indep") {
             SS <- ceiling(I[1]^2 * ((1/PrevH[1]) * (DE_H[1]/(1 - PrevH[1]) + (DE_R[1]/CR[1]) *
                 (PrevR[1]/PrevH[1]) * (1 - PrevR[1]/PrevH[1])/((PrevR[1]/PrevH[1] -
-                FRR[1])^2)))/((deltaI_Est/(qnorm(1 - Power) - qnorm(1 - alpha/2)))^2 -
+                FRR[1])^2)))/((deltaI_Est/(stats::qnorm(1 - Power) - stats::qnorm(1 - alpha/2)))^2 -
                 sum(I^2 * (RSE_MDRI * MDRI/(MDRI - FRR * BigT))^2) - sum(I^2 * (RSE_FRR *
                 FRR * (MDRI - (PrevR/PrevH) * BigT)/((MDRI - FRR * BigT) * (PrevR/PrevH -
                 FRR)))^2) - 1/n2 * I[2]^2 * ((1/PrevH[2]) * (DE_H[2]/(1 - PrevH[2]) +
@@ -388,15 +388,15 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
                   (MDRI[1] - PrevR[1]/PrevH[1] * BigT)/(1 - PrevH[1]))^2))/deltaI_Est
         }
 
-        CI.low <- qnorm(alpha/2, mean = I, sd = sqrt(Var_I))
-        CI.up <- qnorm(1 - alpha/2, mean = I, sd = sqrt(Var_I))
+        CI.low <- stats::qnorm(alpha/2, mean = I, sd = sqrt(Var_I))
+        CI.up <- stats::qnorm(1 - alpha/2, mean = I, sd = sqrt(Var_I))
 
         deltaI_CI <- NULL
-        deltaI_CI[1] <- qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
-        deltaI_CI[2] <- qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
+        deltaI_CI[1] <- stats::qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
+        deltaI_CI[2] <- stats::qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
 
-        ss.power <- 1 - pnorm(q = qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
-        Power.infSS <- 1 - pnorm(q = qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
+        ss.power <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
+        Power.infSS <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
             sd = 1)
 
         if (BMest == "FRR.indep") {
@@ -468,7 +468,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         if (BMest == "same.test") {
             SS <- ceiling(I[2]^2 * ((1/PrevH[2]) * (DE_H[2]/(1 - PrevH[2]) + (DE_R[2]/CR[2]) *
                 (PrevR[2]/PrevH[2]) * (1 - PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2] -
-                FRR[2])^2)))/((deltaI_Est/(qnorm(1 - Power) - qnorm(1 - alpha/2)))^2 -
+                FRR[2])^2)))/((deltaI_Est/(stats::qnorm(1 - Power) - stats::qnorm(1 - alpha/2)))^2 -
                 ((RSE_MDRI[1] * MDRI[1])/(MDRI[1] - FRR[1] * BigT))^2 * (deltaI_Est^2) -
                 ((FRR[1] * RSE_FRR[1])^2/((MDRI[1] - FRR[1] * BigT)^4) * (PrevH[2] *
                   (MDRI[1] - PrevR[2]/PrevH[2] * BigT)/(1 - PrevH[2]) - PrevH[1] *
@@ -479,7 +479,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         } else if (BMest == "FRR.indep") {
             SS <- ceiling(I[2]^2 * ((1/PrevH[2]) * (DE_H[2]/(1 - PrevH[2]) + (DE_R[2]/CR[2]) *
                 (PrevR[2]/PrevH[2]) * (1 - PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2] -
-                FRR[2])^2)))/((deltaI_Est/(qnorm(1 - Power) - qnorm(1 - alpha/2)))^2 -
+                FRR[2])^2)))/((deltaI_Est/(stats::qnorm(1 - Power) - stats::qnorm(1 - alpha/2)))^2 -
                 ((MDRI[1] * RSE_MDRI[1])^2) * (I[1]/(MDRI[1] - FRR[1] * BigT) - I[2]/(MDRI[1] -
                   FRR[2] * BigT))^2 - sum(I^2 * (RSE_FRR * FRR * (MDRI - (PrevR/PrevH) *
                 BigT)/((MDRI - FRR * BigT) * (PrevR/PrevH - FRR)))^2) - 1/n1 * I[1]^2 *
@@ -488,7 +488,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         } else if (BMest == "MDRI.FRR.indep") {
             SS <- ceiling(I[2]^2 * ((1/PrevH[2]) * (DE_H[2]/(1 - PrevH[2]) + (DE_R[2]/CR[2]) *
                 (PrevR[2]/PrevH[2]) * (1 - PrevR[2]/PrevH[2])/((PrevR[2]/PrevH[2] -
-                FRR[2])^2)))/((deltaI_Est/(qnorm(1 - Power) - qnorm(1 - alpha/2)))^2 -
+                FRR[2])^2)))/((deltaI_Est/(stats::qnorm(1 - Power) - stats::qnorm(1 - alpha/2)))^2 -
                 sum(I^2 * (RSE_MDRI * MDRI/(MDRI - FRR * BigT))^2) - sum(I^2 * (RSE_FRR *
                 FRR * (MDRI - (PrevR/PrevH) * BigT)/((MDRI - FRR * BigT) * (PrevR/PrevH -
                 FRR)))^2) - 1/n1 * I[1]^2 * ((1/PrevH[1]) * (DE_H[1]/(1 - PrevH[1]) +
@@ -549,15 +549,15 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
                   (MDRI[1] - PrevR[1]/PrevH[1] * BigT)/(1 - PrevH[1]))^2))/deltaI_Est
         }
 
-        CI.low <- qnorm(alpha/2, mean = I, sd = sqrt(Var_I))
-        CI.up <- qnorm(1 - alpha/2, mean = I, sd = sqrt(Var_I))
+        CI.low <- stats::qnorm(alpha/2, mean = I, sd = sqrt(Var_I))
+        CI.up <- stats::qnorm(1 - alpha/2, mean = I, sd = sqrt(Var_I))
 
         deltaI_CI <- NULL
-        deltaI_CI[1] <- qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
-        deltaI_CI[2] <- qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
+        deltaI_CI[1] <- stats::qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
+        deltaI_CI[2] <- stats::qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
 
-        ss.power <- 1 - pnorm(q = qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
-        Power.infSS <- 1 - pnorm(q = qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
+        ss.power <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
+        Power.infSS <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
             sd = 1)
 
         if (BMest == "FRR.indep") {
@@ -625,23 +625,23 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
     } else if (SS == "out" & n1 == "both" & n2 == "both") {
         if (BMest == "same.test") {
             SS <- ceiling(sum(I^2 * ((1/PrevH) * (DE_H/(1 - PrevH) + (DE_R/CR) *
-                (PrevR/PrevH) * (1 - PrevR/PrevH)/((PrevR/PrevH - FRR)^2))))/((deltaI_Est/(qnorm(1 -
-                Power) - qnorm(1 - alpha/2)))^2 - ((RSE_MDRI[1] * MDRI[1])/(MDRI[1] -
+                (PrevR/PrevH) * (1 - PrevR/PrevH)/((PrevR/PrevH - FRR)^2))))/((deltaI_Est/(stats::qnorm(1 -
+                Power) - stats::qnorm(1 - alpha/2)))^2 - ((RSE_MDRI[1] * MDRI[1])/(MDRI[1] -
                 FRR[1] * BigT))^2 * (deltaI_Est^2) - ((FRR[1] * RSE_FRR[1])^2/((MDRI[1] -
                 FRR[1] * BigT)^4) * (PrevH[2] * (MDRI[1] - PrevR[2]/PrevH[2] * BigT)/(1 -
                 PrevH[2]) - PrevH[1] * (MDRI[1] - PrevR[1]/PrevH[1] * BigT)/(1 -
                 PrevH[1]))^2)))
         } else if (BMest == "FRR.indep") {
             SS <- ceiling(sum(I^2 * ((1/PrevH) * (DE_H/(1 - PrevH) + (DE_R/CR) *
-                (PrevR/PrevH) * (1 - PrevR/PrevH)/((PrevR/PrevH - FRR)^2))))/((deltaI_Est/(qnorm(1 -
-                Power) - qnorm(1 - alpha/2)))^2 - ((MDRI[1] * RSE_MDRI[1])^2) * (I[1]/(MDRI[1] -
+                (PrevR/PrevH) * (1 - PrevR/PrevH)/((PrevR/PrevH - FRR)^2))))/((deltaI_Est/(stats::qnorm(1 -
+                Power) - stats::qnorm(1 - alpha/2)))^2 - ((MDRI[1] * RSE_MDRI[1])^2) * (I[1]/(MDRI[1] -
                 FRR[1] * BigT) - I[2]/(MDRI[1] - FRR[2] * BigT))^2 - sum(I^2 * (RSE_FRR *
                 FRR * (MDRI - (PrevR/PrevH) * BigT)/((MDRI - FRR * BigT) * (PrevR/PrevH -
                 FRR)))^2)))
         } else if (BMest == "MDRI.FRR.indep") {
             SS <- ceiling(sum(I^2 * ((1/PrevH) * (DE_H/(1 - PrevH) + (DE_R/CR) *
-                (PrevR/PrevH) * (1 - PrevR/PrevH)/((PrevR/PrevH - FRR)^2))))/((deltaI_Est/(qnorm(1 -
-                Power) - qnorm(1 - alpha/2)))^2 - sum(I^2 * (RSE_MDRI * MDRI/(MDRI -
+                (PrevR/PrevH) * (1 - PrevR/PrevH)/((PrevR/PrevH - FRR)^2))))/((deltaI_Est/(stats::qnorm(1 -
+                Power) - stats::qnorm(1 - alpha/2)))^2 - sum(I^2 * (RSE_MDRI * MDRI/(MDRI -
                 FRR * BigT))^2) - sum(I^2 * (RSE_FRR * FRR * (MDRI - (PrevR/PrevH) *
                 BigT)/((MDRI - FRR * BigT) * (PrevR/PrevH - FRR)))^2)))
         }
@@ -697,15 +697,15 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
                   (MDRI[1] - PrevR[1]/PrevH[1] * BigT)/(1 - PrevH[1]))^2))/deltaI_Est
         }
 
-        CI.low <- qnorm(alpha/2, mean = I, sd = sqrt(Var_I))
-        CI.up <- qnorm(1 - alpha/2, mean = I, sd = sqrt(Var_I))
+        CI.low <- stats::qnorm(alpha/2, mean = I, sd = sqrt(Var_I))
+        CI.up <- stats::qnorm(1 - alpha/2, mean = I, sd = sqrt(Var_I))
 
         deltaI_CI <- NULL
-        deltaI_CI[1] <- qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
-        deltaI_CI[2] <- qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
+        deltaI_CI[1] <- stats::qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
+        deltaI_CI[2] <- stats::qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
 
-        ss.power <- 1 - pnorm(q = qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
-        Power.infSS <- 1 - pnorm(q = qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
+        ss.power <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
+        Power.infSS <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
             sd = 1)
 
         if (BMest == "FRR.indep") {

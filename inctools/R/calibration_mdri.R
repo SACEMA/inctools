@@ -82,7 +82,7 @@
 #'         functional_forms = c("cloglog_linear"),
 #'         recency_rule = "binary_data",
 #'         recency_vars = "Recent",
-#'         n_bootstraps = 100,
+#'         n_bootstraps = 10,
 #'         alpha = 0.05,
 #'         plot = TRUE)
 #' @export
@@ -255,8 +255,8 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             mdri_ff <- data.frame(round(mdri, 4), NA, NA, NA)
             mdri_output <- rbind(mdri_output, mdri_ff)
         } else {
-            mdri_sd <- sd(mdris)
-            mdri_ci <- quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
+            mdri_sd <- stats::sd(mdris)
+            mdri_ci <- stats::quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
             mdri_ff <- data.frame(round(mdri, 4), round(mdri_ci[1], 4), round(mdri_ci[2],
                 4), round(mdri_sd, 4))
             mdri_output <- rbind(mdri_output, mdri_ff)
@@ -291,7 +291,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
 check_package <- function(package) {
     if (!require(package, character.only = TRUE)) {
         print(paste("Attempting to install dependency", package, sep = " "))
-        install.packages(package, dependencies = TRUE)
+        utils::install.packages(package, dependencies = TRUE)
         if (!require(package, character.only = TRUE)) {
             stop(paste("Package", package, "could not be automatically installed.",
                 sep = " "))
@@ -310,7 +310,7 @@ process_data <- function(data = data, subid_var = subid_var, time_var = time_var
     }
     temp_data <- subset(temp_data, 0 < as.numeric(temp_data$time_since_eddi) & as.numeric(temp_data$time_since_eddi) <=
         inclusion_time_threshold)
-    temp_data <- na.omit(temp_data)
+    temp_data <- stats::na.omit(temp_data)
     if (nrow(temp_data) < 1) {
         stop("Error: dataframe is empty after omitting rows with empty cells and applying time exclusion criterion")
     }
@@ -355,7 +355,7 @@ fit_binomial_model <- function(data = data, functional_form = functional_form, t
         fitted <- FALSE
         while (!fitted) {
             model <- glm2::glm2(formula = (1 - recency_status) ~ 1 + I(log(time_since_eddi)),
-                family = binomial(link = "cloglog"), data = data, control = glm.control(epsilon = tolerance,
+                family = stats::binomial(link = "cloglog"), data = data, control = stats::glm.control(epsilon = tolerance,
                   maxit = maxit, trace = FALSE))
             if (class(model)[1] == "try-error") {
                 tolerance <- tolerance * 10
@@ -367,8 +367,8 @@ fit_binomial_model <- function(data = data, functional_form = functional_form, t
         fitted <- FALSE
         while (!fitted) {
             model <- glm2::glm2(formula = recency_status ~ 1 + I(time_since_eddi) +
-                I(time_since_eddi^2) + I(time_since_eddi^3), family = binomial(link = "logit"),
-                data = data, control = glm.control(epsilon = tolerance, maxit = maxit,
+                I(time_since_eddi^2) + I(time_since_eddi^3), family = stats::binomial(link = "logit"),
+                data = data, control = stats::glm.control(epsilon = tolerance, maxit = maxit,
                   trace = FALSE))
             if (class(model)[1] == "try-error") {
                 tolerance <- tolerance * 10
