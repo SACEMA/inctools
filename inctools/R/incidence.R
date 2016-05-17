@@ -474,8 +474,8 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
             }
         } else {
             for (i in c(1:ncol(BSMat))) {
-                CI_Mat[i, 1] <- quantile(BSMat[, i], alpha/2)
-                CI_Mat[i, 2] <- quantile(BSMat[, i], 1 - alpha/2)
+                CI_Mat[i, 1] <- stats::quantile(BSMat[, i], alpha/2)
+                CI_Mat[i, 2] <- stats::quantile(BSMat[, i], 1 - alpha/2)
             }
         }
         return(CI_Mat)

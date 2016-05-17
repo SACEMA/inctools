@@ -235,8 +235,8 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         deltaI_CI[1] <- stats::qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
         deltaI_CI[2] <- stats::qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
 
-        ss.power <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
-        Power.infSS <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
+        ss.power <- 1 - stats::pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
+        Power.infSS <- 1 - stats::pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
             sd = 1)
 
         # if(ss.power<0.7){warning('Probability of correct inference less than 70%')}
@@ -395,8 +395,8 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         deltaI_CI[1] <- stats::qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
         deltaI_CI[2] <- stats::qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
 
-        ss.power <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
-        Power.infSS <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
+        ss.power <- 1 - stats::pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
+        Power.infSS <- 1 - stats::pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
             sd = 1)
 
         if (BMest == "FRR.indep") {
@@ -556,8 +556,8 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         deltaI_CI[1] <- stats::qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
         deltaI_CI[2] <- stats::qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
 
-        ss.power <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
-        Power.infSS <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
+        ss.power <- 1 - stats::pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
+        Power.infSS <- 1 - stats::pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
             sd = 1)
 
         if (BMest == "FRR.indep") {
@@ -704,8 +704,8 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
         deltaI_CI[1] <- stats::qnorm(alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
         deltaI_CI[2] <- stats::qnorm(1 - alpha/2, mean = deltaI_Est, sd = sqrt(Var_delta_I))
 
-        ss.power <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
-        Power.infSS <- 1 - pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
+        ss.power <- 1 - stats::pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI, sd = 1)
+        Power.infSS <- 1 - stats::pnorm(q = stats::qnorm(1 - alpha/2), mean = 1/RSE_deltaI.infSS,
             sd = 1)
 
         if (BMest == "FRR.indep") {
