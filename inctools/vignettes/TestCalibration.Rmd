@@ -149,7 +149,7 @@ frrcal(data=excalibdata,
              alpha = 0.05)
 ```
 
-[^1]: Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. "A new general biomarker-based incidence estimator." Epidemiology; 2012, 23(5): 721-728; doi:[10.1097/EDE.0b013e3182576c07](http://dx.doi.org/10.1097/EDE.0b013e3182576c07).
+[^1]: Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. "A new general biomarker-based incidence estimator." Epidemiology; 2012, 23(5): 721-728; \doi{10.1097/EDE.0b013e3182576c07}
 
 [^2]: Kassanjee, R., McWalter, T.A. and Welte, A. "Short Communication:
-Defining Optimality of a Test for Recent Infection for HIV Incidence Surveillance." AIDS Research and Human Retroviruses; 2014, 30(1): 45-49; doi:[10.1089/aid.2013.0113](http://dx.doi.org/10.1089/aid.2013.0113); [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/24090052).
+Defining Optimality of a Test for Recent Infection for HIV Incidence Surveillance." AIDS Research and Human Retroviruses; 2014, 30(1): 45-49; \doi{10.1089/aid.2013.0113}

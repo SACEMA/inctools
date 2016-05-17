@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.1
-Date: 2016-05-13
+Version: 1.0.2
+Date: 2016-05-17
 Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
@@ -20,7 +20,7 @@ Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys and for calibrating tests for recent infection.
 Depends:
     R (>= 3.2.1)
-License: GPL-3
+License: GPL-3 + file LICENSE
 LazyData: True
 Imports:
     stats,
@@ -30,10 +30,10 @@ Imports:
     glm2,
     MASS,
     plyr,
-    pracma
+    pracma,
+    foreach
 Suggests:
     doMC,
-    foreach,
     knitr,
     survey
 RoxygenNote: 5.0.1

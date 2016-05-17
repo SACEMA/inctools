@@ -85,6 +85,7 @@
 #'         n_bootstraps = 10,
 #'         alpha = 0.05,
 #'         plot = TRUE)
+#' @importFrom foreach foreach
 #' @export
 mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_forms = c("cloglog_linear",
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
@@ -144,7 +145,6 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
   }
 
   if (parallel == TRUE) {
-    check_package("foreach")
     check_package("doMC")
   }
 
@@ -199,7 +199,6 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
 
             doMC::registerDoMC(cores)
             chosen_subjects <- vector(mode = "list", length = n_bootstraps)
-            # set.seed(123)
             for (j in 1:n_bootstraps) {
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
             }
@@ -207,7 +206,8 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                 {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {
-                    boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[[j]][k]))
+                    #subset(data, sid == chosen_subjects[[j]][k])
+                    boot_data <- rbind(boot_data, data[data$sid==chosen_subjects[[j]][k],])
                   }
                   model <- fit_binomial_model(data = boot_data, functional_form = functional_form,
                     tolerance = tolerance_glm2, maxit = maxit_glm2)
@@ -218,13 +218,13 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                   return(mdri_iterate)
                 }
         } else {
-            # set.seed(123)
             for (j in 0:n_bootstraps) {
                 chosen_subjects <- sample(1:n_subjects, n_subjects, replace = T)
                 if (j != 0) {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {
-                    boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[k]))
+                    #boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[k]))
+                    boot_data <- rbind(boot_data, data[data$sid==chosen_subjects[k],])
                   }
                 } else {
                   boot_data <- data
@@ -435,8 +435,10 @@ plot_probability <- function(functional_form = functional_form, parameters = par
         colnames(plotdata) <- c("time_since_eddi", "probability")
     })
 
-    plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = time_since_eddi,
-        y = probability))
+    #plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = time_since_eddi,
+    #                                                                                y = probability))
+    plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = plotdata$time_since_eddi,
+                                                                                    y = plotdata$probability))
     plotout <- plotout + ggplot2::labs(x = "Time (since detectable infection)", y = "Probability of testing recent")
     plotout <- plotout + ggplot2::geom_vline(xintercept = mdri, colour = "blue")
     plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[1], colour = "blue",
