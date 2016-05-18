@@ -1,10 +1,10 @@
 # Incidence Estimation Tools (*inctools*)
 
-Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests. This package contains the functionality previously available in the package *ritcalib*.
+Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests. 
 
-*inctools* is available on the [Comprehensive R Archive Network](https://cran.r-project.org/web/packages/inctools/index.html). You can also find the latest stable release under [Releases](https://github.com/SACEMA/inctools/releases). Releases on this repository may be slightly ahead of the version available through CRAN.
+This package is a more robust implementation of the deprecated spreadsheet tools released as *ABIE* and also contains the functionality previously available in the deprecated package *ritcalib*.
 
-We recommend installing from [CRAN](https://cran.r-project.org/web/packages/inctools/index.html).
+*inctools* is available on the [Comprehensive R Archive Network](https://cran.r-project.org/web/packages/inctools/index.html). You can also find the latest stable release under [Releases](https://github.com/SACEMA/inctools/releases). Releases on this repository may be slightly ahead of the version available through CRAN, but we recommend installing from CRAN.
 
 Older spreadsheet-based tools for inferring incidence using biomarkers for 'recent infection' can be found [here](http://www.incidence-estimation.org/page/tools-for-incidence-from-biomarkers-for-recent-infection). These tools are largely superceded by *inctools*.
 
