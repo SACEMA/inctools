@@ -1,142 +1,122 @@
 ---
 title: "Estimating incidence from cross-sectional data"
-#date: Sys.Date()
+date: 2016-05-12
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{Inference}
+  %\VignetteIndexEntry{Estimating incidence}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{Integrating TCGA Data}
 ---
 
-This vignette covers the use of the functions `incprops`, `inccounts`, and `prevcounts`.
+## Introduction
 
-The *inctools* package provides two functions for HIV incidence estimation: $incprops$ and $inccounts$, and ancillary function $prevcounts$. These functions take as argument user-defined parameters and estimates taken from assays of recent HIV infection and output estimates for inference, incidence difference in the situation of multiple cross-sectional surveys (and possibly multiple assays), and confidence intervals, among other output. See the function help pages for specific examples of running the code. The principal reference for the methods behind this implementation is given by Kassanjee et al. *Epidemiology*, 2012.[^1] Further guidance is provided in Kassanjee, McWalter, Welte. *AIDS Research and Human Retroviruses*, 2014.[^2]
+This vignette covers the use of the functions `incprops`, `inccounts`, and `prevcounts`. It is strongly recommended that the vignette "Introduction" be read before any use of this package.
 
-This vignette will describe the use of necessary functions and some background on methods specific to this package.
+The two primary functions for HIV incidence estimation are `incprops` and `inccounts`. These take as arguments a summary of arbitrarily complex survey data sets capturing HIV prevalence and prevalence of recent HIV infection among HIV positive subjects. They return estimates of incidence, and, if specification of multiple cross-sectional surveys is provided, incidence differences (point estimates, confidence intervals, p values, and subsidiary output). The principal reference for the methodology underlying this implementation is Kassanjee et al. *Epidemiology*, 2012.[^1] Further guidance is provided in Kassanjee, McWalter, Welte. *AIDS Research and Human Retroviruses*, 2014.[^2], and some hitherto unpublished technical details are in the appendix of vignette "Introduction".
 
-## `prevcounts`
+## Analytical Paradigm
 
-Function `prevcounts`, while not strictly necessary for inference on incidence, allows for using function `incprops` while taking into account of design effects, which factor into the relative standard error of prevalence of HIV positivity and recenecy. `inccounts` has an option for design effects. The function `prevcounts` takes count data from a prevalence survey and produces estimates of prevalences and relative standard errors. Design effects are assumed negligible unless the user specifies otherwise. Note that the input values for design effects are assumed to be known by the user. 
+A fundamental element in the conception of the *inctools* is that the primary entry point into the critical methodology which *inctools* implements is the function  `incprops`, which takes, as summary of the population state, estimates of HIV prevalence and the prevalence of *recent infection* amongst HIV positive subjects (including variance and covariance). These estimates, in turn, would usually be best derived by (potentially complex) preliminary analysis of the raw survey data documenting individual subjects' status ascertainment, cluster and strata membership, weighting, etc.
 
+The derivation of these prevalence estimates from raw data is in principle facilitated by various algorithms which are implemented in other packages, and are essentially independent of any of the innovation captured in this package. Use of *inctools* does not imply any specific approach to the preliminary analytical methodology, but the widely used package *survey* (totally independently maintained, with no link to *inctools*) may be suitable for many typical data sets. Additionally, to facilitate 'naive', self contained within the package, analysis, the ancilliary function `prevcounts` is provided. This takes survey counts and produces prevalence estimates (for both HIV and recent infection, including variance) under the simplifying assumption of individual level random selection of subjects from a single population group.
+
+
+## Using functions `incprops` and `inccounts`
+
+The functions `incprops` and `inccounts` provide a near-identical interface, as further detailed in the help pages. Both functions take considerably pre-processed data specifying a recent infection test and a survey in which it is used:
+* estimates of false recency rate (FRR--$\beta$) and mean duration of recent infection (MDRI--$\Omega_T$) and their respective relative standard errors and recency time cutoff (T)
+*  and survey data: proportions (counts, if using function `inccounts`) of HIV positives (PrevH) and positives for recency (PrevR) and their relative standard errors.
+
+A critical distinction is that with the use of `incprops`, variance of prevalences, including covariance, is explicitly supplied, and with the use of `inccounts`, variance emerges from counts and design effects, and there is no covariance.  
+
+The output for a single survey is an estimate of incidence along with confidence intervals and RSE, estimated annual rate of infection and associated confidence intervals, and confidence intervals for parameters MDRI and FRR, which are deduced from input parameters.
+
+The output for multiple surveys is the same output as for a single survey, along with pairwise comparisons of incidence rates, confidence intervals of differences, and tests of equality with p-values and RSE of differences.
+
+
+### Examples
+
+```{r echo=FALSE}
+library(inctools)
+```
+
+Consider a single cross sectional survey summarised by:
+
+* An HIV prevalence of 20% estimated with a relative standard error of 2.8%
+* An estimated prevalence of recent infection, amongst HIV positives, of 10%, with a relative standard error of 9%
+* an MDRI of 200 days estimated with a relative standard error of 5%
+* an FRR of 5% estimated with a relative standard error of 20%
+
+and proposed to be processed by 10,000 bootstap iterations. Function `incprops` will calculate:
+
+* an incidence point estimate, confidence interval, and relative standard error
+* the equivalent annualised risk of infection (which is usually numerically very similar)
+* implied confidence intervals on MDRi and FRR derived from input parameters
+
+```{r, fig.show='hold'}
+incprops(PrevH = 0.20, RSE_PrevH = 0.028, PrevR = 0.10, RSE_PrevR = 0.09,
+         BS_Count = 10000, Boot = TRUE, MDRI = 200, RSE_MDRI = 0.05,
+         FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+```
+
+Multiple surveys can be processed in a single call to `incprops` by supplying vectors of the parameters. Note that:
+
+* A single value of recency cut off time $T$ is required for all surveys, even if the tests are different and have independently estimates MDRI and FRR, as in the example below
+* In addition to the results returned for the single survey case (replicated for each survey), `incprops` also calculates all pairwise incidence differences and p values.
+
+
+```{r, fig.show='hold'}
+incprops(PrevH = c(0.20,0.21,0.18), RSE_PrevH = c(0.028,0.03,0.022),
+         PrevR = c(0.10,0.13,0.12), RSE_PrevR = c(0.094,0.095,0.05),
+         BS_Count = 10000, Boot = FALSE, BMest = 'MDRI.FRR.indep',
+         MDRI = c(200,180,180), RSE_MDRI = c(0.05,0.07,0.06),
+         FRR = c(0.01,0.009,0.02), RSE_FRR = c(0.2,0.2,0.1), BigT = 730)
+```
+
+
+
+## Function `prevcounts`
+
+Function `prevcounts`, while not strictly necessary (and indeed not recommended for final inference on incidence based on real survey data, presumably obtained at great cost and with considerable complex sampling structure) turns counts of:
+
+* Number of subjects tested for HIV
+* Number of subjects who tested positive for HIV
+* Number of HIV positive subjects tested for recent infections
+* Number of HIV positive subjects who tested positive for recent infections
+
+into (point) estimates (and variance) of prevalence of HIV and prevalence of recent infection among HIV the positives. At heart, this is a relatively simple multinomial distribution analysis (trinomial, in the case of complete coverage of recency testing amongst HIV positives) and could be accomplished without any significant innovation directly arising out of the core methods of this package, but function `prevcounts` at least provides a consistent entry point into this analysis, using arguments consistently named to align to the other functions, including appropriate design effects. The most likely use of `prevcounts` is probably indirectly through `inccounts`, but it is provided in user-exposed form for its intuitive supportive value and for recycling into user customisations beyond routine primary incidence estimation. Note that the use of `prevcounts` implies an interpretation of these counts which precludes non-null covariance of the prevalence of HIV and the prevalence of recency.
 
 For a single survey:
 
 ```{r, fig.show='hold'}
-library("inctools")
+prevcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_H = 1.1,
+           DE_R = 1.5)
 ```
 
+Note that:
 
+* It is spelled out that in this instance all HIV positive subjects were tested for recent infection
+
+* A design effect is provided for adjusting the variance of the prevalence of HIV
+
+* An independent design effect is provided for adjusting the variance of the prevalence of recent infection amongst HIV positives
+
+* There is no mention of a total sample size in excess of the number of individuals in the underlying survey, on whom there is no HIV status information. A more sophisticated analysis might well use this larger sample size, and additionally account for the frequency, and risk-factor distribution, of missingness, but the conception `prevcounts` does not require this data. The use of design effects, though limited and ultimately problematic, is the appropriate way to insert distributional information beyond the implied two independent binomial distributions for each prevalence.
+
+
+Input can be provided for two or more surveys in vector form, using the concatenation expression `c()`:
 
 ```{r, fig.show='hold'}
-prevcounts(N = 5000, N_H = 1000, N_testR = 1000, N_R = 70, DE_R = 1.1)
+prevcounts (N = c(5000,6000), N_H = c(1000,1100), N_testR = c(950,1060),
+            N_R = c(100,70), DE_H = c(1.1,1.2), DE_R = c(1.2,1.3))
 ```
-the output for the function is estimated prevalence of HIV given survey counts (5000/1000), estimated proportion of those tested who are defined as recently infected by the assay, and the relative standard error (RSE)--the ratio of standard deviation of the estimator to the estimate, which is itself an estimate of $\sigma/\mu$.   
-
-The number of individuals tested for recency of infection is 1000 (in this example equal to the total number of individuals who tested positive for HIV). 
-
-The number of recent infections was calculated by the assay to be 70. 
-
-Design effects in the above example are assumed negligible for test of positivity, but are given as 1.1 for the test of recency. 
-
-For two or more surveys, the function input is given in vector form using the concatenation expression `c()`.
-
-```{r, fig.show='hold'}
-prevcounts (N = c(5000,5000), N_H = c(1000,1000), N_testR = c(1000,1000), 
-            N_R = c(100,70), DE_H = 1, DE_R = c(1,1.1))
-```
-Note the construction that survey 1 (the first survey entered) had design effects assumed negligible (=1), while the second survey had an estimated design effect (=1.1). These inputs must be followed sequentially for surveys in multiple entries. 
-
-## `incprops` and `inccounts`
-
-The functions `incprops` and `inccounts` uses an identical syntax scheme to that shown above for `prevcounts`, and given in the functions' help pages. Both functions take data that has already been calculated about the assay used for testing recency--estimates of false recency rate (FRR--$\beta$) and mean duration of recent infection (MDRI--$\Omega_T$) and their respective relative standard errors and the time cut threshold for recency in days (T)--as well a test rejection threshold $\alpha$ (default=0.05) and survey data: proportions (counts, if using function `inccounts`) of HIV positives (PrevH) and positives for recency (PrevR) and their relative standard errors. 
-
-The output for a single survey is an estimate of incidence along with confidence intervals and RSE, estimated annual rate of infection and associated confidence intervals, and confidence intervals for parameters MDRI and FRR, which are deduced from use input. 
-
-The output for multiple surveys is the same output as for a single survey, along with pairwise comparisons of incidence rates, confidence intervals of differences, and tests of equality with p-values and RSE of differences. Run the code given in the examples section at the bottom of the function help page `help("incprops")` for examples of this implementation and output. 
-
-The delta method calculation of the estimator variance is described in the second reference, however the delta method approximation of the variance of the difference of incidence estimators has not been described until now. There are three cases that can arise: (1) the same test is used for both assays; (2) the tests are different with independent FRR; (3) the tests are independent with different FRR and different MDRI. The option for assay scheme is specified in both `incprops` and `inccounts` by function parameter `BMest`. Subscripts 1 and 2 in the parameter notation denote associated survey or test parameters. The variances of the three cases follow. 
-
-Case 1: Same test
-\begin{align}
-V[\Delta \mathbb{I}]_1 \approx &
-\Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
-&\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
-  & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\ PrevR_1)^2) + \\     & \frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))\ (RSE_{PrevR_2}PrevR_2)^2) +\\
-    &\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
-&\Big(\big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{(1 - PrevH_1)} -\frac{PrevH_2(T\ PrevR_2 -\Omega)}{(1 - PrevH_2)}\big)(\Omega - \beta T)^2 \Big)^2 RSE_{\beta}\ \beta\\
-\end{align}
 
 
 
-Case 2: FRR independent
-\begin{align}
-V[\Delta \mathbb{I}]_2 \approx &
- \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
-&\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
-      & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\ PrevR_1)^2)  +\\     &\frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))(RSE_{PrevR_2}PrevR_2)^2) +\\
-&\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
-      &\Big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{1 - PrevH_1}(\Omega - \beta_1 \ T)^2\Big)^2 RSE_{\beta_1}\ \beta_1 + \\  
-      &\Big(\frac{PrevH_2(T\ PrevR_2 - \Omega)}{1 - PrevH_2}(\Omega - \beta_2 \ T)^2)\Big)^2 RSE_{\beta_2}\ \beta_2
-\end{align}
 
-
-Case 3: FRR and MDRI independent
-\begin{align}
-V[\Delta \mathbb{I}]_3 \approx &
- \Big(\frac{(PrevR_1 - \beta_1)}{(1 - PrevH_1)^2} (\Omega_1 - \beta_1 T_1)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
-&\Big(\frac{(PrevR_2 - \beta_2)}{(1 - PrevH_2)^2} (\Omega_2 - \beta_2 T_2)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
-      & \frac{PrevH_1}{1 - PrevH_1}(\Omega_1 - \beta_1 T_1))\ (RSE_{PrevR_1}\ PrevR_1)^2)  +\\     &\frac{PrevH_2}{1 - PrevH_2}(\Omega_2 - \beta_2 T_2))(RSE_{PrevR_2}PrevR_2)^2) +\\
-      &\Big(\frac{\beta_1\ PrevH_1 - PrevR_1\ PrevH_1}{1 - PrevH_1}\ (\Omega_1 - \beta_1\ T_1)^2\Big)^2 RSE_{MDRI_1}\ MDRI_1 + \\
-    &\Big(\frac{\beta_2\ PrevH_2 - PrevR_2\ PrevH_2}{1 - PrevH_2}\ (\Omega_2 - \beta_2\ T_2)^2\Big)^2 RSE_{MDRI_2}\ MDRI_2    +\\
-      &\Big(\frac{PrevH_1(T_1\ PrevR_1 - \Omega_1}{1 - PrevH_1}(\Omega_1 -\beta_1\ T_1)^2\Big)^2  RSE_{\beta_1}\ \beta_1 + \\     
-      &\Big(\frac{PrevH_2(T_2\ PrevR_2 - \Omega_2}{1 - PrevH_2}(\Omega_2 -\beta_2\ T_2)^2\Big)^2  RSE_{\beta_2}\ \beta_2 
-\end{align}
-
-If bootstrapping is use in place of the delta method approximation, the user may also enter in a covariance estimate between testing for recency and testing for positivity to be used in the empirical bootstrap sampler. 
-
-## The Empirical Bootstrapping Option
-
-Functions `incprops` and `inccounts` both admit the option of bootstrapping. The default multivariate delta method approximation to the variance of the incidence estimator is adequate for inputs that are normal, however the method is still only a linear approximation. Since there are situations where the higher order terms in the Taylor expansion of variance may contribute non-negligibly to the variance estimator, and since it may be the case that both FRR and structured survey data may not be exactly normally distributed, we have programmed an empirical bootstrapping option for users wishing to make non-parametric inference on differences in proportions.
-
-This method is called in `incprops` and `inccounts` by adding the option `Boot = TRUE`. The method is described below.
-
-We start with estimates on parameters that are derived from data. So we have estimates:
-
-* $\widehat{\text{PrevH}}$,
-* $\widehat{\text{PrevR}}$,
-* $\widehat{\Omega}$,
-* $\widehat{\beta}$,
-
-along with their respective estimates of variance.
-
-We resample a multivariate normal distribution with argument `EMPIRICAL = TRUE` to the function `mvrnorm` from the *MASS* package, which coerces the samples such that if we take the mean and variance of any number of samples of $\Omega_T$, say, we will get the exact mean and variance we entered into the multivariate normal sampler as parameters from the distribution. Each unique re-sample for each estimator $\varphi$ is a B-tuple of values such that the B-tuple mean equals $\widehat{\varphi}$ and its variance exactly equals the variance of the original estimator. Corresponding to each column of this matrix is a single "bootstrap" estimate $\mathbb{I}$, the estimate of incidence. 
-
-\noindent
-So we have sample matrix
-\[ \mathbf{B} = \left( \begin{array}{ccccc}
-\text{PrevH}_\text{1} & \text{PrevH}_\text{2} & \text{PrevH}_\text{3} & \cdots & \text{PrevH}_\text{B}\\ 
-\text{PrevR}_\text{1} & \text{PrevR}_\text{2} & \text{PrevR}_\text{3} & \cdots & \text{PrevR}_\text{B}\\
-\Omega_1 & \Omega_2 & \Omega_3 & \cdots&\Omega_B \\
-\beta_1 & \beta_2 & \beta_3 &\cdots & \beta_B 
-\end{array} \right)\] 
-$$  \  \ \  \ \  \ \   \ \  \ \  \ \  \ \  \downarrow\ \ \ \ \ \ \  \ \ \  \ \  \downarrow\ \ \ \ \ \ \ \ \  \ \  \   \downarrow\ \ \ \ \  \ \ \  \cdots\ \ \ \ \  \ \downarrow \ \ \ \ \ \ \  \ \ 
-$$
-$$\ \ \ \  \  \ \  \ \  \ \   \ \  \ \  \ \ \ \ \ \ \  \mathbb{I}_1 \ \ \ \ \ \ \ \ \   \ \  \  \ \mathbb{I}_2\ \ \  \ \ \ \ \ \  \ \ \  \  \mathbb{I}_3\ \ \  \  \  \ \ \ \cdots\ \ \ \ \ \  \ \ \mathbb{I}_B \ \ \ \ \ \ \  \ \ \ \ \ \
-$$
-which is sampled in such a way that, for example, for empirical bootstrap sample $\Omega_B$ 
-$$
-\sum_{b=1}^B\Omega_b = \widehat{\Omega}\ \ \text{(the $observed$ value of the estimator)}
-$$
-and
-$$
-\frac{1}{B-1}\sum_{b=1}^B\Omega_b = s^2_{\Omega}\ \ \text{(the $observed$ SD of the estimator)}
-$$
-The bootstrap option produces most of the statistics given by running the functions using a delta method approximation, however the estimate of RSE of the incidence estimator at infinite sample size, which is calculated by letting sample size $n$ tend toward infinity in the limit in the components of the variance of incidence estimator, is not produced.
-
-[^1]: Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. "A new general biomarker-based incidence estimator." Epidemiology; 2012, 23(5): 721-728; doi:[10.1097/EDE.0b013e3182576c07](http://dx.doi.org/10.1097/EDE.0b013e3182576c07); [PubMed](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3500970/).
+[^1]: Kassanjee, R., McWalter, T.A., Baernighausen, T. and Welte, A. "A new general biomarker-based incidence estimator." Epidemiology; 2012, 23(5): 721-728; \doi{10.1097/EDE.0b013e3182576c07}
 
 [^2]: Kassanjee, R., McWalter, T.A. and Welte, A. "Short Communication:
-Defining Optimality of a Test for Recent Infection for HIV Incidence Surveillance." AIDS Research and Human Retroviruses; 2014, 30(1): 45-49; doi:[10.1089/aid.2013.0113](http://dx.doi.org/10.1089/aid.2013.0113); [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/24090052).
+Defining Optimality of a Test for Recent Infection for HIV Incidence Surveillance." AIDS Research and Human Retroviruses; 2014, 30(1): 45-49; \doi{10.1089/aid.2013.0113}

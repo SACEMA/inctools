@@ -52,7 +52,7 @@ Models The fitted GLM models for each functional form.
 Estimate MDRI (point estimate and confidence interval) using binomial regression and a maximum likelihood approach
 }
 \details{
-The package contains a long form vignette that covers the use of this function. Use vignette('TestCalibration',package='inctools') to access the vignette.
+The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 
 Expected data frame format: Before calling the function, please import your dataset into R environment.
 
@@ -98,7 +98,7 @@ mdrical(data=excalibdata,
         functional_forms = c("cloglog_linear"),
         recency_rule = "binary_data",
         recency_vars = "Recent",
-        n_bootstraps = 100,
+        n_bootstraps = 10,
         alpha = 0.05,
         plot = TRUE)
 }

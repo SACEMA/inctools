@@ -25,7 +25,7 @@
 #' @param recency_vars Variables to be used in determining recency outcomes
 #' @param recency_params Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule
 #' @param alpha Confidence level, default=0.05.
-#' @details The package contains a long form vignette that covers the use of this function. Use vignette('TestCalibration',package='inctools') to access the vignette.
+#' @details The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 #'
 #' recency_rule: binary_data - supply a binary variable with 1=recent and 0=non-recent in recency_vars.
 #'
@@ -59,8 +59,10 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
 
     names(data)[names(data) == subid_var] <- "sid"
     names(data)[names(data) == time_var] <- "time_since_eddi"
-    # Keep only observations after the cuttoff
-    data <- subset(data, as.numeric(time_since_eddi) > recency_cutoff_time)
+    data$time_since_eddi <- as.numeric(data$time_since_eddi)
+
+    #data <- subset(data, as.numeric(data$time_since_eddi) > recency_cutoff_time)
+    data <- data[data$time_since_eddi > recency_cutoff_time,]
     data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
         recency_vars = recency_vars, inclusion_time_threshold = 1e+06)
     data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
@@ -79,8 +81,8 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
             subjectdata <- rbind(subjectdata, c(subjectid, 1))
         }
     }
-    subjectdata <- subset(subjectdata, !is.na(sid))
-    binomprob <- binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
+    subjectdata <- subjectdata[!is.na(subjectdata$sid),]
+    binomprob <- stats::binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
         p = 0, conf.level = 1 - alpha)
     FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1],
         4), round(binomprob$conf.int[2], 4), alpha, binomprob$statistic, binomprob$parameter[[1]],

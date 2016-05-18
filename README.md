@@ -2,17 +2,33 @@
 
 Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests. This package contains the functionality previously available in the package *ritcalib*.
 
-You can find version 0.9.9 (stable pre-release) under [Releases](https://github.com/SACEMA/inctools/releases).
+You can find version 1.0.0 (initial release) under [Releases](https://github.com/SACEMA/inctools/releases).
 
-**Version 1.0.0 will be released shortly and will be available through CRAN.**
+**Version 1.0.0 has been submitted to CRAN and is undergoing review.**
 
 We recommend using the latest stable release, rather than the code under development contained in this repository.
 
-Spreadsheet-based tools for inferring incidence using biomarkers for 'recent infection' can be found [here](http://www.incidence-estimation.org/page/tools-for-incidence-from-biomarkers-for-recent-infection).
+Older spreadsheet-based tools for inferring incidence using biomarkers for 'recent infection' can be found [here](http://www.incidence-estimation.org/page/tools-for-incidence-from-biomarkers-for-recent-infection). These tools are largely superceded by *inctools*.
 
 ## About
 
 These tools are released as an R package by the [DST/NRF Centre of Excellence in Epidemiological Modelling and Analysis (SACEMA)](http://www.sacema.org/) in collaboration with the [Consortium for the Evaluation and Performance of HIV Incidence Assays (CEPHIA)](http://www.incidence-estimation.org/page/cephia) and other partners. The package maintainer can be contacted at [eduardgrebe@sun.ac.za](mailto:eduardgrebe@sun.ac.za).
+
+## Installation
+
+Install directly from CRAN once the package becomes available.
+
+Otherwise, download the source or binary package for your platform, and install dependencies manually first:
+
+```
+install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma"))
+```
+
+If you're on Mac or Linux, additionally,
+
+```
+install.packages(c("doMC","foreach"))
+```
 
 ## Usage terms
 
@@ -33,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Several people contributed to this package. We encourage contributions from the community of users. 
 
-Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, Simon Daniel and Yuruo Li, with contributions by Reshma Kassanjee, Hilmarie Brand, and Stefano Ongarello.
+Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, Simon Daniel and Yuruo Li, with contributions by Reshma Kassanjee, Hilmarie Brand, Stefano Ongarello and Yusuke Asai.
 
 ## Contact
 

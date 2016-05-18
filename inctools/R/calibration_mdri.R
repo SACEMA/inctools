@@ -31,12 +31,12 @@
 # ADD OPTION TO GET FULL LIST OF MDRIs from the bootstrapping procedure or the
 # shape of the distribution or something
 #' @param plot Specifies whether a plot of the probability of testing recent over time should be produced
-#' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste.
+#' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste. Not available on Windows.
 #' @param cores Set number of cores for parallel processing when parallel=TRUE. This defaults to four.
 #' @return MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
 #' @return Plots A plot of Probability of testing recent over time for each functional form.
 #' @return Models The fitted GLM models for each functional form.
-#' @details The package contains a long form vignette that covers the use of this function. Use vignette('TestCalibration',package='inctools') to access the vignette.
+#' @details The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 #'
 #' Expected data frame format: Before calling the function, please import your dataset into R environment.
 #'
@@ -82,9 +82,10 @@
 #'         functional_forms = c("cloglog_linear"),
 #'         recency_rule = "binary_data",
 #'         recency_vars = "Recent",
-#'         n_bootstraps = 100,
+#'         n_bootstraps = 10,
 #'         alpha = 0.05,
 #'         plot = TRUE)
+#' @importFrom foreach foreach
 #' @export
 mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_forms = c("cloglog_linear",
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
@@ -139,6 +140,14 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
     stop("Subject identifier and time variables must be specified.")
   }
 
+  if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
+    stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
+  }
+
+  if (parallel == TRUE) {
+    check_package("doMC")
+  }
+
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
   if (sum(variables == subid_var) != 1) {
@@ -187,18 +196,18 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             if (plot == TRUE) {
                 plot_parameters <- parameters
             }
-            cluster <- snow::makeCluster(cores, type = "SOCK")
-            doSNOW::registerDoSNOW(cluster)
+
+            doMC::registerDoMC(cores)
             chosen_subjects <- vector(mode = "list", length = n_bootstraps)
             for (j in 1:n_bootstraps) {
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
             }
-            library(foreach)
-            mdris <- foreach(j = 1:n_bootstraps, .combine = rbind) %dopar%
+            mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind) %dopar%
                 {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {
-                    boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[[j]][k]))
+                    #subset(data, sid == chosen_subjects[[j]][k])
+                    boot_data <- rbind(boot_data, data[data$sid==chosen_subjects[[j]][k],])
                   }
                   model <- fit_binomial_model(data = boot_data, functional_form = functional_form,
                     tolerance = tolerance_glm2, maxit = maxit_glm2)
@@ -208,14 +217,14 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                     maxit = maxit_integral)
                   return(mdri_iterate)
                 }
-            snow::stopCluster(cluster)
         } else {
             for (j in 0:n_bootstraps) {
                 chosen_subjects <- sample(1:n_subjects, n_subjects, replace = T)
                 if (j != 0) {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {
-                    boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[k]))
+                    #boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[k]))
+                    boot_data <- rbind(boot_data, data[data$sid==chosen_subjects[k],])
                   }
                 } else {
                   boot_data <- data
@@ -246,8 +255,8 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             mdri_ff <- data.frame(round(mdri, 4), NA, NA, NA)
             mdri_output <- rbind(mdri_output, mdri_ff)
         } else {
-            mdri_sd <- sd(mdris)
-            mdri_ci <- quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
+            mdri_sd <- stats::sd(mdris)
+            mdri_ci <- stats::quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
             mdri_ff <- data.frame(round(mdri, 4), round(mdri_ci[1], 4), round(mdri_ci[2],
                 4), round(mdri_sd, 4))
             mdri_output <- rbind(mdri_output, mdri_ff)
@@ -279,16 +288,16 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
 
 
 
-# check_package <- function(package) {
-#     if (!require(package, character.only = TRUE)) {
-#         print(paste("Attempting to install dependency", package, sep = " "))
-#         install.packages(package, dependencies = TRUE)
-#         if (!require(package, character.only = TRUE)) {
-#             stop(paste("Package", package, "could not be automatically installed.",
-#                 sep = " "))
-#         }
-#     }
-# }
+check_package <- function(package) {
+    if (!require(package, character.only = TRUE)) {
+        print(paste("Attempting to install dependency", package, sep = " "))
+        utils::install.packages(package, dependencies = TRUE)
+        if (!require(package, character.only = TRUE)) {
+            stop(paste("Package", package, "could not be automatically installed.",
+                sep = " "))
+        }
+    }
+}
 
 process_data <- function(data = data, subid_var = subid_var, time_var = time_var,
     recency_vars = recency_vars, inclusion_time_threshold = inclusion_time_threshold) {
@@ -301,7 +310,7 @@ process_data <- function(data = data, subid_var = subid_var, time_var = time_var
     }
     temp_data <- subset(temp_data, 0 < as.numeric(temp_data$time_since_eddi) & as.numeric(temp_data$time_since_eddi) <=
         inclusion_time_threshold)
-    temp_data <- na.omit(temp_data)
+    temp_data <- stats::na.omit(temp_data)
     if (nrow(temp_data) < 1) {
         stop("Error: dataframe is empty after omitting rows with empty cells and applying time exclusion criterion")
     }
@@ -346,7 +355,7 @@ fit_binomial_model <- function(data = data, functional_form = functional_form, t
         fitted <- FALSE
         while (!fitted) {
             model <- glm2::glm2(formula = (1 - recency_status) ~ 1 + I(log(time_since_eddi)),
-                family = binomial(link = "cloglog"), data = data, control = glm.control(epsilon = tolerance,
+                family = stats::binomial(link = "cloglog"), data = data, control = stats::glm.control(epsilon = tolerance,
                   maxit = maxit, trace = FALSE))
             if (class(model)[1] == "try-error") {
                 tolerance <- tolerance * 10
@@ -358,8 +367,8 @@ fit_binomial_model <- function(data = data, functional_form = functional_form, t
         fitted <- FALSE
         while (!fitted) {
             model <- glm2::glm2(formula = recency_status ~ 1 + I(time_since_eddi) +
-                I(time_since_eddi^2) + I(time_since_eddi^3), family = binomial(link = "logit"),
-                data = data, control = glm.control(epsilon = tolerance, maxit = maxit,
+                I(time_since_eddi^2) + I(time_since_eddi^3), family = stats::binomial(link = "logit"),
+                data = data, control = stats::glm.control(epsilon = tolerance, maxit = maxit,
                   trace = FALSE))
             if (class(model)[1] == "try-error") {
                 tolerance <- tolerance * 10
@@ -426,8 +435,10 @@ plot_probability <- function(functional_form = functional_form, parameters = par
         colnames(plotdata) <- c("time_since_eddi", "probability")
     })
 
-    plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = time_since_eddi,
-        y = probability))
+    #plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = time_since_eddi,
+    #                                                                                y = probability))
+    plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = plotdata$time_since_eddi,
+                                                                                    y = plotdata$probability))
     plotout <- plotout + ggplot2::labs(x = "Time (since detectable infection)", y = "Probability of testing recent")
     plotout <- plotout + ggplot2::geom_vline(xintercept = mdri, colour = "blue")
     plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[1], colour = "blue",

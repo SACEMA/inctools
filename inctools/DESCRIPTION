@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.0
-Date: 2016-05-09
+Version: 1.0.3
+Date: 2016-05-18
 Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
@@ -13,26 +13,28 @@ Authors@R: c(
   person("Hilmarie","Brand", role="ctb"),
   person("Yuruo","Li",email="yul123@pitt.edu", role="ctb"),
   person("Simon","Daniel",email="skjdaniel@gmail.com", role="ctb"),
-  person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="ctb")
+  person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="ctb"),
+  person("Yusuke","Asai", email="yusuke.asai@yahoo.de", role="ctb")
   )
 Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys and for calibrating tests for recent infection.
 Depends:
     R (>= 3.2.1)
-License: file LICENSE
+License: GPL-3
 LazyData: True
 Imports:
+    stats,
+    utils,
     cubature,
     ggplot2,
     glm2,
     MASS,
     plyr,
     pracma,
-    doSNOW,
     foreach
 Suggests:
-    testthat,
+    doMC,
     knitr,
-    rmarkdown
+    survey
 RoxygenNote: 5.0.1
-VignetteBuilder: rmarkdown
+VignetteBuilder: knitr

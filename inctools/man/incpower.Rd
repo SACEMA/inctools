@@ -17,9 +17,9 @@ incpower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
 
 \item{PrevH2}{Predicted prevalence of HIV in survey 2.}
 
-\item{n1}{Sample size for survey 1. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value 'both', which is the default. If necessary sample size at a given power level for survey 1 is desired and survey 2 has been completed, n1 must be set to 'out' along with SS.}
+\item{n1}{Sample size for survey 1. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value 'both', which is the default.}
 
-\item{n2}{Sample size for survey 2. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value 'both', which is the default. If necessary sample size at a given power level for survey 2 is desired and survey 1 has been completed, n2 must be set to 'out' along with SS.}
+\item{n2}{Sample size for survey 2. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value 'both', which is the default.}
 
 \item{alpha}{Significance level for test (default alpha=0.05).}
 
@@ -52,25 +52,20 @@ Common sample size of two surveys--or the sample size of one survey given the ot
 Power and sample size calculation for assay-based incidence estimation
 }
 \details{
-The package contains a long form vignette that covers the use of this function. Use vignette('SurveyDesign',package='inctools') to access the vignette.
+The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 }
 \examples{
 incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
-n1 = 5000, n2 = 5000, alpha = 0.05, Power = 'out', SS = NULL,
+n1 = 5000, n2 = 5000, alpha = 0.05, Power = "out", SS = NULL,
 DE_H = c(1,1.1), DE_R = 1, BMest = 'same.test', MDRI = 200,
 RSE_MDRI = 0.05, FRR = 0.01, RSE_FRR = 0.20, BigT = 730)
 
 
 incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
-alpha = 0.05, Power = 0.80, SS = 'out', DE_H = 1, DE_R = 1,
+alpha = 0.05, Power = 0.80, SS = "out", DE_H = 1, DE_R = 1,
 BMest = 'FRR.indep', MDRI = 200, RSE_MDRI = 0.05,
 FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.21), BigT = 730)
 
 
-incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
-n1 = 5000, n2 = 'out', alpha = 0.05, Power = 0.80, SS ='out',
-DE_H = 1, DE_R = 1, BMest = 'MDRI.FRR.indep', MDRI = 200,
-RSE_MDRI = c(0.05,0.06), FRR = c(0.01,0.009),
-RSE_FRR = c(0.20,0.21), BigT = 730)
 }
 
