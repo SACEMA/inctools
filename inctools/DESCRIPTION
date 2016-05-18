@@ -20,7 +20,7 @@ Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys and for calibrating tests for recent infection.
 Depends:
     R (>= 3.2.1)
-License: GPL-3 + file LICENSE
+License: GPL-3
 LazyData: True
 Imports:
     stats,
