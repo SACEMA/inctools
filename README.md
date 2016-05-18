@@ -1,12 +1,10 @@
 # Incidence Estimation Tools (*inctools*)
 
-Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests. This package contains the functionality previously available in the package *ritcalib*.
+Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests. 
 
-You can find version 1.0.0 (initial release) under [Releases](https://github.com/SACEMA/inctools/releases).
+This package is a more robust implementation of the deprecated spreadsheet tools released as *ABIE* and also contains the functionality previously available in the deprecated package *ritcalib*.
 
-**Version 1.0.0 has been submitted to CRAN and is undergoing review.**
-
-We recommend using the latest stable release, rather than the code under development contained in this repository.
+*inctools* is available on the [Comprehensive R Archive Network](https://cran.r-project.org/web/packages/inctools/index.html). You can also find the latest stable release under [Releases](https://github.com/SACEMA/inctools/releases). Releases on this repository may be slightly ahead of the version available through CRAN, but we recommend installing from CRAN.
 
 Older spreadsheet-based tools for inferring incidence using biomarkers for 'recent infection' can be found [here](http://www.incidence-estimation.org/page/tools-for-incidence-from-biomarkers-for-recent-infection). These tools are largely superceded by *inctools*.
 
@@ -16,9 +14,13 @@ These tools are released as an R package by the [DST/NRF Centre of Excellence in
 
 ## Installation
 
-Install directly from CRAN once the package becomes available.
+Install directly from CRAN as follows:
 
-Otherwise, download the source or binary package for your platform, and install dependencies manually first:
+```
+install.packages("inctools")
+```
+
+Otherwise, download the source package and install dependencies manually first:
 
 ```
 install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma"))
