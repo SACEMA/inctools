@@ -144,13 +144,13 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
     stop("Subject identifier and time variables must be specified.")
   }
 
-  if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
-    stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
-  }
-
-  if (parallel == TRUE) {
-    check_package("doMC")
-  }
+  # if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
+  #   stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
+  # }
+  #
+  # if (parallel == TRUE) {
+  #   check_package("doMC")
+  # }
 
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
@@ -201,7 +201,11 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                 plot_parameters <- parameters
             }
 
-            doMC::registerDoMC(cores)
+            #doMC::registerDoMC(cores)
+            doSNOW::registerDoSNOW(snow::makeCluster(cores, type = "SOCK"))
+            if (foreach::getDoParWorkers() != cores) {
+              stop("Failed to initialise parallel worker threads.")
+              }
             chosen_subjects <- vector(mode = "list", length = n_bootstraps)
             for (j in 1:n_bootstraps) {
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
@@ -286,22 +290,17 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
     return(output)
 }
 
-# This is complicated - needs specification of the family of individual curves,
-# function with parameters etc...  Estimate MDRI using a mixed effects binomial
-# model...  mdri_ml_mixedbinomial <- function() { }
 
-
-
-check_package <- function(package) {
-    if (!require(package, character.only = TRUE)) {
-        print(paste("Attempting to install dependency", package, sep = " "))
-        utils::install.packages(package, dependencies = TRUE)
-        if (!require(package, character.only = TRUE)) {
-            stop(paste("Package", package, "could not be automatically installed.",
-                sep = " "))
-        }
-    }
-}
+# check_package <- function(package) {
+#     if (!require(package, character.only = TRUE)) {
+#         print(paste("Attempting to install dependency", package, sep = " "))
+#         utils::install.packages(package, dependencies = TRUE)
+#         if (!require(package, character.only = TRUE)) {
+#             stop(paste("Package", package, "could not be automatically installed.",
+#                 sep = " "))
+#         }
+#     }
+# }
 
 process_data <- function(data = data, subid_var = subid_var, time_var = time_var,
     recency_vars = recency_vars, inclusion_time_threshold = inclusion_time_threshold) {

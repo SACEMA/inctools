@@ -1,4 +1,5 @@
 import(foreach)
+#import(doSNOW)
 export(frrcal)
 export(inccounts)
 export(incpower)
