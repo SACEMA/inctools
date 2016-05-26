@@ -113,7 +113,7 @@ mdrical(data=excalibdata,
 
 As above, but asking for both functional forms and parellelising the bootstrapping. In this case, the job is split over four cores.
 
-**Note: This option only works on Unix (Mac or Linux). On Windows this will result in error messages. To make sure this vignette builds on all platforms, the example code, but not the output, is shown.**
+**Note: To make sure this vignette builds in a reasonable time, the example code, but not the output, is shown.**
 
 ```{r, eval = FALSE}
 mdrical(data=excalibdata,
