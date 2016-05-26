@@ -31,7 +31,7 @@
 # ADD OPTION TO GET FULL LIST OF MDRIs from the bootstrapping procedure or the
 # shape of the distribution or something
 #' @param plot Specifies whether a plot of the probability of testing recent over time should be produced
-#' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste. Not available on Windows.
+#' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste.
 #' @param cores Set number of cores for parallel processing when parallel=TRUE. This defaults to four.
 #' @return MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
 #' @return Plots A plot of Probability of testing recent over time for each functional form.
@@ -144,14 +144,6 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
     stop("Subject identifier and time variables must be specified.")
   }
 
-  if (parallel == TRUE && Sys.info()["sysname"] == "Windows") {
-    stop("Sorry, parallelisation of bootstrapping is not supported on Windows")
-  }
-
-  if (parallel == TRUE) {
-    check_package("doMC")
-  }
-
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
   if (sum(variables == subid_var) != 1) {
@@ -201,7 +193,10 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                 plot_parameters <- parameters
             }
 
-            doMC::registerDoMC(cores)
+            doSNOW::registerDoSNOW(snow::makeCluster(cores, type = "SOCK"))
+            if (foreach::getDoParWorkers() != cores) {
+              stop("Failed to initialise parallel worker threads.")
+              }
             chosen_subjects <- vector(mode = "list", length = n_bootstraps)
             for (j in 1:n_bootstraps) {
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
@@ -284,23 +279,6 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
         output <- list(MDRI = mdri_output, Models = model_output)
     }
     return(output)
-}
-
-# This is complicated - needs specification of the family of individual curves,
-# function with parameters etc...  Estimate MDRI using a mixed effects binomial
-# model...  mdri_ml_mixedbinomial <- function() { }
-
-
-
-check_package <- function(package) {
-    if (!require(package, character.only = TRUE)) {
-        print(paste("Attempting to install dependency", package, sep = " "))
-        utils::install.packages(package, dependencies = TRUE)
-        if (!require(package, character.only = TRUE)) {
-            stop(paste("Package", package, "could not be automatically installed.",
-                sep = " "))
-        }
-    }
 }
 
 process_data <- function(data = data, subid_var = subid_var, time_var = time_var,
@@ -439,8 +417,6 @@ plot_probability <- function(functional_form = functional_form, parameters = par
         colnames(plotdata) <- c("time_since_eddi", "probability")
     })
 
-    #plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = time_since_eddi,
-    #                                                                                y = probability))
     plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = plotdata$time_since_eddi,
                                                                                     y = plotdata$probability))
     plotout <- plotout + ggplot2::labs(x = "Time (since detectable infection)", y = "Probability of testing recent")
