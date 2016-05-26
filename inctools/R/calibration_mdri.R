@@ -115,11 +115,15 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
   }
 
   if (is.null(recency_rule)) {
-    stop("Please specify a Recency Rule")
+    stop("Please specify a recency rule")
   }
 
   if (is.null(recency_vars)) {
     stop("Please specify at least one Recency Variable")
+  }
+
+  if (recency_rule != "binary_data" & recency_rule != "independent_thresholds") {
+    stop("Please specify a valid recency rule")
   }
 
   if (recency_rule == "binary_data") {
@@ -441,10 +445,15 @@ plot_probability <- function(functional_form = functional_form, parameters = par
                                                                                     y = plotdata$probability))
     plotout <- plotout + ggplot2::labs(x = "Time (since detectable infection)", y = "Probability of testing recent")
     plotout <- plotout + ggplot2::geom_vline(xintercept = mdri, colour = "blue")
-    plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[1], colour = "blue",
-        alpha = 0.7, linetype = "dashed")
-    plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[2], colour = "blue",
-        alpha = 0.7, linetype = "dashed")
+    if (!is.na(mdri_ci[1]) & !is.na(mdri_ci[2]) & !is.null(mdri_ci[1]) &
+        !is.null(mdri_ci[2])) {
+      plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[1],
+                                               colour = "blue", alpha = 0.7,
+                                               linetype = "dashed")
+      plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[2],
+                                               colour = "blue", alpha = 0.7,
+                                               linetype = "dashed")
+      }
     plotout <- plotout + ggplot2::annotate("text", label = "MDRI", x = mdri + 50,
         y = 0.95, colour = "blue")
     plotout <- plotout + ggplot2::geom_vline(xintercept = recency_cutoff_time, colour = "red")
