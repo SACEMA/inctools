@@ -115,11 +115,15 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
   }
 
   if (is.null(recency_rule)) {
-    stop("Please specify a Recency Rule")
+    stop("Please specify a recency rule")
   }
 
   if (is.null(recency_vars)) {
     stop("Please specify at least one Recency Variable")
+  }
+
+  if (recency_rule != "binary_data" & recency_rule != "independent_thresholds") {
+    stop("Please specify a valid recency rule")
   }
 
   if (recency_rule == "binary_data") {
