@@ -52,11 +52,11 @@ In both cases, MDRI is the integral of $P_R(t)$ from $0$ to $T$.
 \Omega_T = \int_{0}^{T} P_R(t)dt
 \end{equation}
 
-The default behaviour is to implement both model forms if the argument `functional_forms` omitted.
+The default behaviour is to implement both model forms if the argument `functional_forms` is omitted.
 
-Confidence intervals are computed by means of subject-level bootstrapping, as  measurements from subjects with more than one measurement in the dataset cannot be considered indpendent observations. An MDRI estimate is then computed using the resampled data. The number of bootstraps is specified using the argument `n_bootstraps`. We recommend 10,000 for reproducible confidence intervals and standard errors. To support subject level resampling, the subject identifier in the dataset nust be specified using the `subid_var` argument.
+Confidence intervals are computed by means of subject-level bootstrapping, as measurements from subjects with more than one measurement in the dataset cannot be considered indpendent observations. An MDRI estimate is then calculated using the resampled data. The number of bootstrap iterations is specified using the argument `n_bootstraps`. We recommend 10,000 for reproducible confidence intervals and standard errors. To support subject level resampling, the subject identifier in the dataset must be specified using the `subid_var` argument.
 
-In addition to specifying the value of $T$ (using the argument `recency_cutoff_time`) a `inclusion_time_threshold` is required, to *exclude* data points beyond a certain time (post infection). This is to prevent falsely recent measurements from unduly affecting the fit between $0$ and $T$. This should typically be a value somewhat (but not too much) larger than $T$.
+In addition to specifying the value of $T$ (using the argument `recency_cutoff_time`), an `inclusion_time_threshold` is required, to *exclude* data points beyond a certain time (post infection). This is to prevent falsely recent measurements from unduly affecting the fit between $0$ and $T$. This should typically be a value somewhat (but not too much) larger than $T$.
 
 To specify recency status, one can either supply a list of variables and thresholds (indicating in whether a result above or below the thresholds signifies recency) or specify the `recency_rule` as `"binary_data"`, in which case a 1 indicates recency.
 
