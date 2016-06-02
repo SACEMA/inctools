@@ -1,6 +1,6 @@
 # Incidence Estimation Tools (*inctools*)
 
-Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests. 
+Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests.
 
 This package is a more robust implementation of the deprecated spreadsheet tools released as *ABIE* and also contains the functionality previously available in the deprecated package *ritcalib*.
 
@@ -20,7 +20,9 @@ Install directly from CRAN as follows:
 install.packages("inctools")
 ```
 
-Otherwise, download the source package and install dependencies manually first:
+### Latest stable release
+
+Otherwise, download the source package from [Releases](https://github.com/SACEMA/inctools/releases) and install dependencies manually first:
 
 ```
 install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma"))
@@ -30,6 +32,22 @@ If you're on Mac or Linux, additionally,
 
 ```
 install.packages(c("doMC","foreach"))
+```
+
+### Current development version
+
+To build and install the current development version, you will need to clone the repository and ensure that you have the required build tools installed on your system.
+
+Install dependencies manually:
+
+```
+install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma","foreach","snow","doSNOW","devtools","knitr","roxygen2"))
+```
+
+Then use "build and reload" in RStudio or set your working directory to `<repo location>/inctools/` and then execute:
+
+```
+devtools::install()
 ```
 
 ## Usage terms
@@ -49,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Contributors
 
-Several people contributed to this package. We encourage contributions from the community of users. 
+Several people contributed to this package. We encourage contributions from the community of users.
 
 Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, Simon Daniel and Yuruo Li, with contributions by Reshma Kassanjee, Hilmarie Brand, Stefano Ongarello and Yusuke Asai.
 
