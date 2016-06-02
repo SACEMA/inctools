@@ -2,7 +2,7 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.5.9000
+Version: 1.0.5.9001
 Date: 2016-06-02
 Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
@@ -37,7 +37,7 @@ Imports:
     snow,
     doSNOW
 Suggests:
-    knitr,
-    survey
+    survey,
+    rmarkdown
+VignetteBuilder: rmarkdown
 RoxygenNote: 5.0.1
-VignetteBuilder: knitr
