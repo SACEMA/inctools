@@ -22,7 +22,9 @@ install.packages("inctools")
 
 ### Latest stable release
 
-Otherwise, download the source package from [Releases](https://github.com/SACEMA/inctools/releases) and install dependencies manually first:
+Otherwise, download the source package from
+[Releases](https://github.com/SACEMA/inctools/releases) and install dependencies
+manually first:
 
 ```
 install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma"))
@@ -36,15 +38,19 @@ install.packages(c("doMC","foreach"))
 
 ### Current development version
 
-To build and install the current development version, you will need to clone the repository and ensure that you have the required build tools installed on your system.
+To build and install the current development version, you will need to clone the
+repository and ensure that you have the required build tools installed on your
+system.
 
 Install dependencies manually:
 
 ```
-install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma","foreach","snow","doSNOW","devtools","knitr","roxygen2"))
+install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma","foreach",
+                   "snow","doSNOW","devtools","knitr","roxygen2","rmarkdown"))
 ```
 
-Then use "build and reload" in RStudio or set your working directory to `<repo location>/inctools/` and then execute:
+Then use "build and reload" in RStudio or set your working directory to
+`<repo location>/inctools/` and then execute:
 
 ```
 devtools::install()
