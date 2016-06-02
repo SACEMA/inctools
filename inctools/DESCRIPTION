@@ -19,6 +19,8 @@ Authors@R: c(
   )
 Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys and for calibrating tests for recent infection.
+URL: http://www.incidence-estimation.org/page/inctools
+BugReports: https://github.com/SACEMA/inctools/issues
 Depends:
     R (>= 3.2.1)
 License: GPL-3
@@ -35,7 +37,6 @@ Imports:
     snow,
     doSNOW
 Suggests:
-    knitr,
     survey
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
