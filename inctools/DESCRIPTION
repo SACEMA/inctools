@@ -37,6 +37,7 @@ Imports:
     snow,
     doSNOW
 Suggests:
+    knitr,
     survey
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
