@@ -35,7 +35,8 @@ Imports:
     pracma,
     foreach,
     snow,
-    doSNOW
+    doSNOW,
+    utils
 Suggests:
     survey,
     rmarkdown

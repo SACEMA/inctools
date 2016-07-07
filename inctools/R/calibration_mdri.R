@@ -32,6 +32,7 @@
 # shape of the distribution or something
 #' @param plot Specifies whether a plot of the probability of testing recent over time should be produced
 #' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste.
+#' @param progress Set to TRUE to print a progress bar during bootstrapping.
 #' @param cores Set number of cores for parallel processing when parallel=TRUE. This defaults to four.
 #' @return MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
 #' @return Plots A plot of Probability of testing recent over time for each functional form.
@@ -84,13 +85,15 @@
 #'         recency_vars = "Recent",
 #'         n_bootstraps = 10,
 #'         alpha = 0.05,
-#'         plot = TRUE)
+#'         plot = TRUE,
+#'         progress = TRUE)
 #' @importFrom foreach foreach
 #' @export
 mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_forms = c("cloglog_linear",
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
     recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
-    n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4) {
+    n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4,
+    progress = TRUE) {
 
   if (is.null(data)) {
     stop("No input data has been specified")
@@ -147,15 +150,19 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
   if (sum(variables == subid_var) != 1) {
-    print(paste("There is no column", subid_var, "in the data frame."))
+    stop(paste("There is no column", subid_var, "in the data frame."))
   }
   if (sum(variables == time_var) != 1) {
-    print(paste("There is no column", time_var, "in the data frame."))
+    stop(paste("There is no column", time_var, "in the data frame."))
   }
   for (i in 1:length(recency_vars)) {
     if (sum(variables == recency_vars[i]) != 1) {
-      print(paste("There is no column", recency_vars[i], "in the data frame."))
+      stop(paste("There is no column", recency_vars[i], "in the data frame."))
     }
+  }
+
+  if (n_bootstraps < 0 | !is.wholenumber(n_bootstraps)) {
+    stop("n_bootstraps must be a positive integer")
   }
 
     ## Assign numeric subject ids, recency variables and recency status
@@ -178,6 +185,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
 
     for (i in 1:length(functional_forms)) {
         functional_form <- functional_forms[i]
+        print(paste("Computing MDRI using functional form",functional_form))
 
         if (parallel == TRUE && n_bootstraps != 0) {
             boot_data <- data
@@ -193,7 +201,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                 plot_parameters <- parameters
             }
 
-            doSNOW::registerDoSNOW(snow::makeCluster(cores, type = "SOCK"))
+            doSNOW::registerDoSNOW(snow::makeCluster(cores, type = "SOCK", oufile = ""))
             if (foreach::getDoParWorkers() != cores) {
               stop("Failed to initialise parallel worker threads.")
               }
@@ -201,6 +209,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             for (j in 1:n_bootstraps) {
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
             }
+            if (progress==TRUE) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 2)}
             mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind) %dopar%
                 {
                   boot_data <- data[FALSE, ]
@@ -214,9 +223,12 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                   mdri_iterate <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
                     functional_form = functional_form, tolerance = tolerance_integral,
                     maxit = maxit_integral)
+                  if (progress==TRUE) {utils::setTxtProgressBar(pb, j)}
                   return(mdri_iterate)
                 }
+            if (progress==TRUE) {close(pb)}
         } else {
+            if (progress==TRUE && n_bootstraps > 0) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)}
             for (j in 0:n_bootstraps) {
                 chosen_subjects <- sample(1:n_subjects, n_subjects, replace = T)
                 if (j != 0) {
@@ -244,8 +256,10 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                   }
                 } else {
                   mdris <- append(mdris, mdri_iterate)
+                  if (progress==TRUE) {utils::setTxtProgressBar(pb, j)}
                 }
             }  # bootstraps
+          if (progress==TRUE) {close(pb)}
         }
 
         if (n_bootstraps == 0) {
@@ -442,4 +456,8 @@ plot_probability <- function(functional_form = functional_form, parameters = par
     plotout <- plotout + ggplot2::ggtitle(plot_title)
 
     return(plotout)
+}
+
+is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) {
+  abs(x - round(x)) < tol
 }

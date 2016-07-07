@@ -9,7 +9,7 @@ mdrical(data = NULL, subid_var = NULL, time_var = NULL,
   recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
   recency_rule = "binary_data", recency_vars = NULL,
   recency_params = NULL, n_bootstraps = 100, alpha = 0.05, plot = TRUE,
-  parallel = FALSE, cores = 4)
+  parallel = FALSE, cores = 4, progress = TRUE)
 }
 \arguments{
 \item{data}{A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)}
@@ -40,6 +40,8 @@ mdrical(data = NULL, subid_var = NULL, time_var = NULL,
 \item{parallel}{Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste.}
 
 \item{cores}{Set number of cores for parallel processing when parallel=TRUE. This defaults to four.}
+
+\item{progress}{Set to TRUE to print a progress bar during bootstrapping.}
 }
 \value{
 MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
@@ -100,6 +102,7 @@ mdrical(data=excalibdata,
         recency_vars = "Recent",
         n_bootstraps = 10,
         alpha = 0.05,
-        plot = TRUE)
+        plot = TRUE,
+        progress = TRUE)
 }
 
