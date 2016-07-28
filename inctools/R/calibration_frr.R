@@ -77,8 +77,6 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
         }
     }
     subjectdata <- subjectdata[!is.na(subjectdata$sid),]
-    print("Data, 1 row per subject")
-    print(nrow(subjectdata))
     binomprob <- stats::binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
         p = 0, conf.level = 1 - alpha)
     FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1],
