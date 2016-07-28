@@ -177,7 +177,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
 
     n_subjects <- max(data$sid)
 
-    mdri_output <- data.frame(matrix(ncol = 4, nrow = 0))
+    mdri_output <- data.frame(matrix(ncol = 7, nrow = 0))
     model_output <- list()
     if (plot == TRUE) {
         plot_output <- list()
@@ -265,13 +265,13 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
         if (n_bootstraps == 0) {
             mdri_sd <- NA
             mdri_ci <- c(NA, NA)
-            mdri_ff <- data.frame(round(mdri, 4), NA, NA, NA)
+            mdri_ff <- data.frame(round(mdri, 4), NA, NA, NA, sum(data$recency_status), length(unique(data$sid)), nrow(data))
             mdri_output <- rbind(mdri_output, mdri_ff)
         } else {
             mdri_sd <- stats::sd(mdris)
             mdri_ci <- stats::quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
             mdri_ff <- data.frame(round(mdri, 4), round(mdri_ci[1], 4), round(mdri_ci[2],
-                4), round(mdri_sd, 4))
+                4), round(mdri_sd, 4), sum(data$recency_status), length(unique(data$sid)), nrow(data))
             mdri_output <- rbind(mdri_output, mdri_ff)
         }
 
@@ -285,7 +285,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
 
     }  # functional forms
     rownames(mdri_output) <- functional_forms
-    colnames(mdri_output) <- c("PE", "CI_LB", "CI_UB", "SD")
+    colnames(mdri_output) <- c("PE", "CI_LB", "CI_UB", "SE", "n_recent", "n_subjects", "n_observations")
 
     if (plot == TRUE) {
         output <- list(MDRI = mdri_output, Plots = plot_output, Models = model_output)
