@@ -57,14 +57,9 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
     if (is.null(time_var)) {stop("Error: No time variable provided.")}
     if (is.null(time_var)) {stop("Error: No recency variables provided variable provided.")}
 
-    names(data)[names(data) == subid_var] <- "sid"
-    names(data)[names(data) == time_var] <- "time_since_eddi"
-    data$time_since_eddi <- as.numeric(data$time_since_eddi)
-
-    #data <- subset(data, as.numeric(data$time_since_eddi) > recency_cutoff_time)
-    data <- data[data$time_since_eddi > recency_cutoff_time,]
     data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
         recency_vars = recency_vars, inclusion_time_threshold = 1e+06)
+    data <- data[data$time_since_eddi > recency_cutoff_time,]
     data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
     subjectdata <- data.frame(sid = NA, recent = NA)
     for (subjectid in unique(data$sid)) {
@@ -82,6 +77,8 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
         }
     }
     subjectdata <- subjectdata[!is.na(subjectdata$sid),]
+    print("Data, 1 row per subject")
+    print(nrow(subjectdata))
     binomprob <- stats::binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
         p = 0, conf.level = 1 - alpha)
     FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1],

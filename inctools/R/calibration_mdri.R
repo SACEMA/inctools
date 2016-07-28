@@ -299,13 +299,14 @@ process_data <- function(data = data, subid_var = subid_var, time_var = time_var
     recency_vars = recency_vars, inclusion_time_threshold = inclusion_time_threshold) {
     names(data)[names(data) == subid_var] <- "sid"
     names(data)[names(data) == time_var] <- "time_since_eddi"
+    data$time_since_eddi <- as.numeric(as.character(data$time_since_eddi))
     temp_data <- data[, c("sid", "time_since_eddi")]
     for (i in 1:length(recency_vars)) {
         temp_data <- cbind(temp_data, data[, recency_vars[i]])
         colnames(temp_data)[2 + i] <- paste0("recency", i)
     }
-    temp_data <- subset(temp_data, 0 < as.numeric(temp_data$time_since_eddi) & as.numeric(temp_data$time_since_eddi) <=
-        inclusion_time_threshold)
+    temp_data <- subset(temp_data, 0 < temp_data$time_since_eddi &
+                          temp_data$time_since_eddi <= inclusion_time_threshold)
     temp_data <- stats::na.omit(temp_data)
     if (nrow(temp_data) < 1) {
         stop("Error: dataframe is empty after omitting rows with empty cells and applying time exclusion criterion")
