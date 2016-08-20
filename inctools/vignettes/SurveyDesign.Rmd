@@ -97,8 +97,10 @@ incprecision(I = 0.017, RSE_I = 'out', PrevH = c(0.10,0.20), CR = 1, MDRI = 211,
              step = 5)
 ```
 
-<!-- #not-for-release -->
+<!-- #not-for-release -->  
 <!--
+## Not for release - one survey has been completed
+
 If one study has already been completed, one may calculate sample size requirements for a second survey, to obtain desired power:
 
 * `n1` is set to the sample size of the completed  The function call for this situation is similar to the previous call, except the survey for which the sample size generation is to be performed will have the sample size parameter in the function call specified as `"out`. See below for an example of this syntax and output. Again, note that the function parameter for sample size is still set to `SS = "out"`.
