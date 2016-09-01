@@ -1,0 +1,44 @@
+---
+title: "vignette_notes"
+output: html_document
+---
+
+
+```{r, echo=FALSE}
+library(inctools)
+```
+
+**Note: This is for inclusion in SurveyDesign.Rmd once incpower() has been updated.**
+
+## Not for release - one survey has been completed
+
+If one study has already been completed, one may calculate sample size requirements for a second survey, to obtain desired power:
+
+* `n1` is set to the sample size of the completed  The function call for this situation is similar to the previous call, except the survey for which the sample size generation is to be performed will have the sample size parameter in the function call specified as `"out`. See below for an example of this syntax and output. Again, note that the function parameter for sample size is still set to `SS = "out"`.
+
+```{r, echo=TRUE}
+incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.15, n1 = 5000,
+        n2 = "out", alpha = 0.05, Power = 0.8, SS = "out", CR = 1, DE_H = 1,
+        DE_R = 1, BMest = "same.test", MDRI = 200, RSE_MDRI = 0.05, FRR = 0.01,
+        RSE_FRR = 0.21, BigT = 730)
+```
+The function now returns the necessary sample size for survey 2 that will generate power of 80\%, given the hypothetical population parameters for survey 2 and the observed parameter estimates for survey 1 and the assay characteristics MDRI, FRR, and their respective relative standard errors and time cut point T.
+
+## This is material for the incpower() help file:
+
+```{r, echo=TRUE}
+
+# param
+
+#' @param n1 Sample size for survey 1. If equal sample sizes for both surveys are desired at a given power level, both n1 and n2 must have value 'both', which is the default.
+#' If necessary sample size at a given power level for survey 1 is desired and survey 2 has been completed, n1 must be set to 'out' along with SS.
+#' If necessary sample size at a given power level for survey 2 is desired and survey 1 has been completed, n2 must be set to 'out' along with SS.
+
+# example
+
+#'incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
+#'n1 = 5000, n2 = 'out', alpha = 0.05, Power = 0.80, SS ="out",
+#'DE_H = 1, DE_R = 1, BMest = 'MDRI.FRR.indep', MDRI = 200,
+#'RSE_MDRI = c(0.05,0.06), FRR = c(0.01,0.009),
+#'RSE_FRR = c(0.20,0.21), BigT = 730)
+```
