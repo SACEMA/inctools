@@ -93,7 +93,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
     recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
     n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4,
-    progress = TRUE) {
+    progress = FALSE) {
 
   if (is.null(data)) {
     stop("No input data has been specified")
@@ -228,7 +228,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                 }
             if (progress==TRUE) {close(pb)}
         } else {
-            if (progress==TRUE && n_bootstraps > 0) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)}
+            if (progress==TRUE) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)}
             for (j in 0:n_bootstraps) {
                 chosen_subjects <- sample(1:n_subjects, n_subjects, replace = T)
                 if (j != 0) {
@@ -395,7 +395,6 @@ integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = re
     if (is.nan(functional_form)) {
         stop("functional_form name required in order to evaluate functional form")
     }
-
     switch(as.character(functional_form), cloglog_linear = {
         answer <- try(cubature::adaptIntegrate(f = functional_form_clogloglinear,
             lowerLimit = 0, upperLimit = recency_cutoff_time, parameters = parameters,
