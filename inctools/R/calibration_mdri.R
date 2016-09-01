@@ -92,8 +92,7 @@
 mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_forms = c("cloglog_linear",
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
     recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
-    n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4,
-    progress = FALSE) {
+    n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4) {
 
   if (is.null(data)) {
     stop("No input data has been specified")
@@ -187,7 +186,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
         functional_form <- functional_forms[i]
         print(paste("Computing MDRI using functional form",functional_form))
 
-        if (parallel == TRUE && n_bootstraps != 0) {
+        if (parallel == TRUE && n_bootstraps > 0) {
             boot_data <- data
             model <- fit_binomial_model(data = boot_data, functional_form = functional_form,
                 tolerance = tolerance_glm2, maxit = maxit_glm2)
@@ -209,8 +208,11 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             for (j in 1:n_bootstraps) {
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
             }
-            if (progress==TRUE) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 2)}
-            mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind) %dopar%
+              pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)
+              progress <- function(n) utils::setTxtProgressBar(pb, n)
+              opts <- list(progress = progress)
+            mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
+                                      .options.snow = opts) %dopar%
                 {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {
@@ -223,12 +225,12 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                   mdri_iterate <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
                     functional_form = functional_form, tolerance = tolerance_integral,
                     maxit = maxit_integral)
-                  if (progress==TRUE) {utils::setTxtProgressBar(pb, j)}
+                  if (n_bootstraps > 0) {utils::setTxtProgressBar(pb, j)}
                   return(mdri_iterate)
                 }
-            if (progress==TRUE) {close(pb)}
+            close(pb)
         } else {
-            if (progress==TRUE) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)}
+            if (n_bootstraps > 0) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)}
             for (j in 0:n_bootstraps) {
                 chosen_subjects <- sample(1:n_subjects, n_subjects, replace = T)
                 if (j != 0) {
@@ -256,10 +258,10 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                   }
                 } else {
                   mdris <- append(mdris, mdri_iterate)
-                  if (progress==TRUE) {utils::setTxtProgressBar(pb, j)}
+                  utils::setTxtProgressBar(pb, j)
                 }
             }  # bootstraps
-          if (progress==TRUE) {close(pb)}
+          if (n_bootstraps > 0) {close(pb)}
         }
 
         if (n_bootstraps == 0) {
