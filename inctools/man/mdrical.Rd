@@ -37,11 +37,9 @@ mdrical(data = NULL, subid_var = NULL, time_var = NULL,
 
 \item{plot}{Specifies whether a plot of the probability of testing recent over time should be produced}
 
-\item{parallel}{Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste.}
+\item{parallel}{Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor system.}
 
 \item{cores}{Set number of cores for parallel processing when parallel=TRUE. This defaults to four.}
-
-\item{progress}{Set to TRUE to print a progress bar during bootstrapping.}
 }
 \value{
 MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
@@ -102,7 +100,6 @@ mdrical(data=excalibdata,
         recency_vars = "Recent",
         n_bootstraps = 10,
         alpha = 0.05,
-        plot = TRUE,
-        progress = TRUE)
+        plot = TRUE)
 }
 

@@ -65,7 +65,5 @@ incpower(I1 = 0.05, I2 = 0.03, PrevH1 = 0.20, PrevH2 = 0.20,
 alpha = 0.05, Power = 0.80, SS = "out", DE_H = 1, DE_R = 1,
 BMest = 'FRR.indep', MDRI = 200, RSE_MDRI = 0.05,
 FRR = c(0.01,0.009), RSE_FRR = c(0.20,0.21), BigT = 730)
-
-
 }
 

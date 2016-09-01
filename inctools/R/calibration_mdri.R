@@ -31,8 +31,7 @@
 # ADD OPTION TO GET FULL LIST OF MDRIs from the bootstrapping procedure or the
 # shape of the distribution or something
 #' @param plot Specifies whether a plot of the probability of testing recent over time should be produced
-#' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor syste.
-#' @param progress Set to TRUE to print a progress bar during bootstrapping.
+#' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor system.
 #' @param cores Set number of cores for parallel processing when parallel=TRUE. This defaults to four.
 #' @return MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
 #' @return Plots A plot of Probability of testing recent over time for each functional form.
@@ -85,8 +84,7 @@
 #'         recency_vars = "Recent",
 #'         n_bootstraps = 10,
 #'         alpha = 0.05,
-#'         plot = TRUE,
-#'         progress = TRUE)
+#'         plot = TRUE)
 #' @importFrom foreach foreach
 #' @export
 mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_forms = c("cloglog_linear",
