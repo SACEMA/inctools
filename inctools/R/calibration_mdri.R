@@ -197,8 +197,8 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             if (plot == TRUE) {
                 plot_parameters <- parameters
             }
-
-            doSNOW::registerDoSNOW(snow::makeCluster(cores, type = "SOCK", oufile = ""))
+            cluster <- parallel::makeCluster(cores)
+            doParallel::registerDoParallel(cluster)
             if (foreach::getDoParWorkers() != cores) {
               stop("Failed to initialise parallel worker threads.")
               }
@@ -210,7 +210,9 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
               progress <- function(n) utils::setTxtProgressBar(pb, n)
               opts <- list(progress = progress)
             mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
-                                      .options.snow = opts) %dopar%
+                                      #.options.snow = opts,
+                                      .inorder = FALSE,
+                                      .packages = "inctools") %dopar%
                 {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {
@@ -227,6 +229,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                   return(mdri_iterate)
                 }
             close(pb)
+            parallel::stopCluster(cluster)
         } else {
             if (n_bootstraps > 0) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)}
             for (j in 0:n_bootstraps) {
@@ -345,6 +348,7 @@ assign_recency_status <- function(data = data, recency_params = recency_params, 
     return(data)
 }
 
+#' @export
 fit_binomial_model <- function(data = data, functional_form = functional_form, tolerance, maxit) {
     data$time_since_eddi <- ifelse(data$time_since_eddi == 0, 1e-10, data$time_since_eddi)
 
@@ -389,6 +393,7 @@ functional_form_logitcubic <- function(t, parameters) {
 }
 
 # A function that integrates from 0 to T in order to obtain MDRI estimate
+#' @export
 integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
     functional_form = functional_form, tolerance, maxit) {
 
