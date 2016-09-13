@@ -197,7 +197,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             if (plot == TRUE) {
                 plot_parameters <- parameters
             }
-            cluster <- parallel::makeCluster(cores)
+            cluster <- parallel::makeCluster(cores, outfile="")
             doParallel::registerDoParallel(cluster)
             if (foreach::getDoParWorkers() != cores) {
               stop("Failed to initialise parallel worker threads.")
@@ -207,12 +207,13 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
                 chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
             }
               pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)
-              progress <- function(n) utils::setTxtProgressBar(pb, n)
-              opts <- list(progress = progress)
+              #progress <- function(n) utils::setTxtProgressBar(pb, n)
+              #opts <- list(progress = progress)
             mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
                                       #.options.snow = opts,
-                                      .inorder = FALSE,
-                                      .packages = "inctools") %dopar%
+                                      .inorder = FALSE #,
+                                      #.packages = "inctools"
+                                      ) %dopar%
                 {
                   boot_data <- data[FALSE, ]
                   for (k in 1:n_subjects) {

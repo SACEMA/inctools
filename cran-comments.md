@@ -1,7 +1,12 @@
-# 2016-09-01 - v1.0.0.6
+# 2016-09-13 - v1.0.0.7
 
 ## Build environment
 * OS X 10.11.6, R 3.3.1
+
+## Test environments
+* OS X 10.11.6, R 3.3.1
+* http://win-builder.r-project.org/ R-release
+* http://win-builder.r-project.org/ R-devel
 
 ## R CMD check results
 0 errors | 0 warnings | 0 notes

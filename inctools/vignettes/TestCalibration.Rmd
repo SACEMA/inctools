@@ -85,8 +85,7 @@ mdrical(data=excalibdata,
                  recency_vars = "Recent",
                  n_bootstraps = 100,
                  alpha = 0.05,
-                 plot = TRUE,
-                 progress = FALSE)
+                 plot = TRUE)
 ```
 
 ### Example of `mdrical` using the logit cubic functional form and two independent thresholds on biomarkers
@@ -107,8 +106,7 @@ mdrical(data=excalibdata,
                  recency_params = c(10,0,1000,1),
                  n_bootstraps = 100,
                  alpha = 0.05,
-                 plot = TRUE,
-                 progress = FALSE)
+                 plot = TRUE)
 ```
 
 ### Example of `mdrical` in which bootstraps are run in parallel
@@ -131,8 +129,7 @@ mdrical(data=excalibdata,
                  alpha = 0.05,
                  plot = TRUE,
                  parallel = TRUE,
-                 cores=4,
-                 progress = FALSE)
+                 cores=4)
 ```
 
 ## Estimating FRR using binomial proportions with `frrcal`

@@ -179,16 +179,16 @@
 </ol>
 <p>Below are the variances of the incidence difference estimator for the three cases</p>
 Case 1: Surveys share a single estimate for MDRI and a single estimate for FRR
-\begin{align}
+<span class="math display">\[\begin{align}
 V[\Delta \mathbb{I}]_1 \approx &amp;
 \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
 &amp;\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
   &amp; \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\ PrevR_1)^2) + \\     &amp; \frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))\ (RSE_{PrevR_2}PrevR_2)^2) +\\
     &amp;\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
 &amp;\Big(\big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{(1 - PrevH_1)} -\frac{PrevH_2(T\ PrevR_2 -\Omega)}{(1 - PrevH_2)}\big)(\Omega - \beta T)^2 \Big)^2 RSE_{\beta}\ \beta\\
-\end{align}
+\end{align}\]</span>
 Case 2: Surveys share a single estimate for MDRI, but have independent FRR estimates
-\begin{align}
+<span class="math display">\[\begin{align}
 V[\Delta \mathbb{I}]_2 \approx &amp;
  \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
 &amp;\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
@@ -196,9 +196,9 @@ V[\Delta \mathbb{I}]_2 \approx &amp;
 &amp;\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
       &amp;\Big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{1 - PrevH_1}(\Omega - \beta_1 \ T)^2\Big)^2 RSE_{\beta_1}\ \beta_1 + \\  
       &amp;\Big(\frac{PrevH_2(T\ PrevR_2 - \Omega)}{1 - PrevH_2}(\Omega - \beta_2 \ T)^2)\Big)^2 RSE_{\beta_2}\ \beta_2
-\end{align}
+\end{align}\]</span>
 Case 3: Both MDRI and FRR are independently estimated in each survey
-\begin{align}
+<span class="math display">\[\begin{align}
 V[\Delta \mathbb{I}]_3 \approx &amp;
  \Big(\frac{(PrevR_1 - \beta_1)}{(1 - PrevH_1)^2} (\Omega_1 - \beta_1 T_1)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
 &amp;\Big(\frac{(PrevR_2 - \beta_2)}{(1 - PrevH_2)^2} (\Omega_2 - \beta_2 T_2)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
@@ -207,7 +207,7 @@ V[\Delta \mathbb{I}]_3 \approx &amp;
     &amp;\Big(\frac{\beta_2\ PrevH_2 - PrevR_2\ PrevH_2}{1 - PrevH_2}\ (\Omega_2 - \beta_2\ T_2)^2\Big)^2 RSE_{MDRI_2}\ MDRI_2    +\\
       &amp;\Big(\frac{PrevH_1(T_1\ PrevR_1 - \Omega_1}{1 - PrevH_1}(\Omega_1 -\beta_1\ T_1)^2\Big)^2  RSE_{\beta_1}\ \beta_1 + \\     
       &amp;\Big(\frac{PrevH_2(T_2\ PrevR_2 - \Omega_2}{1 - PrevH_2}(\Omega_2 -\beta_2\ T_2)^2\Big)^2  RSE_{\beta_2}\ \beta_2
-\end{align}
+\end{align}\]</span>
 <p>Note:</p>
 <ul>
 <li>The option for the assay characteristic scheme is specified by function parameter <code>BMest</code>. Subscripts 1 and 2 in the parameter notation denote associated survey or test parameters. The variances of the three cases follow.</li>
@@ -223,7 +223,7 @@ V[\Delta \mathbb{I}]_3 \approx &amp;
 <li>hypothesize that the estimated value of the variance of the incidence difference estimate (calculated carefully in accordance with the choice of how test properties are shared between the surveys) is a good estimate of the actual variance of the incidence difference. (This is equivalent to a routinely made assumption in less complex situations)</li>
 <li>allow the prevalence for each context to be independently estimated from the data from that context. (Note that even if the data does not support the rejection of the hypothesis that the prevalences are identical, benchmarking indicates that there is little or no advantage in constructing the null hypothesis to include equal prevalence.)</li>
 </ul>
-<p>The preceding assumptions allow the calculation of a p-value, which is done according to a two-tailed test, capturing the point that the experimenter has no basis to pre-determine the acceptable direction of any incidence difference.   Note that while it is common to report “power” as simply the probability of correctly rejecting a null hypothesis, without regard to whether the inferred direction of difference is in correspondence with the underlying reality, the present construction specifically presumes a two-tailed test, where the direction of any particular inferred difference will be either correct or incorrect. Hence, <em>inctools</em> calculates the probability of <em>correctly</em> detecting the sign of the incidence difference through the rejection of the null hypothesis throug the attainment of a below-threshold <em>p value</em>. Numerically, the probability of rejecting the null hypothesis, but with the incorrect direction for the inferred effect, will usually be <em>very</em> small, unless the study design has no useful statistical power in any case. The primary difference between this implementation and an alternative likely to be proposed, is in the insistence on a two tailed test, which should not be controversial in this situation as it would be difficult to defend the claim that survey implementers can claim to know the change in</p>
+<p>The preceding assumptions allow the calculation of a p-value, which is done according to a two-tailed test, capturing the point that the experimenter has no basis to pre-determine the acceptable direction of any incidence difference.   Note that while it is common to report “power” as simply the probability of correctly rejecting a null hypothesis, without regard to whether the inferred direction of difference is in correspondence with the underlying reality, the present construction specifically presumes a two-tailed test, where the direction of any particular inferred difference will be either correct or incorrect. Hence, <em>inctools</em> calculates the probability of <em>correctly</em> detecting the sign of the incidence difference through the rejection of the null hypothesis throug the attainment of a below-threshold <em>p value</em>. Numerically, the probability of rejecting the null hypothesis, but with the incorrect direction for the inferred effect, will usually be <em>very</em> small, unless the study design has no useful statistical power in any case. The primary difference between this implementation and an alternative likely to be proposed, is in the insistence on a two tailed test, which should not be controversial in this situation as it would be difficult to defend the claim that survey implementers can claim to know, in advance, the direction of a change in incidence.</p>
 <!--   #not-for-release -->
 <!--
 ## The Empirical Bootstrapping Option
