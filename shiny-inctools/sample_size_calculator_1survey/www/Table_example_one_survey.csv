@@ -1,0 +1,5 @@
+scenario,prev,inc,FRR,MDRI
+Example1,9.4,4.3,0.25,139
+Example2,5.2,0.8,0.75,150
+Example3,7.1,5.1,0.5,155
+Example4,7.1,5.1,0.8,195
