@@ -424,44 +424,44 @@ integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = re
 }
 
 plot_probability <- function(functional_form = functional_form, parameters = parameters,
-    mdri = mdri, inclusion_time_threshold = inclusion_time_threshold, recency_cutoff_time = recency_cutoff_time,
-    mdri_ci = mdri_ci) {
-    plot_time <- seq(from = 0, to = inclusion_time_threshold, by = 0.01)
-    switch(as.character(functional_form), cloglog_linear = {
-        plotdata <- data.frame(plot_time, exp(-exp(parameters[1] + (parameters[2]) *
-            log(plot_time))))
-        colnames(plotdata) <- c("time_since_eddi", "probability")
-    }, logit_cubic = {
-        plotdata <- data.frame(plot_time, 1/(1 + exp(-(parameters[1] + parameters[2] *
-            plot_time + parameters[3] * plot_time^2 + parameters[4] * plot_time^3))))
-        colnames(plotdata) <- c("time_since_eddi", "probability")
-    })
+                             mdri = mdri, inclusion_time_threshold = inclusion_time_threshold, recency_cutoff_time = recency_cutoff_time,
+                             mdri_ci = mdri_ci) {
+  plot_time <- seq(from = 0, to = inclusion_time_threshold, by = 0.01)
+  switch(as.character(functional_form), cloglog_linear = {
+    plotdata <- data.frame(plot_time, exp(-exp(parameters[1] + (parameters[2]) *
+                                                 log(plot_time))))
+    colnames(plotdata) <- c("time_since_eddi", "probability")
+  }, logit_cubic = {
+    plotdata <- data.frame(plot_time, 1/(1 + exp(-(parameters[1] + parameters[2] *
+                                                     plot_time + parameters[3] * plot_time^2 + parameters[4] * plot_time^3))))
+    colnames(plotdata) <- c("time_since_eddi", "probability")
+  })
 
-    plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = plotdata$time_since_eddi,
-                                                                                    y = plotdata$probability))
-    plotout <- plotout + ggplot2::labs(x = "Time (since detectable infection)", y = "Probability of testing recent")
-    plotout <- plotout + ggplot2::geom_vline(xintercept = mdri, colour = "blue")
-    if (!is.na(mdri_ci[1]) & !is.na(mdri_ci[2]) & !is.null(mdri_ci[1]) &
-        !is.null(mdri_ci[2])) {
-      plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[1],
-                                               colour = "blue", alpha = 0.7,
-                                               linetype = "dashed")
-      plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[2],
-                                               colour = "blue", alpha = 0.7,
-                                               linetype = "dashed")
-      }
-    plotout <- plotout + ggplot2::annotate("text", label = "MDRI", x = mdri + 50,
-        y = 0.95, colour = "blue")
-    plotout <- plotout + ggplot2::geom_vline(xintercept = recency_cutoff_time, colour = "red")
-    plotout <- plotout + ggplot2::annotate("text", label = "T", x = recency_cutoff_time +
-        20, y = 0.95, colour = "red")
-    plotout <- plotout + ggplot2::theme(panel.background = ggplot2::element_blank(),
-        panel.grid.major = ggplot2::element_line(colour = "dark grey"))
-    plot_title <- paste0("Probability of testing recent over time (", functional_form,
-        ")")
-    plotout <- plotout + ggplot2::ggtitle(plot_title)
+  plotout <- ggplot2::ggplot() + ggplot2::geom_line(data = plotdata, ggplot2::aes(x = plotdata$time_since_eddi,
+                                                                                  y = plotdata$probability)) +
+    ggplot2::labs(x = "Time (since detectable infection)", y = "Probability of testing recent") +
+    ggplot2::scale_y_continuous(limits=c(0,1),breaks = seq(0,1,0.2)) +
+    ggplot2::geom_vline(xintercept = mdri, colour = "blue")
+  if (!is.na(mdri_ci[1]) & !is.na(mdri_ci[2]) & !is.null(mdri_ci[1]) &
+      !is.null(mdri_ci[2])) {
+    plotout <- plotout + ggplot2::geom_vline(xintercept = mdri_ci[1],
+                                             colour = "blue", alpha = 0.7,
+                                             linetype = "dashed") +
+      ggplot2::geom_vline(xintercept = mdri_ci[2],
+                          colour = "blue", alpha = 0.7,
+                          linetype = "dashed")
+  }
+  plotout <- plotout + ggplot2::annotate("text", label = "MDRI", x = mdri + 50,
+                                         y = 0.95, colour = "blue") +
+    ggplot2::geom_vline(xintercept = recency_cutoff_time, colour = "red") +
+    ggplot2::annotate("text", label = "T", x = recency_cutoff_time +
+                        20, y = 0.95, colour = "red") +
+    ggplot2::theme(panel.background = ggplot2::element_blank(),
+                   panel.grid.major = ggplot2::element_line(colour = "dark grey")) +
+    ggplot2::ggtitle(paste0("Probability of testing recent over time (", functional_form,
+                            ")"))
 
-    return(plotout)
+  return(plotout)
 }
 
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) {
