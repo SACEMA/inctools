@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Several people contributed to this package. We encourage contributions from the community of users.
 
-Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, Simon Daniel and Yuruo Li, with contributions by Reshma Kassanjee, Hilmarie Brand, Stefano Ongarello and Yusuke Asai.
+Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, Simon Daniel and Yuruo Li, with contributions by Cari van Schalkwyk, Reshma Kassanjee, Hilmarie Brand, Stefano Ongarello and Yusuke Asai.
 
 ## Contact
 
