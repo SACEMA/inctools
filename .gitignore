@@ -1,6 +1,11 @@
 # History files
 .Rhistory
 .Rapp.history
+venv
+*.pyc
+*~
+*#*
+#*
 
 # Session Data files
 .RData
@@ -27,3 +32,4 @@ inctools.Rcheck
 
 # Mac garbage
 .DS_Store
+
