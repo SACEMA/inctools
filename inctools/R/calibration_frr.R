@@ -49,40 +49,88 @@
 #'        alpha = 0.05)
 #' @export
 frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cutoff_time = 730.5,
-    recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
-    alpha = 0.05) {
+                   recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
+                   alpha = 0.05) {
 
-    if (is.null(data)) {stop("Error: No dataframe provided.")}
-    if (is.null(subid_var)) {stop("Error: No subject identifier variable provided.")}
-    if (is.null(time_var)) {stop("Error: No time variable provided.")}
-    if (is.null(time_var)) {stop("Error: No recency variables provided variable provided.")}
 
-    data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
-        recency_vars = recency_vars, inclusion_time_threshold = 1e+06)
-    data <- data[data$time_since_eddi > recency_cutoff_time,]
-    data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
-    subjectdata <- data.frame(sid = NA, recent = NA)
-    for (subjectid in unique(data$sid)) {
-        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
-            subjectid, ]) == 0.5) {
-            subjectdata <- rbind(subjectdata, c(subjectid, 0.5))
-        }
-        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
-            subjectid, ]) < 0.5) {
-            subjectdata <- rbind(subjectdata, c(subjectid, 0))
-        }
-        if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
-            subjectid, ]) > 0.5) {
-            subjectdata <- rbind(subjectdata, c(subjectid, 1))
-        }
+  if (is.null(recency_rule)) {
+    stop("Please specify a recency rule")
+  }
+
+  if (is.null(recency_vars)) {
+    stop("Please specify at least one Recency Variable")
+  }
+
+  if (recency_rule != "binary_data" & recency_rule != "independent_thresholds") {
+    stop("Please specify a valid recency rule")
+  }
+
+  if (recency_rule == "binary_data") {
+    if (length(recency_vars) > 1) {
+      stop("Binary data should be specified in one recency (outcome) variable.")
     }
-    subjectdata <- subjectdata[!is.na(subjectdata$sid),]
-    binomprob <- stats::binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
-        p = 0, conf.level = 1 - alpha)
-    FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1],
-        4), round(binomprob$conf.int[2], 4), alpha, binomprob$statistic, binomprob$parameter[[1]],
-        nrow(data))
-    colnames(FRR) <- c("FRRest", "LB", "UB", "alpha", "n_recent", "n_subjects", "n_observations")
-    rownames(FRR) <- ""
-    return(FRR)
+    if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
+      stop("Input data is not binary")
+    }
+  }
+
+  if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 *
+      length(recency_params)) {
+    stop("The number of recency variables must match the number of recency paramaters.")
+  }
+
+  if (is.null(subid_var) | is.null(time_var)) {
+    stop("Subject identifier and time variables must be specified.")
+  }
+
+  if (is.null(data)) {stop("Error: No dataframe provided.")}
+  if (is.null(subid_var)) {stop("Error: No subject identifier variable provided.")}
+  if (is.null(time_var)) {stop("Error: No time variable provided.")}
+  if (is.null(time_var)) {stop("Error: No recency variables provided variable provided.")}
+
+
+  # check that subject id, time and recency variables exist
+  variables <- colnames(data)
+  if (sum(variables == subid_var) != 1) {
+    stop(paste("There is no column", subid_var, "in the data frame."))
+  }
+  if (sum(variables == time_var) != 1) {
+    stop(paste("There is no column", time_var, "in the data frame."))
+  }
+  for (i in 1:length(recency_vars)) {
+    if (sum(variables == recency_vars[i]) != 1) {
+      stop(paste("There is no column", recency_vars[i], "in the data frame."))
+    }
+  }
+
+
+
+  data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
+                       recency_vars = recency_vars, inclusion_time_threshold = 1e+06)
+  data <- data[data$time_since_eddi > recency_cutoff_time,]
+  data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
+  subjectdata <- data.frame(sid = NA, recent = NA)
+  for (subjectid in unique(data$sid)) {
+    if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
+                                                                       subjectid, ]) == 0.5) {
+      subjectdata <- rbind(subjectdata, c(subjectid, 0.5))
+    }
+    if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
+                                                                       subjectid, ]) < 0.5) {
+      subjectdata <- rbind(subjectdata, c(subjectid, 0))
+    }
+    if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
+                                                                       subjectid, ]) > 0.5) {
+      subjectdata <- rbind(subjectdata, c(subjectid, 1))
+    }
+  }
+  subjectdata <- subjectdata[!is.na(subjectdata$sid),]
+  binomprob <- stats::binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
+                                 p = 0, conf.level = 1 - alpha)
+  FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1],
+                                                             4), round(binomprob$conf.int[2], 4), alpha, binomprob$statistic, binomprob$parameter[[1]],
+                    nrow(data))
+  colnames(FRR) <- c("FRRest", "LB", "UB", "alpha", "n_recent", "n_subjects", "n_observations")
+  rownames(FRR) <- ""
+  return(FRR)
 }
