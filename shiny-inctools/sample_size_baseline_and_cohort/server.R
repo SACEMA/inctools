@@ -21,11 +21,15 @@ shinyServer(function(input, output) {
                                                            DE_C = input$DE_C)})
   
   
-  output$text1 <- renderText({
+  output$text_desc <- renderText({
+    return(paste("Minimum sample size to achieve",input$Power,"probability of correctly inferring incidence change:"))
+  })
+  
+  output$text_ss <- renderText({
     ss_do <- do_it()
     
     if (!is.na(ss_do$RequiredN)) {
-      return(paste("The minimum sample size to correctly infer incidence change is",ss_do$RequiredN))
+      return(ss_do$RequiredN)
     } else {
       return("Desired power level cannot be achieved!")
     }
