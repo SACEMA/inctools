@@ -4,7 +4,6 @@ library(shiny)
 shinyUI(fluidPage(
   
   titlePanel("Required sample size for power (baseline survey and cohort)") , 
-  #headerPanel("Incidence difference from baseline cross-sectional survey and cohort recruited from those screened HIV-")))
   sidebarLayout(
     sidebarPanel(
       h2("Significance"),
@@ -32,7 +31,9 @@ shinyUI(fluidPage(
     ),
     mainPanel(
       img(src='SACEMA_logo.png', align = "right", height = "75px"),
-      p(textOutput("text_desc")),
+      #p(em("Incidence difference from baseline cross-sectional survey and cohort recruited from those screened HIV-")),
+      #br(),br(),br(),
+      p(strong(em(textOutput("text_desc")))),
       p(strong(textOutput("text_ss"))),
       br(),
       plotOutput("plot1", height = 600, width = 600),
