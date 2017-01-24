@@ -3,7 +3,7 @@ library(shiny)
 source("ss_baseline_cohort.R")
 
 shinyServer(function(input, output) {
-  do_it <- eventReactive(input$button, {ss_baseline_cohort(Inc = input$Inc/100, 
+  do_it <- reactive({ss_baseline_cohort(Inc = input$Inc/100, 
                                                            Prev = input$Prev/100, 
                                                            FracIncRed = input$FracIncRed/100,
                                                            Power = input$Power, 
@@ -19,11 +19,6 @@ shinyServer(function(input, output) {
                                                            CohortCR = input$CohortCR/100, 
                                                            FUT = input$FUT,
                                                            DE_C = input$DE_C)})
-  
-  
-  output$text_desc <- renderText({
-    return(paste("Minimum sample size to achieve",input$Power,"probability of correctly inferring incidence change:"))
-  })
   
   output$text_ss <- renderText({
     ss_do <- do_it()
