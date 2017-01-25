@@ -1,5 +1,4 @@
 ---
-layout: page
 ---
 
 # Welcome to *inctools*
