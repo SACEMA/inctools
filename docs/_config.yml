@@ -2,4 +2,4 @@ theme: jekyll-theme-slate
 title: inctools
 description: Incidence estimation tools
 permalink: /:title/
-
+show_downloads: false
