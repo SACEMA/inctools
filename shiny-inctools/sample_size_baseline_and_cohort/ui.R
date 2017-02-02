@@ -56,10 +56,10 @@ fluidPage(
            #   #                  sliderInput('tab2_slider', 'tab2 slider', min=2,max=7,value=2)
            #   # )
            # )
-           
+
     ),
     column(6,
-           tabsetPanel(id = "tabs", type = "tabs", 
+           tabsetPanel(id = "tabs", type = "tabs",
                        tabPanel("Incidence reduction", value='tab1_val', id = 'tab1',
                                 wellPanel(
                                   p("Select an incidence reduction range to see the minimum sample sizes in a plot"),
@@ -98,17 +98,17 @@ fluidPage(
                        #endnew
                        tabPanel("About", value='tab4_val', id = 'tab4',
                                 wellPanel(
-                                  p("This tool calculates the minimum required sample size to achieve a specified 
-                                    probability of correctly inferring an incidence decline (power) in the special 
-                                    case where a baseline cross-sectional HIV incidence survey is conducted and HIV- 
-                                    survey respondents are recruited into a cohort to observe an expected decline 
-                                    in incidence. It also allows to evaluate the impact on power and required sample size 
+                                  p("This tool calculates the minimum required sample size to achieve a specified
+                                    probability of correctly inferring an incidence decline (power) in the special
+                                    case where a baseline cross-sectional HIV incidence survey is conducted and HIV-
+                                    survey respondents are recruited into a cohort to observe an expected decline
+                                    in incidence. It also allows to evaluate the impact on power and required sample size
                                     for different values of % incidence reduction."),
                                   p("Contributors:"),
                                   tags$ul(
-                                    tags$li("Eduard Grebe"), 
-                                    tags$li("Cari van Schalkwyk"), 
+                                    tags$li("Eduard Grebe"),
                                     tags$li("Stefano Ongarello"),
+                                    tags$li("Cari van Schalkwyk"),
                                     tags$li("Alex Welte")
                                   ),
                                   p(em("Built using ", a(strong("inctools"), href = "https://cran.r-project.org/web/packages/inctools/index.html", target = "_blank")))
@@ -117,5 +117,5 @@ fluidPage(
            )
     )
   )
-  
+
   )
