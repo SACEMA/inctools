@@ -66,4 +66,3 @@ incprecision(I = 0.017, RSE_I = 'out', PrevH = c(0.10,0.20),
 CR = 1, MDRI = 211, RSE_MDRI = 0.05, FRR = 0.009, RSE_FRR = 0.2,
 BigT = 720, n = 5000, step = 5)
 }
-

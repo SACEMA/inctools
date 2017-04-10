@@ -65,4 +65,3 @@ frrcal(data=excalibdata,
        recency_params = c(10,0,1000,1),
        alpha = 0.05)
 }
-
