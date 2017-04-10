@@ -10,6 +10,21 @@
 # General Public License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+# Function for resampling groups using dplyr
+# inspired by drhagen https://github.com/tidyverse/dplyr/issues/361#issuecomment-243551042
+# example use:
+# iris %>% group_by(Species) %>% sample_frac_groups(1)
+
+sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
+  # regroup when done
+  grps <- tbl %>% dplyr::groups() %>% base::unlist() %>% base::as.character()
+  # check length of groups non-zero
+  keep <- tbl %>% dplyr::summarise() %>% dplyr::sample_frac(size, replace, weight)
+  # keep only selected groups, regroup because joins change count.
+  # regrouping may be unnecessary but joins do something funky to grouping variable
+  tbl %>% dplyr::right_join(keep, by=grps) %>% dplyr::group_by_(grps)
+}
+
 #'Estimate MDRI (point estimate and confidence interval) using binomial regression and a maximum likelihood approach
 #'
 #' @param data A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)
@@ -185,8 +200,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
         print(paste("Computing MDRI using functional form",functional_form))
 
         if (parallel == TRUE && n_bootstraps > 0) {
-            boot_data <- data
-            model <- fit_binomial_model(data = boot_data, functional_form = functional_form,
+            model <- fit_binomial_model(data = data, functional_form = functional_form,
                 tolerance = tolerance_glm2, maxit = maxit_glm2)
             parameters <- model$coefficients
             mdri <- integrate_for_mdri(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
@@ -197,29 +211,27 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             if (plot == TRUE) {
                 plot_parameters <- parameters
             }
+
             cluster <- parallel::makeCluster(cores, outfile="")
             doParallel::registerDoParallel(cluster)
             if (foreach::getDoParWorkers() != cores) {
               stop("Failed to initialise parallel worker threads.")
               }
-            chosen_subjects <- vector(mode = "list", length = n_bootstraps)
-            for (j in 1:n_bootstraps) {
-                chosen_subjects[[j]] <- sample(1:n_subjects, n_subjects, replace = T)
-            }
-              pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)
-              #progress <- function(n) utils::setTxtProgressBar(pb, n)
-              #opts <- list(progress = progress)
+            pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)
+
+            # Group data for bootstrapping purposes
+            data_grouped <- data %>%
+              dplyr::group_by_("sid")
+
             mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
                                       #.options.snow = opts,
                                       .inorder = FALSE #,
                                       #.packages = "inctools"
                                       ) %dopar%
                 {
-                  boot_data <- data[FALSE, ]
-                  for (k in 1:n_subjects) {
-                    #subset(data, sid == chosen_subjects[[j]][k])
-                    boot_data <- rbind(boot_data, data[data$sid==chosen_subjects[[j]][k],])
-                  }
+                  boot_data <- data_grouped %>%
+                    sample_frac_groups(1, replace = TRUE) %>%
+                    dplyr::ungroup()
                   model <- fit_binomial_model(data = boot_data, functional_form = functional_form,
                     tolerance = tolerance_glm2, maxit = maxit_glm2)
                   parameters <- model$coefficients
@@ -233,14 +245,16 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
             parallel::stopCluster(cluster)
         } else {
             if (n_bootstraps > 0) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)}
+
+          # Group data for bootstrapping purposes
+          data_grouped <- data %>%
+            dplyr::group_by_("sid")
+
             for (j in 0:n_bootstraps) {
-                chosen_subjects <- sample(1:n_subjects, n_subjects, replace = T)
                 if (j != 0) {
-                  boot_data <- data[FALSE, ]
-                  for (k in 1:n_subjects) {
-                    #boot_data <- rbind(boot_data, subset(data, sid == chosen_subjects[k]))
-                    boot_data <- rbind(boot_data, data[data$sid==chosen_subjects[k],])
-                  }
+                  boot_data <- data_grouped %>%
+                    sample_frac_groups(1, replace = TRUE) %>%
+                    dplyr::ungroup()
                 } else {
                   boot_data <- data
                 }

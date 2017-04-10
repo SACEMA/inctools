@@ -1,4 +1,5 @@
-import(foreach)
+importFrom(foreach, "%dopar%")
+importFrom(magrittr,"%>%")
 export(inccounts)
 export(incpower)
 export(incprecision)

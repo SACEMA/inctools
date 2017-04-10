@@ -102,4 +102,3 @@ mdrical(data=excalibdata,
         alpha = 0.05,
         plot = TRUE)
 }
-
