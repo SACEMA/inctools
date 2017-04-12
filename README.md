@@ -29,8 +29,8 @@ system.
 Install dependencies manually:
 
 ```
-install.packages(c("cubature","ggplot2","glm2","MASS","plyr","pracma","foreach",
-                   "snow","doParallel","devtools","knitr","roxygen2","rmarkdown","dplyr))
+install.packages(c("cubature","ggplot2","glm2","MASS","plyr","dplyr","magrittr","pracma","foreach",
+                   "parallel","doParallel","devtools","knitr","roxygen2","rmarkdown","dplyr))
 ```
 
 Then use "build and reload" in RStudio or set your working directory to
