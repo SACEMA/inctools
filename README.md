@@ -30,7 +30,7 @@ Install dependencies manually:
 
 ```
 install.packages(c("cubature","ggplot2","glm2","MASS","plyr","dplyr","magrittr","pracma","foreach",
-                   "parallel","doParallel","devtools","knitr","roxygen2","rmarkdown","dplyr))
+                   "parallel","doParallel","devtools","knitr","roxygen2","rmarkdown"))
 ```
 
 Then use "build and reload" in RStudio or set your working directory to
