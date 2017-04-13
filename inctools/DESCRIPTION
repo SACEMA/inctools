@@ -18,8 +18,9 @@ Authors@R: c(
   person("Yusuke","Asai", email="yusuke.asai@yahoo.de", role="ctb")
   )
 Description: Tools for estimating incidence from biomarker data in cross-
-    sectional surveys, using and extending the method of Kassanjee et al. (2012),
-    and for calibrating tests for recent infection.
+    sectional surveys, and for calibrating tests for recent infection. 
+    Implements and extends the method of Kassanjee et al. (2012)
+    <doi:10.1097/EDE.0b013e3182576c07>.
 URL: http://www.incidence-estimation.org/page/inctools
 BugReports: https://github.com/SACEMA/inctools/issues
 Depends:
