@@ -2,7 +2,7 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.9
+Version: 1.0.10
 Date: 2017-04-13
 Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
