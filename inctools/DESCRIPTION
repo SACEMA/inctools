@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.7.9100
-Date: 2017-04-10
+Version: 1.0.9
+Date: 2017-04-13
 Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
@@ -18,7 +18,8 @@ Authors@R: c(
   person("Yusuke","Asai", email="yusuke.asai@yahoo.de", role="ctb")
   )
 Description: Tools for estimating incidence from biomarker data in cross-
-    sectional surveys and for calibrating tests for recent infection.
+    sectional surveys, using and extending the method of Kassanjee et al. (2012),
+    and for calibrating tests for recent infection.
 URL: http://www.incidence-estimation.org/page/inctools
 BugReports: https://github.com/SACEMA/inctools/issues
 Depends:
