@@ -4,3 +4,5 @@ r:
   - oldrel
   - release
   - devel
+before_install:
+  - cd inctools
