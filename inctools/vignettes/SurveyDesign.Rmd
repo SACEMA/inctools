@@ -1,8 +1,8 @@
 ---
 title: "Survey design: power, precision and sample size"
-date: 2016-05-12
-output: rmarkdown::html_vignette
-#output: rmarkdown::pdf_document
+date: "29 April 2017"
+#output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
 vignette: >
   %\VignetteIndexEntry{Survey design}
   %\VignetteEngine{knitr::rmarkdown}

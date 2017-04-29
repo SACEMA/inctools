@@ -1,14 +1,18 @@
 ---
 title: "Recent infection test calibration"
-date: 2016-05-12
-output: rmarkdown::html_vignette
-#output: rmarkdown::pdf_document
+date: "29 April 2017"
+#output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
 vignette: >
   %\VignetteIndexEntry{Test calibration}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteIndexEntry{Integrating TCGA Data}
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(progress=FALSE)
+```
 
 This vignette covers the use of functions `mdrical` and `frrcal`.
 
@@ -72,41 +76,49 @@ The dataset `excalibdata` contains example data from an evaluation of an assay m
 
 The first example provides a variable that has pre-classified results, and uses only the complementary log-log functional form.
 
-*Note: To keep compute time reasonable during execution of the example code, only 100 bootstraps are performed. To obtain reasonable standard errors and confidence intervals, 10,000 bootstraps are recommended.*
+*Note: To keep compute time reasonable during execution of the example code, only 1000 bootstraps are performed. To obtain reasonable standard errors and confidence intervals, 10,000 bootstraps are recommended.*
+
+```{r, results='hide' }
+mdri <- mdrical(data=excalibdata,
+                subid_var = "SubjectID",
+                time_var = "DaysSinceEDDI",
+                recency_cutoff_time = 730.5,
+                inclusion_time_threshold = 800,
+                functional_forms = c("cloglog_linear"),
+                recency_rule = "binary_data",
+                recency_vars = "Recent",
+                n_bootstraps = 1000,
+                alpha = 0.05,
+                plot = TRUE)
+```
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
-mdrical(data=excalibdata,
-                 subid_var = "SubjectID",
-                 time_var = "DaysSinceEDDI",
-                 recency_cutoff_time = 730.5,
-                 inclusion_time_threshold = 800,
-                 functional_forms = c("cloglog_linear"),
-                 recency_rule = "binary_data",
-                 recency_vars = "Recent",
-                 n_bootstraps = 100,
-                 alpha = 0.05,
-                 plot = TRUE)
+print(mdri)
 ```
 
 ### Example of `mdrical` using the logit cubic functional form and two independent thresholds on biomarkers
 
 This example also specifies a vector of variables and a vector of paramaters to define recency, using the assay result and the viral load. The paramaters in the vector `c(10,0,1000,1)` mean that recency is defined as an assay biomarker reading below 10 and a viral load reading above 1000.
 
-*Note: To keep compute time reasonable during execution of the example code, only 100 bootstraps are performed. To obtain reasonable standard errors and confidence intervals, 10,000 bootstraps are recommended.*
+*Note: To keep compute time reasonable during execution of the example code, only 1000 bootstraps are performed. To obtain reasonable standard errors and confidence intervals, 10,000 bootstraps are recommended.*
+
+```{r, results='hide' }
+mdri <- mdrical(data=excalibdata,
+                subid_var = "SubjectID",
+                time_var = "DaysSinceEDDI",
+                recency_cutoff_time = 730.5,
+                inclusion_time_threshold = 800,
+                functional_forms = c("logit_cubic"),
+                recency_rule = "independent_thresholds",
+                recency_vars = c("Result","VL"),
+                recency_params = c(10,0,1000,1),
+                n_bootstraps = 1000,
+                alpha = 0.05,
+                plot = TRUE)
+```
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
-mdrical(data=excalibdata,
-                 subid_var = "SubjectID",
-                 time_var = "DaysSinceEDDI",
-                 recency_cutoff_time = 730.5,
-                 inclusion_time_threshold = 800,
-                 functional_forms = c("logit_cubic"),
-                 recency_rule = "independent_thresholds",
-                 recency_vars = c("Result","VL"),
-                 recency_params = c(10,0,1000,1),
-                 n_bootstraps = 100,
-                 alpha = 0.05,
-                 plot = TRUE)
+print(mdri)
 ```
 
 ### Example of `mdrical` in which bootstraps are run in parallel
