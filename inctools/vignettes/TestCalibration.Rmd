@@ -1,8 +1,8 @@
 ---
 title: "Recent infection test calibration"
 date: "29 April 2017"
-#output: rmarkdown::html_vignette
-output: rmarkdown::pdf_document
+output: rmarkdown::html_vignette
+#output: rmarkdown::pdf_document
 vignette: >
   %\VignetteIndexEntry{Test calibration}
   %\VignetteEngine{knitr::rmarkdown}

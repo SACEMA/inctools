@@ -1,8 +1,8 @@
 ---
 title: "Estimating incidence from cross-sectional data"
 date: "29 April 2017"
-#output: rmarkdown::html_vignette
-output: rmarkdown::pdf_document
+output: rmarkdown::html_vignette
+#output: rmarkdown::pdf_document
 fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Estimating incidence}
