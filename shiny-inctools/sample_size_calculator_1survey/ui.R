@@ -38,18 +38,6 @@ shinyUI(fluidPage(
                          'text/comma-separated-values,text/plain',
                          '.csv')),
       tags$hr(),
-#       checkboxInput('header', 'Header', TRUE),
-#       radioButtons('sep', 'Separator',
-#                    c(Comma=',',
-#                      Semicolon=';',
-#                      Tab='\t'),
-#                    ','),
-#       radioButtons('quote', 'Quote',
-#                    c(None='',
-#                      'Double Quote'='"',
-#                      'Single Quote'="'"),
-#                    '"'),
-  #  ),
   downloadButton('downloadData', 'Download output table'),
   #numericInput('percent_reduction', label = h3("Incidence % reduction"), 50, step = 5),
   numericInput('DE_prev', label = h3("Design effect prevalence"), 1.3, step = 0.1),
@@ -72,11 +60,3 @@ shinyUI(fluidPage(
   )
 ))
 
-
-#
-#
-# test_performance_inverted <- function(MDRI = 180, TIME = 730, frrhat = 0.01,
-#                                       mdrihatcov = 0.05, frrhatcov = 0.5,
-#                                       inc = 0.015, p_pos = 0.15, inc_cov = 0.25,
-#                                       DE_prev = 1, DE_RgivenTested = 1, rec_cov = 1,
-#                                       alpha = 0.05)

@@ -12,15 +12,33 @@
 #calculates the incidence difference and its cov from two surveys based on pupolation size and assay characteristics
 inc_diff <- function(MDRI = 200, TIME = 730, frrhat = 0.01,
                      mdrihatcov = 0.05, frrhatcov = 0.2,
-                     n_s_1 = 4000, n_s_2 = 4100, n_t_1 = 1000, n_t_2 = 950,
-                     n_pos_1 = 1000, n_pos_2 = 950, n_r_1 = 70, n_r_2 = 45,
-                     DE_prev_1 = 1, DE_RgivenTested_1 = 1, DE_prev_2 = 1, DE_RgivenTested_2 = 1) {
+                     n_s_1 = 4000, n_s_2 = 4100,
+                     n_t_1 = 1000, n_t_2 = 950,
+                     n_pos_1 = 1000, n_pos_2 = 950,
+                     n_r_1 = 70, n_r_2 = 45,
+                     DE_prev_1 = 1, DE_RgivenTested_1 = 1,
+                     DE_prev_2 = 1, DE_RgivenTested_2 = 1) {
+  mdrihat <- MDRI/365.25
+  TIME <- TIME /365.25
+  n_1 <- n_s_1 + n_pos_1
+  n_2 <- n_s_2 + n_pos_2
+  #HIV-negative (proportion)
+  p_s_1 <- n_s_1/n_1
+  p_s_2 <- n_s_2/n_2
+  
+  temp_inc_diff<- incprops(PrevH = c(0.20,0.21), RSE_PrevH = c(0.028,0.03),
+                           PrevR = c(0.10,0.13), RSE_PrevR = c(0.094,0.095),
+                           BS_Count = 10000, Boot = FALSE,
+                           MDRI = 200, RSE_MDRI = 0.05, 
+                           FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+  temp_inc_diff$Incidence.Difference.Statistics[1,c("Diff","RSE.Diff")]
+  
 
   mdrihat <- MDRI/365.25
   TIME <- TIME /365.25
   n_1 <- n_s_1 + n_pos_1
   n_2 <- n_s_2 + n_pos_2
-  #HIV-negative
+  #HIV-negative (proportion)
   p_s_1 <- n_s_1/n_1
   p_s_2 <- n_s_2/n_2
   #HIV-positive and "recent"
@@ -74,15 +92,13 @@ inc_diff <- function(MDRI = 200, TIME = 730, frrhat = 0.01,
 }
 
 
-
-
 inc_diff_inverted <- function(MDRI = 200, TIME = 730, frrhat = 0.01,
                               mdrihatcov = 0.05, frrhatcov = 0.2,
-                              inc_1 = 0.015, inc_2 = 0.012, prev_1 = 0.15, prev_2 = 0.11, inc_diff_cov = 0.3,
+                              inc_1 = 0.015, inc_2 = 0.012, 
+                              prev_1 = 0.15, prev_2 = 0.11, inc_diff_cov = 0.3,
                               cov2_1 = 0.05, cov2_2 = 0.05,
-                              #n_s_1 = 4000, n_s_2 = 4100, n_t_1 = 1000, n_t_2 = 950,
-                              #n_pos_1 = 1000, n_pos_2 = 950, n_r_1 = 70, n_r_2 = 45,
-                              DE_prev_1 = 1, DE_RgivenTested_1 = 1, DE_prev_2 = 1, DE_RgivenTested_2 = 1) {
+                              DE_prev_1 = 1, DE_RgivenTested_1 = 1, 
+                              DE_prev_2 = 1, DE_RgivenTested_2 = 1) {
 
   inc_diff <- inc_2 - inc_1
   mdrihat <- MDRI/365.25
@@ -128,9 +144,6 @@ inc_diff_inverted <- function(MDRI = 200, TIME = 730, frrhat = 0.01,
   k65 <- DE_prev_2/(n_2*p_pos_2*(1 - p_pos_2)) + (DE_RgivenTested_2*p_RgivenTested_2*(1 - p_RgivenTested_2))/(p_t_2*n_2*(p_RgivenTested_2 - frrhat)^2)
 
 }
-
-
-
 
 #Calculates the incidence estimator relative standard error (RSE) implied by test characteristics (and their uncertainty), in a chosen context
 test_performance <- function(MDRI = 200, TIME = 730, frrhat = 0.01,
@@ -189,8 +202,6 @@ test_performance_inverted <- function(MDRI = 180, TIME = 730, frrhat = 0.01,
   return(data.frame(n = ceiling(n), inc_cov, low_CI, upp_CI))
 }
 
-
-
 #changes the names of the input dataset to be used by ss_calc
 assign_colnames <- function(cd) {
   #names are correct
@@ -224,17 +235,12 @@ do_table <- function(cd, DE_prev, DE_RgivenTested, alpha, inc_cov, rec_cov, TIME
   cd$inc <- cd$inc * 1/100
   cd$p_pos <- cd$p_pos * 1/100
   cd$frrhat <- cd$frrhat * 1/100
-  #     df <- assemble_data(cd, percent_reduction = 0.5, DE_p_1 = 1.3, DE_p_2 = 1.3, DE_R_1 = 1.3, DE_R_2 = 1.3,
-  #                         power = 0.8, alpha = 0.05)
-  #return(alpha)
+
   df <- assemble_data(cd, DE_prev = DE_prev, DE_RgivenTested = DE_RgivenTested,
                       alpha = alpha, inc_cov = inc_cov, rec_cov = rec_cov, TIME = TIME,
                       mdrihatcov = mdrihatcov, frrhatcov = frrhatcov)
 
   res_I001 <- mdply(df[, - which(colnames(df) == "scenario")], test_performance_inverted)
-
-
-  #res_I002 <- mdply(df[, - which(colnames(df) == "scenario")], test_performance_inverted)
 
   res <- cbind(res_I001, scenario = df[, 3])
   id <- which(colnames(res) == "n")
@@ -252,10 +258,6 @@ do_table <- function(cd, DE_prev, DE_RgivenTested, alpha, inc_cov, rec_cov, TIME
 
   res_clean_extra[, 2:12] <- sapply(res_clean_extra[, 2:12], FUN = function(x) prettyNum(x, big.mark=","))
   colnames(res_clean_extra)[c(3,5)] <- c("prev", "FRR")
-  #colnames(res_clean) <- c("Scenario", "Inc_1", "Prev_1", "MDRI", "FRR", "Sample size")
-
-
-
 
   return(res_clean_extra)
 }

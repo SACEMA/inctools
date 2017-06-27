@@ -1,4 +1,5 @@
 # Created by and Copyright (C) 2015-2016 Stefano Ongarello (FIND).
+# Recoded by Lamin Juwara (McGill)(2017/18)
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published by the
 # Free Software Foundation, either version 3 of the License, or (at your option)
@@ -11,14 +12,12 @@
 
 #server.R
 library(shiny)
-#library(shinyURL)
-#main_path <- 'D:/PROJECTS/AIDS/INCIDENCE_ESTIMATION/R/'
-# setwd(paste0(main_path, 'abie-r/Sample.Size.Calculator/Sample_size_calculator'))
 library(ggplot2)
 library(scales)
 library(plyr)
 library(dplyr)
 library(grid)
+library(inctools)
 source('sample_size_calc_v297.R')
 source('plot_fcn.R')
 
@@ -26,18 +25,11 @@ shinyServer(function(input, output, session) {
 
   #shinyURL.server(session)
   df <- reactive({
-    #     switch(input$dataset,
-    #            "rock" = rock,
-    #            "pressure" = pressure,
-    #            "cars" = cars)
 
     if("MDRI" == input$x_variable & 1 == input$scenario_case) {
-      # temp <- mdply(expand.grid(MDRI = seq(120, 720, by = 120), frrhat = (1/100)*input$frrhat,
       temp <- mdply(expand.grid(MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 30), frrhat = (1/100)*input$frrhat,
-                                #frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
                                 TIME = input$TIME,
                                 frrhatcov = (1/100)*input$frrhatcov,
-                                # frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
                                 mdrihatcov = (1/100)*input$mdrihatcov,
                                 DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
                                 DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
@@ -46,11 +38,11 @@ shinyServer(function(input, output, session) {
                     power = input$power, alpha = input$alpha,
                     rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
                     ss_calc, case = input$scenario_case)
+                        
       return(temp)
     }
 
     if("MDRI" == input$x_variable & 2 == input$scenario_case) {
-      #temp <- mdply(expand.grid(MDRI = seq(120, 720, by = 120),
       temp <- mdply(expand.grid(MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 30),
                                 frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
                                 TIME = input$TIME,
@@ -68,14 +60,9 @@ shinyServer(function(input, output, session) {
 
     if("frrhat" == input$x_variable & 1 == input$scenario_case) {
       temp <- mdply(expand.grid(MDRI = input$MDRI,
-                                #MDRI_1 = input$MDRI_1, MDRI_2 = input$MDRI_2,
-                                #frrhat = seq(0, 0.1, by = 0.005),
                                 frrhat = seq((1/100)*input$FRR_range[1], (1/100)*input$FRR_range[2], by = 0.005),
                                 TIME = input$TIME,
-                                #frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
-                                #frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
                                 frrhatcov = (1/100)*input$frrhatcov, mdrihatcov = (1/100)*input$mdrihatcov,
-                                #mdrihatcov_1 = (1/100)*input$mdrihatcov_1, mdrihatcov_2 = (1/100)*input$mdrihatcov_2,
                                 DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
                                 DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
                                 inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
@@ -83,20 +70,15 @@ shinyServer(function(input, output, session) {
                     power = input$power, alpha = input$alpha,
                     rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
                     ss_calc, case = input$scenario_case)
-      #temp$frrhat <- (100)*temp$frrhat
       return(temp)
     }
 
     if("frrhat" == input$x_variable & 2 == input$scenario_case) {
       temp <- mdply(expand.grid(MDRI = input$MDRI,
-                                #MDRI_1 = input$MDRI_1, MDRI_2 = input$MDRI_2,
-                                #frrhat = seq(0, 0.1, by = 0.005),
                                 TIME = input$TIME,
                                 frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
                                 frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
-                                # frrhatcov = (1/100)*input$frrhatcov,
                                 mdrihatcov = (1/100)*input$mdrihatcov,
-                                #mdrihatcov_1 = (1/100)*input$mdrihatcov_1, mdrihatcov_2 = (1/100)*input$mdrihatcov_2,
                                 DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
                                 DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
                                 inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
@@ -110,12 +92,9 @@ shinyServer(function(input, output, session) {
 
     if(3 == input$scenario_case) {
       temp <- mdply(expand.grid(MDRI_1 = input$MDRI_1, MDRI_2 = input$MDRI_2,
-                                #MDRI_1 = input$MDRI_1, MDRI_2 = input$MDRI_2,
-                                #frrhat = seq(0, 0.1, by = 0.005),
                                 TIME = input$TIME,
                                 frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
                                 frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
-                                # frrhatcov = (1/100)*input$frrhatcov, mdrihatcov = (1/100)*input$mdrihatcov,
                                 mdrihatcov_1 = (1/100)*input$mdrihatcov_1, mdrihatcov_2 = (1/100)*input$mdrihatcov_2,
                                 DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
                                 DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
@@ -124,7 +103,6 @@ shinyServer(function(input, output, session) {
                     power = input$power, alpha = input$alpha,
                     rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
                     ss_calc, case = input$scenario_case)
-      #temp$frrhat <- (100)*temp$frrhat
       return(temp)
     }
 
@@ -134,13 +112,7 @@ shinyServer(function(input, output, session) {
         #MDRI = seq(120, 720, by = 120),
         MDRI = seq(input$MDRI_range_sim1[1], input$MDRI_range_sim1[2], by = 30),
         frrhat = seq((1/100)*input$FRR_range_simul[1], (1/100)*input$FRR_range_simul[2], by = 0.005),
-        # frrhat = seq(0, 0.05, by = 0.005),
 
-
-
-        #        MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 60),
-        #                                frrhat = seq((1/100)*input$frrhat[1], (1/100)*input$frrhat[2], by = 0.005)),
-        #frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
         TIME = input$TIME,
         frrhatcov = (1/100)*input$frrhatcov,
         # frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
@@ -156,21 +128,11 @@ shinyServer(function(input, output, session) {
     }
 
     if("simulate_FRR" == input$x_variable & 1 == input$scenario_case) {
-      # temp <- mdply(expand.grid(MDRI = seq(120, 720, by = 120), frrhat = (1/100)*input$frrhat,
       temp <- mdply(expand.grid(
-        #MDRI = seq(120, 720, by = 120),
         MDRI = seq(input$MDRI_range_simul[1], input$MDRI_range_simul[2], by = 30),
         frrhat = seq((1/100)*input$FRR_range_sim2[1], (1/100)*input$FRR_range_sim2[2], by = 0.005),
-        #frrhat = seq(0, 0.05, by = 0.005),
-
-
-
-        #        MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 60),
-        #                                frrhat = seq((1/100)*input$frrhat[1], (1/100)*input$frrhat[2], by = 0.005)),
-        #frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
         TIME = input$TIME,
         frrhatcov = (1/100)*input$frrhatcov,
-        # frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
         mdrihatcov = (1/100)*input$mdrihatcov,
         DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
         DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
@@ -183,8 +145,6 @@ shinyServer(function(input, output, session) {
     }
 
   })
-
-
   output$plot <- renderPlot({
     #Input checking to avoid the application crashes due to lack of proper input
     #logic_case2 <- input$scenario_case == 2 & input$x_variable == "frrhat"
@@ -261,15 +221,6 @@ shinyServer(function(input, output, session) {
     #return(plot)
   })
 
-
-
-
-
-
-
-
-
-
   output$tab <- renderTable({
     validate(
       need(!(input$scenario_case != 1 & input$x_variable == "simulate"), 'Simulation is only implemented for case 1'),
@@ -343,6 +294,5 @@ shinyServer(function(input, output, session) {
       ggsave(file = file, plot = plot, width = 13, height = 9)
     }
   )
-
 
 })
