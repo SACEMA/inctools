@@ -22,8 +22,8 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       fluidPage(
-        fluidRow(column(3, downloadButton('downloadData', 'Download table')),
-                 column(3, downloadButton('downloadPlot', 'Save plot'))),
+        fluidRow(column(6, downloadButton('downloadData', 'Download table'))),
+        fluidRow(column(6, downloadButton('downloadPlot', 'Save plot'))),
         #hr(),
         #fluidRow((column(9, shinyURL.ui(label = "URL with current parameters")))),
         #hr(),
@@ -35,12 +35,6 @@ shinyUI(fluidPage(
                                                "Simulation x: MDRI (Case 1 only)" = "simulate",
                                                "Simulation x: FRR (Case 1 only)" = "simulate_FRR"
                                 ), selected = "MDRI"))),
-        #fluidRow(column(9, downloadButton('downloadData', 'Download table'))),
-        #fluidRow(column(9, downloadButton('downloadPlot', 'Save plot'))),
-       # fluidRow(column(3, downloadButton('downloadData', 'Download table')),
-        #         column(3, downloadButton('downloadPlot', 'Save plot'))),
-        #hr(),
-        #fluidRow((column(9, shinyURL.ui(label = "URL with current parameters")))),
         fluidRow(column(9,
                         radioButtons("scenario_case", label = h5("Scenario case type:"),
                                      c("Case 1 (Same MDRI, same FRR estimates in the two surveys)" = 1,

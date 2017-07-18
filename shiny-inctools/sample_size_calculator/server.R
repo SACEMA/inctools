@@ -107,9 +107,8 @@ shinyServer(function(input, output, session) {
     }
 
     if("simulate" == input$x_variable & 1 == input$scenario_case) {
-      # temp <- mdply(expand.grid(MDRI = seq(120, 720, by = 120), frrhat = (1/100)*input$frrhat,
       temp <- mdply(expand.grid(
-        #MDRI = seq(120, 720, by = 120),
+        #MDRI = seq(120, 720, by = 120),S
         MDRI = seq(input$MDRI_range_sim1[1], input$MDRI_range_sim1[2], by = 30),
         frrhat = seq((1/100)*input$FRR_range_simul[1], (1/100)*input$FRR_range_simul[2], by = 0.005),
 

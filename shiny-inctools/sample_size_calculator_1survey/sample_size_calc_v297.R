@@ -35,7 +35,8 @@ ss_calc <- function(case = 1, TIME = 730, MDRI = 200, MDRI_1 = 200, MDRI_2 = 200
                          PrevH1 =  p_pos_1, PrevH2 =  p_pos_2, Power = power, alpha = alpha,
                          CR = c(rec_test_coverage_1,rec_test_coverage_2),
                          BMest = 'same.test', SS = 'out' )
-    ss<-sum(temp_ss$Implied.Subject.Counts[1:2,1])
+    ss<-temp_ss$Minimum.Common.SS
+      #sum(temp_ss$Implied.Subject.Counts[1:2,1])
     
   }
   
@@ -47,7 +48,7 @@ ss_calc <- function(case = 1, TIME = 730, MDRI = 200, MDRI_1 = 200, MDRI_2 = 200
                          PrevH1 =  p_pos_1, PrevH2 =  p_pos_2, Power = power, alpha = alpha,
                          CR = c(rec_test_coverage_1,rec_test_coverage_2),
                          BMest = 'FRR.indep', SS = 'out' )
-    ss <- sum(temp_ss$Implied.Subject.Counts[1:2,1])
+    ss <- temp_ss$Minimum.Common.SS
     
   }
   
@@ -60,7 +61,8 @@ ss_calc <- function(case = 1, TIME = 730, MDRI = 200, MDRI_1 = 200, MDRI_2 = 200
                         PrevH1 =  p_pos_1, PrevH2 =  p_pos_2, Power = power, alpha = alpha,
                         CR = c(rec_test_coverage_1,rec_test_coverage_2),
                         BMest = 'MDRI.FRR.indep', SS = 'out' )
-    ss <- sum(temp_ss$Implied.Subject.Counts[1:2,1])
+    ss <- temp_ss$Minimum.Common.SS
+      # sum(temp_ss$Implied.Subject.Counts[1:2,1])
     
   }
   

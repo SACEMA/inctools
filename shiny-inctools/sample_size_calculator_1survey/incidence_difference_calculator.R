@@ -26,12 +26,12 @@ inc_diff <- function(MDRI = 200, TIME = 730, frrhat = 0.01,
   p_s_1 <- n_s_1/n_1
   p_s_2 <- n_s_2/n_2
   
-  temp_inc_diff<- incprops(PrevH = c(0.20,0.21), RSE_PrevH = c(0.028,0.03),
-                           PrevR = c(0.10,0.13), RSE_PrevR = c(0.094,0.095),
-                           BS_Count = 10000, Boot = FALSE,
-                           MDRI = 200, RSE_MDRI = 0.05, 
-                           FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
-  temp_inc_diff$Incidence.Difference.Statistics[1,c("Diff","RSE.Diff")]
+  # temp_inc_diff<- incprops(PrevH = c(0.20,0.21), RSE_PrevH = c(0.028,0.03),
+  #                          PrevR = c(0.10,0.13), RSE_PrevR = c(0.094,0.095),
+  #                          BS_Count = 10000, Boot = FALSE,
+  #                          MDRI = 200, RSE_MDRI = 0.05, 
+  #                          FRR = 0.01, RSE_FRR = 0.2, BigT = 730)
+  # temp_inc_diff$Incidence.Difference.Statistics[1,c("Diff","RSE.Diff")]
   
 
   mdrihat <- MDRI/365.25

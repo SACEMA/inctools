@@ -1,5 +1,5 @@
 library(inctools)
-# No parallelisation
+# No parallelisation 
 system.time(print(mdrical(data=excalibdata,
         subid_var = "SubjectID",
         time_var = "DaysSinceEDDI",

@@ -279,11 +279,11 @@ n2 <- "both"
 alpha = 0.05
 BMest = "MDRI.FRR.indep"
 
-sspower(I1 = I1, I2 = I2, PrevH1 = PrevH1, PrevH2 = PrevH2, n1 = n1, n2 = n2, alpha = 0.05,
+sspower<-incpower(I1 = I1, I2 = I2, PrevH1 = PrevH1, PrevH2 = PrevH2, n1 = n1, n2 = n2, alpha = 0.05,
     Power = 0.8, SS = "out", CR = CR, DE_H = DE_H, DE_R = DE_R, BMest = "MDRI.FRR.indep",
     MDRI = MDRI, RSE_MDRI = RSE_MDRI, FRR = FRR, RSE_FRR = RSE_FRR, BigT = BigT)
 
-
+sspower$Minimum.Common.SS
 
 
 
