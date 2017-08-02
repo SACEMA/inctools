@@ -65,7 +65,9 @@ shinyServer(function(input, output, session){
       need(input$PrevH, 'Please provide an prevalence value for survey '),
       need(input$DE_H, 'Please provide a D.E. value for survey '),
       need(input$DE_R, 'Please provide a D.E. value for survey '),
-      need(input$CR, 'Please provide a valid value for the % of recently tested for positives')
+      need(input$CR, 'Please provide a valid value for the % of recently tested for positives'),
+      need(input$RSE_infSS>=0 & input$RSE_infSS<=1, "Please provide a RSE of incidence estimate at infinite sample size between 0 and 1.")
+      
     )
 
     data <- renameTable(df())
@@ -75,7 +77,7 @@ shinyServer(function(input, output, session){
                 main = "Relative standard error of incidence estimate as \n a function of sample size",
                 xlab = "Sample Size", 
                 ylab = "Relative standard error",type = "l",col='blue',ylim = c(0,0.8))
-    abline(h = c(0.083,input$RSE_req_Inc), lty=c(2,2), col=c("red","grey"),lwd=c(1,2))
+    abline(h = c(input$RSE_infSS,input$RSE_req_Inc), lty=c(2,2), col=c("red","grey"),lwd=c(1,2))
     abline(v = data[which(round(data[,"RSE_I"],2)==input$RSE_req_Inc),"n"],
            lty=2, col="grey",lwd=2)
     print(plot)
@@ -108,7 +110,7 @@ shinyServer(function(input, output, session){
                   main = "Relative standard error of incidence estimate as \n a function of sample size",
                   xlab = "Sample Size", 
                   ylab = "Relative standard error",type = "l",col='blue',ylim = c(0,0.8))
-      abline(h = c(0.083,input$RSE_req_Inc), lty=c(2,2), col=c("red","grey"),lwd=c(1,2))
+      abline(h = c(input$RSE_infSS,input$RSE_req_Inc), lty=c(2,2), col=c("red","grey"),lwd=c(1,2))
       abline(v = data[which(round(data[,"RSE_I"],2)==round(input$RSE_req_Inc,2)),"n"],
              lty=2, col="grey",lwd=2)
       print(plot)

@@ -27,7 +27,7 @@ prevalence_calc <- function(N = 5000, N_H = 1000,
 incidence_calc <- function(N = 5000, N_H = 1000,
                             N_testR = 1000, N_R = 50,
                             DE_H = 1, DE_R = 1,
-                            Boot = TRUE,
+                            Boot = FALSE,
                             BMest = 'same.test',
                             MDRI = 210, RSE_MDRI = 0.05, FRR = 0.005, RSE_FRR = 0.19,
                             BigT = 700){
@@ -35,7 +35,7 @@ incidence_calc <- function(N = 5000, N_H = 1000,
   temp<-inccounts(N = c(N), N_H = N_H,
                   N_testR = N_testR, N_R = N_R,
                   DE_H = DE_H, DE_R = DE_R,
-                  Boot = TRUE,
+                  Boot = FALSE,
                   BMest = 'same.test',
                   MDRI = MDRI, RSE_MDRI = RSE_MDRI, FRR = FRR, RSE_FRR = RSE_FRR,
                   BigT = BigT)
@@ -60,3 +60,4 @@ risk_of_infection_calc <- function(N = 5000, N_H = 1000,
                   BigT = BigT)
   return(temp$Annual.Risk.of.Infection)
 }
+

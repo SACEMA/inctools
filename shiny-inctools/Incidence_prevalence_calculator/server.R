@@ -26,9 +26,9 @@ shinyServer(function(input, output, session){
   data_prevalence <- reactive({ # for prevalence calculation
     validate(
       need(input$N>0,"Please enter a valid total population sample size"),
-      need(input$N>=input$N_H,"HIV-positive samples should be less than total sample size"),
-      need(input$N_H>=input$N_testR,"HIV-positive samples tested for recency should be less than HIV-positive samples among total sample size"),
-      need(input$N_testR>=input$N_R,"The number of recent HIV cases should be less than HIV-positive samples tested for recency"),
+      need(input$N>=input$N_H,"HIV-positive subjects should be less than total sample size"),
+      need(input$N_H>=input$N_testR,"HIV-positive subjects tested for recency should be less than HIV-positive subjects among total sample size"),
+      need(input$N_testR>=input$N_R,"The number of recent HIV cases should be less than HIV-positive subjects tested for recency"),
       need(input$RSE_FRR >= 0, 'Please provide a valid RSE for FRR'),
       need(input$RSE_FRR <= 100, 'Please provide a valid RSE for FRR'),
       need(!(input$RSE_FRR == "" ), 'Please provide a value for RSE_FRR'),
@@ -50,9 +50,9 @@ shinyServer(function(input, output, session){
   data_incidence <- reactive({ # for incidence calculiation
     validate(
       need(input$N>0,"Please enter a valid total population sample size"),
-      need(input$N>=input$N_H,"HIV-positive samples should be less than total sample size"),
-      need(input$N_H>=input$N_testR,"HIV-positive samples tested for recency should be less than HIV-positive samples among total sample size"),
-      need(input$N_testR>=input$N_R,"The number of recent HIV cases should be less than HIV-positive samples tested for recency"),
+      need(input$N>=input$N_H,"HIV-positive subjects should be less than total sample size"),
+      need(input$N_H>=input$N_testR,"HIV-positive subjects tested for recency should be less than HIV-positive subjects among total sample size"),
+      need(input$N_testR>=input$N_R,"The number of recent HIV cases should be less than HIV-positive subjects tested for recency"),
       need(input$N_R>=0,"Please enter a valid number for recent HIV cases"),
       need(input$RSE_FRR >= 0, 'Please provide a valid RSE for FRR'),
       need(input$RSE_FRR <= 100, 'Please provide a valid RSE for FRR'),
@@ -78,9 +78,9 @@ shinyServer(function(input, output, session){
   data_risk <- reactive({ # for risk of infection calculiation
     validate(
       need(input$N>0,"Please enter a valid total population sample size"),
-      need(input$N>=input$N_H,"HIV-positive samples should be less than total sample size"),
-      need(input$N_H>=input$N_testR,"HIV-positive samples tested for recency should be less than HIV-positive samples among total sample size"),
-      need(input$N_testR>=input$N_R,"The number of recent HIV cases should be less than HIV-positive samples tested for recency"),
+      need(input$N>=input$N_H,"HIV-positive subjects should be less than total sample size"),
+      need(input$N_H>=input$N_testR,"HIV-positive subjects tested for recency should be less than HIV-positive subjects among total sample size"),
+      need(input$N_testR>=input$N_R,"The number of recent HIV cases should be less than HIV-positive subjects tested for recency"),
       need(input$RSE_FRR >= 0, 'Please provide a valid RSE for FRR'),
       need(input$RSE_FRR <= 100, 'Please provide a valid RSE for FRR'),
       need(!(input$RSE_FRR == "" ), 'Please provide a value for RSE_FRR'),
@@ -103,22 +103,25 @@ shinyServer(function(input, output, session){
   })
   
   data_pie<-reactive({
+    validate(
+      need(input$N>0,""),
+      need(input$N>=input$N_H,""),
+      need(input$N_H>=input$N_testR,""),
+      need(input$N_testR>=input$N_R,""))
     Sample.Count<-c((input$N-input$N_H),input$N_R,
-         (input$N_H-input$N_R),(input$N_H-input$N_testR))
+         (input$N_testR-input$N_R),(input$N_H-input$N_testR))
     piepercent<-paste(round(100*Sample.Count/sum(Sample.Count),1),sep = "","%") 
-    label<-c("HIV-negative","HIV-positive and 'recent' ",
+    label<-c("HIV-negative",
+             "HIV-positive and 'recent' ",
              "HIV-positve and 'not recent' ", 
              "HIV-positive and not tested for recency")
     color<-c("blue","orange","yellow","violet")
     pie(x = Sample.Count,labels = piepercent, col = color,
                          main = "Sample Counts")
-    options(error = NULL)
+    #options(error = NULL)
     legend("bottomleft",legend = label,cex = 1.0,fill = color)
   })
   
-# Output value  
-   
-
   # Produce an output table value.
   output$tab1 <- renderTable({
     data_prevalence()
@@ -137,13 +140,37 @@ shinyServer(function(input, output, session){
     data_risk()
     
   })
+  
+  output$tab4<-renderTable({
+    temp<-c(prevalence_calc(),incidence_calc(),risk_of_infection_calc())
+    data.frame("Parameters" = c("Prevalence of HIV (PrevH)","Prevalence of recency (PrevR)",
+                      "Relative standard error of PrevH (RSE_PrevH)","Relative standard error of PrevR (RSE_PrevR)",
+                      "Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
+                      "Upper limit of confidence interval (CI.up)","Relative standard error of incidence estimate (RSE)",
+                      "Relative standard error at infinite sample size (RSE.Inf.SS)",
+                      "Annual Risk of Infection (ARI)",
+                      "Lower confidence limit of Annual Risk of Infection (ARI.CI.low)",
+                      "Upper confidence limit of Annual Risk of Infection (ARI.CI.up)"),
+               #"variable"=names(temp), 
+               "values"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
+                          temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
+                          temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
+    
+  })
 
   output$downloadData <- downloadHandler(
     filename = function() {
       paste("resultTable-", Sys.Date(), ".csv", sep="")
     },
     content = function(file) {
-      write.csv(c(data_prevalence(),data_incidence(),data_risk()) , file)
+      temp<-c(prevalence_calc(),incidence_calc(),risk_of_infection_calc())
+      temp<-data.frame("Parameters" = names(temp), 
+                       "values"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
+                            temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
+                            temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
+      #tt=xtabs(values~Parameters,data = temp) 
+      #write.csv(tt, file)
+      write.csv(temp, file)
     }
   )
 

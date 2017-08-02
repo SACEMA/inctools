@@ -1,0 +1,386 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title></title>
+	<meta name="generator" content="LibreOffice 4.2.8.2 (Linux)">
+	<meta name="author" content="&gt;">
+	<meta name="created" content="20170801;84000000000000">
+	<meta name="changedby" content="&gt;">
+	<meta name="changed" content="20170801;84100000000000">
+	<meta name="AppVersion" content="16.0000">
+	<meta name="Company" content="Stellenbosch University">
+	<meta name="DocSecurity" content="0">
+	<meta name="HyperlinksChanged" content="false">
+	<meta name="LinksUpToDate" content="false">
+	<meta name="ScaleCrop" content="false">
+	<meta name="ShareDoc" content="false">
+	<style type="text/css">
+	<!--
+		@page { size: 21cm 29.7cm; margin-left: 2.5cm; margin-right: 2.5cm; margin-top: 2cm; margin-bottom: 2cm }
+		p { margin-bottom: 0.25cm; direction: ltr; line-height: 120%; text-align: left; widows: 2; orphans: 2 }
+	-->
+	</style>
+</head>
+<body lang="en-ZA" dir="ltr">
+<p align="center" style="margin-bottom: 0.28cm; line-height: 107%"><b>User
+Guide</b></p>
+<p align="center" style="margin-bottom: 0.28cm; line-height: 107%"><b>Assay-Based
+Incidence Estimation (ABIE) v3:</b></p>
+<p align="center" style="margin-bottom: 0.28cm; line-height: 107%"><b>Sample_Size_Calculator</b></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><br><br>
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">It is recommended
+that users of the <b>Sampe_Size_Calculator </b>workbook read through
+this calculator-specific user guide before using the calculator.</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><br><br>
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">In addition to
+this workbook-specific guide, users will need to familiarise
+themselves with the overall ABIE user guide/version 3 release note,
+which can be found on a separate tab &lt;<i>About&nbsp;ABIE&nbsp;v3</i>&gt;
+in this workbook.  The overall ABIE guide provides important
+contextual information, including suggested further reading, relevant
+to the correct use of this tool; in particular, critical information
+on 
+</p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">nuanced
+	concepts around input requirements and the meaning of outputs, and</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">licensing
+	and citation.</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><br><br>
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><b>Summary</b></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">This tool
+provides the sample size calculations for desired <i>precision</i> or
+statistical “<i>power</i>”.</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><br><br>
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><u><b>Sample Size
+for Precision</b></u></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">The <b>Sample
+Size for Precision </b>calculations provide the minimum required
+sample size, of a proposed cross-sectional survey which tests for HIV
+and follows up by testing for biomarkers of recent infection amongst
+HIV positives, to attain a desired precision (relative standard
+error) of the incidence estimate, given assumptions about 
+</p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">population
+	prevalence and incidence</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">recency test
+	characteristics and coverage</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">“design
+	effects” for the precision of cluster based sampling estimates of
+	<i>a</i>) HIV prevalence, and <i>b</i>) the proportion of ‘recent
+	infections’ among HIV positives tested for recency.</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><u><b>Sample Size
+for Power</b></u></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">The <b>Sample
+Size for Power </b>calculations provide the minimum (common) sample
+size of two cross-sectional surveys (which each test for HIV and
+follow up by testing for biomarkers of recent infection amongst
+positives), to achieve a desired probability of detecting a
+difference in incidence (with the correct sign), given assumptions
+about</p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">population
+	prevalences and incidences (with the implied incidence difference to
+	be detected)</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">characteristics
+	and coverage of the recency test(s)</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">“design
+	effects” for the precision of cluster based sampling estimates of
+	<i>a</i>) HIV prevalence, and <i>b</i>) the proportion of “recent
+	infections” among HIV positives tested for recency, for both
+	surveys</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">The <b>Sample
+Size for Power Calculator </b>distinguishes three cases:</p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">Case I: The
+	two surveys used the same recency test, with a single estimate of
+	MDRI and a single estimate of FRR to be used for analysis of all
+	data</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">Case II: The
+	two surveys used the same recency test, with a single estimate of
+	MDRI, but with FRRs that are independently estimated in each survey
+	context</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">Case III:
+	The two surveys used independently estimated MDRIs (possibly for
+	different tests, and different associated cut-off times T) and
+	independently estimated FRRs</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><i><b>Crucial
+note on choice of null hypothesis, calculation of p-values and
+meaning of “power”</b></i></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">It is not
+uncommon for a null hypothesis to be underspecified until the final
+data is available, i.e. for certain details (such as a hypothetically
+shared value of a test statistic) to be specified (estimated) in
+light of the data.  In the present situation, the hypothetically
+common value of incidence, as well as the (potentially different by
+context) values of prevalence, cannot be reasonably supplied without
+seeing the data.  Once data is available, there is further no unique,
+obviously correct, approach to deriving these parameters, and
+different choices can be entertained.  The simplest, but not
+necessarily optimal, (indeed potentially problematic) approach is to
+hypothesize that the two survey populations are identical in terms of
+incidence AND prevalence, as this suggests a naïve pooling of all
+data to provide the hypothetically common values.  However, a simple
+test for difference of prevalence would be expected to lead to the
+rejection of the null hypothesis (of equal prevalence) in many, if
+not most, cases, as prevalence will be relatively precisely
+estimatable in any survey remotely powered to estimate incidence.
+Hence, a more flexible approach to the null hypothesis is required.</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">The approach
+taken in the present tool is to: 
+</p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">hypothesize
+	that the incidence is the same in the two contexts</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">be agnostic
+	on the matter of the value of this shared incidence</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">hypothesize
+	that the estimated value of the variance of the incidence difference
+	estimate (calculated carefully in accordance with the choice of how
+	test properties are shared between the surveys) is a good estimate
+	of the actual variance of the incidence difference. (This is
+	equivalent to a routinely made assumption in less complex
+	situations) 
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">allow the
+	prevalence for each context to be independently estimated from the
+	data from that context.  (Note that even if the data does not
+	support the rejection of the hypothesis that the prevalences are
+	identical, there is little or no advantage in constructing the null
+	hypothesis to include equal prevalence.)</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%">The preceding
+assumptions allow the calculation of a p-value, which is done
+according to a two-tailed test, capturing the point that the
+experimenter has no basis to pre-determine the acceptable direction
+of any incidence difference.</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">Note that while
+it is common to report “power” as the probability of correctly
+rejecting a null hypothesis, we are specifically insisting on a
+two-tailed test, where the direction of any inferred difference will
+specifically be either correct or incorrect.  Hence, we formally
+calculate <i>the probability of correctly detecting the correct sign
+of the incidence difference</i>.  Numerically, the probability of
+rejecting the null hypothesis, but with the incorrect direction for
+the inferred effect, will usually be very small, unless the study
+design has no useful statistical power in any case. 
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><b>Worksheets in
+this Workbook</b></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">The <b>Sample
+Size Calculator </b>contains seven worksheets or tabs:</p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><i>&lt;Welcome
+	to ABIE&gt;</i> (introduction to the ABIE toolbox in general and
+	major release three)</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><i>&lt;User
+	Guide&gt;</i>  (this document)</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><i>&lt;Sample
+	Size for Precision&gt;</i></p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><i>&lt;Scenario
+	Comparison&gt;</i></p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><i>&lt;Sample
+	Size for Power (I)&gt;</i></p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><i>&lt;Sample
+	Size for Power (II)&gt;</i></p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><i>&lt;Sample
+	Size for Power (III)&gt;</i>&nbsp;</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">The sheets are
+described in more detail below.</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><b>&lt;</b><i><b>Sample
+Size for Precision</b></i><b>&gt;</b></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><i>Context</i>:</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">A cross-sectional
+survey is planned, and expected prevalence and incidence values,
+estimates or hypothetical values of test properties (MDRI and FRR),
+and estimates of design effects are available.  An appropriate sample
+size must be determined.</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><i>Utility</i>:</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">This sheet
+calculates the minimum sample size consistent with the relative
+standard error (RSE) of the incidence estimate desired by the user. 
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">Note:</p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">Incidence is
+	entered as an “instantaneous rate”, with units of % per annum
+	(p.a.).</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">The minimum
+	possible relative standard error of the incidence estimate is not in
+	general zero, and depends in detail on the uncertainties (relative
+	standard errors) of the recency test characteristics (MDRI and FRR),
+	as well as the hypothetical prevalence and incidence.  The minimum
+	possible RSE of the incidence estimate is reported in the cell
+	directly above the cell where the desired RSE is entered.  An error
+	message is displayed if the desired RSE is less than the minimum. 
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">The
+	calculation only takes into account those subjects whose HIV status
+	is ascertained. It does not assume, however, that recency test
+	results will be available for all HIV positive subjects.  The
+	percentage of HIV positive subjects for which recency test results
+	are expected to be available – the recency test coverage –
+	should be close or equal to 100%. 
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">The output
+	under the heading “Expected Survey Counts” gives the numbers of
+	HIV negative subjects, HIV positive subjects, recency test results,
+	and recency-test-positive subjects that would be expected if a
+	survey were to be carried out with the minimum required sample size
+	proposed by the calculator, in a context described by the inputs. 
+	Expected survey counts are also given for a survey carried out with
+	a “user-defined sample size”, which may, for example, be a round
+	number greater than the minimum required sample size. 
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">The sheet
+	displays a graph of the RSE of the incidence estimate as a function
+	of sample size.  The shape of the curve, including the minimum RSE,
+	shown as a horizontal dashed asymptote, is determined by all of the
+	inputs <i>except</i> the desired RSE.  The desired RSE determines
+	the point on the curve which corresponds to the minimum sample size.
+	 The graph is displayed for values of sample size from 0 to 50,000. 
+		</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><b>&lt;</b><i><b>Scenario
+Comparison</b></i><b>&gt;</b></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><i>Context</i>:</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">As in the &lt;<i>Sample
+Size for Precision</i>&gt; sheet, but questions remain about one or
+more of the inputs (population incidence and prevalence, test
+characteristics or coverage, design effects, required precision). 
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><i>Utility</i>:</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">This sheet
+performs the same calculation as the &lt;<i>Sample Size for
+Precision</i>&gt; sheet, but allows for up to 10 sets of inputs, and
+thus, for example, for a sensitivity analysis indicating how sample
+size depends on the input assumptions or on desired RSE.  
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">Note:</p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">Each
+	scenario is specified in a column much like column D in the <i>&lt;Sample
+	Size for Precision&gt;</i> sheet. 
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">It is
+	envisaged that the main use of this sheet is to implement
+	sensitivity analysis of minimum sample size modifying one input at a
+	time; the 10 scenarios can however be selected arbitrarily and
+	independently of each other. 
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">It is
+	recommended that the user at some point enter each input set into
+	the <i>&lt;Sample Size for Precision&gt;</i> sheet in order to view
+	relevant warnings and error messages.</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><b>&lt;</b><i><b>Sample
+Size for Power (I/II/III)&gt;</b></i></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US"><i>Context</i></span><span lang="en-US">:</span></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US">Two
+cross-sectional surveys are to be carried out, in order to estimate
+the size of the difference in HIV incidence between the two
+populations.  Expected prevalence and incidence values for the two
+populations, estimates or hypothetical values of the properties of
+the recency test(s) (MDRI and FRR), and estimates of design effects
+are available.  An appropriate sample size (common to the two
+surveys), consistent with a desired probability of correctly
+diagnosing the direction of the incidence difference, must be
+determined.</span></p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US"><i>Utility</i></span><span lang="en-US">:
+</span>
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US">This
+sheet calculates the minimum required sample size, common to two
+surveys, consistent with the “power” (probability of inferring a
+difference in incidence, with the correct sign) desired by the user. </span>
+</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US">Note:</span></p>
+<ul>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><b>To
+	simplify the calculation, it has been set up expecting that the
+	higher of the two underlying incidence values is supplied in
+	scenario I. An error message alerts users to the violation of this
+	presumption. </b>
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US">The
+	“power” as defined here has an upper limit which depends on the
+	uncertainties (relative standard errors) of the recency test
+	characteristics (MDRI and FRR), as well as the hypothetical
+	incidence and prevalence.  The maximum power is reported in the cell
+	directly above the one where the desired power is entered.  An error
+	message is displayed if the desired power is greater than the
+	maximum possible power. </span>
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US">The
+	case where the two surveys are to have different sample sizes is not
+	considered here. Nor is the case where one survey has already been
+	done, and the question is how large a sample size is required of a
+	second survey in order to reliably detect differences between 1) the
+	scenario for which an estimate is already in hand, and 2) the
+	scenario in which a survey is still to be performed.</span></p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US">Incidences
+	are entered and reported as “instantaneous rates”, with units of
+	% per annum (p.a.).  </span>
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%">The
+	calculation only takes into account those subjects whose HIV status
+	is ascertained. It does not assume, however, that recency test
+	results will be available for all HIV positive subjects.  The
+	percentage of HIV positive subjects for which recency test results
+	are expected to be available – the recency test coverage –
+	should be close or equal to 100% for both surveys. 
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US">The
+	output under the heading “Expected Survey Counts” gives the
+	numbers of HIV negative subjects, HIV positive subjects, recency
+	tests performed, and recency-test-positive subjects that would be
+	expected for each survey if the surveys were to be carried out with
+	the minimum sample size in a context described by the inputs
+	provided.  Expected survey counts are also given for surveys carried
+	out with a “user-defined sample size”, which may, for example,
+	be a round number greater than the minimum sample size. </span>
+	</p>
+	<li><p style="margin-bottom: 0.28cm; line-height: 107%"><span lang="en-US">Each
+	of these sheets displays a graph of “power” (the probability of
+	correctly inferring an incidence difference with the correct sign)
+	as a function of the common sample size.  The shape of the curve,
+	including the maximum power, displayed as a horizontal dashed
+	asymptote), is determined by all of the inputs </span><span lang="en-US"><i>except</i></span><span lang="en-US">
+	the desired power.  The desired power determines the point on the
+	curve which corresponds to the minimum sample size.  The graph is
+	displayed for values of sample size from 0 to 50,000.  </span>
+	</p>
+</ul>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%">&nbsp;</p>
+<p style="margin-bottom: 0.28cm; line-height: 107%"><br><br>
+</p>
+</body>
+</html>

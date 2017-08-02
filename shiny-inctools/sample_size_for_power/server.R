@@ -92,6 +92,15 @@ shinyServer(function(input, output, session) {
       need(!(input$mdrihatcov_2 > 100  & input$scenario_case == 3), 'Please provide a value for MDRI_2 covariance'),
       need(input$frrhatcov >= 0, 'Please provide a valid covariance value for FRR'),
       need(input$frrhatcov <= 100, 'Please provide a valid covariance value for FRR'),
+      need(input$MDRI, 'Please provide a  value for MDRI'),
+      need(input$MDRI >= 0, 'Please provide a valid  value for MDRI'),
+      #need(input$MDRI <= 720, 'Please provide a valid  value for MDRI'),
+      need(input$MDRI_1, 'Please provide a  value for MDRI for survey 1'),
+      need(input$MDRI_1 >= 0, 'Please provide a valid  value for MDRI for survey 1'),
+      #need(input$MDRI_1 <= 720, 'Please provide a valid  value for MDRI for survey 1'),
+      need(input$MDRI_2, 'Please provide a  value for MDRI for survey 2'),
+      need(input$MDRI_2 >= 0, 'Please provide a valid  value for MDRI for survey 2'),
+      #need(input$MDRI_2 <= 720, 'Please provide a valid  value for MDRI for survey 2'),
       need(input$mdrihatcov, 'Please provide a covariance value for MDRI'),
       need(input$mdrihatcov >= 0, 'Please provide a valid covariance value for MDRI'),
       need(input$mdrihatcov <= 100, 'Please provide a valid covariance value for MDRI'),
@@ -118,7 +127,8 @@ shinyServer(function(input, output, session) {
       need(input$rec_test_coverage_1 > 0, 'Please provide a valid value for the % of recently tested for positives'),
       need(input$rec_test_coverage_1 <= 100, 'Please provide a valid value for the % of recently tested for positives'),
       need(input$rec_test_coverage_2 > 0, 'Please provide a valid value for the % of recently tested for positives'),
-      need(input$rec_test_coverage_2 <= 100, 'Please provide a valid value for the % of recently tested for positives')
+      need(input$rec_test_coverage_2 <= 100, 'Please provide a valid value for the % of recently tested for positives'),
+      need(input$statPower>=0 & input$statPower<=100,"Please provide a valid value for statistical power (%)")
     )
 
     data <- format_table(df(), input$scenario_case)
@@ -128,8 +138,8 @@ shinyServer(function(input, output, session) {
                 xlab = "Sample Size common to survey 1 and survey 2", 
                 ylab = "Probability ",type = "l", col='blue')
     #abline(h = 0.8, v = data[which(data[,1]==0.8),"N"])
-    abline(h = input$statPower,  lty=2, col="grey", lwd=2)
-    abline(v = data[which(round(data[,1],2)==input$statPower),"N"], lty=2, col="grey", lwd=2)
+    abline(h = input$statPower/100,  lty=2, col="grey", lwd=2)
+    abline(v = data[which(round(data[,1],2)==input$statPower/100),"N"], lty=2, col="grey", lwd=2)
     print(plot)
   })
 
@@ -243,13 +253,11 @@ shinyServer(function(input, output, session) {
                   main = "Probability of correcting inferring incidence 1 > incidence 2 \n as a function of sample size",
                   xlab = "Sample Size common to survey 1 and survey 2", 
                   ylab = "Probability",type = "l",col='blue')
-      abline(h = input$statPower,  lty=2, col="grey")
-      abline(v = data[which(round(data[,1],2)==input$statPower),"N"])
+      abline(h = input$statPower/100,  lty=2, col="grey")
+      abline(v = data[which(round(data[,1],2)==input$statPower/100),"N"])
       print(plot)
       dev.off()
-      #write.csv(renameTable(format_table(df(), input$scenario_case)) , file)
-      # ggsave(file = file, plot = plot, width = 13, height = 9)
-      
+  
     }
   )
   
