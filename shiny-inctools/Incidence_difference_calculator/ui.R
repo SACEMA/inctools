@@ -24,86 +24,23 @@ shinyUI(fluidPage(
          wellPanel(
          fluidRow(column(9, downloadButton('downloadData', 'Download Results')))
          ),
-        wellPanel(
-        fluidRow(column(9,
-                        radioButtons("survey_number", label = h3("Number of surveys:"),
-                                     c("Two surveys" = 2,
-                                       "Three surveys" = 3)),
-                        selected = 2)
-        )
-        ),
         wellPanel(fluidRow(
-          conditionalPanel(
-            condition = "input.survey_number == 2",
             column(12,
                    radioButtons("case", label = h3("Scenario Type:"),
                                 c(" Same MDRI, same FRR estimates in the two surveys" = 1,
                                   " Same MDRI, but different FRR estimates in the two surveys" = 2,
                                   " Different MDRI and FRR estimates in the two surveys" = 3)),
-                   selected = 3)
-          ),
-          conditionalPanel(
-            condition = "input.survey_number == 3",
-            
-            column(12,
-                   radioButtons("case", label = h3("Scenario Type:"),
-                                c("Independent MDRI and FRR estimates between all surveys" = 3)),
-                   selected = 3)
-          )
-        )),
-        wellPanel(
-          fluidPage(
-            h3("Survey Parameters"),
-            #wellPanel(
-              fluidRow(
-  
-                column(6, 
-                       numericInput("PrevH_1", label = h5("Prevalence of HIV infection in survey 1 (%)"), value = 20, step = 0.1, min=0, max = 100),
-                       numericInput("PrevR_1", label = h5("Prevalence of recent infections among positives in survey 1 (%)"), value = 10, step = 0.1, min=0, max = 100)
-                ),
-                column(6,
-                       numericInput("RSE_PrevH_1", label = h5("RSE of Prevalence HIV infection in survey 1 (%)"), value = 2.8, step = 0.1, min=0, max = 100),
-                       numericInput("RSE_PrevR_1", label = h5("RSE of Prevalence of recent infections among positives 1 (%)"), value = 9.8, step = 0.1, min=0, max = 100))
-             # )
-              ),
-           # wellPanel(
-              fluidRow(
-                
-                
-                column(6, 
-                       numericInput("PrevH_2", label = h5("Prevalence of HIV infection in survey 2 (%)"), value = 21, step = 0.1, min=0, max = 100),
-                       numericInput("PrevR_2", label = h5("Prevalence of recent infections among positives in survey 2 (%)"), value = 13, step = 0.1, min=0, max = 100)
-                ),
-                column(6, 
-                       numericInput("RSE_PrevH_2", label = h5("RSE of Prevalence HIV infection in survey 2 (%)"), value = 3, step = 0.1, min=0, max = 100),
-                       numericInput("RSE_PrevR_2", label = h5("RSE of Prevalence of recent infections among positives 2 (%)"), value = 9.5, step = 0.1, min=0, max = 100))
-             # )
-              ),
-            #wellPanel(
-              fluidRow(
-                conditionalPanel(
-                  condition = "input.survey_number != 2",
-                  column(6, 
-                         numericInput("PrevH_3", label = h5("Prevalence of HIV infection in survey 3 (%)"), value = 18, step = 0.1, min=0, max = 100),
-                         numericInput("PrevR_3", label = h5("Prevalence of recent infections among positives in survey 3 (%)"), value = 12, step = 0.1, min=0, max = 100)
-                  ),
-                  column(6, 
-                         numericInput("RSE_PrevH_3", label = h5("RSE of Prevalence HIV infection in survey 3 (%)"), value = 2.2, step = 0.1, min=0, max = 100),
-                         numericInput("RSE_PrevR_3", label = h5("RSE of Prevalence of recent infections among positives 3 (%)"), value = 5, step = 0.1, min=0, max = 100))
-                )
-              )
-           # )
-            )
-        ),
+                   selected = 1)
+          )),
+       
        wellPanel(
           # fluid page for the assay parameters
           fluidPage(
             h3("Assay Parameters"),
-           # wellPanel(
               fluidRow(
                 column(6,
                        conditionalPanel(
-                         condition = "input.case != 3 & input.survey_number != 3",
+                         condition = "input.case != 3",
                          numericInput("MDRI",
                                       label = h5("MDRI estimate (days)"),
                                       min = 0,
@@ -112,7 +49,7 @@ shinyUI(fluidPage(
                                       value = 240)
                        ),
                        conditionalPanel(
-                         condition = "input.case == 3 | input.survey_number == 3",
+                         condition = "input.case == 3",
                          numericInput("MDRI_1",
                                       label = h5("MDRI estimate for survey 1 (days)"),
                                       min = 0,
@@ -121,7 +58,7 @@ shinyUI(fluidPage(
                                       value = 240)
                        ),
                        conditionalPanel(
-                         condition = "input.case == 1 & input.survey_number != 3",
+                         condition = "input.case == 1",
                          numericInput("FRR",
                                       label = h5("FRR estimate (%)"),
                                       min = 0,
@@ -130,7 +67,7 @@ shinyUI(fluidPage(
                                       value = 1)
                        ),
                        conditionalPanel(
-                         condition = "input.case != 1 | input.survey_number == 3",
+                         condition = "input.case != 1",
                          numericInput("FRR_1",
                                       label = h5("FRR estimate for survey 1 (%)"),
                                       min = 0,
@@ -141,29 +78,27 @@ shinyUI(fluidPage(
                 ),
                 column(6,
                        conditionalPanel(
-                         condition = "input.case != 3 & input.survey_number != 3",
+                         condition = "input.case != 3",
                          numericInput("RSE_MDRI", label = h5("RSE of MDRI estimate (%)"), value = 5, step = 0.1)
                        ),
                        conditionalPanel(
-                         condition = "input.case == 3 | input.survey_number == 3",
+                         condition = "input.case == 3",
                          numericInput("RSE_MDRI_1", label = h5("RSE of MDRI estimate for survey 1 (%)"), value = 5, step = 0.1)
                        ),
                        conditionalPanel(
-                         condition = "input.case == 1 & input.survey_number != 3",
+                         condition = "input.case == 1",
                          numericInput("RSE_FRR", label = h5("RSE of FRR estimate (%)"), value = 20, step = 0.1)
                        ),
                        conditionalPanel(
-                         condition = "input.case != 1 | input.survey_number == 3",
+                         condition = "input.case != 1",
                          numericInput("RSE_FRR_1", label = h5("RSE of FRR estimate for survey 1 (%)"), value = 20, step = 0.1)
                        )
                 )
-              #  )
               ),
-           # wellPanel(
               fluidRow(
                 column(6,
                        conditionalPanel(
-                         condition = "input.case == 3 | input.survey_number == 3",
+                         condition = "input.case == 3",
                          numericInput("MDRI_2",
                                       label = h5("MDRI estimate for survey 2 (days)"),
                                       min = 0,
@@ -172,7 +107,7 @@ shinyUI(fluidPage(
                                       value = 240)
                        ),
                        conditionalPanel(
-                         condition = "input.case != 1 | input.survey_number == 3",
+                         condition = "input.case != 1",
                          numericInput("FRR_2",
                                       label = h5("FRR estimate for survey 2 (%)"),
                                       min = 0,
@@ -183,43 +118,50 @@ shinyUI(fluidPage(
                 ),
                 column(6,
                        conditionalPanel(
-                         condition = "input.case == 3 | input.survey_number == 3",
+                         condition = "input.case == 3",
                          numericInput("RSE_MDRI_2", label = h5("RSE of MDRI estimate for survey 2(%)"), value = 5, step = 0.1)
                        ),
                        conditionalPanel(
-                         condition = "input.case != 1 | input.survey_number == 3",
+                         condition = "input.case != 1",
                          numericInput("RSE_FRR_2", label = h5("RSE of FRR estimate for survey 2 (%)"), value = 20, step = 0.1)
                        )
                 )
-               # )
+
               ),
-           # wellPanel(
-              fluidRow(
-                conditionalPanel(
-                  condition = "input.survey_number != 2",
-                  column(6,
-                         numericInput("MDRI_3",
-                                      label = h5("MDRI estimate of survey 3 (days)"),
-                                      step = 1,
-                                      value = 180 ),
-                         numericInput("FRR_3",
-                                      label = h5("FRR estimate of survey 3 (%)"),
-                                      min = 0,
-                                      max = 100,
-                                      step = 0.1,
-                                      value = 2 )
-                  ),
-                  column(6,
-                         numericInput("RSE_MDRI_3", label = h5("RSE of MDRI estimate of survey 3 (%)"), value = 6, step = 0.1),
-                         numericInput("RSE_FRR_3", label = h5("RSE of FRR estimate of survey 3 (%)"), value = 10, step = 0.1)
-                  )
-                )
-            #  )
-              ),
-           # wellPanel(
+           
               fluidRow(
               column(10,numericInput("BigT", label = h5("Cut-off time T (days)"), value = 730, step = 10)
               )))
+       ),
+       
+       wellPanel(
+         fluidPage(
+           h3("Survey Parameters"),
+           fluidRow(
+             
+             column(6, 
+                    numericInput("PrevH_1", label = h5("Prevalence of HIV infection in survey 1 (%)"), value = 20, step = 0.1, min=0, max = 100),
+                    numericInput("PrevR_1", label = h5("Prevalence of recent infections among positives in survey 1 (%)"), value = 10, step = 0.1, min=0, max = 100)
+             ),
+             column(6,
+                    numericInput("RSE_PrevH_1", label = h5("RSE of Prevalence HIV infection in survey 1 (%)"), value = 2.8, step = 0.1, min=0, max = 100),
+                    numericInput("RSE_PrevR_1", label = h5("RSE of Prevalence of recent infections among positives 1 (%)"), value = 9.8, step = 0.1, min=0, max = 100))
+             # )
+           ),
+           # wellPanel(
+           fluidRow(
+             
+             column(6, 
+                    numericInput("PrevH_2", label = h5("Prevalence of HIV infection in survey 2 (%)"), value = 21, step = 0.1, min=0, max = 100),
+                    numericInput("PrevR_2", label = h5("Prevalence of recent infections among positives in survey 2 (%)"), value = 13, step = 0.1, min=0, max = 100)
+             ),
+             column(6, 
+                    numericInput("RSE_PrevH_2", label = h5("RSE of Prevalence HIV infection in survey 2 (%)"), value = 3, step = 0.1, min=0, max = 100),
+                    numericInput("RSE_PrevR_2", label = h5("RSE of Prevalence of recent infections among positives 2 (%)"), value = 9.5, step = 0.1, min=0, max = 100))
+             # )
+           )
+          
+         )
        )
           )
       #  )
