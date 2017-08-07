@@ -15,18 +15,20 @@ library(shiny)
 
 shinyUI(fluidPage(
 
-  # Application title
-  titlePanel("Incidence/Prevalence Calculator"),
+  # Application title  # formerly called the incidence/Prevalence calculator
+  titlePanel("Incidence Calculator"),
   br(),
   sidebarLayout(
     sidebarPanel(
 
-      wellPanel(
-        fluidPage(
-
-        fluidRow(column(12,
-                        downloadButton('downloadData', 'Download Estimates')))
-      )),
+      # wellPanel(
+      #   fluidPage(
+      # 
+      #   fluidRow(column(12,
+      #                   downloadButton('downloadData1', 'Download Estimates'))),
+      #   fluidRow(column(12,
+      #                   downloadButton('downloadData2', 'Download Estimates')))
+      # )),
       wellPanel(
         fluidRow(column(9,
                         radioButtons("data_type", label = h3("Data Type:"),
@@ -77,8 +79,6 @@ shinyUI(fluidPage(
               column(12,
                      numericInput("N_H", 
                                   label = "Number of HIV positive among total",
-                                  # min = 0,
-                                  # max = "input.N",
                                   value = 1000, 
                                   step = 1)
               )
@@ -86,8 +86,6 @@ shinyUI(fluidPage(
             fluidRow(column(12,
                             numericInput("N_testR", 
                                          label = "HIV positives tested for recency",
-                                         # min = 0,
-                                         # max = "input.N_H",
                                          value = 1000, 
                                          step = 1)
             )),
@@ -95,8 +93,6 @@ shinyUI(fluidPage(
               column(12,
                      numericInput("N_R", 
                                   label = "Number of recent cases",
-                                  # min = 0,
-                                  # max = "input.N_testR",
                                   value = 50, 
                                   step = 1 )
               )
@@ -176,10 +172,19 @@ shinyUI(fluidPage(
       conditionalPanel(
         condition = "input.data_type == 2",
         tabsetPanel(type = "tabs",
-                    tabPanel("Incidence",tableOutput("tab4")),
+                    tabPanel("Incidence Estimates",
+                             br(""),
+                             fluidRow(column(12,
+                                               downloadButton('downloadData1', 'Download Estimates'))
+                             ),
+                             br(""),
+                             tableOutput("tab4"),
+                             fluidRow(
+                               plotOutput("plot1")
+                             )),
                     tabPanel("About", value='tab4_val', id = 'tab4',
                              wellPanel( p(""),
-                                        p(HTML("Calculates the point estimate and confidence interval for incidence, prevalence and 
+                                        p(HTML("Calculates the point estimate and confidence interval for incidence, prevalence and
                                              annual risk of infection.")),
                                         p("Contributors:"),
                                         tags$ul(
@@ -192,16 +197,19 @@ shinyUI(fluidPage(
                                         p(em("Built using", a(strong("inctools"), href = "https://cran.r-project.org/web/packages/inctools/index.html", target = "_blank")))
                              )
                     )
-        ),
-        fluidRow(
-          br(""),
-          plotOutput("plot1")
         )
         ),
       conditionalPanel(
         condition = "input.data_type == 1",
         tabsetPanel(type = "tabs",
-                    tabPanel("incidence Estimates", tableOutput("tab5"),
+                    tabPanel("Incidence Estimates",
+                             br(""),
+                             fluidRow(column(12,
+                                               downloadButton('downloadData2', 'Download Estimates'))
+                             ),
+                             br(""),
+                             tableOutput("tab5b"),
+                             tableOutput("tab5"),
                              br(),
                              p(""),
                              p(strong('Definition of Parameters')),
@@ -211,8 +219,9 @@ shinyUI(fluidPage(
                              br("RSE: Relative standard error of incidence estimate"),
                              br("ARI: Annual Risk of Infection"),
                              br("ARI.CI.low: Lower confidence limit of Annual Risk of Infection"),
-                             br("ARI.CI.up: Upper confidence limit of Annual Risk of Infection")),
-                                     
+                             br("ARI.CI.up: Upper confidence limit of Annual Risk of Infection")
+                             ),
+
                     tabPanel("User Guide", value='tab3_val', id = 'tab3',
                              wellPanel( p(""),
                                         wellPanel(includeHTML("Incidence_Prevalence_Calculator.html"))
@@ -220,7 +229,7 @@ shinyUI(fluidPage(
                     ),
                     tabPanel("About", value='tab4_val', id = 'tab10',
                              wellPanel( p(""),
-                                        p(HTML("Calculates the point estimate and confidence interval for incidence, prevalence and 
+                                        p(HTML("Calculates the point estimate and confidence interval for incidence, prevalence and
                                              annual risk of infection.")),
                                         p("Contributors:"),
                                         tags$ul(
@@ -234,10 +243,7 @@ shinyUI(fluidPage(
                              )
                     ))
       )
-   
-      
 
-      
     )
   )
 ))

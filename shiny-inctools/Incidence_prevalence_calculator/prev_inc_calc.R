@@ -62,6 +62,7 @@ risk_of_infection_calc <- function(N = 5000, N_H = 1000,
   return(temp$Annual.Risk.of.Infection)
 }
 
+# A general wrapper/function making use of the incidence, prevalence and risk functions from above
 prev_inc_calc_counts<-function(N = 5000, N_H = 1000,
                                N_testR = 1000, N_R = 50,
                                DE_H = 1, DE_R = 1,
@@ -95,8 +96,8 @@ prev_inc_calc_incprop <- function(PrevH = 0.20, RSE_PrevH = 0.028,
                  BS_Count = 10000, Boot = TRUE, MDRI = MDRI,
                  RSE_MDRI = RSE_MDRI, FRR = FRR,
                  RSE_FRR = RSE_FRR, BigT = BigT)
-  temp<-cbind(temp$Incidence.Statistics,temp$Annual.Risk.of.Infection)
-  return(temp)
+  df.values<-cbind(temp$Incidence.Statistics,temp$Annual.Risk.of.Infection)
+  return(df.values)
 }
 
 
