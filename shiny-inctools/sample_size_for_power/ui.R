@@ -172,7 +172,6 @@ shinyUI(fluidPage(
       fluidRow(
         column(12,
                img(src='SACEMA_logo.jpg', align = "right", height = "75px")
-               #img(src='mcgill.png', align = "right", height = "40px"),
         )),
       br(),
       #plotOutput("plot")

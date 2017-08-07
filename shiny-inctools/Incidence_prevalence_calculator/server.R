@@ -102,6 +102,34 @@ shinyServer(function(input, output, session){
     return(temp)
   })
   
+  
+  data_incidence_count <- reactive({ # for risk of infection calculiation
+    validate(
+      need(input$N>0,"Please enter a valid total population sample size"),
+      need(input$N>=input$N_H,"HIV-positive subjects should be less than total sample size"),
+      need(input$N_H>=input$N_testR,"HIV-positive subjects tested for recency should be less than HIV-positive subjects among total sample size"),
+      need(input$N_testR>=input$N_R,"The number of recent HIV cases should be less than HIV-positive subjects tested for recency"),
+      need(input$RSE_FRR >= 0, 'Please provide a valid RSE for FRR'),
+      need(input$RSE_FRR <= 100, 'Please provide a valid RSE for FRR'),
+      need(!(input$RSE_FRR == "" ), 'Please provide a value for RSE_FRR'),
+      need(input$RSE_MDRI >= 0, 'Please provide a valid RSE for MDRI'),
+      need(input$RSE_MDRI <= 100, 'Please provide a valid RSE for MDRI'),
+      need(!(input$RSE_MDRI == "" ), 'Please provide a value for RSE_MDRI'),
+      need(input$MDRI >= 0, 'Please provide a valid value for MDRI'),
+      need(input$FRR >= 0, 'Please provide a valid value for FRR'),
+      need(input$FRR <= 100, 'Please provide a valid value for FRR'),
+      need(input$BigT, 'Please provide a value for the cut-off time'),
+      need(input$BigT > 120, 'Please provide a valid value for the cut-off time (>120)')
+    )
+    temp <- prev_inc_calc_counts(N = input$N, N_H = input$N_H, 
+                                   N_testR = input$N_testR, N_R = input$N_R, 
+                                   DE_H = input$DE_H, DE_R = input$DE_R,
+                                   MDRI = input$MDRI, RSE_MDRI = input$RSE_MDRI/100,
+                                   FRR = input$FRR/100, RSE_FRR = input$RSE_FRR/100,
+                                   BigT = input$BigT) 
+    return(temp)
+  })
+  
   data_pie<-reactive({
     validate(
       need(input$N>0,""),
@@ -121,7 +149,17 @@ shinyServer(function(input, output, session){
     #options(error = NULL)
     legend("bottomleft",legend = label,cex = 1.0,fill = color)
   })
+  # create a function for incidence from the incprops calculator
+  data_prev_inc_calc_incprop<- reactive({
+    temp<-prev_inc_calc_incprop(PrevH = input$PrevH/100, RSE_PrevH = input$RSE_PrevH/100,
+                                PrevR = input$PrevR/100, RSE_PrevR = input$RSE_PrevR/100,
+                                MDRI = input$MDRI, RSE_MDRI = input$RSE_MDRI/100,
+                                FRR = input$FRR/100, RSE_FRR = input$RSE_FRR/100,
+                                BigT = input$BigT)
+    return(temp)
+  }) 
   
+
   # Produce an output table value.
   output$tab1 <- renderTable({
     data_prevalence()
@@ -141,9 +179,17 @@ shinyServer(function(input, output, session){
     
   })
   
+  output$tab5<-renderTable(
+    
+    data_prev_inc_calc_incprop()
+    
+  )
+  
+ # A single tab for incidence from count data
   output$tab4<-renderTable({
-    temp<-c(prevalence_calc(),incidence_calc(),risk_of_infection_calc())
-    data.frame("Parameters" = c("Prevalence of HIV (PrevH)","Prevalence of recency (PrevR)",
+    #data_incidence_count()
+    temp<-data_incidence_count()
+    data.frame("Parameter" = c("Prevalence of HIV (PrevH)","Prevalence of recency (PrevR)",
                       "Relative standard error of PrevH (RSE_PrevH)","Relative standard error of PrevR (RSE_PrevR)",
                       "Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
                       "Upper limit of confidence interval (CI.up)","Relative standard error of incidence estimate (RSE)",
@@ -151,11 +197,10 @@ shinyServer(function(input, output, session){
                       "Annual Risk of Infection (ARI)",
                       "Lower confidence limit of Annual Risk of Infection (ARI.CI.low)",
                       "Upper confidence limit of Annual Risk of Infection (ARI.CI.up)"),
-               #"variable"=names(temp), 
-               "values"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
+               "Value"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
                           temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
                           temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
-    
+
   })
 
   output$downloadData <- downloadHandler(
@@ -163,13 +208,12 @@ shinyServer(function(input, output, session){
       paste("resultTable-", Sys.Date(), ".csv", sep="")
     },
     content = function(file) {
-      temp<-c(prevalence_calc(),incidence_calc(),risk_of_infection_calc())
-      temp<-data.frame("Parameters" = names(temp), 
-                       "values"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
+      temp<-cbind(prevalence_calc(),incidence_calc(),risk_of_infection_calc())
+      temp<-data.frame("Parameter" = names(temp), 
+                       "Value"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
                             temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
                             temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
-      #tt=xtabs(values~Parameters,data = temp) 
-      #write.csv(tt, file)
+      tt=xtabs(Value~Parameter,data = temp) 
       write.csv(temp, file)
     }
   )

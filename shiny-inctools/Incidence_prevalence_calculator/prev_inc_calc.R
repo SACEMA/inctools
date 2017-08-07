@@ -13,8 +13,8 @@
 prevalence_calc <- function(N = 5000, N_H = 1000,
                             N_testR = 1000, N_R = 50,
                             DE_H = 1, DE_R = 1,
-                            Boot = TRUE,
-                            BMest = 'same.test',
+                            # Boot = TRUE,
+                            # BMest = 'same.test',
                             MDRI = 210, RSE_MDRI = 0.05, FRR = 0.005, RSE_FRR = 0.19,
                             BigT = 700){
   
@@ -27,8 +27,8 @@ prevalence_calc <- function(N = 5000, N_H = 1000,
 incidence_calc <- function(N = 5000, N_H = 1000,
                             N_testR = 1000, N_R = 50,
                             DE_H = 1, DE_R = 1,
-                            Boot = FALSE,
-                            BMest = 'same.test',
+                            # Boot = FALSE,
+                            # BMest = 'same.test',
                             MDRI = 210, RSE_MDRI = 0.05, FRR = 0.005, RSE_FRR = 0.19,
                             BigT = 700){
   
@@ -46,9 +46,10 @@ incidence_calc <- function(N = 5000, N_H = 1000,
 risk_of_infection_calc <- function(N = 5000, N_H = 1000,
                            N_testR = 1000, N_R = 50,
                            DE_H = 1, DE_R = 1,
-                           Boot = TRUE,
-                           BMest = 'same.test',
-                           MDRI = 210, RSE_MDRI = 0.05, FRR = 0.005, RSE_FRR = 0.19,
+                           # Boot = TRUE,
+                           # BMest = 'same.test',
+                           MDRI = 210, RSE_MDRI = 0.05, 
+                           FRR = 0.005, RSE_FRR = 0.19,
                            BigT = 700){
   
   temp<-inccounts(N = c(N), N_H = N_H,
@@ -60,4 +61,42 @@ risk_of_infection_calc <- function(N = 5000, N_H = 1000,
                   BigT = BigT)
   return(temp$Annual.Risk.of.Infection)
 }
+
+prev_inc_calc_counts<-function(N = 5000, N_H = 1000,
+                               N_testR = 1000, N_R = 50,
+                               DE_H = 1, DE_R = 1,
+                               MDRI = 210, RSE_MDRI = 0.05,
+                               FRR = 0.005, RSE_FRR = 0.19,
+                               BigT = 700){
+  temp<-cbind(
+  prevalence_calc(N = N, N_H = N_H, N_testR = N_testR , N_R = N_R,
+                  DE_H = DE_H, DE_R = DE_R, MDRI = MDRI, RSE_MDRI = RSE_MDRI,
+                  FRR = FRR, RSE_FRR = RSE_FRR, BigT = BigT),
+  incidence_calc(N = N, N_H = N_H, N_testR = N_testR , N_R = N_R,
+                 DE_H = DE_H, DE_R = DE_R, MDRI = MDRI, RSE_MDRI = RSE_MDRI,
+                 FRR = FRR, RSE_FRR = RSE_FRR, BigT = BigT),
+  risk_of_infection_calc(N = N, N_H = N_H, N_testR = N_testR , N_R = N_R,
+                         DE_H = DE_H, DE_R = DE_R, MDRI = MDRI, RSE_MDRI = RSE_MDRI,
+                         FRR = FRR, RSE_FRR = RSE_FRR, BigT = BigT)
+  )
+  return(temp)
+}
+
+
+# calculator for incidence and annual risk of infection using the
+# function inprops and proportions as inputs.
+prev_inc_calc_incprop <- function(PrevH = 0.20, RSE_PrevH = 0.028,
+                                  PrevR = 0.10, RSE_PrevR = 0.09,
+                                  MDRI = 210, RSE_MDRI = 0.05,
+                                  FRR = 0.005, RSE_FRR = 0.19,
+                                  BigT = 700){
+  temp<-incprops(PrevH = PrevH, RSE_PrevH = RSE_PrevH,
+                 PrevR = PrevR, RSE_PrevR = RSE_PrevR,
+                 BS_Count = 10000, Boot = TRUE, MDRI = MDRI,
+                 RSE_MDRI = RSE_MDRI, FRR = FRR,
+                 RSE_FRR = RSE_FRR, BigT = BigT)
+  temp<-cbind(temp$Incidence.Statistics,temp$Annual.Risk.of.Infection)
+  return(temp)
+}
+
 
