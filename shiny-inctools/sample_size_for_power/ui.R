@@ -18,6 +18,14 @@ shinyUI(fluidPage(
   # Application title
   titlePanel("Sample Size for Power"),
   br(),
+  
+  # fluidRow(
+  #     column(4,
+  #            wellPanel(
+  #            "testing")
+  #            )
+  #   
+  #   ),
   sidebarLayout(
     sidebarPanel(
       
@@ -26,7 +34,14 @@ shinyUI(fluidPage(
         fluidRow(
           column(5, downloadButton('downloadData', 'Download Table')),
           column(5, downloadButton('downloadPlot', 'Save Plot'))),
-        #hr(),
+        hr(),
+        fluidRow(
+          h3("Type of Analysis:"),
+          column(9, selectInput("x_variable", label = "",
+                                choices = list("Sample Size for Power" = "Power",
+                                               "MDRI Sensitivity" = "MDRI",
+                                               "FRR Sensitivity" = "FRR"
+                                ), selected = "Power"))),
         fluidRow(column(9,
                         radioButtons("scenario_case", label = h3("Scenario Type:"),
                                      c("Same MDRI, same FRR estimates in the two surveys" = 1,
@@ -35,8 +50,24 @@ shinyUI(fluidPage(
                         selected = 1)
         )
       )),
+      wellPanel(fluidPage(
+        h3("Survey Parameters"),
+        fluidRow(
+          column(6,
+                 numericInput("I1", label = h5("Incidence in survey 1 (%)"), value = 5, step = 0.1),
+                 numericInput("PrevH1", label = h5("Prevalence in survey 1 (%)"), value = 15, step = 0.1),
+                 numericInput("CR_1", label = h5("Percentage of HIV positives tested for recency in survey 1 (%)"), value = 100, step = 1)
+                 
+          ),
+          
+          column(6,
+                 numericInput("I2", label = h5("Incidence in survey 2 (%)"), value = 2.5, step = 0.1),
+                 numericInput("PrevH2", label = h5("Prevalence in survey 2 (%)"), value = 12, step = 0.1),
+                 numericInput("CR_2", label = h5("Percentage of HIV positives tested for recency in survey 2 (%)"), value = 100, step = 1)
+          )
+        )
+      )),
       wellPanel( # fluid page for the assay parameters
-        #hr(),
         fluidPage(
           h3("Assay Parameters"),
           fluidRow(
@@ -67,7 +98,7 @@ shinyUI(fluidPage(
                    ),
                    conditionalPanel(
                      condition = "input.scenario_case == 1",
-                     numericInput("frrhat",
+                     numericInput("FRR",
                                  label = h5("FRR estimate (%)"),
                                  min = 0,
                                  max = 100,
@@ -76,13 +107,13 @@ shinyUI(fluidPage(
                    ),
                    conditionalPanel(
                      condition = "input.scenario_case != 1",
-                     numericInput("frrhat_1",
+                     numericInput("FRR_1",
                                  label = h5("FRR estimate for survey 1 (%)"),
                                  min = 0,
                                  max = 100,
                                  step = 0.1,
                                  value = 1),
-                     numericInput("frrhat_2",
+                     numericInput("FRR_2",
                                  label = h5("FRR estimate for survey 2 (%)"),
                                  min = 0,
                                  max = 100,
@@ -94,53 +125,37 @@ shinyUI(fluidPage(
             column(6,
                    conditionalPanel(
                      condition = "input.scenario_case != 3",
-                     numericInput("mdrihatcov", label = h5("RSE of MDRI estimate (%)"), value = 5, step = 0.1)),
+                     numericInput("RSE_MDRI", label = h5("RSE of MDRI estimate (%)"), value = 5, step = 0.1)),
                    conditionalPanel(
                      condition = "input.scenario_case == 3",
-                     numericInput("mdrihatcov_1", label = h5("RSE of MDRI estimate for survey 1 (%)"), value = 5, step = 0.1),
-                     numericInput("mdrihatcov_2", label = h5("RSE of MDRI estimate for survey 2(%)"), value = 5, step = 0.1)),
+                     numericInput("RSE_MDRI_1", label = h5("RSE of MDRI estimate for survey 1 (%)"), value = 5, step = 0.1),
+                     numericInput("RSE_MDRI_2", label = h5("RSE of MDRI estimate for survey 2(%)"), value = 5, step = 0.1)),
                    conditionalPanel(
                      condition = "input.scenario_case == 1",
-                     numericInput("frrhatcov", label = h5("RSE of FRR estimate (%)"), value = 20, step = 0.1)),
+                     numericInput("RSE_FRR", label = h5("RSE of FRR estimate (%)"), value = 20, step = 0.1)),
                    conditionalPanel(
                      condition = "input.scenario_case != 1",
-                     numericInput("frrhatcov_1", label = h5("RSE of FRR estimate for survey 1 (%)"), value = 20, step = 0.1),
-                     numericInput("frrhatcov_2", label = h5("RSE of FRR estimate for survey 2 (%)"), value = 20, step = 0.1))
+                     numericInput("RSE_FRR_1", label = h5("RSE of FRR estimate for survey 1 (%)"), value = 20, step = 0.1),
+                     numericInput("RSE_FRR_2", label = h5("RSE of FRR estimate for survey 2 (%)"), value = 20, step = 0.1))
                    
             )
           ),
           fluidRow(column(9,
-                          numericInput("TIME", label = h5("Cut-off time T (days)"), value = 730, step = 10)
+                          numericInput("BigT", label = h5("Cut-off BigT T (days)"), value = 730, step = 10)
                           ))
           )),
-      wellPanel(fluidPage(
-        h3("Survey Parameters"),
-        fluidRow(
-          column(6,
-                 numericInput("inc_1", label = h5("Incidence in survey 1 (%)"), value = 5, step = 0.1),
-                 numericInput("p_pos_1", label = h5("Prevalence in survey 1 (%)"), value = 15, step = 0.1),
-                 numericInput("rec_test_coverage_1", label = h5("Percentage of HIV positives tested for recency in survey 1 (%)"), value = 100, step = 1)
-                 
-          ),
-          
-          column(6,
-                 numericInput("inc_2", label = h5("Incidence in survey 2 (%)"), value = 2.5, step = 0.1),
-                 numericInput("p_pos_2", label = h5("Prevalence in survey 2 (%)"), value = 12, step = 0.1),
-                 numericInput("rec_test_coverage_2", label = h5("Percentage of HIV positives tested for recency in survey 2 (%)"), value = 100, step = 1)
-          )
-        )
-      )),
+     
       wellPanel(
         #Design Effect parameters
         fluidPage(
           h3("Design Effect Parameters"),
           fluidRow(
             column(6,
-                   numericInput("DE_prev_1", label = h5("Infection prevalence in survey 1"), value = 1, step = 0.1),
-                   numericInput("DE_RgivenTested_1", label = h5("Recent infection prevalence among positives in survey 1"), value = 1, step = 0.1)),
+                   numericInput("DE_H1", label = h5("Infection prevalence in survey 1"), value = 1, step = 0.1),
+                   numericInput("DE_R1", label = h5("Recent infection prevalence among positives in survey 1"), value = 1, step = 0.1)),
             column(6,
-                   numericInput("DE_prev_2", label = h5("Infection prevalence in survey 2"), value = 1, step = 0.1),
-                   numericInput("DE_RgivenTested_2", label = h5("Recent infection prevalence among positives in survey 2"), value = 1, step = 0.1))
+                   numericInput("DE_H2", label = h5("Infection prevalence in survey 2"), value = 1, step = 0.1),
+                   numericInput("DE_R2", label = h5("Recent infection prevalence among positives in survey 2"), value = 1, step = 0.1))
           )
         )
       ),
@@ -159,7 +174,7 @@ shinyUI(fluidPage(
                        step = 0.01,
                        value = 80)
         ),
-        fluidRow(sliderInput("power_range",
+        fluidRow(sliderInput("Power_range",
                              label = "Plot Power Range",
                              min = 0.01, max = 0.99,
                              value = c(0.2, 0.9),
@@ -169,10 +184,11 @@ shinyUI(fluidPage(
 
       ),
     mainPanel(
-      fluidRow(
-        column(12,
-               img(src='SACEMA_logo.jpg', align = "right", height = "75px")
-        )),
+      # fluidRow(
+      #   column(12,
+      #          img(src='SACEMA_logo.jpg', align = "right", height = "75px")
+      #   )),
+      img(src='SACEMA_logo.jpg', align = "right", height = "75px"),
       br(),
       #plotOutput("plot")
       tabsetPanel(type = "tabs",
@@ -182,7 +198,7 @@ shinyUI(fluidPage(
                            p(strong('Definition of Parameters')),
                            br("MDRI: Mean Duration of Recent Infection"),
                            br("FRR: False Recent Rate"),
-                           br("BigT: Cut-off time"),
+                           br("BigT: Cut-off Time"),
                            br("RSE_FRR: Covariance of FRR estimate"), br("RSE_MDRI: Covariance of MDRI estimate"),
                            br("DE_H1: Design effect for prevalence in survey 1"),
                            br("DE_H2: Design effect for prevalence in survey 2"),
