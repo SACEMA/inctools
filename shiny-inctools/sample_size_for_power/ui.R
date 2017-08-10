@@ -18,14 +18,6 @@ shinyUI(fluidPage(
   # Application title
   titlePanel("Sample Size for Power"),
   br(),
-  
-  # fluidRow(
-  #     column(4,
-  #            wellPanel(
-  #            "testing")
-  #            )
-  #   
-  #   ),
   sidebarLayout(
     sidebarPanel(
       
@@ -35,21 +27,31 @@ shinyUI(fluidPage(
           column(5, downloadButton('downloadData', 'Download Table')),
           column(5, downloadButton('downloadPlot', 'Save Plot'))),
         hr(),
+        # fluidRow(
+        #   h3("Type of Analysis:"),
+        #   column(9, selectInput("x_variable", label = "",
+        #                         choices = list("Sample Size for Power" = "Power",
+        #                                        "MDRI Sensitivity" = "MDRI",
+        #                                        "FRR Sensitivity" = "FRR"
+        #                         ), selected = "Power"))),
+        
         fluidRow(
           h3("Type of Analysis:"),
           column(9, selectInput("x_variable", label = "",
                                 choices = list("Sample Size for Power" = "Power",
-                                               "MDRI Sensitivity" = "MDRI",
-                                               "FRR Sensitivity" = "FRR"
+                                               "Sensitivity Analysis" = "Sensitivity"
                                 ), selected = "Power"))),
-        fluidRow(column(9,
-                        radioButtons("scenario_case", label = h3("Scenario Type:"),
-                                     c("Same MDRI, same FRR estimates in the two surveys" = 1,
-                                       "Same MDRI, but different FRR estimates in the two surveys" = 2,
-                                       "Different MDRI and FRR estimates in the two surveys" = 3)),
-                        selected = 1)
-        )
+
+          fluidRow(column(9,
+                          radioButtons("scenario_case", label = h3("Scenario Type:"),
+                                       c("Same MDRI, same FRR estimates in the two surveys" = 1,
+                                         "Same MDRI, but different FRR estimates in the two surveys" = 2,
+                                         "Different MDRI and FRR estimates in the two surveys" = 3)),
+                          selected = 1)
+          )
+      #  )
       )),
+
       wellPanel(fluidPage(
         h3("Survey Parameters"),
         fluidRow(
@@ -181,7 +183,7 @@ shinyUI(fluidPage(
                              step = 0.01))
       )
       )
-
+#)
       ),
     mainPanel(
       # fluidRow(

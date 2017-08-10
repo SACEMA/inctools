@@ -108,13 +108,11 @@ shinyServer(function(input, output, session) {
 
     if("simulate" == input$x_variable & 1 == input$scenario_case) {
       temp <- mdply(expand.grid(
-        #MDRI = seq(120, 720, by = 120),S
         MDRI = seq(input$MDRI_range_sim1[1], input$MDRI_range_sim1[2], by = 30),
         frrhat = seq((1/100)*input$FRR_range_simul[1], (1/100)*input$FRR_range_simul[2], by = 0.005),
 
         TIME = input$TIME,
         frrhatcov = (1/100)*input$frrhatcov,
-        # frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
         mdrihatcov = (1/100)*input$mdrihatcov,
         DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
         DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
@@ -145,8 +143,6 @@ shinyServer(function(input, output, session) {
 
   })
   output$plot <- renderPlot({
-    #Input checking to avoid the application crashes due to lack of proper input
-    #logic_case2 <- input$scenario_case == 2 & input$x_variable == "frrhat"
     validate(
       need(input$scenario_case <3, 'No plot available for this scenario (only one value available -see table)'),
       need(!(input$scenario_case == 2 & input$x_variable == "frrhat"), 'This scenario cannot be represented by a plot (2 FRR values cannot live on one x-axis -see table)'),
@@ -288,8 +284,6 @@ shinyServer(function(input, output, session) {
       if (input$x_variable == "simulate_FRR") {
         plot <- myplot_simulation_FRR(data, input$x_variable, input$checkbox_plotparams, title = plot_title, legend_text = legend_text)
       }
-      ###end
-      #write.csv(format_table(df(), input$scenario_case, input$x_variable), file)
       ggsave(file = file, plot = plot, width = 13, height = 9)
     }
   )

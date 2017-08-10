@@ -25,13 +25,10 @@ myplot <- function(df, x_var = "MDRI", checkbox_plotparams = FALSE, title = "XXX
     x_breaks <- seq(0, 15, 1)
     x_lab <- "FRR (%)"
     x_variable <- "FRR"}
-  #   gp <- ggplot(df, aes_string(y = "V1", x = "MDRI", colour = "factor(frrhat)")) +
   gp <- ggplot(df, aes_string(y = "N", x = x_variable)) +
     geom_point(size = 5) +
     stat_smooth(method = "lm", formula = y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5), alpha = 0, size = 0.6, colour = "darkblue") +
-    #stat_smooth(method = "auto", alpha = 0.1, size = 0.6, colour = "darkblue") +
     scale_y_continuous(limits = c(0, max(df$V1))) +
-    # geom_hline(yintercept = seq(10000, 50000, by = 20000)) +
     xlab(x_lab) + ylab("Number of subjects required") +
     scale_x_continuous(breaks = x_breaks) +
     ggtitle(paste0("Required sample size")) +
@@ -57,7 +54,6 @@ myplot <- function(df, x_var = "MDRI", checkbox_plotparams = FALSE, title = "XXX
 
 
 myplot_simulation <- function(df, x_var = "MDRI", checkbox_plotparams = FALSE, title = "XXX", legend_text = "XXX") {
-  # if("MDRI" == x_var) {
   x_breaks <- c(120, 180, 240, 300, 360, 420, 480, 540, 600, 660, 720, 780, 840)
   x_lab <- "MDRI (days)"
   x_variable <- "MDRI"
@@ -66,16 +62,11 @@ myplot_simulation <- function(df, x_var = "MDRI", checkbox_plotparams = FALSE, t
   #}
   gp <- ggplot(df, aes_string(y = "N", x = x_variable, colour = var_variable)) +
     geom_point(size = 5)  +
-    #stat_smooth(method = "auto", alpha = 0.1, size = 1, aes_string(fill = var_variable)) +
     stat_smooth(method = "lm", formula = y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5), alpha = 0, size = 1) +
-   # stat_smooth(method = "auto", alpha = 0.1, size = 1) +
     scale_y_continuous(limits = c(0, max(df$N))) +
-    # geom_hline(yintercept = seq(10000, 50000, by = 20000)) +
     xlab(x_lab) + ylab("Number of subjects required") +
     scale_x_continuous(breaks = x_breaks) +
     ggtitle(title) +
-    #  scale_colour_brewer(palette="Paired") +
-    #ggtitle(paste0("Required sample size")) +
     theme_linedraw() + theme(
       panel.grid.major = element_line(colour = "darkgrey"),
       panel.grid.minor = element_line(colour = "darkgrey")
@@ -85,8 +76,6 @@ myplot_simulation <- function(df, x_var = "MDRI", checkbox_plotparams = FALSE, t
     theme(axis.title = element_text(size = 18, family = "URWHelvetica")) +
     theme(text = element_text(size = 20, family = "URWHelvetica"))
   if(checkbox_plotparams) {
-    #  if("MDRI" == x_var) x_grob_pos <- 0.65
-    #  if("frrhat" == x_var) x_grob_pos <- 0.05
     x_grob_pos <- 0.65
     my_grob <- grobTree(textGrob(legend_text, x = x_grob_pos,  y = 0.7, hjust = 0,
                                  gp = gpar(col = "darkblue", fontsize = 12)))
@@ -125,8 +114,6 @@ myplot_simulation_FRR <- function(df, x_var = "FRR", checkbox_plotparams = FALSE
     theme(axis.title = element_text(size = 18, family = "URWHelvetica")) +
     theme(text = element_text(size = 20, family = "URWHelvetica"))
   if(checkbox_plotparams) {
-    #  if("MDRI" == x_var) x_grob_pos <- 0.65
-    #  if("frrhat" == x_var) x_grob_pos <- 0.05
     x_grob_pos <- 0.05
     my_grob <- grobTree(textGrob(legend_text, x = x_grob_pos,  y = 0.7, hjust = 0,
                                  gp = gpar(col = "darkblue", fontsize = 12)))
@@ -188,11 +175,6 @@ plot_title <- function(x_var = "MDRI", power = 0.8, alpha = 0.1, inc_1 = 5, inc_
     title <- paste0("Required sample size \n",
                     "Power: ", power, " Alpha: ", alpha, "%, T: ", TIME, " days\n",
                     "Inc_1: ", inc_1, "% Inc_2: ", inc_2, "% Prev_1: ", p_pos_1, "% Prev_2: ", p_pos_2, "%\n")}
-#
-#   if("simulate_FRR" == x_var & 1 == scenario_case) {
-#     title <- paste0("Required sample size \n",
-#                     "Power: ", power, " Alpha: ", alpha, "%, T: ", TIME, " days\n",
-#                     "Inc_1: ", inc_1, "% Inc_2: ", inc_2, "% Prev_1: ", p_pos_1, "% Prev_2: ", p_pos_2, "%\n")}
 
   return(title)
 }
@@ -227,6 +209,4 @@ legendbox_text <- function(scenario_case = 1, x_var = "MDRI",
   return(legend)
 }
 
-# plot_title(x_var = x_var,
-#            power = 0.8, alpha = 0.1, inc_1 = 5, inc_2 = 2.5, TIME = 720,
-#            p_pos_1 = 15, p_pos_2 = 15, FRR = 1, FRR_1 = 1.5, FRR_2 = 2, MDRI = 360, case_scenario = 1)
+

@@ -64,3 +64,4 @@ ss_calc <- function(case = 1, BigT = 730, MDRI = 200, MDRI_1 = 200, MDRI_2 = 200
 
   return(ss)
 }
+
