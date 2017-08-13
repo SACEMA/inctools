@@ -182,6 +182,11 @@ shinyUI(fluidPage(
                              fluidRow(
                                plotOutput("plot1")
                              )),
+                    tabPanel("User Guide", value='tab3_val', id = 'tab3',
+                             wellPanel( p(""),
+                                        wellPanel(includeHTML("Incidence_Prevalence_Calculator.html"))
+                             )
+                    ),
                     tabPanel("About", value='tab4_val', id = 'tab4',
                              wellPanel( p(""),
                                         p(HTML("Calculates the point estimate and confidence interval for incidence, prevalence and

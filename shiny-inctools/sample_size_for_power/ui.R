@@ -146,8 +146,8 @@ shinyUI(fluidPage(
               column(9,
                      selectInput("test_variable", label = "",
                                  choices = list("MDRI Sensitivity" = "mdrisense",
-                                                "FRR Sensitivity for survey 1" = "frr1sense",
-                                                "FRR Sensitivity for survey 2" = "frr2sense"),
+                                                "FRR Sensitivity for survey 1" = "frrsense",
+                                                "FRR Sensitivity for survey 2" = "frrsense"),
                                  selected = "mdrisense"))
               
             ),
@@ -194,79 +194,64 @@ shinyUI(fluidPage(
                                    value = c(0, 10), step = 0.25, animate = FALSE)
                        
                      ),
-                     # conditionalPanel(
-                     #   condition = "input.scenario_case == 1 & input.test_variable == 'frrsense'",
-                     #   sliderInput("FRR_range",
-                     #               label = "FRR range (%)",
-                     #               min = 0, max = 15, 
-                     #               value = c(0, 10), step = 0.25, animate = FALSE)
-                     #   
-                     # ),
-                     # conditionalPanel(
-                     #   condition = "input.scenario_case == 1 & input.test_variable == 'mdrisense'",
-                     #   numericInput("FRR",
-                     #                label = h5("FRR estimate (%)"),
-                     #                min = 0,
-                     #                max = 100,
-                     #                step = 0.1,
-                     #                value = 1)
-                     # ),
 
-                     conditionalPanel(
-                       condition = "input.scenario_case == 2 & input.test_variable == 'mdrisense'",
-                       sliderInput("MDRI_range",
-                                   label = "MDRI range for survey (days)",
-                                   min = 60, max = 720,
-                                   value = c(120, 360), step = 10, animate = FALSE),
-                       numericInput("FRR_1",
-                                    label = h5("FRR estimate for survey 1 (%)"),
-                                    min = 0,
-                                    max = 100,
-                                    step = 0.1,
-                                    value = 1),
-                       numericInput("FRR_2",
-                                    label = h5("FRR estimate for survey 2 (%)"),
-                                    min = 0,
-                                    max = 100,
-                                    step = 0.1,
-                                    value = 1)
-                     ),
-
-                     conditionalPanel(
-                       condition = "input.scenario_case == 2 & input.test_variable == 'frr1sense'",
-                       numericInput("MDRI",
-                                    label = h5("MDRI estimate for survey (days)"),
-                                    step = 1,
-                                    value = 240),
-                       sliderInput("FRR_1_range",
-                                   label = "FRR range for survey 1 (%)",
-                                   min = 0, max = 15,
-                                   value = c(0, 10), step = 0.25, animate = FALSE),
-                       numericInput("FRR_2",
-                                    label = h5("FRR estimate for survey 2 (%)"),
-                                    min = 0,
-                                    max = 100,
-                                    step = 0.1,
-                                    value = 1)
-                     ),
-                     conditionalPanel(
-                       condition = "input.scenario_case == 2 & input.test_variable == 'frr2sense'",
-                       numericInput("MDRI",
-                                    label = h5("MDRI estimate for survey (days)"),
-                                    step = 1,
-                                    value = 240),
-                       numericInput("FRR_1",
-                                    label = h5("FRR estimate for survey 1 (%)"),
-                                    min = 0,
-                                    max = 100,
-                                    step = 0.1,
-                                    value = 1),
-                       sliderInput("FRR_2_range",
-                                   label = "FRR range for survey 2 (%)",
-                                   min = 0, max = 15,
-                                   value = c(0, 10), step = 0.25, animate = FALSE)
-                     )
                      
+                     fluidPage(
+                       conditionalPanel(
+                         condition = "input.scenario_case == 2 & input.test_variable == 'mdrisense'",
+                         sliderInput("MDRI_range",
+                                     label = "MDRI range for survey (days)",
+                                     min = 60, max = 720,
+                                     value = c(120, 360), step = 10, animate = FALSE),
+                         numericInput("FRR_1",
+                                      label = h5("FRR estimate for survey 1 (%)"),
+                                      min = 0,
+                                      max = 100,
+                                      step = 0.1,
+                                      value = 1),
+                         numericInput("FRR_2",
+                                      label = h5("FRR estimate for survey 2 (%)"),
+                                      min = 0,
+                                      max = 100,
+                                      step = 0.1,
+                                      value = 1)
+                       ),
+                       
+                       conditionalPanel(
+                         condition = "input.scenario_case == 2 & input.test_variable == 'frr1sense'",
+                         numericInput("MDRI",
+                                      label = h5("MDRI estimate for survey (days)"),
+                                      step = 1,
+                                      value = 240),
+                         sliderInput("FRR_1_range",
+                                     label = "FRR range for survey 1 (%)",
+                                     min = 0, max = 15,
+                                     value = c(0, 10), step = 0.25, animate = FALSE),
+                         numericInput("FRR_2",
+                                      label = h5("FRR estimate for survey 2 (%)"),
+                                      min = 0,
+                                      max = 100,
+                                      step = 0.1,
+                                      value = 1)
+                       ),
+                       conditionalPanel(
+                         condition = "input.scenario_case == 2 & input.test_variable == 'frr2sense'",
+                         numericInput("MDRI",
+                                      label = h5("MDRI estimate for survey (days)"),
+                                      step = 1,
+                                      value = 240),
+                         numericInput("FRR_1",
+                                      label = h5("FRR estimate for survey 1 (%)"),
+                                      min = 0,
+                                      max = 100,
+                                      step = 0.1,
+                                      value = 1),
+                         sliderInput("FRR_2_range",
+                                     label = "FRR range for survey 2 (%)",
+                                     min = 0, max = 15,
+                                     value = c(0, 10), step = 0.25, animate = FALSE)
+                       )
+                     )
                      
                      # conditionalPanel(
                      #   condition = "input.scenario_case == 3 & input.test_variable == 'mdri1sense'",

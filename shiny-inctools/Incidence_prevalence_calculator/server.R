@@ -47,7 +47,8 @@ shinyServer(function(input, output, session){
     return(temp)
   })
   
-  data_incidence <- reactive({ # for incidence calculiation
+
+    data_incidence <- reactive({ # for incidence calculiation
     validate(
       need(input$N>0,"Please enter a valid total population sample size"),
       need(input$N>=input$N_H,"HIV-positive subjects should be less than total sample size"),
@@ -208,7 +209,7 @@ shinyServer(function(input, output, session){
  # A tab to display the all the incidence estimates from count data in the form of a dataframe
   output$tab4<-renderTable({
     temp<-data_incidence_count()
-    data.frame("Parameter" = c("Prevalence of HIV (PrevH)","Prevalence of recency (PrevR)",
+    DF<-data.frame("Parameter" = c("Prevalence of HIV (PrevH)","Prevalence of recency (PrevR)",
                       "Relative standard error of PrevH (RSE_PrevH)","Relative standard error of PrevR (RSE_PrevR)",
                       "Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
                       "Upper limit of confidence interval (CI.up)","Relative standard error of incidence estimate (RSE)",
@@ -219,6 +220,7 @@ shinyServer(function(input, output, session){
                "Value"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
                           temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
                           temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
+    print(DF, digits = 8)
 
   })
 
@@ -232,7 +234,7 @@ shinyServer(function(input, output, session){
                        "Value"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
                             temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
                             temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
-      tt=xtabs(Value~Parameter,data = temp) 
+      #tt=xtabs(Value~Parameter,data = temp) 
       write.csv(temp, file)
     }
   )
@@ -240,13 +242,13 @@ shinyServer(function(input, output, session){
   # A tab to display the incidence estimates from proportions in a dataframe form
   output$tab5b<-renderTable({
     temP<-data_prev_inc_calc_incprop()
-    data.frame("Parameter" = c("Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
+    DF = data.frame("Parameter" = c("Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
                                "Upper limit of confidence interval (CI.up)","Relative standard error of incidence estimate (RSE)",
                                "Annual Risk of Infection (ARI)",
                                "Lower confidence limit of Annual Risk of Infection (ARI.CI.low)",
                                "Upper confidence limit of Annual Risk of Infection (ARI.CI.up)"),
                "Value"=c(temP$Incidence,temP$CI.low,temP$CI.up,temP$RSE,temP$ARI,temP$ARI.CI.low,temP$ARI.CI.up))
-    
+    print(DF, digits = 8)
   })
   
    	 	 	 	
@@ -259,7 +261,7 @@ shinyServer(function(input, output, session){
       temp<-data.frame("Parameter" = names(temp), 
                        "Value"=c(temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
                                  temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
-      tt=xtabs(Value~Parameter,data = temp) 
+      #tt=xtabs(Value~Parameter,data = temp) 
       write.csv(temp, file)
     }
   )
