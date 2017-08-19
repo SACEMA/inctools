@@ -28,7 +28,7 @@ shinyUI(fluidPage(
           h3("Analysis parameters"),
           column(9, selectInput("x_variable", label = "Choose analysis type",
                                 choices = list("Explore x-axis MDRI" = "MDRI",
-                                               "Exolore x-axis FRR" = "frrhat",
+                                               "Exolore x-axis FRR" = "FRR",
                                                "Simulation x: MDRI (Case 1 only)" = "simulate",
                                                "Simulation x: FRR (Case 1 only)" = "simulate_FRR"
                                 ), selected = "MDRI"))),
@@ -43,7 +43,7 @@ shinyUI(fluidPage(
                         h4("Plot options"),
                         checkboxInput("checkbox_plotparams", label = "Display parameters values on the plot", value = FALSE))),
         conditionalPanel(
-          condition = "input.scenario_case == 1 & input.x_variable == 'frrhat'",
+          condition = "input.scenario_case == 1 & input.x_variable == 'FRR'",
           sliderInput("FRR_range", label = "FRR range", min = 0, max = 15, value = c(0, 10), step = 0.25, animate = TRUE)
         ),
         conditionalPanel(
@@ -58,7 +58,7 @@ shinyUI(fluidPage(
         fluidRow(
           column(6,
                  conditionalPanel(
-                   condition = "input.scenario_case != 3 & input.x_variable == 'frrhat'",
+                   condition = "input.scenario_case != 3 & input.x_variable == 'FRR'",
                    sliderInput("MDRI",
                                label = h5("MDRI estimate (days)"),
                                min = 0,
@@ -83,7 +83,7 @@ shinyUI(fluidPage(
                  ),
                  conditionalPanel(
                    condition = "input.scenario_case == 1 & input.x_variable == 'MDRI'",
-                   sliderInput("frrhat",
+                   sliderInput("FRR",
                                label = h5("FRR estimate (%)"),
                                min = 0,
                                max = 10,
@@ -92,13 +92,13 @@ shinyUI(fluidPage(
                  ),
                  conditionalPanel(
                    condition = "input.scenario_case != 1",
-                   sliderInput("frrhat_1",
+                   sliderInput("FRR_1",
                                label = h5("FRR estimate for survey 1 (%)"),
                                min = 0,
                                max = 10,
                                step = 0.1,
                                value = 1),
-                   sliderInput("frrhat_2",
+                   sliderInput("FRR_2",
                                label = h5("FRR estimate for survey 2 (%)"),
                                min = 0,
                                max = 10,
@@ -115,24 +115,24 @@ shinyUI(fluidPage(
                    sliderInput("MDRI_range_simul", label = "MDRI range", min = 60, max = 720, value = c(120, 360), step = 10),
                    sliderInput("FRR_range_sim2", label = "FRR range", min = 0, max = 15, value = c(0, 10), step = 0.25)
                  ),
-                 numericInput("TIME", label = h5("Cut-off time T (days)"), value = 730, step = 10)
+                 numericInput("BigT", label = h5("Cut-off BigT T (days)"), value = 730, step = 10)
           ),
 
           column(6,
                  conditionalPanel(
                    condition = "input.scenario_case != 3",
-                   numericInput("mdrihatcov", label = h5("MDRI estimate standard error (%)"), value = 5, step = 0.1)),
+                   numericInput("RSE_MDRI", label = h5("MDRI estimate standard error (%)"), value = 5, step = 0.1)),
                  conditionalPanel(
                    condition = "input.scenario_case == 3",
-                   numericInput("mdrihatcov_1", label = h5("MDRI estimate standard error for survey 1 (%)"), value = 5, step = 0.1),
-                   numericInput("mdrihatcov_2", label = h5("MDRI estimate standard error for survey 2(%)"), value = 5, step = 0.1)),
+                   numericInput("RSE_MDRI_1", label = h5("MDRI estimate standard error for survey 1 (%)"), value = 5, step = 0.1),
+                   numericInput("RSE_MDRI_2", label = h5("MDRI estimate standard error for survey 2(%)"), value = 5, step = 0.1)),
                  conditionalPanel(
                    condition = "input.scenario_case == 1",
-                   numericInput("frrhatcov", label = h5("FRR estimate standard error (%)"), value = 20, step = 0.1)),
+                   numericInput("RSE_FRR", label = h5("FRR estimate standard error (%)"), value = 20, step = 0.1)),
                  conditionalPanel(
                    condition = "input.scenario_case != 1",
-                   numericInput("frrhatcov_1", label = h5("FRR estimate standard error for survey 1 (%)"), value = 20, step = 0.1),
-                   numericInput("frrhatcov_2", label = h5("FRR estimate standard error for survey 2 (%)"), value = 20, step = 0.1))
+                   numericInput("RSE_FRR_1", label = h5("FRR estimate standard error for survey 1 (%)"), value = 20, step = 0.1),
+                   numericInput("RSE_FRR_2", label = h5("FRR estimate standard error for survey 2 (%)"), value = 20, step = 0.1))
           )
         )),
       hr(),
@@ -140,16 +140,16 @@ shinyUI(fluidPage(
         h3("Survey parameters"),
         fluidRow(
           column(6,
-                 numericInput("inc_1", label = h5("Incidence in survey 1 (%)"), value = 5, step = 0.1),
-                 numericInput("p_pos_1", label = h5("Prevalence in survey 1 (%)"), value = 15, step = 0.1),
-                 numericInput("rec_test_coverage_1", label = h5("Percentage of HIV positives tested for recency in survey 1"), value = 100, step = 1),
-                 numericInput("power", label = h5("Power required"), value = 0.8, step = 0.01)
+                 numericInput("I_1", label = h5("Incidence in survey 1 (%)"), value = 5, step = 0.1),
+                 numericInput("PrevH_1", label = h5("Prevalence in survey 1 (%)"), value = 15, step = 0.1),
+                 numericInput("CR_1", label = h5("Percentage of HIV positives tested for recency in survey 1"), value = 100, step = 1),
+                 numericInput("Power", label = h5("Power required"), value = 0.8, step = 0.01)
           ),
 
           column(6,
-                 numericInput("inc_2", label = h5("Incidence in survey 2 (%)"), value = 2.5, step = 0.1),
-                 numericInput("p_pos_2", label = h5("Prevalence in survey 2 (%)"), value = 12, step = 0.1),
-                 numericInput("rec_test_coverage_2", label = h5("Percentage of HIV positives tested for recency in survey 2"), value = 100, step = 1),
+                 numericInput("I_2", label = h5("Incidence in survey 2 (%)"), value = 2.5, step = 0.1),
+                 numericInput("PrevH_2", label = h5("Prevalence in survey 2 (%)"), value = 12, step = 0.1),
+                 numericInput("CR_2", label = h5("Percentage of HIV positives tested for recency in survey 2"), value = 100, step = 1),
                  numericInput("alpha", label = h5("Significance level (alpha)"), value = 0.05, step = 0.1)
           )
         )
@@ -160,16 +160,16 @@ shinyUI(fluidPage(
         h3("Design Effect parameters"),
         fluidRow(
           column(6,
-                 numericInput("DE_prev_1", label = h5("Infection prevalence in survey 1"), value = 1, step = 0.1),
-                 numericInput("DE_RgivenTested_1", label = h5("Recent infection prevalence among positives in survey 1"), value = 1, step = 0.1)),
+                 numericInput("DE_H_1", label = h5("Infection prevalence in survey 1"), value = 1, step = 0.1),
+                 numericInput("DE_R_1", label = h5("Recent infection prevalence among positives in survey 1"), value = 1, step = 0.1)),
           column(6,
-                 numericInput("DE_prev_2", label = h5("Infection prevalence in survey 2"), value = 1, step = 0.1),
-                 numericInput("DE_RgivenTested_2", label = h5("Recent infection prevalence among positives in survey 2"), value = 1, step = 0.1))
+                 numericInput("DE_H_2", label = h5("Infection prevalence in survey 2"), value = 1, step = 0.1),
+                 numericInput("DE_R_2", label = h5("Recent infection prevalence among positives in survey 2"), value = 1, step = 0.1))
         )
       )
       ),
     mainPanel(
-      img(src='FIND_logo.jpg', align = "right", height = "75px"),
+      #img(src='FIND_logo.jpg', align = "right", height = "75px"),
       img(src='SACEMA_logo.jpg', align = "right", height = "75px"),
       br(),
       tabsetPanel(type = "tabs",
@@ -179,16 +179,16 @@ shinyUI(fluidPage(
                            p("Table legend"),
                            br("MDRI: Mean Duration of Recent Infection"),
                            br("FRR: False Recent Rate"),
-                           br("TIME: Cut-off time"),
-                           br("frrhatcov: Covariance of FRR estimate"), br("mdrihatcov: Covariance of MDRI estimate"),
-                           br("DE_prev_1: Design effect for prevalence in survey 1"),
-                           br("DE_prev_2: Design effect for prevalence in survey 2"),
-                           br("DE_RgivenTested_1: Design effect for recent infection prevalence among positives in survey 1"),
-                           br("DE_RgivenTested_2: Design effect for recent infection prevalence among positives in survey 2"),
-                           br("Incidence_1 (%): Incidence (%) in survey 1"),
-                           br("Incidence_2 (%): Incidence (%) in survey 2"),
-                           br("Prevalence_1 (%): Prevalence (%) in survey 1"),
-                           br("Prevalence_2 (%): Prevalence (%) in survey 2"),
+                           br("BigT: Cut-off BigT"),
+                           br("RSE_FRR: Covariance of FRR estimate"), br("RSE_MDRI: Covariance of MDRI estimate"),
+                           br("DE_H_1: Design effect for prevalence in survey 1"),
+                           br("DE_H_2: Design effect for prevalence in survey 2"),
+                           br("DE_R_1: Design effect for recent infection prevalence among positives in survey 1"),
+                           br("DE_R_2: Design effect for recent infection prevalence among positives in survey 2"),
+                           br("I_1 (%): Incidence (%) in survey 1"),
+                           br("I_2 (%): Incidence (%) in survey 2"),
+                           br("PrevH_1 (%): Prevalence (%) in survey 1"),
+                           br("PrevH_2 (%): Prevalence (%) in survey 2"),
                            br("N: Minimal number of subjects required"))
       )
     )

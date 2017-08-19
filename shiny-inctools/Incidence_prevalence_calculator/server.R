@@ -209,18 +209,20 @@ shinyServer(function(input, output, session){
  # A tab to display the all the incidence estimates from count data in the form of a dataframe
   output$tab4<-renderTable({
     temp<-data_incidence_count()
-    DF<-data.frame("Parameter" = c("Prevalence of HIV (PrevH)","Prevalence of recency (PrevR)",
-                      "Relative standard error of PrevH (RSE_PrevH)","Relative standard error of PrevR (RSE_PrevR)",
-                      "Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
-                      "Upper limit of confidence interval (CI.up)","Relative standard error of incidence estimate (RSE)",
-                      "Relative standard error at infinite sample size (RSE.Inf.SS)",
-                      "Annual Risk of Infection (ARI)",
-                      "Lower confidence limit of Annual Risk of Infection (ARI.CI.low)",
-                      "Upper confidence limit of Annual Risk of Infection (ARI.CI.up)"),
-               "Value"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
-                          temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
-                          temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
-    print(DF, digits = 8)
+    options(digits = 4)
+    Parameter<-c("Prevalence of HIV (PrevH)","Prevalence of recency (PrevR)",
+                 "Relative standard error of PrevH (RSE_PrevH)","Relative standard error of PrevR (RSE_PrevR)",
+                 "Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
+                 "Upper limit of confidence interval (CI.up)","Relative standard error of incidence estimate (RSE)",
+                 "Relative standard error at infinite sample size (RSE.Inf.SS)",
+                 "Annual Risk of Infection (ARI)",
+                 "Lower confidence limit of Annual Risk of Infection (ARI.CI.low)",
+                 "Upper confidence limit of Annual Risk of Infection (ARI.CI.up)")
+    # Value<-c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
+    #           temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
+    #           temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up)
+    data.frame("Parameter"=Parameter, "Value"=t(temp[1:ncol(temp)]))
+
 
   })
 
@@ -230,25 +232,20 @@ shinyServer(function(input, output, session){
     },
     content = function(file) {
       temp<-data_incidence_count()
-      temp<-data.frame("Parameter" = names(temp), 
-                       "Value"=c(temp$PrevH,temp$PrevR,temp$RSE_PrevH,temp$RSE_PrevR,
-                            temp$Incidence,temp$CI.low,temp$CI.up,temp$RSE,
-                            temp$RSE.Inf.SS,temp$ARI,temp$ARI.CI.low,temp$ARI.CI.up))
-      #tt=xtabs(Value~Parameter,data = temp) 
       write.csv(temp, file)
     }
   )
   
   # A tab to display the incidence estimates from proportions in a dataframe form
   output$tab5b<-renderTable({
-    temP<-data_prev_inc_calc_incprop()
-    DF = data.frame("Parameter" = c("Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
-                               "Upper limit of confidence interval (CI.up)","Relative standard error of incidence estimate (RSE)",
-                               "Annual Risk of Infection (ARI)",
-                               "Lower confidence limit of Annual Risk of Infection (ARI.CI.low)",
-                               "Upper confidence limit of Annual Risk of Infection (ARI.CI.up)"),
-               "Value"=c(temP$Incidence,temP$CI.low,temP$CI.up,temP$RSE,temP$ARI,temP$ARI.CI.low,temP$ARI.CI.up))
-    print(DF, digits = 8)
+    temp<-data_prev_inc_calc_incprop()
+    options(digits = 4)
+    Parameter = c("Estimated incidence (Incidence)","Lower limit of confidence interval (CI.low)",
+                    "Upper limit of confidence interval (CI.up)","Relative standard error of incidence estimate (RSE)",
+                    "Annual Risk of Infection (ARI)",
+                    "Lower confidence limit of Annual Risk of Infection (ARI.CI.low)",
+                    "Upper confidence limit of Annual Risk of Infection (ARI.CI.up)")
+    data.frame("Parameter"=Parameter, "Value"=t(temp[1:ncol(temp)]))
   })
   
    	 	 	 	

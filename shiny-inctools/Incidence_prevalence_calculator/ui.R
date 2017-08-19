@@ -21,14 +21,7 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
 
-      # wellPanel(
-      #   fluidPage(
-      # 
-      #   fluidRow(column(12,
-      #                   downloadButton('downloadData1', 'Download Estimates'))),
-      #   fluidRow(column(12,
-      #                   downloadButton('downloadData2', 'Download Estimates')))
-      # )),
+
       wellPanel(
         fluidRow(column(9,
                         radioButtons("data_type", label = h3("Data Type:"),
@@ -167,7 +160,6 @@ shinyUI(fluidPage(
       fluidRow(
         column(12,
                img(src='SACEMA_logo.jpg', align = "right", height = "75px")
-               #img(src='mcgill.png', align = "right", height = "40px"),
         )),
       conditionalPanel(
         condition = "input.data_type == 2",
@@ -187,7 +179,8 @@ shinyUI(fluidPage(
                                         wellPanel(includeHTML("Incidence_Prevalence_Calculator.html"))
                              )
                     ),
-                    tabPanel("About", value='tab4_val', id = 'tab4',
+                    tabPanel("About", 
+                             #value='tab4_val', id = 'tab4',
                              wellPanel( p(""),
                                         p(HTML("Calculates the point estimate and confidence interval for incidence, prevalence and
                                              annual risk of infection.")),
@@ -213,18 +206,8 @@ shinyUI(fluidPage(
                                                downloadButton('downloadData2', 'Download Estimates'))
                              ),
                              br(""),
-                             tableOutput("tab5b"),
-                             tableOutput("tab5"),
-                             br(),
-                             p(""),
-                             p(strong('Definition of Parameters')),
-                             br("Incidence: Estimated incidence"),
-                             br("CI.low: Confidence interval(lower limit)"),
-                             br("CI.up: Confidence interval(upper limit)"),
-                             br("RSE: Relative standard error of incidence estimate"),
-                             br("ARI: Annual Risk of Infection"),
-                             br("ARI.CI.low: Lower confidence limit of Annual Risk of Infection"),
-                             br("ARI.CI.up: Upper confidence limit of Annual Risk of Infection")
+                             tableOutput("tab5b")
+                           
                              ),
 
                     tabPanel("User Guide", value='tab3_val', id = 'tab3',

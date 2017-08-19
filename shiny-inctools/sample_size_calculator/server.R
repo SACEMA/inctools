@@ -27,16 +27,16 @@ shinyServer(function(input, output, session) {
   df <- reactive({
 
     if("MDRI" == input$x_variable & 1 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 30), frrhat = (1/100)*input$frrhat,
-                                TIME = input$TIME,
-                                frrhatcov = (1/100)*input$frrhatcov,
-                                mdrihatcov = (1/100)*input$mdrihatcov,
-                                DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-                                DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
-                                inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
-                                p_pos_1 = (1/100)*input$p_pos_1, p_pos_2 = (1/100)*input$p_pos_2),
-                    power = input$power, alpha = input$alpha,
-                    rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
+      temp <- mdply(expand.grid(MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 30), FRR = (1/100)*input$FRR,
+                                BigT = input$BigT,
+                                RSE_FRR = (1/100)*input$RSE_FRR,
+                                RSE_MDRI = (1/100)*input$RSE_MDRI,
+                                DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+                                DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2,
+                                I_1 = (1/100)*input$I_1, I_2 = (1/100)*input$I_2,
+                                PrevH_1 = (1/100)*input$PrevH_1, PrevH_2 = (1/100)*input$PrevH_2),
+                    Power = input$Power, alpha = input$alpha,
+                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
                     ss_calc, case = input$scenario_case)
                         
       return(temp)
@@ -44,64 +44,64 @@ shinyServer(function(input, output, session) {
 
     if("MDRI" == input$x_variable & 2 == input$scenario_case) {
       temp <- mdply(expand.grid(MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 30),
-                                frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
-                                TIME = input$TIME,
-                                frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
-                                mdrihatcov = (1/100)*input$mdrihatcov,
-                                DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-                                DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
-                                inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
-                                p_pos_1 = (1/100)*input$p_pos_1, p_pos_2 = (1/100)*input$p_pos_2),
-                    power = input$power, alpha = input$alpha,
-                    rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
+                                FRR_1 = (1/100)*input$FRR_1, FRR_2 = (1/100)*input$FRR_2,
+                                BigT = input$BigT,
+                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1, RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
+                                RSE_MDRI = (1/100)*input$RSE_MDRI,
+                                DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+                                DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2,
+                                I_1 = (1/100)*input$I_1, I_2 = (1/100)*input$I_2,
+                                PrevH_1 = (1/100)*input$PrevH_1, PrevH_2 = (1/100)*input$PrevH_2),
+                    Power = input$Power, alpha = input$alpha,
+                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
                     ss_calc, case = input$scenario_case)
       return(temp)
     }
 
-    if("frrhat" == input$x_variable & 1 == input$scenario_case) {
+    if("FRR" == input$x_variable & 1 == input$scenario_case) {
       temp <- mdply(expand.grid(MDRI = input$MDRI,
-                                frrhat = seq((1/100)*input$FRR_range[1], (1/100)*input$FRR_range[2], by = 0.005),
-                                TIME = input$TIME,
-                                frrhatcov = (1/100)*input$frrhatcov, mdrihatcov = (1/100)*input$mdrihatcov,
-                                DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-                                DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
-                                inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
-                                p_pos_1 = (1/100)*input$p_pos_1, p_pos_2 = (1/100)*input$p_pos_2),
-                    power = input$power, alpha = input$alpha,
-                    rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
+                                FRR = seq((1/100)*input$FRR_range[1], (1/100)*input$FRR_range[2], by = 0.005),
+                                BigT = input$BigT,
+                                RSE_FRR = (1/100)*input$RSE_FRR, RSE_MDRI = (1/100)*input$RSE_MDRI,
+                                DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+                                DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2,
+                                I_1 = (1/100)*input$I_1, I_2 = (1/100)*input$I_2,
+                                PrevH_1 = (1/100)*input$PrevH_1, PrevH_2 = (1/100)*input$PrevH_2),
+                    Power = input$Power, alpha = input$alpha,
+                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
                     ss_calc, case = input$scenario_case)
       return(temp)
     }
 
-    if("frrhat" == input$x_variable & 2 == input$scenario_case) {
+    if("FRR" == input$x_variable & 2 == input$scenario_case) {
       temp <- mdply(expand.grid(MDRI = input$MDRI,
-                                TIME = input$TIME,
-                                frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
-                                frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
-                                mdrihatcov = (1/100)*input$mdrihatcov,
-                                DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-                                DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
-                                inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
-                                p_pos_1 = (1/100)*input$p_pos_1, p_pos_2 = (1/100)*input$p_pos_2),
-                    power = input$power, alpha = input$alpha,
-                    rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
+                                BigT = input$BigT,
+                                FRR_1 = (1/100)*input$FRR_1, FRR_2 = (1/100)*input$FRR_2,
+                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1, RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
+                                RSE_MDRI = (1/100)*input$RSE_MDRI,
+                                DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+                                DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2,
+                                I_1 = (1/100)*input$I_1, I_2 = (1/100)*input$I_2,
+                                PrevH_1 = (1/100)*input$PrevH_1, PrevH_2 = (1/100)*input$PrevH_2),
+                    Power = input$Power, alpha = input$alpha,
+                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
                     ss_calc, case = input$scenario_case)
-      #temp$frrhat <- (100)*temp$frrhat
+      #temp$FRR <- (100)*temp$FRR
       return(temp)
     }
 
     if(3 == input$scenario_case) {
       temp <- mdply(expand.grid(MDRI_1 = input$MDRI_1, MDRI_2 = input$MDRI_2,
-                                TIME = input$TIME,
-                                frrhat_1 = (1/100)*input$frrhat_1, frrhat_2 = (1/100)*input$frrhat_2,
-                                frrhatcov_1 = (1/100)*input$frrhatcov_1, frrhatcov_2 = (1/100)*input$frrhatcov_2,
-                                mdrihatcov_1 = (1/100)*input$mdrihatcov_1, mdrihatcov_2 = (1/100)*input$mdrihatcov_2,
-                                DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-                                DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
-                                inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
-                                p_pos_1 = (1/100)*input$p_pos_1, p_pos_2 = (1/100)*input$p_pos_2),
-                    power = input$power, alpha = input$alpha,
-                    rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
+                                BigT = input$BigT,
+                                FRR_1 = (1/100)*input$FRR_1, FRR_2 = (1/100)*input$FRR_2,
+                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1, RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
+                                RSE_MDRI_1 = (1/100)*input$RSE_MDRI_1, RSE_MDRI_2 = (1/100)*input$RSE_MDRI_2,
+                                DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+                                DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2,
+                                I_1 = (1/100)*input$I_1, I_2 = (1/100)*input$I_2,
+                                PrevH_1 = (1/100)*input$PrevH_1, PrevH_2 = (1/100)*input$PrevH_2),
+                    Power = input$Power, alpha = input$alpha,
+                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
                     ss_calc, case = input$scenario_case)
       return(temp)
     }
@@ -109,17 +109,17 @@ shinyServer(function(input, output, session) {
     if("simulate" == input$x_variable & 1 == input$scenario_case) {
       temp <- mdply(expand.grid(
         MDRI = seq(input$MDRI_range_sim1[1], input$MDRI_range_sim1[2], by = 30),
-        frrhat = seq((1/100)*input$FRR_range_simul[1], (1/100)*input$FRR_range_simul[2], by = 0.005),
+        FRR = seq((1/100)*input$FRR_range_simul[1], (1/100)*input$FRR_range_simul[2], by = 0.005),
 
-        TIME = input$TIME,
-        frrhatcov = (1/100)*input$frrhatcov,
-        mdrihatcov = (1/100)*input$mdrihatcov,
-        DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-        DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
-        inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
-        p_pos_1 = (1/100)*input$p_pos_1, p_pos_2 = (1/100)*input$p_pos_2),
-        power = input$power, alpha = input$alpha,
-        rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
+        BigT = input$BigT,
+        RSE_FRR = (1/100)*input$RSE_FRR,
+        RSE_MDRI = (1/100)*input$RSE_MDRI,
+        DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+        DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2,
+        I_1 = (1/100)*input$I_1, I_2 = (1/100)*input$I_2,
+        PrevH_1 = (1/100)*input$PrevH_1, PrevH_2 = (1/100)*input$PrevH_2),
+        Power = input$Power, alpha = input$alpha,
+        CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
         ss_calc, case = input$scenario_case)
       return(temp)
     }
@@ -127,16 +127,16 @@ shinyServer(function(input, output, session) {
     if("simulate_FRR" == input$x_variable & 1 == input$scenario_case) {
       temp <- mdply(expand.grid(
         MDRI = seq(input$MDRI_range_simul[1], input$MDRI_range_simul[2], by = 30),
-        frrhat = seq((1/100)*input$FRR_range_sim2[1], (1/100)*input$FRR_range_sim2[2], by = 0.005),
-        TIME = input$TIME,
-        frrhatcov = (1/100)*input$frrhatcov,
-        mdrihatcov = (1/100)*input$mdrihatcov,
-        DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-        DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2,
-        inc_1 = (1/100)*input$inc_1, inc_2 = (1/100)*input$inc_2,
-        p_pos_1 = (1/100)*input$p_pos_1, p_pos_2 = (1/100)*input$p_pos_2),
-        power = input$power, alpha = input$alpha,
-        rec_test_coverage_1 = (1/100)*input$rec_test_coverage_1, rec_test_coverage_2 = (1/100)*input$rec_test_coverage_2,
+        FRR = seq((1/100)*input$FRR_range_sim2[1], (1/100)*input$FRR_range_sim2[2], by = 0.005),
+        BigT = input$BigT,
+        RSE_FRR = (1/100)*input$RSE_FRR,
+        RSE_MDRI = (1/100)*input$RSE_MDRI,
+        DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+        DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2,
+        I_1 = (1/100)*input$I_1, I_2 = (1/100)*input$I_2,
+        PrevH_1 = (1/100)*input$PrevH_1, PrevH_2 = (1/100)*input$PrevH_2),
+        Power = input$Power, alpha = input$alpha,
+        CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
         ss_calc, case = input$scenario_case)
       return(temp)
     }
@@ -145,65 +145,65 @@ shinyServer(function(input, output, session) {
   output$plot <- renderPlot({
     validate(
       need(input$scenario_case <3, 'No plot available for this scenario (only one value available -see table)'),
-      need(!(input$scenario_case == 2 & input$x_variable == "frrhat"), 'This scenario cannot be represented by a plot (2 FRR values cannot live on one x-axis -see table)'),
+      need(!(input$scenario_case == 2 & input$x_variable == "FRR"), 'This scenario cannot be represented by a plot (2 FRR values cannot live on one x-axis -see table)'),
       need(!(input$scenario_case != 1 & input$x_variable == "simulate"), 'Simulation is only implemented for case 1'),
       need(!(input$scenario_case != 1 & input$x_variable == "simulate_FRR"), 'Simulation is only implemented for case 1'),
-      #need(!(input$frrhatcov < 0 ), 'Please provide a covariance value for FRR'),
-      need(!(input$frrhatcov_1 < 0  & input$scenario_case >1), 'Please provide a value for FRR_1 covariance'),
-      need(!(input$frrhatcov_1 > 100  & input$scenario_case >1), 'Please provide a value for FRR_1 covariance'),
-      need(!(input$frrhatcov_2 < 0  & input$scenario_case >1), 'Please provide a value for FRR_2 covariance'),
-      need(!(input$frrhatcov_2 > 100  & input$scenario_case >1), 'Please provide a value for FRR_2 covariance'),
-      need(!(input$mdrihatcov_1 < 0  & input$scenario_case == 3), 'Please provide a value for MDRI_1 covariance'),
-      need(!(input$mdrihatcov_1 > 100  & input$scenario_case == 3), 'Please provide a value for MDRI_1 covariance'),
-      need(!(input$mdrihatcov_2 < 0  & input$scenario_case == 3), 'Please provide a value for MDRI_2 covariance'),
-      need(!(input$mdrihatcov_2 > 100  & input$scenario_case == 3), 'Please provide a value for MDRI_2 covariance'),
-      need(input$frrhatcov >= 0, 'Please provide a valid covariance value for FRR'),
-      need(input$frrhatcov <= 100, 'Please provide a valid covariance value for FRR'),
-      need(input$mdrihatcov, 'Please provide a covariance value for MDRI'),
-      need(input$mdrihatcov >= 0, 'Please provide a valid covariance value for MDRI'),
-      need(input$mdrihatcov <= 100, 'Please provide a valid covariance value for MDRI'),
-      need(input$inc_1, 'Please provide an incidence value for survey 1'),
-      need(input$inc_2, 'Please provide an incidence value for survey 2'),
-      need(input$inc_1 > 0, 'Please provide a valid incidence value for survey 1 (>0)'),
-      need(input$inc_2 > 0, 'Please provide a valid incidence value for survey 2 (>0)'),
-      need(input$inc_2 < input$inc_1, 'Incidence in survey 1 must be >=  Incidence in survey 2'),
-      need(input$TIME, 'Please provide a value for the cut-off time'),
-      need(input$TIME > 120, 'Please provide a valid value for the cut-off time (>120)'),
-      need(input$p_pos_1, 'Please provide an prevalence value for survey 1'),
-      need(input$p_pos_2, 'Please provide an prevalence value for survey 2'),
-      need(input$p_pos_1 > 0, 'Please provide a valid prevalence value for survey 1 (>0)'),
-      need(input$p_pos_2 > 0, 'Please provide a valid prevalence value for survey 2 (>0)'),
-      need(input$power, 'Please provide a valid value for the power required (0:1)'),
-      need(input$power > 0, 'Please provide a valid value for the power required (0:1)'),
-      need(input$power <= 1, 'Please provide a valid value for the power required (0:1)'),
+      #need(!(input$RSE_FRR < 0 ), 'Please provide a covariance value for FRR'),
+      need(!(input$RSE_FRR_1 < 0  & input$scenario_case >1), 'Please provide a value for FRR_1 covariance'),
+      need(!(input$RSE_FRR_1 > 100  & input$scenario_case >1), 'Please provide a value for FRR_1 covariance'),
+      need(!(input$RSE_FRR_2 < 0  & input$scenario_case >1), 'Please provide a value for FRR_2 covariance'),
+      need(!(input$RSE_FRR_2 > 100  & input$scenario_case >1), 'Please provide a value for FRR_2 covariance'),
+      need(!(input$RSE_MDRI_1 < 0  & input$scenario_case == 3), 'Please provide a value for MDRI_1 covariance'),
+      need(!(input$RSE_MDRI_1 > 100  & input$scenario_case == 3), 'Please provide a value for MDRI_1 covariance'),
+      need(!(input$RSE_MDRI_2 < 0  & input$scenario_case == 3), 'Please provide a value for MDRI_2 covariance'),
+      need(!(input$RSE_MDRI_2 > 100  & input$scenario_case == 3), 'Please provide a value for MDRI_2 covariance'),
+      need(input$RSE_FRR >= 0, 'Please provide a valid covariance value for FRR'),
+      need(input$RSE_FRR <= 100, 'Please provide a valid covariance value for FRR'),
+      need(input$RSE_MDRI, 'Please provide a covariance value for MDRI'),
+      need(input$RSE_MDRI >= 0, 'Please provide a valid covariance value for MDRI'),
+      need(input$RSE_MDRI <= 100, 'Please provide a valid covariance value for MDRI'),
+      need(input$I_1, 'Please provide an incidence value for survey 1'),
+      need(input$I_2, 'Please provide an incidence value for survey 2'),
+      need(input$I_1 > 0, 'Please provide a valid incidence value for survey 1 (>0)'),
+      need(input$I_2 > 0, 'Please provide a valid incidence value for survey 2 (>0)'),
+      need(input$I_2 < input$I_1, 'Incidence in survey 1 must be >=  Incidence in survey 2'),
+      need(input$BigT, 'Please provide a value for the cut-off BigT'),
+      need(input$BigT > 120, 'Please provide a valid value for the cut-off BigT (>120)'),
+      need(input$PrevH_1, 'Please provide an prevalence value for survey 1'),
+      need(input$PrevH_2, 'Please provide an prevalence value for survey 2'),
+      need(input$PrevH_1 > 0, 'Please provide a valid prevalence value for survey 1 (>0)'),
+      need(input$PrevH_2 > 0, 'Please provide a valid prevalence value for survey 2 (>0)'),
+      need(input$Power, 'Please provide a valid value for the Power required (0:1)'),
+      need(input$Power > 0, 'Please provide a valid value for the Power required (0:1)'),
+      need(input$Power <= 1, 'Please provide a valid value for the Power required (0:1)'),
       need(input$alpha, 'Please provide a valid value for alpha (0:1)'),
       need(input$alpha > 0, 'Please provide a valid value for alpha (0:1)'),
       need(input$alpha <= 1, 'Please provide a valid value for alpha (0:1)'),
-      need(input$DE_prev_1, 'Please provide a D.E. value for survey 1'),
-      need(input$DE_RgivenTested_1, 'Please provide a D.E. value for survey 1'),
-      need(input$DE_prev_2, 'Please provide a D.E. value for survey 2'),
-      need(input$DE_RgivenTested_2, 'Please provide a D.E. value for survey 2'),
-      need(input$rec_test_coverage_1, 'Please provide a valid value for the % of recently tested for positives'),
-      need(input$rec_test_coverage_2, 'Please provide a valid value for the % of recently tested for positives'),
-      need(input$rec_test_coverage_1 > 0, 'Please provide a valid value for the % of recently tested for positives'),
-      need(input$rec_test_coverage_1 <= 100, 'Please provide a valid value for the % of recently tested for positives'),
-      need(input$rec_test_coverage_2 > 0, 'Please provide a valid value for the % of recently tested for positives'),
-      need(input$rec_test_coverage_2 <= 100, 'Please provide a valid value for the % of recently tested for positives')
+      need(input$DE_H_1, 'Please provide a D.E. value for survey 1'),
+      need(input$DE_R_1, 'Please provide a D.E. value for survey 1'),
+      need(input$DE_H_2, 'Please provide a D.E. value for survey 2'),
+      need(input$DE_R_2, 'Please provide a D.E. value for survey 2'),
+      need(input$CR_1, 'Please provide a valid value for the % of recently tested for positives'),
+      need(input$CR_2, 'Please provide a valid value for the % of recently tested for positives'),
+      need(input$CR_1 > 0, 'Please provide a valid value for the % of recently tested for positives'),
+      need(input$CR_1 <= 100, 'Please provide a valid value for the % of recently tested for positives'),
+      need(input$CR_2 > 0, 'Please provide a valid value for the % of recently tested for positives'),
+      need(input$CR_2 <= 100, 'Please provide a valid value for the % of recently tested for positives')
     )
 
     data <- format_table(df(), input$scenario_case, input$x_variable)
     plot_title <- plot_title(x_var = input$x_variable,
-                             power = input$power, alpha = input$alpha,
-                             inc_1 = input$inc_1, inc_2 = input$inc_2, TIME = input$TIME,
-                             p_pos_1 = input$p_pos_1, p_pos_2 = input$p_pos_2,
-                             FRR = input$frrhat, FRR_1 = input$frrhat_1, FRR_2 = input$frrhat_2,
+                             Power = input$Power, alpha = input$alpha,
+                             I_1 = input$I_1, I_2 = input$I_2, BigT = input$BigT,
+                             PrevH_1 = input$PrevH_1, PrevH_2 = input$PrevH_2,
+                             FRR = input$FRR, FRR_1 = input$FRR_1, FRR_2 = input$FRR_2,
                              MDRI = input$MDRI, scenario_case = input$scenario_case)
     legend_text <- legendbox_text(scenario_case = input$scenario_case, x_var = input$x_variable,
-                                  frrhatcov = input$frrhatcov , frrhatcov_1 = input$frrhatcov_1, frrhatcov_2 = input$frrhatcov_2,
-                                  mdrihatcov = input$mdrihatcov, mdrihatcov_1 = input$mdrihatcov_1, mdrihatcov_2 = input$mdrihatcov_2,
-                                  rec_test_coverage_1 = input$rec_test_coverage_1, rec_test_coverage_2 = input$rec_test_coverage_2,
-                                  DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-                                  DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2)
+                                  RSE_FRR = input$RSE_FRR , RSE_FRR_1 = input$RSE_FRR_1, RSE_FRR_2 = input$RSE_FRR_2,
+                                  RSE_MDRI = input$RSE_MDRI, RSE_MDRI_1 = input$RSE_MDRI_1, RSE_MDRI_2 = input$RSE_MDRI_2,
+                                  CR_1 = input$CR_1, CR_2 = input$CR_2,
+                                  DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+                                  DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2)
     if (input$x_variable != "simulate" & input$x_variable != "simulate_FRR") {
       plot <- myplot(data, input$x_variable, input$checkbox_plotparams, title = plot_title, legend_text = legend_text)}
     if (input$x_variable == "simulate") {
@@ -229,21 +229,21 @@ shinyServer(function(input, output, session) {
     if("FRR" %in% colnames(data)) data$FRR <- format(data$FRR, digits = 2)
     if("FRR_1" %in% colnames(data)) data$FRR_1 <- format(data$FRR_1, digits = 2)
     if("FRR_2" %in% colnames(data)) data$FRR_2 <- format(data$FRR_2, digits = 2)
-    if("mdrihatcov" %in% colnames(data)) data$mdrihatcov <- format(data$mdrihatcov, digits = 4)
-    if("mdrihatcov_1" %in% colnames(data)) data$mdrihatcov_1 <- format(data$mdrihatcov_1, digits = 4)
-    if("mdrihatcov_2" %in% colnames(data)) data$mdrihatcov_2 <- format(data$mdrihatcov_2, digits = 4)
-    if("frrhatcov" %in% colnames(data)) data$frrhatcov <- format(data$frrhatcov, digits = 4)
-    if("frrhatcov_1" %in% colnames(data)) data$frrhatcov_1 <- format(data$frrhatcov_1, digits = 4)
-    if("frrhatcov_2" %in% colnames(data)) data$frrhatcov_2 <- format(data$frrhatcov_2, digits = 4)
-    data$DE_prev_1 <- format(data$DE_prev_1, digits = 2)
-    data$DE_prev_2 <- format(data$DE_prev_2, digits = 2)
-    data$DE_RgivenTested_1 <- format(data$DE_RgivenTested_1, digits = 2)
-    data$DE_RgivenTested_2 <- format(data$DE_RgivenTested_2, digits = 2)
-    data[, "Incidence_1 (%)"] <- format(data[, "Incidence_1 (%)"], digits = 2)
-    data[, "Incidence_2 (%)"] <- format(data[, "Incidence_2 (%)"], digits = 2)
-    data[, "Prevalence_1 (%)"] <- format(data[, "Prevalence_1 (%)"], digits = 3)
-    data[, "Prevalence_2 (%)"] <- format(data[, "Prevalence_2 (%)"], digits = 3)
-    data$TIME <- format(data$TIME, digits = 4)
+    if("RSE_MDRI" %in% colnames(data)) data$RSE_MDRI <- format(data$RSE_MDRI, digits = 4)
+    if("RSE_MDRI_1" %in% colnames(data)) data$RSE_MDRI_1 <- format(data$RSE_MDRI_1, digits = 4)
+    if("RSE_MDRI_2" %in% colnames(data)) data$RSE_MDRI_2 <- format(data$RSE_MDRI_2, digits = 4)
+    if("RSE_FRR" %in% colnames(data)) data$RSE_FRR <- format(data$RSE_FRR, digits = 4)
+    if("RSE_FRR_1" %in% colnames(data)) data$RSE_FRR_1 <- format(data$RSE_FRR_1, digits = 4)
+    if("RSE_FRR_2" %in% colnames(data)) data$RSE_FRR_2 <- format(data$RSE_FRR_2, digits = 4)
+    data$DE_H_1 <- format(data$DE_H_1, digits = 2)
+    data$DE_H_2 <- format(data$DE_H_2, digits = 2)
+    data$DE_R_1 <- format(data$DE_R_1, digits = 2)
+    data$DE_R_2 <- format(data$DE_R_2, digits = 2)
+    data[, "I_1"] <- format(data[, "I_1"], digits = 2)
+    data[, "I_2"] <- format(data[, "I_2"], digits = 2)
+    data[, "PrevH_1"] <- format(data[, "PrevH_1"], digits = 3)
+    data[, "PrevH_2"] <- format(data[, "PrevH_2"], digits = 3)
+    data$BigT <- format(data$BigT, digits = 4)
     data.frame(data)
   #}, digits = 1)
   })
@@ -265,17 +265,17 @@ shinyServer(function(input, output, session) {
       ##begin
       data <- format_table(df(), input$scenario_case, input$x_variable)
       plot_title <- plot_title(x_var = input$x_variable,
-                               power = input$power, alpha = input$alpha,
-                               inc_1 = input$inc_1, inc_2 = input$inc_2, TIME = input$TIME,
-                               p_pos_1 = input$p_pos_1, p_pos_2 = input$p_pos_2,
-                               FRR = input$frrhat, FRR_1 = input$frrhat_1, FRR_2 = input$frrhat_2,
+                               Power = input$Power, alpha = input$alpha,
+                               I_1 = input$I_1, I_2 = input$I_2, BigT = input$BigT,
+                               PrevH_1 = input$PrevH_1, PrevH_2 = input$PrevH_2,
+                               FRR = input$FRR, FRR_1 = input$FRR_1, FRR_2 = input$FRR_2,
                                MDRI = input$MDRI, scenario_case = input$scenario_case)
       legend_text <- legendbox_text(scenario_case = input$scenario_case, x_var = input$x_variable,
-                                    frrhatcov = input$frrhatcov , frrhatcov_1 = input$frrhatcov_1, frrhatcov_2 = input$frrhatcov_2,
-                                    mdrihatcov = input$mdrihatcov, mdrihatcov_1 = input$mdrihatcov_1, mdrihatcov_2 = input$mdrihatcov_2,
-                                    rec_test_coverage_1 = input$rec_test_coverage_1, rec_test_coverage_2 = input$rec_test_coverage_2,
-                                    DE_prev_1 = input$DE_prev_1, DE_prev_2 = input$DE_prev_2,
-                                    DE_RgivenTested_1 = input$DE_RgivenTested_1, DE_RgivenTested_2 = input$DE_RgivenTested_2)
+                                    RSE_FRR = input$RSE_FRR , RSE_FRR_1 = input$RSE_FRR_1, RSE_FRR_2 = input$RSE_FRR_2,
+                                    RSE_MDRI = input$RSE_MDRI, RSE_MDRI_1 = input$RSE_MDRI_1, RSE_MDRI_2 = input$RSE_MDRI_2,
+                                    CR_1 = input$CR_1, CR_2 = input$CR_2,
+                                    DE_H_1 = input$DE_H_1, DE_H_2 = input$DE_H_2,
+                                    DE_R_1 = input$DE_R_1, DE_R_2 = input$DE_R_2)
       if (input$x_variable != "simulate" & input$x_variable != "simulate_FRR") {
         plot <- myplot(data, input$x_variable, input$checkbox_plotparams, title = plot_title, legend_text = legend_text)}
       if (input$x_variable == "simulate") {
