@@ -14,22 +14,23 @@
 # for the three cases based on the biomaker test parameters (MDRI, FRR, and RSE). 
 # See the BMest input in inctools.
 
-ss_calc <- function(case = 1, BigT = 730, MDRI = 200, MDRI_1 = 200, MDRI_2 = 200,
-                    RSE_MDRI = 0.05, RSE_MDRI_1 = 0.05, RSE_MDRI_2 = 0.05, 
-                    FRR = 0.01, FRR_1 = 0.01, RSE_FRR = 0.20, RSE_FRR_1 = 0.20, 
-                    FRR_2 = 0.01, RSE_FRR_2 = 0.30, I1 = 0.05, I2 = 0.03,
+ss_calc <- function(COV_MDRI = 0, COV_FRR=0,  BigT = 730, 
+                    MDRI_1 = 200, MDRI_2 = 200,
+                    RSE_MDRI_1 = 0.05, RSE_MDRI_2 = 0.05, 
+                    FRR_1 = 0.01, RSE_FRR_1 = 0.20, 
+                    FRR_2 = 0.01, RSE_FRR_2 = 0.30,
+                    I1 = 0.05, I2 = 0.03,
                     PrevH1 = 0.20, PrevH2 = 0.15, Power = 0.8, DE_H1 = 1, DE_H2 = 1,
                     DE_R1 = 1, DE_R2 = 1,
                     CR_1 = 1, CR_2 = 1, alpha = 0.05) {
 
-  #checks if case is correctly specified
-  if(!sum(case == c(1, 2, 3))) {stop("Please enter a valid case value")}
+
 
   #manual dispatching according to case, passing arguments to the appropriate function
 
-  if (1 == case) { #Case I: Assumes that the two surveys use a single MDRI and FRRs estimate.
-    temp_ss <-suppressWarnings(incpower( MDRI = MDRI, FRR = FRR, BigT = BigT, RSE_FRR = RSE_FRR,
-                                         RSE_MDRI = RSE_MDRI, DE_H = c(DE_H1,DE_H2), 
+  if (COV_MDRI==0 & COV_FRR==0) { #Case I: Assumes that the two surveys use a single MDRI and FRRs estimate.
+    temp_ss <-suppressWarnings(incpower( MDRI = MDRI_1, FRR = FRR_1, BigT = BigT, RSE_FRR = RSE_FRR_1,
+                                         RSE_MDRI = RSE_MDRI_1, DE_H = c(DE_H1,DE_H2), 
                                          DE_R = c(DE_R1,DE_R2), I1 = 0.05, I2 = 0.03,
                                          PrevH1 =  PrevH1, PrevH2 =  PrevH2, Power = Power, alpha = alpha,
                                          CR = c(CR_1,CR_2),
@@ -37,10 +38,10 @@ ss_calc <- function(case = 1, BigT = 730, MDRI = 200, MDRI_1 = 200, MDRI_2 = 200
     ss<-temp_ss$Minimum.Common.SS
   }
 
-  if (2 == case) { #Case II: Assumes that the two surveys use a single MDRI estimate, but that the FRRs are independently estimated
-    temp_ss <- suppressWarnings(incpower( MDRI = MDRI, FRR = c(FRR_1,FRR_2), BigT = BigT, 
+  if (COV_MDRI==0 & COV_FRR==1) { #Case II: Assumes that the two surveys use a single MDRI estimate, but that the FRRs are independently estimated
+    temp_ss <- suppressWarnings(incpower( MDRI = MDRI_1, FRR = c(FRR_1,FRR_2), BigT = BigT, 
                                           RSE_FRR = c(RSE_FRR_1,RSE_FRR_2),
-                                          RSE_MDRI = RSE_MDRI, DE_H = c(DE_H1,DE_H2), 
+                                          RSE_MDRI = RSE_MDRI_1, DE_H = c(DE_H1,DE_H2), 
                                           DE_R = c(DE_R1,DE_R2), I1 = 0.05, I2 = 0.03,
                                           PrevH1 =  PrevH1, PrevH2 =  PrevH2, Power = Power, alpha = alpha,
                                           CR = c(CR_1,CR_2),
@@ -48,8 +49,12 @@ ss_calc <- function(case = 1, BigT = 730, MDRI = 200, MDRI_1 = 200, MDRI_2 = 200
     ss <- temp_ss$Minimum.Common.SS
     
   }
+  if(COV_MDRI==1 & COV_FRR==0) { #Case not allowed
+    ss <- "The two surveys cannot have the same FRR and independent MDRIs"
+    
+  }
 
-  if(3 == case) { #Case III: Assumes that the two surveys use MDRI estimates which arise from different incidence tests, and that the FRRs are independently estimated
+  if(COV_MDRI==1 & COV_FRR==1) { #Case III: Assumes that the two surveys use MDRI estimates which arise from different incidence tests, and that the FRRs are independently estimated
     temp_ss <-suppressWarnings(incpower( MDRI = c(MDRI_1,MDRI_2), FRR = c(FRR_1,FRR_2), BigT = BigT, 
                                          RSE_FRR = c(RSE_FRR_1,RSE_FRR_2),
                                          RSE_MDRI = c(RSE_MDRI_1,RSE_MDRI_2), 

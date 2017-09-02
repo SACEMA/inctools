@@ -25,41 +25,43 @@ shinyServer(function(input, output, session) {
   #shinyURL.server(session)
   df <- reactive({
 
-    if(1 == input$scenario_case) {
+    if(0 == input$COV_FRR & 0==input$COV_MDRI) {
       temp <- mdply(expand.grid(Power = seq(input$Power_range[1],input$Power_range[2], by = 0.01), 
-                                MDRI = input$MDRI, 
-                                FRR = (1/100)*input$FRR,
+                                MDRI_1 = input$MDRI_1, 
                                 BigT = input$BigT,
-                                RSE_FRR = (1/100)*input$RSE_FRR,
-                                RSE_MDRI = (1/100)*input$RSE_MDRI,
+                                FRR_1 = (1/100)*input$FRR_1,
+                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1, 
+                                RSE_MDRI_1 = (1/100)*input$RSE_MDRI_1, 
                                 DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
                                 DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
                                 I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
                                 PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
                     alpha = input$alpha,
                     CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
+                    ss_calc, COV_FRR=input$COV_FRR, COV_MDRI=input$COV_MDRI)
                         
       return(temp)
     }
 
-    if(2 == input$scenario_case) {
+    if(0 == input$COV_FRR & 1==input$COV_MDRI) {
       temp <- mdply(expand.grid(Power = seq(input$Power_range[1],input$Power_range[2], by = 0.01), 
-                                MDRI = input$MDRI,
-                                FRR_1 = (1/100)*input$FRR_1, FRR_2 = (1/100)*input$FRR_2,
+                                MDRI_1 = input$MDRI_1,
+                                MDRI_2 = input$MDRI_2,
+                                RSE_MDRI_1 = (1/100)*input$RSE_MDRI_1,
+                                RSE_MDRI_2 = (1/100)*input$RSE_MDRI_2,
                                 BigT = input$BigT,
-                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1, RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
-                                RSE_MDRI = (1/100)*input$RSE_MDRI,
+                                FRR_1 = (1/100)*input$FRR_1,
+                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1,
                                 DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
                                 DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
                                 I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
                                 PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
                     alpha = input$alpha,
                     CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
+                    ss_calc, COV_FRR=input$COV_FRR, COV_MDRI=input$COV_MDRI)
       return(temp)
     }
-    if(3 == input$scenario_case) {
+    if(1 == input$COV_FRR & 1==input$COV_MDRI) {
       temp <- mdply(expand.grid(Power = seq(input$Power_range[1],input$Power_range[2], by = 0.01),
                                 MDRI_1 = input$MDRI_1, MDRI_2 = input$MDRI_2,
                                 BigT = input$BigT,
@@ -72,205 +74,49 @@ shinyServer(function(input, output, session) {
                                 PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
                     alpha = input$alpha,
                     CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
+                    ss_calc, COV_FRR=input$COV_FRR, COV_MDRI=input$COV_MDRI)
+      return(temp)
+    }
+    if(1 == input$COV_FRR & 0==input$COV_MDRI) {
+      temp <- mdply(expand.grid(Power = seq(input$Power_range[1],input$Power_range[2], by = 0.01),
+                                MDRI_1 = input$MDRI_1, 
+                                RSE_MDRI_1 = (1/100)*input$RSE_MDRI_1,
+                                BigT = input$BigT,
+                                FRR_1 = (1/100)*input$FRR_1,
+                                FRR_2 = (1/100)*input$FRR_2,
+                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1,
+                                RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
+                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
+                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
+                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
+                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
+                    alpha = input$alpha,
+                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
+                    ss_calc, COV_FRR=input$COV_FRR, COV_MDRI=input$COV_MDRI)
       return(temp)
     }
 
   })
   
-###
-  df_sensitivity <- reactive({
-    
-    if("MDRI" == input$x_variable & 1 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 30), FRR = (1/100)*input$FRR,
-                                BigT = input$BigT,
-                                RSE_FRR = (1/100)*input$RSE_FRR,
-                                RSE_MDRI = (1/100)*input$RSE_MDRI,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      
-      return(temp)
-    }
-    
-    if("MDRI" == input$x_variable & 2 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI = seq(input$MDRI_range[1], input$MDRI_range[2], by = 30),
-                                FRR_1 = (1/100)*input$FRR_1, FRR_2 = (1/100)*input$FRR_2,
-                                BigT = input$BigT,
-                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1, RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
-                                RSE_MDRI = (1/100)*input$RSE_MDRI,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      return(temp)
-    }
-    
-    if("FRR" == input$x_variable & 1 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI = input$MDRI,
-                                FRR = seq((1/100)*input$FRR_range[1], (1/100)*input$FRR_range[2], by = 0.005),
-                                BigT = input$BigT,
-                                RSE_FRR = (1/100)*input$RSE_FRR, RSE_MDRI = (1/100)*input$RSE_MDRI,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      return(temp)
-    }
-    
-    if("FRR_1" == input$x_variable & 2 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI = input$MDRI,
-                                BigT = input$BigT,
-                                FRR_1 = seq((1/100)*input$FRR_1_range[1], (1/100)*input$FRR_1_range[2], by = 0.005),
-                                #FRR_1 = (1/100)*input$FRR_1, 
-                                FRR_2 = (1/100)*input$FRR_2,
-                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1,
-                                RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
-                                RSE_MDRI = (1/100)*input$RSE_MDRI,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      return(temp)
-    }
-    if("FRR_2" == input$x_variable & 2 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI = input$MDRI,
-                                BigT = input$BigT,
-                                FRR_1 = (1/100)*input$FRR_1, 
-                                FRR_2 = seq((1/100)*input$FRR_2_range[1], (1/100)*input$FRR_2_range[2], by = 0.005),
-                                #FRR_2 = (1/100)*input$FRR_2,
-                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1,
-                                RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
-                                RSE_MDRI = (1/100)*input$RSE_MDRI,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      return(temp)
-    }
-    
-    if("FRR_1" == input$x_variable & 3 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI_1 = input$MDRI_1, MDRI_2 = input$MDRI_2,
-                                BigT = input$BigT,
-                                FRR_1 = (1/100)*input$FRR_1,
-                                FRR_2 = (1/100)*input$FRR_2,
-                                #RSE_FRR_1 = (1/100)*input$RSE_FRR_1,
-                                FRR_1 = seq((1/100)*input$FRR_1_range[1], (1/100)*input$FRR_1_range[2], by = 0.005),
-                                RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
-                                RSE_MDRI_1 = (1/100)*input$RSE_MDRI_1,
-                                RSE_MDRI_2 = (1/100)*input$RSE_MDRI_2,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      return(temp)
-    }
-    if("FRR_2" == input$x_variable & 3 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI_1 = input$MDRI_1, MDRI_2 = input$MDRI_2,
-                                BigT = input$BigT,
-                                FRR_1 = (1/100)*input$FRR_1,
-                                #FRR_2 = (1/100)*input$FRR_2,
-                                FRR_2 = seq((1/100)*input$FRR_2_range[1], (1/100)*input$FRR_2_range[2], by = 0.005),
-                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1,
-                                RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
-                                RSE_MDRI_1 = (1/100)*input$RSE_MDRI_1,
-                                RSE_MDRI_2 = (1/100)*input$RSE_MDRI_2,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      return(temp)
-    }
-    if("MDRI_1" == input$x_variable & 3 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI_1 = seq((1/100)*input$MDRI_1_range[1], (1/100)*input$MDRI_1_range[2], by = 0.005),
-                                #MDRI_1 = input$MDRI_1,
-                                MDRI_2 = input$MDRI_2,
-                                BigT = input$BigT,
-                                FRR_1 = (1/100)*input$FRR_1,
-                                FRR_2 = (1/100)*input$FRR_2,
-                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1,
-                                RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
-                                RSE_MDRI_1 = (1/100)*input$RSE_MDRI_1,
-                                RSE_MDRI_2 = (1/100)*input$RSE_MDRI_2,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      return(temp)
-    }
-    if("MDRI_2" == input$x_variable & 3 == input$scenario_case) {
-      temp <- mdply(expand.grid(MDRI_1 = input$MDRI_1,
-                                #MDRI_2 = input$MDRI_2,
-                                MDRI_2 = seq((1/100)*input$MDRI_2_range[1], (1/100)*input$MDRI_2_range[2], by = 0.005),
-                                BigT = input$BigT,
-                                FRR_1 = (1/100)*input$FRR_1,
-                                FRR_2 = (1/100)*input$FRR_2,
-                                RSE_FRR_1 = (1/100)*input$RSE_FRR_1,
-                                RSE_FRR_2 = (1/100)*input$RSE_FRR_2,
-                                RSE_MDRI_1 = (1/100)*input$RSE_MDRI_1,
-                                RSE_MDRI_2 = (1/100)*input$RSE_MDRI_2,
-                                DE_H1 = input$DE_H1, DE_H2 = input$DE_H2,
-                                DE_R1 = input$DE_R1, DE_R2 = input$DE_R2,
-                                I1 = (1/100)*input$I1, I2 = (1/100)*input$I2,
-                                PrevH1 = (1/100)*input$PrevH1, PrevH2 = (1/100)*input$PrevH2),
-                    Power = input$Power, alpha = input$alpha,
-                    CR_1 = (1/100)*input$CR_1, CR_2 = (1/100)*input$CR_2,
-                    ss_calc, case = input$scenario_case)
-      return(temp)
-    }
-    
-    
-  })
+
   
   output$plot <- renderPlot({
     validate(
-      need(!(input$RSE_FRR_1 < 0  & input$scenario_case >1), 'Please provide a value for FRR_1 covariance'),
-      need(!(input$RSE_FRR_1 > 100  & input$scenario_case >1), 'Please provide a value for FRR_1 covariance'),
-      need(!(input$RSE_FRR_2 < 0  & input$scenario_case >1), 'Please provide a value for FRR_2 covariance'),
-      need(!(input$RSE_FRR_2 > 100  & input$scenario_case >1), 'Please provide a value for FRR_2 covariance'),
-      need(!(input$RSE_MDRI_1 < 0  & input$scenario_case == 3), 'Please provide a value for MDRI_1 covariance'),
-      need(!(input$RSE_MDRI_1 > 100  & input$scenario_case == 3), 'Please provide a value for MDRI_1 covariance'),
-      need(!(input$RSE_MDRI_2 < 0  & input$scenario_case == 3), 'Please provide a value for MDRI_2 covariance'),
-      need(!(input$RSE_MDRI_2 > 100  & input$scenario_case == 3), 'Please provide a value for MDRI_2 covariance'),
-      need(input$RSE_FRR >= 0, 'Please provide a valid covariance value for FRR'),
-      need(input$RSE_FRR <= 100, 'Please provide a valid covariance value for FRR'),
-      need(input$MDRI, 'Please provide a  value for MDRI'),
-      need(input$MDRI >= 0, 'Please provide a valid  value for MDRI'),
-      #need(input$MDRI <= 720, 'Please provide a valid  value for MDRI'),
+      need(!(input$RSE_FRR_1 < 0 ), 'Please provide a value for FRR_1 covariance'),
+      need(!(input$RSE_FRR_1 > 100 ), 'Please provide a value for FRR_1 covariance'),
+      need(!(input$RSE_FRR_2 < 0  ), 'Please provide a value for FRR_2 covariance'),
+      need(!(input$RSE_FRR_2 > 100 ), 'Please provide a value for FRR_2 covariance'),
+      need(!(input$RSE_MDRI_1 < 0  ), 'Please provide a value for MDRI_1 covariance'),
+      need(!(input$RSE_MDRI_1 > 100 ), 'Please provide a value for MDRI_1 covariance'),
+      need(!(input$RSE_MDRI_2 < 0  ), 'Please provide a value for MDRI_2 covariance'),
+      need(!(input$RSE_MDRI_2 > 100 ), 'Please provide a value for MDRI_2 covariance'),
+      need(!(input$COV_FRR==0 & input$COV_MDRI==1), 'Please provide a valid combination for the covariance between FRR and MDRI'),
       need(input$MDRI_1, 'Please provide a  value for MDRI for survey 1'),
       need(input$MDRI_1 >= 0, 'Please provide a valid  value for MDRI for survey 1'),
       #need(input$MDRI_1 <= 720, 'Please provide a valid  value for MDRI for survey 1'),
       need(input$MDRI_2, 'Please provide a  value for MDRI for survey 2'),
       need(input$MDRI_2 >= 0, 'Please provide a valid  value for MDRI for survey 2'),
       #need(input$MDRI_2 <= 720, 'Please provide a valid  value for MDRI for survey 2'),
-      need(input$RSE_MDRI, 'Please provide a covariance value for MDRI'),
-      need(input$RSE_MDRI >= 0, 'Please provide a valid covariance value for MDRI'),
-      need(input$RSE_MDRI <= 100, 'Please provide a valid covariance value for MDRI'),
       need(input$I1, 'Please provide an incidence value for survey 1'),
       need(input$I2, 'Please provide an incidence value for survey 2'),
       need(input$I1 > 0, 'Please provide a valid incidence value for survey 1 (>0)'),
@@ -298,13 +144,12 @@ shinyServer(function(input, output, session) {
       need(input$statPower>=0 & input$statPower<=100,"Please provide a valid value for statistical Power (%)")
     )
 
-    data <- format_table(df(), input$scenario_case)
-  
+    data <- format_table(df())
+    #data<-df()
     plot<- plot(data[,length(names(data))],data[,1],
                 main = "Probability of correcting inferring incidence 1 > incidence 2 \n as a function of sample size",
                 xlab = "Sample Size common to survey 1 and survey 2", 
                 ylab = "Probability ",type = "l", col='blue')
-    #abline(h = 0.8, v = data[which(data[,1]==0.8),"N"])
     abline(h = input$statPower/100,  lty=2, col="grey", lwd=2)
     abline(v = data[which(round(data[,1],2)==input$statPower/100),"N"], lty=2, col="grey", lwd=2)
     print(plot)
@@ -315,29 +160,20 @@ shinyServer(function(input, output, session) {
   
   renameTable<-function(data){
     colnames(data)[which(colnames(data)=="Power")] <- "Power"
-    if("MDRI" %in% colnames(data)){
-      data$MDRI <- format(data$MDRI, digits = 0) } 
     if("MDRI_1" %in% colnames(data)) {
       data$MDRI_1 <- format(data$MDRI_1, digits = 0) }
     if("MDRI_2" %in% colnames(data)) {
       data$MDRI_2 <- format(data$MDRI_2, digits = 0) }
     data$N <- format(data$N, digits = 10)
     colnames(data)[which(colnames(data)=="N")] <- "ss"
-    if("FRR" %in% colnames(data)) data$FRR <- format(data$FRR, digits = 2)
     if("FRR_1" %in% colnames(data)) data$FRR_1 <- format(data$FRR_1, digits = 2)
     if("FRR_2" %in% colnames(data)) data$FRR_2 <- format(data$FRR_2, digits = 2)
-    if("RSE_MDRI" %in% colnames(data)) {
-      data$RSE_MDRI <- format(data$RSE_MDRI, digits = 4)
-      colnames(data)[which(colnames(data)=="RSE_MDRI")] <- "RSE_MDRI" }
     if("RSE_MDRI_1" %in% colnames(data)) {
       data$RSE_MDRI_1 <- format(data$RSE_MDRI_1, digits = 4)
       colnames(data)[which(colnames(data)=="RSE_MDRI_1")] <- "RSE_MDRI_1" }
     if("RSE_MDRI_2" %in% colnames(data)) {
       data$RSE_MDRI_2 <- format(data$RSE_MDRI_2, digits = 4)
       colnames(data)[which(colnames(data)=="RSE_MDRI_2")] <- "RSE_MDRI_2" }
-    if("RSE_FRR" %in% colnames(data)){
-      data$RSE_FRR <- format(data$RSE_FRR, digits = 4)
-      colnames(data)[which(colnames(data)=="RSE_FRR")] <- "RSE_FRR" } 
     if("RSE_FRR_1" %in% colnames(data)){
       data$RSE_FRR_1 <- format(data$RSE_FRR_1, digits = 4)
       colnames(data)[which(colnames(data)=="RSE_FRR_1")] <- "RSE_FRR_1" } 
@@ -367,7 +203,7 @@ shinyServer(function(input, output, session) {
   }
   
   ### Define the function format_table()  (reference: DS(FIND))
-  format_table <- function(df, case_scenario) {
+  format_table <- function(df) {
     df$I1 <- 100*df$I1
     df$I2 <- 100*df$I2
     df$PrevH1 <- 100*df$PrevH1
@@ -396,7 +232,7 @@ shinyServer(function(input, output, session) {
   
   # Produce an output table value.
   output$tab <- renderTable({
-    data <- format_table(df(), input$scenario_case)
+    data <- format_table(df())
     renameTable(data)  # We call the function rename table here
   })
 
@@ -405,7 +241,7 @@ shinyServer(function(input, output, session) {
       paste("data-", Sys.Date(), ".csv", sep="")
     },
     content = function(file) {
-      write.csv(renameTable(format_table(df(), input$scenario_case)) , file)
+      write.csv(renameTable(format_table(df())) , file)
     }
   )
 
@@ -414,7 +250,7 @@ shinyServer(function(input, output, session) {
       paste("data-", Sys.Date(), ".jpeg", sep="")
     },
     content = function(file) {
-      data <- format_table(df(), input$scenario_case)
+      data <- format_table(df())
       jpeg(filename = file)
       plot<- plot(data[,length(names(data))],data[,1],
                   main = "Probability of correcting inferring incidence 1 > incidence 2 \n as a function of sample size",
