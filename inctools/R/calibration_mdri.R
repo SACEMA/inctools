@@ -105,7 +105,9 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
 mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_forms = c("cloglog_linear",
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
     recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
-    n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4) {
+    n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4, debug = FALSE) {
+
+  if (debug) { browser() }
 
   if (is.null(data)) {
     stop("No input data has been specified")
