@@ -24,115 +24,173 @@ shinyUI(fluidPage(
          wellPanel(
          fluidRow(column(9, downloadButton('downloadData', 'Download Results')))
          ),
-        wellPanel(fluidRow(
-            column(12,
-                   radioButtons("case", label = h3("Scenario Type:"),
-                                c(" Same MDRI, same FRR estimates in the two surveys" = 1,
-                                  " Same MDRI, but different FRR estimates in the two surveys" = 2,
-                                  " Different MDRI and FRR estimates in the two surveys" = 3)),
-                   selected = 1)
-          )),
+        # wellPanel(fluidRow(
+        #     column(12,
+        #            radioButtons("case", label = h3("Scenario Type:"),
+        #                         c(" Same MDRI, same FRR estimates in the two surveys" = 1,
+        #                           " Same MDRI, but different FRR estimates in the two surveys" = 2,
+        #                           " Different MDRI and FRR estimates in the two surveys" = 3)),
+        #            selected = 1)
+        #   )),
        
-       wellPanel(
-          # fluid page for the assay parameters
+        wellPanel( # fluid page for the assay parameters
           fluidPage(
             h3("Assay Parameters"),
-              fluidRow(
-                column(6,
-                       conditionalPanel(
-                         condition = "input.case != 3",
-                         numericInput("MDRI",
-                                      label = h5("MDRI estimate (days)"),
-                                      min = 0,
-                                      max = 720,
-                                      step = 1,
-                                      value = 240)
-                       ),
-                       conditionalPanel(
-                         condition = "input.case == 3",
-                         numericInput("MDRI_1",
-                                      label = h5("MDRI estimate for survey 1 (days)"),
-                                      min = 0,
-                                      max = 720,
-                                      step = 1,
-                                      value = 240)
-                       ),
-                       conditionalPanel(
-                         condition = "input.case == 1",
-                         numericInput("FRR",
-                                      label = h5("FRR estimate (%)"),
-                                      min = 0,
-                                      max = 100,
-                                      step = 0.1,
-                                      value = 1)
-                       ),
-                       conditionalPanel(
-                         condition = "input.case != 1",
-                         numericInput("FRR_1",
-                                      label = h5("FRR estimate for survey 1 (%)"),
-                                      min = 0,
-                                      max = 100,
-                                      step = 0.1,
-                                      value = 1)
-                       )
-                ),
-                column(6,
-                       conditionalPanel(
-                         condition = "input.case != 3",
-                         numericInput("RSE_MDRI", label = h5("RSE of MDRI estimate (%)"), value = 5, step = 0.1)
-                       ),
-                       conditionalPanel(
-                         condition = "input.case == 3",
-                         numericInput("RSE_MDRI_1", label = h5("RSE of MDRI estimate for survey 1 (%)"), value = 5, step = 0.1)
-                       ),
-                       conditionalPanel(
-                         condition = "input.case == 1",
-                         numericInput("RSE_FRR", label = h5("RSE of FRR estimate (%)"), value = 20, step = 0.1)
-                       ),
-                       conditionalPanel(
-                         condition = "input.case != 1",
-                         numericInput("RSE_FRR_1", label = h5("RSE of FRR estimate for survey 1 (%)"), value = 20, step = 0.1)
-                       )
-                )
+            ###
+            fluidRow(
+              column(6,
+                     numericInput("MDRI_1",
+                                  label = h5("MDRI estimate for survey 1 (days)"),
+                                  min = 0,
+                                  max = 720,
+                                  step = 1,
+                                  value = 240),
+                     numericInput("MDRI_2",
+                                  label = h5("MDRI estimate for survey 2 (days)"),
+                                  min = 0,
+                                  max = 720,
+                                  step = 1,
+                                  value = 240),
+                     numericInput("FRR_1",
+                                  label = h5("FRR estimate for survey 1 (%)"),
+                                  min = 0,
+                                  max = 100,
+                                  step = 0.1,
+                                  value = 1),
+                     numericInput("FRR_2",
+                                  label = h5("FRR estimate for survey 2 (%)"),
+                                  min = 0,
+                                  max = 100,
+                                  step = 0.1,
+                                  value = 1),
+                     selectInput("COV_MDRI",
+                                 label = h5("Covariance of MDRI values"),
+                                 choices = c(0,1),
+                                 selected = 0
+                     )
               ),
-              fluidRow(
-                column(6,
-                       conditionalPanel(
-                         condition = "input.case == 3",
-                         numericInput("MDRI_2",
-                                      label = h5("MDRI estimate for survey 2 (days)"),
-                                      min = 0,
-                                      max = 720,
-                                      step = 1,
-                                      value = 240)
-                       ),
-                       conditionalPanel(
-                         condition = "input.case != 1",
-                         numericInput("FRR_2",
-                                      label = h5("FRR estimate for survey 2 (%)"),
-                                      min = 0,
-                                      max = 100,
-                                      step = 0.1,
-                                      value = 1)
-                       )
-                ),
-                column(6,
-                       conditionalPanel(
-                         condition = "input.case == 3",
-                         numericInput("RSE_MDRI_2", label = h5("RSE of MDRI estimate for survey 2(%)"), value = 5, step = 0.1)
-                       ),
-                       conditionalPanel(
-                         condition = "input.case != 1",
-                         numericInput("RSE_FRR_2", label = h5("RSE of FRR estimate for survey 2 (%)"), value = 20, step = 0.1)
-                       )
-                )
-
-              ),
-           
-              fluidRow(
-              column(10,numericInput("BigT", label = h5("Cut-off time T (days)"), value = 730, step = 10)
-              )))
-       ),
+              
+              column(6,
+                     numericInput("RSE_MDRI_1", label = h5("RSE of MDRI estimate for survey 1 (%)"), value = 5, step = 0.1),
+                     numericInput("RSE_MDRI_2", label = h5("RSE of MDRI estimate for survey 2(%)"), value = 5, step = 0.1),
+                     numericInput("RSE_FRR_1", label = h5("RSE of FRR estimate for survey 1 (%)"), value = 20, step = 0.1),
+                     numericInput("RSE_FRR_2", label = h5("RSE of FRR estimate for survey 2 (%)"), value = 20, step = 0.1),
+                     selectInput("COV_FRR",
+                                 label = h5("Covariance of FRR values"),
+                                 choices = c(0,1),
+                                 selected = 0
+                     )
+                     
+                     
+              )
+              
+            ),
+            fluidRow(column(9,
+                            numericInput("BigT", label = h5("Cut-off BigT T (days)"), value = 730, step = 10)
+            ))
+          )
+        ),
+        
+       # wellPanel(
+       #    # fluid page for the assay parameters
+       #    fluidPage(
+       #      h3("Assay Parameters"),
+       #        fluidRow(
+       #          column(6,
+       #                 conditionalPanel(
+       #                   condition = "input.case != 3",
+       #                   numericInput("MDRI",
+       #                                label = h5("MDRI estimate (days)"),
+       #                                min = 0,
+       #                                max = 720,
+       #                                step = 1,
+       #                                value = 240)
+       #                 ),
+       #                 conditionalPanel(
+       #                   condition = "input.case == 3",
+       #                   numericInput("MDRI_1",
+       #                                label = h5("MDRI estimate for survey 1 (days)"),
+       #                                min = 0,
+       #                                max = 720,
+       #                                step = 1,
+       #                                value = 240)
+       #                 ),
+       #                 conditionalPanel(
+       #                   condition = "input.case == 1",
+       #                   numericInput("FRR",
+       #                                label = h5("FRR estimate (%)"),
+       #                                min = 0,
+       #                                max = 100,
+       #                                step = 0.1,
+       #                                value = 1)
+       #                 ),
+       #                 conditionalPanel(
+       #                   condition = "input.case != 1",
+       #                   numericInput("FRR_1",
+       #                                label = h5("FRR estimate for survey 1 (%)"),
+       #                                min = 0,
+       #                                max = 100,
+       #                                step = 0.1,
+       #                                value = 1)
+       #                 )
+       #          ),
+       #          column(6,
+       #                 conditionalPanel(
+       #                   condition = "input.case != 3",
+       #                   numericInput("RSE_MDRI", label = h5("RSE of MDRI estimate (%)"), value = 5, step = 0.1)
+       #                 ),
+       #                 conditionalPanel(
+       #                   condition = "input.case == 3",
+       #                   numericInput("RSE_MDRI_1", label = h5("RSE of MDRI estimate for survey 1 (%)"), value = 5, step = 0.1)
+       #                 ),
+       #                 conditionalPanel(
+       #                   condition = "input.case == 1",
+       #                   numericInput("RSE_FRR", label = h5("RSE of FRR estimate (%)"), value = 20, step = 0.1)
+       #                 ),
+       #                 conditionalPanel(
+       #                   condition = "input.case != 1",
+       #                   numericInput("RSE_FRR_1", label = h5("RSE of FRR estimate for survey 1 (%)"), value = 20, step = 0.1)
+       #                 )
+       #          )
+       #        ),
+       #        fluidRow(
+       #          column(6,
+       #                 conditionalPanel(
+       #                   condition = "input.case == 3",
+       #                   numericInput("MDRI_2",
+       #                                label = h5("MDRI estimate for survey 2 (days)"),
+       #                                min = 0,
+       #                                max = 720,
+       #                                step = 1,
+       #                                value = 240)
+       #                 ),
+       #                 conditionalPanel(
+       #                   condition = "input.case != 1",
+       #                   numericInput("FRR_2",
+       #                                label = h5("FRR estimate for survey 2 (%)"),
+       #                                min = 0,
+       #                                max = 100,
+       #                                step = 0.1,
+       #                                value = 1)
+       #                 )
+       #          ),
+       #          column(6,
+       #                 conditionalPanel(
+       #                   condition = "input.case == 3",
+       #                   numericInput("RSE_MDRI_2", label = h5("RSE of MDRI estimate for survey 2(%)"), value = 5, step = 0.1)
+       #                 ),
+       #                 conditionalPanel(
+       #                   condition = "input.case != 1",
+       #                   numericInput("RSE_FRR_2", label = h5("RSE of FRR estimate for survey 2 (%)"), value = 20, step = 0.1)
+       #                 )
+       #          )
+       # 
+       #        ),
+       #     
+       #        fluidRow(
+       #        column(10,numericInput("BigT", label = h5("Cut-off time T (days)"), value = 730, step = 10)
+       #        )))
+       # ),
        
        wellPanel(
          fluidPage(

@@ -102,14 +102,14 @@ shinyServer(function(input, output, session) {
   
   output$plot <- renderPlot({
     validate(
-      need(!(input$RSE_FRR_1 < 0 ), 'Please provide a value for FRR_1 covariance'),
-      need(!(input$RSE_FRR_1 > 100 ), 'Please provide a value for FRR_1 covariance'),
-      need(!(input$RSE_FRR_2 < 0  ), 'Please provide a value for FRR_2 covariance'),
-      need(!(input$RSE_FRR_2 > 100 ), 'Please provide a value for FRR_2 covariance'),
-      need(!(input$RSE_MDRI_1 < 0  ), 'Please provide a value for MDRI_1 covariance'),
-      need(!(input$RSE_MDRI_1 > 100 ), 'Please provide a value for MDRI_1 covariance'),
-      need(!(input$RSE_MDRI_2 < 0  ), 'Please provide a value for MDRI_2 covariance'),
-      need(!(input$RSE_MDRI_2 > 100 ), 'Please provide a value for MDRI_2 covariance'),
+      need(input$RSE_FRR_1 >= 0, 'Please provide a valid RSE for FRR of survey 1'),
+      need(input$RSE_FRR_1 <= 100, 'Please provide a valid RSE for FRR of survey 1'),
+      need(input$RSE_MDRI_1 >= 0, 'Please provide a valid RSE for MDRI of survey 1'),
+      need(input$RSE_MDRI_1, 'Please provide a valid prevalence value for survey 1'),
+      need(input$RSE_FRR_2 >= 0, 'Please provide a valid RSE for FRR of survey 2'),
+      need(input$RSE_FRR_2 <= 100, 'Please provide a valid RSE for FRR of survey 2'),
+      need(input$RSE_MDRI_2 >= 0, 'Please provide a valid RSE for MDRI of survey 2'),
+      need(input$RSE_MDRI_2, 'Please provide a valid prevalence value for survey 2'),
       need(!(input$COV_FRR==0 & input$COV_MDRI==1), 'Please provide a valid combination for the covariance between FRR and MDRI'),
       need(input$MDRI_1, 'Please provide a  value for MDRI for survey 1'),
       need(input$MDRI_1 >= 0, 'Please provide a valid  value for MDRI for survey 1'),

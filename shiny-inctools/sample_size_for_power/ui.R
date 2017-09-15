@@ -102,7 +102,8 @@ shinyUI(fluidPage(
                  numericInput("CR_2", label = h5("Percentage of HIV positives tested for recency in survey 2 (%)"), value = 100, step = 1)
           )
         )
-      )),
+      )
+      ),
 
       wellPanel(
         #Design Effect parameters

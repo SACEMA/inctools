@@ -24,17 +24,15 @@ shinyServer(function(input, output, session){
 
   #shinyURL.server(session)
   incdiff.data <- reactive({  # reactive function for incidence difference
-    temp <- incdiff_calc(case = input$case, survey_number = input$survey_number,
-                         PrevH_1 = input$PrevH_1/100, RSE_PrevH_1 = input$RSE_PrevH_1/100,
+    temp <- incdiff_calc(PrevH_1 = input$PrevH_1/100, RSE_PrevH_1 = input$RSE_PrevH_1/100,
                          PrevR_1 = input$PrevR_1/100, RSE_PrevR_1 = input$RSE_PrevR_1/100,
-                         MDRI = input$MDRI, RSE_MDRI = input$RSE_MDRI/100,
                          MDRI_1 = input$MDRI_1, RSE_MDRI_1 = input$RSE_MDRI_1/100,
-                         FRR = input$FRR/100, RSE_FRR = input$RSE_FRR/100,
                          FRR_1 = input$FRR_1/100, RSE_FRR_1 = input$RSE_FRR_1/100,
                          PrevH_2 = input$PrevH_2/100, RSE_PrevH_2 = input$RSE_PrevH_2/100,
                          PrevR_2 = input$PrevR_2/100, RSE_PrevR_2 = input$RSE_PrevR_2/100,
                          MDRI_2 = input$MDRI_2, RSE_MDRI_2 = input$RSE_MDRI_2/100,
                          FRR_2 = input$FRR_2/100, RSE_FRR_2 = input$RSE_FRR_2/100,
+                         COV_FRR=input$COV_FRR, COV_MDRI=input$COV_MDRI,
                          BigT = input$BigT )
     return(temp)
 
@@ -45,10 +43,7 @@ shinyServer(function(input, output, session){
     validate(
       need(input$BigT, 'Please provide a value for the cut-off time'),
       need(input$BigT > 120, 'Please provide a valid value for the cut-off time (>120)'),
-      need(input$RSE_FRR >= 0, 'Please provide a valid RSE for FRR of survey 1'),
-      need(input$RSE_FRR <= 100, 'Please provide a valid RSE for FRR of survey 1'),
-      need(input$RSE_MDRI >= 0, 'Please provide a valid RSE for MDRI of survey 1'),
-      need(input$RSE_MDRI, 'Please provide a valid prevalence value for survey 1'),
+      need(!(input$COV_FRR==0 & input$COV_MDRI==1), 'Please provide a valid combination for the covariance between FRR and MDRI'),
       need(input$RSE_FRR_1 >= 0, 'Please provide a valid RSE for FRR of survey 1'),
       need(input$RSE_FRR_1 <= 100, 'Please provide a valid RSE for FRR of survey 1'),
       need(input$RSE_MDRI_1 >= 0, 'Please provide a valid RSE for MDRI of survey 1'),
@@ -77,8 +72,6 @@ shinyServer(function(input, output, session){
       need(input$RSE_PrevR_2, 'Please provide an RSE of prevalence of recent infection value for survey 2 '),
       need(input$RSE_PrevR_2 >= 0, 'Please provide a valid RSE of prevalence of recent infection value for survey 2'),
       need(input$RSE_PrevR_2 <= 100, 'Please provide a valid RSE of prevalence of recent infection value for survey 2'),
-      need(input$MDRI >= 0, 'Please provide a valid  value for MDRI'),
-      #need(input$MDRI <= 720, 'Please provide a valid  value for MDRI'),
       need(input$MDRI_1, 'Please provide a  value for MDRI for survey 1'),
       need(input$MDRI_1 >= 0, 'Please provide a valid  value for MDRI for survey 1'),
       #need(input$MDRI_1 <= 720, 'Please provide a valid  value for MDRI for survey 1'),

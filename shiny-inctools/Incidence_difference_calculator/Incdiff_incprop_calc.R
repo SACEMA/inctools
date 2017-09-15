@@ -12,46 +12,43 @@
 # Incidence difference estimate function
 
 
-incdiff_calc<-function(case = 1, survey_number = 2,
+incdiff_calc<-function(COV_MDRI = 0, COV_FRR=0,
                        PrevH_1 = 0.20, RSE_PrevH_1 = 0.028,
                        PrevR_1 = 0.10, RSE_PrevR_1 = 0.094,
-                       MDRI = 200, RSE_MDRI =.05,
-                       FRR = .01, RSE_FRR = .2,
                        MDRI_1 = 200, RSE_MDRI_1 =.05,
                        FRR_1 = .01, RSE_FRR_1 = .2,
-                       PrevH_2 = .21, RSE_PrevH_2 = .03,
-                       PrevR_2 = .13, RSE_PrevR_2 = .095,
                        MDRI_2 = 180, RSE_MDRI_2 = .07,
                        FRR_2 = .009, RSE_FRR_2 = .2,
+                       PrevH_2 = .21, RSE_PrevH_2 = .03,
+                       PrevR_2 = .13, RSE_PrevR_2 = .095,
                        BigT = 730){
-    # checks if case is correctly specified
-    if(!sum(case == c(1, 2, 3))) {stop("Please enter a valid case value")}
+
     
     #manual dispatching according to case, passing arguments to the appropriate function
     
-    if (1 == case) { #Case I: Assumes that the two surveys use a single MDRI and FRRs estimate.
+    if (COV_MDRI==0 & COV_FRR==0) { #Case I: Assumes that the two surveys use a single MDRI and FRRs estimate.
       temp<-incprops(PrevH = c(PrevH_1,PrevH_2), 
                      RSE_PrevH = c(RSE_PrevH_1, RSE_PrevH_2),
                      PrevR = c(PrevR_1,PrevR_2), 
                      RSE_PrevR = c(RSE_PrevR_1, RSE_PrevR_2),
                      BS_Count = 10000, Boot = FALSE,
-                     MDRI = c(MDRI,MDRI),
-                     RSE_MDRI = c(RSE_MDRI,RSE_MDRI),
-                     FRR = c(FRR,FRR),
-                     RSE_FRR = c(RSE_FRR,RSE_FRR),
+                     MDRI = c(MDRI_1,MDRI_1),
+                     RSE_MDRI = c(RSE_MDRI_1,RSE_MDRI_1),
+                     FRR = c(FRR_1,FRR_1),
+                     RSE_FRR = c(RSE_FRR_1,RSE_FRR_1),
                      BigT = BigT, 
                      BMest = 'same.test')
       incdiff<-temp$Incidence.Difference.Statistics
     }
     
-    if (2 == case) { #Case II: Assumes that the two surveys use a single MDRI estimate, but that the FRRs are independently estimated
+    if (COV_MDRI==0 & COV_FRR==1) { #Case II: Assumes that the two surveys use a single MDRI estimate, but FRRs are independently estimated
       temp<-incprops(PrevH = c(PrevH_1,PrevH_2), 
                      RSE_PrevH = c(RSE_PrevH_1, RSE_PrevH_2),
                      PrevR = c(PrevR_1,PrevR_2), 
                      RSE_PrevR = c(RSE_PrevR_1, RSE_PrevR_2),
                      BS_Count = 10000, Boot = FALSE,
-                     MDRI = c(MDRI,MDRI),
-                     RSE_MDRI = c(RSE_MDRI,RSE_MDRI),
+                     MDRI = c(MDRI_1,MDRI_1),
+                     RSE_MDRI = c(RSE_MDRI_1,RSE_MDRI_1),
                      FRR = c(FRR_1,FRR_2),
                      RSE_FRR = c(RSE_FRR_1,RSE_FRR_2),
                      BigT = BigT,
@@ -59,8 +56,12 @@ incdiff_calc<-function(case = 1, survey_number = 2,
       incdiff <- temp$Incidence.Difference.Statistics
       
     }
+  if(COV_MDRI==1 & COV_FRR==0) { #Case not allowed
+    ss <- "The two surveys cannot have the same FRR and independent MDRIs"
     
-    if(3 == case) { #Case III: Assumes that the two surveys use MDRI estimates which arise from different incidence tests, and that the FRRs are independently estimated
+  }
+  
+  if(COV_MDRI==1 & COV_FRR==1){ #Case III: Assumes that the two surveys use MDRI estimates which arise from different incidence tests, and that the FRRs are independently estimated
       temp<-incprops(PrevH = c(PrevH_1,PrevH_2), 
                      RSE_PrevH = c(RSE_PrevH_1, RSE_PrevH_2),
                      PrevR = c(PrevR_1,PrevR_2), 
