@@ -10,11 +10,13 @@
 # General Public License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+#' @importFrom magrittr "%>%"
+#' @importFrom foreach "%dopar%"
+
 # Function for resampling groups using dplyr
 # inspired by drhagen https://github.com/tidyverse/dplyr/issues/361#issuecomment-243551042
 # example use:
 # iris %>% group_by(Species) %>% sample_frac_groups(1)
-
 sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
   # regroup when done
   grps <- tbl %>% dplyr::groups() %>% base::unlist() %>% base::as.character()
@@ -48,6 +50,7 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
 #' @param plot Specifies whether a plot of the probability of testing recent over time should be produced
 #' @param parallel Set to TRUE in order to perform bootstrapping in parallel on a multicore or multiprocessor system.
 #' @param cores Set number of cores for parallel processing when parallel=TRUE. This defaults to four.
+#' @param debug Enable debugging mode (browser)
 #' @return MDRI Dataframe containing MDRI point estimates, CI lower and upper bounds and standard deviation of point estimates produced during bootstrapping. One row per functional form.
 #' @return Plots A plot of Probability of testing recent over time for each functional form.
 #' @return Models The fitted GLM models for each functional form.
@@ -100,12 +103,13 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
 #'         n_bootstraps = 10,
 #'         alpha = 0.05,
 #'         plot = TRUE)
-#' @importFrom foreach foreach
 #' @export
 mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_forms = c("cloglog_linear",
     "logit_cubic"), recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
     recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
-    n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4) {
+    n_bootstraps = 100, alpha = 0.05, plot = TRUE, parallel = FALSE, cores = 4, debug = FALSE) {
+
+  if (debug) { browser() }
 
   if (is.null(data)) {
     stop("No input data has been specified")
@@ -363,7 +367,6 @@ assign_recency_status <- function(data = data, recency_params = recency_params, 
     return(data)
 }
 
-#' @export
 fit_binomial_model <- function(data = data, functional_form = functional_form, tolerance, maxit) {
     data$time_since_eddi <- ifelse(data$time_since_eddi == 0, 1e-10, data$time_since_eddi)
 
@@ -407,8 +410,6 @@ functional_form_logitcubic <- function(t, parameters) {
         t^3)))
 }
 
-# A function that integrates from 0 to T in order to obtain MDRI estimate
-#' @export
 integrate_for_mdri <- function(parameters = parameters, recency_cutoff_time = recency_cutoff_time,
     functional_form = functional_form, tolerance, maxit) {
 
