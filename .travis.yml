@@ -6,3 +6,7 @@ r:
   - devel
 before_install:
   - cd inctools
+r_packages:
+  - covr
+after_success:
+  - Rscript -e 'library(covr); codecov()'

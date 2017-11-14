@@ -1,6 +1,6 @@
 ---
 title: "Survey design: power, precision and sample size"
-date: 2016-05-12
+date: "29 April 2017"
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >
