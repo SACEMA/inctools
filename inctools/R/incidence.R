@@ -369,10 +369,15 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
 
         # calculates incidence (& Var) estimates based on bootstrapped samples of input
         # parameters
+        BS_I_PrevH_cov_vec <- NA
+        BS_I_PrevH_cor_vec <- NA
         for (i in 1:no_s) {
+          #browser()
             I_BSVec <- I_EST(prevH = BS_RootEstMat[, (i * 4 - 3)], prevR = BS_RootEstMat[,
                 (i * 4 - 2)], mdri = BS_RootEstMat[, (i * 4 - 1)], frr = BS_RootEstMat[,
                 (i * 4)], bigt = BigT[i])
+            BS_I_PrevH_cov_vec[i] <- stats::cov(I_BSVec, BS_RootEstMat[, (i * 4 - 3)])
+            BS_I_PrevH_cor_vec[i] <- stats::cor(I_BSVec, BS_RootEstMat[, (i * 4 - 3)])
             I_BSMat[, i] <- I_BSVec
             BS_Var_I[i] <- stats::var(I_BSMat[, i])
         }
@@ -616,7 +621,8 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
                 Annual.Risk.of.Infection = ARI.list, MDRI.CI = MDRI.CI, FRR.CI = FRR.CI)
         } else {
             output <- list(Incidence.Statistics = data.frame(Incidence = out_I_Est,
-                `CI low` = out_CI_I_lo, `CI up` = out_CI_I_up, RSE = out_RSE_I),
+                `CI low` = out_CI_I_lo, `CI up` = out_CI_I_up, RSE = out_RSE_I, Cov.PrevH.I = BS_I_PrevH_cov_vec[[1]],
+                Cor.PrevH.I = BS_I_PrevH_cor_vec[[1]]),
                 Annual.Risk.of.Infection = ARI.list, MDRI.CI = MDRI.CI, FRR.CI = FRR.CI)
         }
     } else if (Boot == FALSE) {
@@ -636,6 +642,7 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
         output <- list(Incidence.Statistics = Incidence.Statistics, Incidence.Difference.Statistics = Incidence.Difference.Statistics,
             MDRI.CI = MDRI.CI, FRR.CI = FRR.CI)
     } else {
+      #browser()
         Incidence.Difference.Statistics = data.frame(compare = delta_code, Diff = out_deltaI_Est,
             `CI Diff low` = out_CI_deltaI_Mat[, 1], `CI Diff up` = out_CI_deltaI_Mat[,
                 2], `RSE Diff` = out_RSE_deltaI, `p-value` = out_p_value)
@@ -645,6 +652,8 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
             1] != ""), ]
         Incidence.Difference.Statistics = Incidence.Difference.Statistics[which(!is.na(Incidence.Difference.Statistics[,
             2])), ]
+        Incidence.Statistics$Cov.PrevH.I <- BS_I_PrevH_cov_vec
+        Incidence.Statistics$Cor.PrevH.I <- BS_I_PrevH_cor_vec
         row.names(Incidence.Statistics) <- 1:nrow(Incidence.Statistics)
         row.names(Incidence.Difference.Statistics) <- 1:nrow(Incidence.Difference.Statistics)
         output <- list(Incidence.Statistics = Incidence.Statistics, Incidence.Difference.Statistics = Incidence.Difference.Statistics,
