@@ -15,7 +15,8 @@ Authors@R: c(
   person("Yuruo","Li",email="yul123@pitt.edu", role="ctb"),
   person("Simon","Daniel",email="skjdaniel@gmail.com", role="ctb"),
   person("Stefano","Ongarello", email="stefano.ongarello@finddx.org", role="aut"),
-  person("Yusuke","Asai", email="yusuke.asai@yahoo.de", role="ctb")
+  person("Yusuke","Asai", email="yusuke.asai@yahoo.de", role="ctb"),
+  person("Jeffrey","Eaton", email="jeffrey.eaton@imperial.ac.uk", role="ctb")
   )
 Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys, and for calibrating tests for recent infection. 
@@ -30,9 +31,9 @@ LazyData: True
 Imports:
     stats,
     cubature,
+    tmvtnorm,
     ggplot2,
     glm2,
-    MASS,
     magrittr,
     dplyr,
     plyr,
@@ -41,7 +42,6 @@ Imports:
     parallel,
     doParallel,
     utils,
-    tmvtnorm
 Suggests:
     survey,
     knitr,
