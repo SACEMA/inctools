@@ -30,6 +30,7 @@
 #' @param FRR False recent rate (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
 #' @param RSE_FRR Relative standard error of FRR (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.
 #' @param BigT Post-infection time cut-off (days). Default 730. If a single value is specified, that value is assumed to be the value for both surveys.
+#' @param debug Enable debugging mode (browser)
 #' @return Common sample size of two surveys--or the sample size of one survey given the other has already been completed--necessary to achieve a given power level for testing a null hypothesis that the incidence rates are identical between populations; alternatively, the power of said test under a particular sample size scenario. Function also returns implied statistics from input values on paramters, confidence limits, and population counts.
 #' @details The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 #'
