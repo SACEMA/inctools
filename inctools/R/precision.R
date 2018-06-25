@@ -92,12 +92,12 @@ incprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT
         }
     }
 
-    for (i in c(1, 3, 4, 6:8)) {
-        if (is.numeric(var_list[[1:length(var_list[i])]]) > 0 & (sum(var_list[[i]] <=
-            1) != length(var_list[[i]]) | sum(var_list[[i]] >= 0) != length(var_list[[i]]))) {
-            stop("Some input values are less than 0 or greater than 1")
-        }
-    }
+    # for (i in c(1, 3, 4, 6:8)) {
+    #     if (is.numeric(var_list[[1:length(var_list[i])]]) > 0 & (sum(var_list[[i]] <=
+    #         1) != length(var_list[[i]]) | sum(var_list[[i]] >= 0) != length(var_list[[i]]))) {
+    #         stop("Some input values are less than 0 or greater than 1")
+    #     }
+    # }
 
     if (sum(RSE_I != "out") > 0) {
         if (is.numeric(var_list[[1:length(var_list[2])]]) > 0 & (sum(var_list[[2]] <=
