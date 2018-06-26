@@ -73,12 +73,12 @@ incprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT
             max.list = max.list + 1
         }
         if (max.list > 2) {
-            stop("only a maximum of 2 variables are allowed to vary")
+            stop("Only a maximum of 2 variables are allowed to vary")
         }
     }
 
     if (sum(var_list == "out") > 1) {
-        stop("only one of the variables RSE_I or n can be requested at a time")
+        stop("Only one of the variables RSE_I or n can be requested at a time")
     }
 
     if (length(var_list[1:8]) < 8) {
@@ -92,19 +92,70 @@ incprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT
         }
     }
 
-    # for (i in c(1, 3, 4, 6:8)) {
+    if (any(I < 0)) {
+      stop("I must be >= 0")
+    }
+
+    if (any(RSE_I != "out" & RSE_I < 0)) {
+      stop("RSE_I must be >= 0 or 'out'")
+    }
+
+    if (any(PrevH <= 0)) {
+      stop("PrevH must be > 0")
+    }
+
+    if (any(PrevH > 1)) {
+      stop("PrevH must be <= 1")
+    }
+
+    if (any(CR <= 0)) {
+      stop("CR must be > 0")
+    }
+
+    if (any(CR > 1)) {
+      stop("CR must be <= 1")
+    }
+
+    if (any(RSE_MDRI < 0)) {
+      stop("RSE_MDRI must be >= 0")
+    }
+
+    if (any(FRR < 0)) {
+      stop("FRR must be >= 0")
+    }
+
+    if (any(FRR > 1)) {
+      stop("FRR must be <= 1")
+    }
+
+    if (any(RSE_FRR < 0)) {
+      stop("RSE_FRR must be >= 0")
+    }
+
+    if (any(DE_H < 0)) {
+      stop("DE_H must be >= 0")
+    }
+
+    if (any(DE_H < 1) | any(DE_R < 1)) {
+      warning("Design effect smaller than 1, implying complex sampling produces smaller standard errors than simple random sampling")
+    }
+
+
+    # for (i in c(1, 3, 4, 6:8)) { #(i in c(1, 3, 4, 6:8)) {
     #     if (is.numeric(var_list[[1:length(var_list[i])]]) > 0 & (sum(var_list[[i]] <=
     #         1) != length(var_list[[i]]) | sum(var_list[[i]] >= 0) != length(var_list[[i]]))) {
     #         stop("Some input values are less than 0 or greater than 1")
     #     }
     # }
 
-    if (sum(RSE_I != "out") > 0) {
-        if (is.numeric(var_list[[1:length(var_list[2])]]) > 0 & (sum(var_list[[2]] <=
-            1) != length(var_list[[2]]) | sum(var_list[[2]] >= 0) != length(var_list[[2]]))) {
-            stop("Some input values are less than 0 or greater than 1")
-        }
-    }
+    # THESE CHECKS NEED TO BE FIXED
+
+    # if (sum(RSE_I != "out") > 0) {
+    #     if (is.numeric(var_list[[1:length(var_list[2])]]) > 0 & (sum(var_list[[2]] <=
+    #         1) != length(var_list[[2]]) | sum(var_list[[2]] >= 0) != length(var_list[[2]]))) {
+    #         stop("Some input values are less than 0 or greater than 1")
+    #     }
+    # }
 
     # above code does what below code does, only in 1 line. Which should we keep?  if
     # (is.numeric(I)>0) {stopifnot (I<=1 & I>=0)} if (is.numeric(RSE_I)>0) {stopifnot
