@@ -201,7 +201,7 @@ mdrical <- function(data = NULL, subid_var = NULL, time_var = NULL, functional_f
 
     for (i in 1:length(functional_forms)) {
         functional_form <- functional_forms[i]
-        print(paste("Computing MDRI using functional form",functional_form))
+        #print(paste("Computing MDRI using functional form",functional_form))
 
         if (parallel == TRUE && n_bootstraps > 0) {
             model <- fit_binomial_model(data = data, functional_form = functional_form,
