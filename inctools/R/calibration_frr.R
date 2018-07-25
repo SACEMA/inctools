@@ -79,9 +79,10 @@ frrcal <- function(data = NULL,
     if (length(recency_vars) > 1) {
       stop("Binary data should be specified in one recency (outcome) variable.")
     }
-    if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
-      stop("Input data is not binary")
-    }
+    # This line was broken. Should we have a similar check?
+    # if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
+    #   stop("Input data is not binary")
+    # }
   }
 
   if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 *
