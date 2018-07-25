@@ -11,15 +11,16 @@
 # details.  You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#' @importFrom magrittr "%>%"
-
-#' Estimate subject-level false-recent rate for a given time cutoff.
+#' Estimate False-Recent Rate
+#'
+#' Estimates subject-level false-recent rate (FRR) for a given time cutoff.
 #' Each subject with any observations after the time cutoff is assigned a recency status according to the majority
 #' of observations for that subject after the cutoff. In the event of exactly half of the observations being
 #' classified as recent, the subject contributes a count of 0.5.
 #' The function performs an exact binomial test and reports the estimated probability of testing recent after the
 #' cutoff, a confidence interval for the proportion, the number of recent results ('successes'),
 #' number of subjects ('trials') and the number of data points contributing to the subject-level estimate.
+#'
 #' @param data A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)
 #' @param subid_var The variable in the dataframe identifying subjects
 #' @param time_var The variable in the dataframe indicating time between 'time zero' (usually detectable infection) and biomarker measurement
@@ -28,6 +29,7 @@
 #' @param recency_vars Variables to be used in determining recency outcomes
 #' @param recency_params Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule
 #' @param alpha Confidence level, default=0.05.
+#' @param debug Enable debugging mode (browser)
 #' @details The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 #'
 #' recency_rule: binary_data - supply a binary variable with 1=recent and 0=non-recent in recency_vars.
@@ -115,15 +117,13 @@ frrcal <- function(data = NULL,
   }
 
   data <- data %>%
-    process_data(data = .,
-                 subid_var = subid_var,
+    process_data(subid_var = subid_var,
                  time_var = time_var,
                  recency_vars = recency_vars,
                  inclusion_time_threshold = 1e+06,
                  debug = debug) %>%
-    dplyr::filter(time_since_eddi > recency_cutoff_time) %>%
-    assign_recency_status(data = .,
-                          recency_params = recency_params,
+    dplyr::filter_("time_since_eddi" > recency_cutoff_time) %>%
+    assign_recency_status(recency_params = recency_params,
                           recency_rule = recency_rule,
                           debug = debug)
 
