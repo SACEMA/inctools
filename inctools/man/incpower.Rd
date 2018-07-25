@@ -2,7 +2,7 @@
 % Please edit documentation in R/power.R
 \name{incpower}
 \alias{incpower}
-\title{Power and sample size calculation for assay-based incidence estimation}
+\title{Power and Required Sample Size}
 \usage{
 incpower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
   Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1,
@@ -58,7 +58,8 @@ incpower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
 Common sample size of two surveys--or the sample size of one survey given the other has already been completed--necessary to achieve a given power level for testing a null hypothesis that the incidence rates are identical between populations; alternatively, the power of said test under a particular sample size scenario. Function also returns implied statistics from input values on paramters, confidence limits, and population counts.
 }
 \description{
-Power and sample size calculation for assay-based incidence estimation
+Calculate power and required sample size for a given power to detect
+incidence change.
 }
 \details{
 The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.

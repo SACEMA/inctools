@@ -37,8 +37,10 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
     dplyr::group_by_(grps)
 }
 
-#'Estimate MDRI (point estimate and confidence interval) using binomial
-#'regression and a maximum likelihood approach
+#' Estimate Mean Duration of Recent Infection (MDRI)
+#'
+#' Estimates MDRI (point estimate and confidence interval) using binomial
+#' regression and a maximum likelihood approach
 #'
 #' @param data A data frame containing variables for subject identifier,
 #' time (since detectable infection), and variables with biomarker readings or
@@ -60,12 +62,11 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
 #' @param recency_vars Variables to be used in determining recency outcomes
 #' @param recency_params Vector of numeric parameters (e.g. thresholds) for
 #' determining recency according to the relevant rule
-#' @param recency_cutoff_time Recency time cut-off ('Big T'). Default=730.5.
+#' @param recency_cutoff_time Recency time cut-off ('Big T'). Default = 730.5.
 #' @param inclusion_time_threshold Data points beyond this time are excluded
-#' from the calculation (in same unit as recency_cutoff_time, default=800).
+#' from the calculation (in same unit as recency_cutoff_time, default = 800).
 #' @param n_bootstraps Number of subject-level bootstrap resampling operations
-#' for estimating confidence intervals, default=100 (useful for testing purposes
-#' only)
+#' for estimating confidence intervals, default = 10000.
 #' @param alpha Confidence level, default=0.05.
 # ADD OPTION TO GET FULL LIST OF MDRIs from the bootstrapping procedure or the
 # shape of the distribution or something

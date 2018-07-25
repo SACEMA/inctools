@@ -2,7 +2,7 @@
 % Please edit documentation in R/precision.R
 \name{incprecision}
 \alias{incprecision}
-\title{Sample size or precision calculation}
+\title{Precision and Required Sample Size}
 \usage{
 incprecision(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
   DE_H = 1, DE_R = 1, n = "out", step = 5)
@@ -38,7 +38,8 @@ incprecision(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730,
 Either sample size necessary for a given precision under a given set of testing characteristics and a hypothetical prevalence/incidence scenario, or precision under a particular sample size scenario, with a given hypothetical prevalence/incidence scenario.
 }
 \description{
-Sample size or precision calculation
+Calculate precision of incidence estimate and required sample size for a
+given precision of the incidence estimate.
 }
 \details{
 The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.

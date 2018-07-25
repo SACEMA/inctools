@@ -19,7 +19,10 @@ DM_FirstOrderTerms <- function(prevH, prevR, mdri, frr, bigt) {
     return(c(fot_prevH, fot_prevR, fot_mdri, fot_frr))
 }
 
-#' Sample size or precision calculation
+#' Precision and Required Sample Size
+#'
+#' Calculate precision of incidence estimate and required sample size for a
+#' given precision of the incidence estimate.
 #'
 #' @param I Expected Incidence.
 #' @param RSE_I Relative Standard Error of Incidence Estimate. If this is the desired output, set to "out".

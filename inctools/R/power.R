@@ -11,7 +11,10 @@
 # details.  You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#' Power and sample size calculation for assay-based incidence estimation
+#' Power and Required Sample Size
+#'
+#' Calculate power and required sample size for a given power to detect
+#' incidence change.
 #'
 #' @param I1 Predicted incidence of HIV in survey 1.
 #' @param I2 Predicted incidence of HIV in survey 2.
