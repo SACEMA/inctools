@@ -11,6 +11,8 @@
 # details.  You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#' @importFrom magrittr "%>%"
+
 #' Estimate subject-level false-recent rate for a given time cutoff.
 #' Each subject with any observations after the time cutoff is assigned a recency status according to the majority
 #' of observations for that subject after the cutoff. In the event of exactly half of the observations being
@@ -49,10 +51,17 @@
 #'        recency_params = c(10,0,1000,1),
 #'        alpha = 0.05)
 #' @export
-frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cutoff_time = 730.5,
-                   recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
-                   alpha = 0.05) {
+frrcal <- function(data = NULL,
+                   subid_var = NULL,
+                   time_var = NULL ,
+                   recency_cutoff_time = 730.5,
+                   recency_rule = "binary_data",
+                   recency_vars = NULL,
+                   recency_params = NULL,
+                   alpha = 0.05,
+                   debug = FALSE) {
 
+  if (debug) {browser()}
 
   if (is.null(recency_rule)) {
     stop("Please specify a recency rule")
@@ -104,12 +113,19 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
     }
   }
 
+  data <- data %>%
+    process_data(data = .,
+                 subid_var = subid_var,
+                 time_var = time_var,
+                 recency_vars = recency_vars,
+                 inclusion_time_threshold = 1e+06,
+                 debug = debug) %>%
+    dplyr::filter(time_since_eddi > recency_cutoff_time) %>%
+    assign_recency_status(data = .,
+                          recency_params = recency_params,
+                          recency_rule = recency_rule,
+                          debug = debug)
 
-
-  data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
-                       recency_vars = recency_vars, inclusion_time_threshold = 1e+06)
-  data <- data[data$time_since_eddi > recency_cutoff_time,]
-  data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
   subjectdata <- data.frame(sid = NA, recent = NA)
   for (subjectid in unique(data$sid)) {
     if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==

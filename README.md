@@ -14,7 +14,7 @@ These tools are released as an R package by the [DST/NRF Centre of Excellence in
 
 ## Installation
 
-Install directly from CRAN as follows:
+Install released version from CRAN as follows:
 
 ```
 install.packages("inctools")
@@ -22,22 +22,11 @@ install.packages("inctools")
 
 ### Current development version
 
-To build and install the current development version, you will need to clone the
-repository and ensure that you have the required build tools installed on your
-system.
-
-Install dependencies manually:
+To build and install the current development version, make sure you have 
+`devtools` installed and execute the following line:
 
 ```
-install.packages(c("cubature","ggplot2","glm2","MASS","plyr","dplyr","magrittr","pracma","foreach",
-                   "parallel","doParallel","devtools","knitr","roxygen2","rmarkdown"))
-```
-
-Then use "build and reload" in RStudio or set your working directory to
-`<repo location>/inctools/` and then execute:
-
-```
-devtools::install()
+devtools::install_github("SACEMA/inctools/inctools")
 ```
 
 ## Usage terms
@@ -57,13 +46,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Contributors
 
-Several people contributed to this package. We encourage contributions from the community of users.
+Several people contributed to this package. We encourage contributions from the 
+community of users.
 
-Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, Simon Daniel and Yuruo Li, with contributions by Cari van Schalkwyk, Reshma Kassanjee, Hilmarie Brand, Stefano Ongarello and Yusuke Asai.
+Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, 
+Simon Daniel and Yuruo Li, with contributions by Cari van Schalkwyk, 
+Reshma Kassanjee, Hilmarie Brand, Stefano Ongarello and Yusuke Asai.
 
 ## Contact
 
-For usage support and bug reports, please contact the package maintainer, Eduard Grebe, or submit issues on this repository.
+For usage support and bug reports, please contact the package maintainer, 
+Eduard Grebe, or submit issues on this repository.
 
 ## References
 
