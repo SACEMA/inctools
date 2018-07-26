@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.12.9010
-Date: 2018-07-25
+Version: 1.0.12.9011
+Date: 2018-07-26
 Authors@R: c(
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
@@ -30,18 +30,19 @@ License: GPL-3
 LazyData: True
 Imports:
     stats,
+    utils,
+    magrittr,
+    rlang,
+    dplyr,
     cubature,
     tmvtnorm,
     ggplot2,
     glm2,
-    magrittr,
-    dplyr,
     plyr,
     pracma,
     foreach,
     parallel,
-    doParallel,
-    utils,
+    doParallel
 Suggests:
     survey,
     knitr,

@@ -122,7 +122,7 @@ frrcal <- function(data = NULL,
                  recency_vars = recency_vars,
                  inclusion_time_threshold = 1e+06,
                  debug = debug) %>%
-    dplyr::filter_("time_since_eddi" > recency_cutoff_time) %>%
+    dplyr::filter(.data$time_since_eddi > recency_cutoff_time) %>%
     assign_recency_status(recency_params = recency_params,
                           recency_rule = recency_rule,
                           debug = debug)

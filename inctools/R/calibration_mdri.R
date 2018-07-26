@@ -13,6 +13,7 @@
 
 #' @importFrom magrittr "%>%"
 #' @importFrom foreach "%dopar%"
+#' @importFrom rlang .data
 
 # Function for resampling groups using dplyr
 # inspired by drhagen
@@ -282,7 +283,7 @@ mdrical <- function(data = NULL,
 
       # Group data for bootstrapping purposes
       data_grouped <- data %>%
-        dplyr::group_by_("sid")
+        dplyr::group_by(.data$sid)
 
       mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
                                 #.options.snow = opts,
@@ -313,7 +314,7 @@ mdrical <- function(data = NULL,
 
       # Group data for bootstrapping purposes
       data_grouped <- data %>%
-        dplyr::group_by_("sid")
+        dplyr::group_by(.data$sid)
 
       for (j in 0:n_bootstraps) {
         if (j != 0) {
