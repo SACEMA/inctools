@@ -466,13 +466,13 @@ fit_binomial_model <- function(data = data,
   switch(as.character(functional_form), cloglog_linear = {
     fitted <- FALSE
     while (!fitted) {
-      model <- glm2::glm2(formula = (1 - recency_status) ~ 1 +
-                            I(log(time_since_eddi)),
-                          family = stats::binomial(link = "cloglog"),
-                          data = data,
-                          control = stats::glm.control(epsilon = tolerance,
-                                                       maxit = maxit,
-                                                       trace = FALSE))
+      suppressWarnings(model <- glm2::glm2(formula = (1 - recency_status) ~ 1 +
+                                             I(log(time_since_eddi)),
+                                           family = stats::binomial(link = "cloglog"),
+                                           data = data,
+                                           control = stats::glm.control(epsilon = tolerance,
+                                                                        maxit = maxit,
+                                                                        trace = FALSE)))
       if (class(model)[1] == "try-error") {
         tolerance <- tolerance * 10
       } else {
@@ -482,13 +482,13 @@ fit_binomial_model <- function(data = data,
   }, logit_cubic = {
     fitted <- FALSE
     while (!fitted) {
-      model <- glm2::glm2(formula = recency_status ~ 1 + I(time_since_eddi) +
-                            I(time_since_eddi^2) + I(time_since_eddi^3),
-                          family = stats::binomial(link = "logit"),
-                          data = data,
-                          control = stats::glm.control(epsilon = tolerance,
-                                                       maxit = maxit,
-                                                       trace = FALSE))
+      suppressWarnings(model <- glm2::glm2(formula = recency_status ~ 1 + I(time_since_eddi) +
+                                             I(time_since_eddi^2) + I(time_since_eddi^3),
+                                           family = stats::binomial(link = "logit"),
+                                           data = data,
+                                           control = stats::glm.control(epsilon = tolerance,
+                                                                        maxit = maxit,
+                                                                        trace = FALSE)))
       if (class(model)[1] == "try-error") {
         tolerance <- tolerance * 10
       } else {
