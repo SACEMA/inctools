@@ -34,10 +34,12 @@ mdri <- mdrical(data = untreated_c,
                 recency_rule = "independent_thresholds",
                 recency_vars = c("LAg_ODn","viral_load"),
                 recency_params = c(1.5,0,75,1),
-                n_bootstraps = 10000,
-                plot = FALSE,
+                n_bootstraps = 100,
+                plot = TRUE,
                 parallel = TRUE,
-                cores = n_cores)
+                output_bs_parms = TRUE,
+                cores = n_cores,
+                debug = TRUE)
 print(mdri)
 
 # let's look at naive FRR to get a sense
