@@ -344,7 +344,7 @@ mdrical <- function(data = NULL,
           if (n_bootstraps > 0) {utils::setTxtProgressBar(pb, j)}
 
           mdri_and_params_iterate <- dplyr::data_frame(MDRI = mdri_iterate) %>%
-            dplyr::bind_cols(parameters)
+            dplyr::bind_cols(dplyr::as_data_frame(t(parameters)))
 
           return(mdri_and_params_iterate)
         }
