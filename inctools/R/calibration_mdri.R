@@ -77,6 +77,8 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
 #' a multicore or multiprocessor system.
 #' @param cores Set number of cores for parallel processing when parallel=TRUE.
 #' This defaults to four.
+#' @param output_bs_parms Return a matrix of the fitting parameters for each
+#' bootstrap iteration.
 #' @param debug Enable debugging mode (browser)
 #' @return MDRI Dataframe containing MDRI point estimates, CI lower and upper
 #' bounds and standard deviation of point estimates produced during
@@ -151,6 +153,7 @@ mdrical <- function(data = NULL,
                     plot = TRUE,
                     parallel = FALSE,
                     cores = 4,
+                    output_bs_parms = FALSE,
                     debug = FALSE) {
 
   if (debug) {browser()}
@@ -285,31 +288,78 @@ mdrical <- function(data = NULL,
       data_grouped <- data %>%
         dplyr::group_by(.data$sid)
 
-      mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
-                                #.options.snow = opts,
-                                .inorder = FALSE #,
-                                #.packages = "inctools"
-      ) %dopar%
-      {
-        boot_data <- data_grouped %>%
-          sample_frac_groups(1, replace = TRUE) %>%
-          dplyr::ungroup()
-        model <- fit_binomial_model(data = boot_data,
-                                    functional_form = functional_form,
-                                    tolerance = tolerance_glm2,
-                                    maxit = maxit_glm2)
-        parameters <- model$coefficients
-        mdri_iterate <- integrate_for_mdri(parameters = parameters,
-                                           recency_cutoff_time = recency_cutoff_time,
-                                           functional_form = functional_form,
-                                           tolerance = tolerance_integral,
-                                           maxit = maxit_integral)
-        if (n_bootstraps > 0) {utils::setTxtProgressBar(pb, j)}
-        return(mdri_iterate)
+      if (!output_bs_parms) {
+        mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
+                                  #.options.snow = opts,
+                                  .inorder = FALSE #,
+                                  #.packages = "inctools"
+        ) %dopar%
+        {
+          boot_data <- data_grouped %>%
+            sample_frac_groups(1, replace = TRUE) %>%
+            dplyr::ungroup()
+          model <- fit_binomial_model(data = boot_data,
+                                      functional_form = functional_form,
+                                      tolerance = tolerance_glm2,
+                                      maxit = maxit_glm2)
+          parameters <- model$coefficients
+          mdri_iterate <- integrate_for_mdri(parameters = parameters,
+                                             recency_cutoff_time = recency_cutoff_time,
+                                             functional_form = functional_form,
+                                             tolerance = tolerance_integral,
+                                             maxit = maxit_integral)
+          if (n_bootstraps > 0) {utils::setTxtProgressBar(pb, j)}
+          return(mdri_iterate)
+        }
+        close(pb)
+        parallel::stopCluster(cluster)
+
+      } else if(output_bs_parms) {
+        mdris_and_params <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
+                                             #.options.snow = opts,
+                                             .inorder = FALSE #,
+                                             #.packages = "inctools"
+        ) %dopar%
+        {
+          boot_data <- data_grouped %>%
+            sample_frac_groups(1, replace = TRUE) %>%
+            dplyr::ungroup()
+          model <- fit_binomial_model(data = boot_data,
+                                      functional_form = functional_form,
+                                      tolerance = tolerance_glm2,
+                                      maxit = maxit_glm2)
+          parameters <- model$coefficients
+
+          if(length(parameters) == 4) {
+            names(parameters) <- c("beta0","beta1","beta2","beta3")
+          } else if (length(parameters) == 2) {
+            names(parameters) <- c("beta0","beta1")
+          }
+
+          mdri_iterate <- integrate_for_mdri(parameters = parameters,
+                                             recency_cutoff_time = recency_cutoff_time,
+                                             functional_form = functional_form,
+                                             tolerance = tolerance_integral,
+                                             maxit = maxit_integral)
+          if (n_bootstraps > 0) {utils::setTxtProgressBar(pb, j)}
+
+          mdri_and_params_iterate <- dplyr::data_frame(MDRI = mdri_iterate) %>%
+            dplyr::bind_cols(parameters)
+
+          return(mdri_and_params_iterate)
+        }
+        close(pb)
+        parallel::stopCluster(cluster)
+
+        mdris <- mdris_and_params %>%
+          dplyr::select(MDRI) %>%
+          as.vector(.)
+
+        bs_params <- mdris_and_params %>%
+          dplyr::select(-MDRI)
       }
-      close(pb)
-      parallel::stopCluster(cluster)
-    } else {
+
+    } else if(!parallel) {
       if (n_bootstraps > 0) {pb <- utils::txtProgressBar(min = 1, max = n_bootstraps, style = 3)}
 
       # Group data for bootstrapping purposes
@@ -386,11 +436,11 @@ mdrical <- function(data = NULL,
   rownames(mdri_output) <- functional_forms
   colnames(mdri_output) <- c("PE", "CI_LB", "CI_UB", "SE", "n_recent", "n_subjects", "n_observations")
 
-  if (plot == TRUE) {
-    output <- list(MDRI = mdri_output, Plots = plot_output, Models = model_output)
-  } else {
-    output <- list(MDRI = mdri_output, Models = model_output)
-  }
+  if (!plot) {plot_output <- NULL}
+  if (!output_bs_parms) {bs_params <- NULL}
+
+  output <- list(MDRI = mdri_output, Models = model_output, Plots = plot_output, BSparms = bs_params)
+
   return(output)
 }
 
