@@ -24,6 +24,99 @@ untreated_all <- dplyr::filter(lagbr, treatment_naive=="True" & scopevisit_ec=="
 treated_all <- dplyr::filter(lagbr, on_treatment=="True" & first_treatment=="True" & days_since_current_art>=90 & scopevisit_ec=="False")
 treated_c <- dplyr::filter(lagbr, on_treatment=="True" & first_treatment=="True" & days_since_current_art>=90 & scopevisit_ec=="False" & subtype == "C")
 
+# Test whether bsparms are output
+
+mdrical(data = untreated_c,
+        subid_var = "subject_id",
+        time_var = "days_since_eddi",
+        functional_forms = "logit_cubic",
+        recency_cutoff_time = 730.5,
+        recency_rule = "independent_thresholds",
+        recency_vars = c("LAg_ODn","viral_load"),
+        recency_params = c(1.5,0,75,1),
+        n_bootstraps = 10,
+        plot = TRUE,
+        parallel = TRUE,
+        cores = 4,
+        output_bs_parms = TRUE,
+        debug = FALSE)
+
+mdrical(data = untreated_c,
+        subid_var = "subject_id",
+        time_var = "days_since_eddi",
+        functional_forms = "cloglog_linear",
+        recency_cutoff_time = 730.5,
+        recency_rule = "independent_thresholds",
+        recency_vars = c("LAg_ODn","viral_load"),
+        recency_params = c(1.5,0,75,1),
+        n_bootstraps = 10,
+        plot = TRUE,
+        parallel = TRUE,
+        cores = 4,
+        output_bs_parms = TRUE,
+        debug = FALSE)
+
+mdrical(data = untreated_c,
+        subid_var = "subject_id",
+        time_var = "days_since_eddi",
+        functional_forms = "logit_cubic",
+        recency_cutoff_time = 730.5,
+        recency_rule = "independent_thresholds",
+        recency_vars = c("LAg_ODn","viral_load"),
+        recency_params = c(1.5,0,75,1),
+        n_bootstraps = 10,
+        plot = TRUE,
+        parallel = FALSE,
+        output_bs_parms = TRUE,
+        debug = FALSE)
+
+mdrical(data = untreated_c,
+        subid_var = "subject_id",
+        time_var = "days_since_eddi",
+        functional_forms = "cloglog_linear",
+        recency_cutoff_time = 730.5,
+        recency_rule = "independent_thresholds",
+        recency_vars = c("LAg_ODn","viral_load"),
+        recency_params = c(1.5,0,75,1),
+        n_bootstraps = 10,
+        plot = TRUE,
+        parallel = FALSE,
+        output_bs_parms = TRUE,
+        debug = FALSE)
+
+# with both functional forms
+mdrical(data = untreated_c,
+        subid_var = "subject_id",
+        time_var = "days_since_eddi",
+        functional_forms = c("cloglog_linear","logit_cubic"),
+        recency_cutoff_time = 730.5,
+        recency_rule = "independent_thresholds",
+        recency_vars = c("LAg_ODn","viral_load"),
+        recency_params = c(1.5,0,75,1),
+        n_bootstraps = 10,
+        plot = TRUE,
+        parallel = FALSE,
+        output_bs_parms = TRUE,
+        debug = FALSE)
+
+mdrical(data = untreated_c,
+        subid_var = "subject_id",
+        time_var = "days_since_eddi",
+        functional_forms = c("cloglog_linear","logit_cubic"),
+        recency_cutoff_time = 730.5,
+        recency_rule = "independent_thresholds",
+        recency_vars = c("LAg_ODn","viral_load"),
+        recency_params = c(1.5,0,75,1),
+        n_bootstraps = 10,
+        plot = TRUE,
+        parallel = TRUE,
+        cores = 4,
+        output_bs_parms = TRUE,
+        debug = FALSE)
+
+
+
+# Other tests
 
 
 mdri <- mdrical(data = untreated_c,
