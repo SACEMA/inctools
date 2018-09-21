@@ -1,6 +1,6 @@
 ---
 title: "Recent infection test calibration"
-date: "29 April 2017"
+date: "21 September 2018"
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >
@@ -142,6 +142,54 @@ mdrical(data=excalibdata,
                  plot = TRUE,
                  parallel = TRUE,
                  cores=4)
+```
+
+### Obtaining fitting parameters for bootstrap iterations
+
+It is possible to output the fitting parameters for each bootstrap iteration, by 
+using the switch `output_bs_parms = TRUE`. This  provides the user with the 
+family of $P_{R}(t)$ curves used to obtain the confidence intervals on 
+the MDRI estimate, for potential further manipulation. Note that the functional 
+form `cloglog_linear` form has two parameters (labeled $\beta_0$ and $\beta_1$), 
+and the `logit_cubic` form has four parameters (labeled $\beta_0$ to $\beta_3$). 
+In each case $\beta_0$ denotes the intercept. In order to use these parameters to 
+obtain predicted probabilities of testing recent for given times since infection, 
+the complementary log-log and logit link functions must be "inverted", so that 
+the equations giving predicted probabilities are
+
+\begin{equation}
+	P_R(t) = \exp(-\exp(\beta_{0} + \beta_{1}\ln(t)))
+\end{equation}
+
+and 
+
+\begin{equation}
+	P_R(t) = \frac{1}{1 + \exp(-(\beta_{0} + \beta_{1}t + \beta_{2}t^2 + \beta_{3}t^3))}
+\end{equation}
+
+respectively.
+
+As a demonstration, we perform only 10 bootstrap iterations in the example below:
+
+```{r, results='hide' }
+mdri <- mdrical(data=excalibdata,
+                subid_var = "SubjectID",
+                time_var = "DaysSinceEDDI",
+                recency_cutoff_time = 730.5,
+                inclusion_time_threshold = 800,
+                functional_forms = c("cloglog_linear","logit_cubic"),
+                recency_rule = "independent_thresholds",
+                recency_vars = c("Result","VL"),
+                recency_params = c(10,0,1000,1),
+                n_bootstraps = 10,
+                alpha = 0.05,
+                plot = TRUE,
+                output_bs_parms = TRUE)
+```
+
+```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
+print(mdri$Models)
+print(mdri$BSparms)
 ```
 
 ## Estimating FRR using binomial proportions with `frrcal`

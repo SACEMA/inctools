@@ -4,9 +4,9 @@
 \alias{incprops}
 \title{Incidence and incidence difference statistics from trinomial prevalences of HIV and recency}
 \usage{
-incprops(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
-  alpha = 0.05, BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-  BigT = 730, Covar_HR = 0)
+incprops(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE,
+  BS_Count = 10000, alpha = 0.05, BMest = "same.test", MDRI,
+  RSE_MDRI, FRR, RSE_FRR, BigT = 730, Covar_HR = 0)
 }
 \arguments{
 \item{PrevH}{Prevalence of HIV (vector/integer).}
