@@ -235,7 +235,11 @@ mdrical <- function(data = NULL,
     stop("Bootstrapped parameters can only be output if bootstrapping is performed")
   }
 
+<<<<<<< HEAD
   if (parallel == TRUE & n_bootstraps == 0) {
+=======
+  if (parallel & n_bootstraps == 0) {
+>>>>>>> 206680a768da7f409720a0e04c65a2fa05a07d99
     warning("Parallelisation only applicable if bootstrapping is performed")
     parallel <- FALSE
   }
