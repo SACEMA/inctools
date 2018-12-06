@@ -235,6 +235,11 @@ mdrical <- function(data = NULL,
     stop("Bootstrapped parameters can only be output if bootstrapping is performed")
   }
 
+  if (parallel == TRUE & n_bootstraps == 0) {
+    warning("Parallelisation only applicable if bootstrapping is performed")
+    parallel <- FALSE
+  }
+
   ## Assign numeric subject ids, recency variables and recency status
   data <- process_data(data = data,
                        subid_var = subid_var,
