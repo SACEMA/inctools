@@ -14,6 +14,7 @@ mdri <- mdrical(data=excalibdata,
                 recency_rule = "binary_data",
                 recency_vars = "Recent",
                 n_bootstraps = 1000,
+                parallel = FALSE,
                 alpha = 0.05,
                 plot = TRUE)
 
@@ -30,7 +31,8 @@ mdri <- mdrical(data=excalibdata,
                 recency_rule = "independent_thresholds",
                 recency_vars = c("Result","VL"),
                 recency_params = c(10,0,1000,1),
-                n_bootstraps = 1000,
+                n_bootstraps = 500,
+                parallel = FALSE,
                 alpha = 0.05,
                 plot = TRUE)
 
@@ -51,7 +53,7 @@ print(mdri)
 #                   alpha = 0.05,
 #                   plot = TRUE,
 #                   parallel = TRUE,
-#                   cores=4)
+#                   cores = parallel::detectCores())
 
 ## ---- results='hide'-----------------------------------------------------
 mdri <- mdrical(data=excalibdata,
@@ -64,6 +66,7 @@ mdri <- mdrical(data=excalibdata,
                 recency_vars = c("Result","VL"),
                 recency_params = c(10,0,1000,1),
                 n_bootstraps = 10,
+                parallel = FALSE,
                 alpha = 0.05,
                 plot = TRUE,
                 output_bs_parms = TRUE)

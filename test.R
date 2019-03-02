@@ -1,4 +1,4 @@
-n_cores <- 4
+n_cores <- 12
 setwd("~/dev/incidence-kzn/")
 
 library(dplyr); library(tidyr);

@@ -9,7 +9,7 @@ mdrical(data = NULL, subid_var = NULL, time_var = NULL,
   recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
   recency_rule = "binary_data", recency_vars = NULL,
   recency_params = NULL, n_bootstraps = 10000, alpha = 0.05,
-  plot = TRUE, parallel = FALSE, cores = 4,
+  plot = TRUE, parallel = TRUE, cores = parallel::detectCores(),
   output_bs_parms = FALSE, debug = FALSE)
 }
 \arguments{
@@ -124,6 +124,7 @@ mdrical(data=excalibdata,
         recency_rule = "binary_data",
         recency_vars = "Recent",
         n_bootstraps = 10,
+        parallel = FALSE,
         alpha = 0.05,
         plot = TRUE)
 }
