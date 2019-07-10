@@ -35,7 +35,7 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
   # variable
   tbl %>%
     dplyr::right_join(keep, by=grps) %>%
-    dplyr::group_by_(grps)
+    dplyr::group_by(get(grps))
 }
 
 #' Estimate Mean Duration of Recent Infection (MDRI)
