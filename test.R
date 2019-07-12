@@ -84,6 +84,18 @@ mdrical(data = untreated_c,
         output_bs_parms = TRUE,
         debug = FALSE)
 
+mdrical(data = untreated_c,
+        subid_var = "subject_id",
+        time_var = "days_since_eddi",
+        functional_forms = "cloglog_linear",
+        recency_cutoff_time = 730.5,
+        recency_rule = "independent_thresholds",
+        recency_vars = c("LAg_ODn","viral_load"),
+        recency_params = c(1.5,0,75,1),
+        n_bootstraps = 0,
+        plot = TRUE,
+        debug = FALSE)
+
 # with both functional forms
 mdrical(data = untreated_c,
         subid_var = "subject_id",
