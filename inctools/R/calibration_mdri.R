@@ -152,7 +152,7 @@ mdrical <- function(data = NULL,
                     n_bootstraps = 10000,
                     alpha = 0.05,
                     plot = TRUE,
-                    parallel = TRUE,
+                    parallel = ifelse(n_bootstraps == 0, FALSE, TRUE),
                     cores = parallel::detectCores(),
                     output_bs_parms = FALSE,
                     debug = FALSE) {
