@@ -3,12 +3,12 @@ module Incidence
 export prevalence, incprops, inccounts
 
 import LinearAlgebra.I
-using Distributions
-using Statistics
+import Distributions
+import Statistics
 
-import Distributions.Normal
-import Distributions.Truncated
-import Distributions.rand
+#import Distributions.Normal
+#import Distributions.Truncated
+#import Distributions.rand
 
 function prevalence(pos, n, de = 1) #, f = 1
     p = pos/n
@@ -16,8 +16,17 @@ function prevalence(pos, n, de = 1) #, f = 1
     return p, σ
 end
 
-function kassanjee(prev::Float64, prevR::Float64, mdri::Float64, frr::Float64, T)
+function kassanjee(prev::Float64, prevR::Float64, mdri::Float64, frr::Float64, T::Float64)
     return (prev * (prevR - frr)) / ((1 - prev) * (mdri - frr * T))
+end
+
+function σ_dm(prev, prevR, mdri, frr, T, σ_prev, σ_prevR, σ_mdri, σ_frr)
+    fot_prev = (prevR - frr)/(((1 - prev)^2) * (mdri - frr * T))  #E.G. d(I)/d(P_H)
+    fot_prevR = prev/((1 - prev) * (mdri - frr * T))
+    fot_mdri = (frr * prev - prevR * prev)/((1 - prev) * ((mdri - frr * T)^2))
+    fot_frr = (prev * (T * prev - mdri))/((1 - prev) * ((mdri - frr * T)^2))
+    σ = sqrt(fot_prev^2 * σ_prev^2 + fot_prevR^2 *
+        σ_prevR^2 + fot_mdri^2 * σ_mdri^2 + fot_frr^2 * σ_frr^2)
 end
 
 # Method for single survey
@@ -43,20 +52,12 @@ function incprops(prev::Float64,
 
     pe = kassanjee(prev, prevR, mdri, frr, T) * per
 
-    if bs == 0
-        fot_prev = (prevR - frr)/(((1 - prev)^2) * (mdri - frr * T))  #E.G. d(I)/d(P_H)
-        fot_prevR = prev/((1 - prev) * (mdri - frr * T))
-        fot_mdri = (frr * prev - prevR * prev)/((1 - prev) * ((mdri - frr * T)^2))
-        fot_frr = (prev * (T * prev - mdri))/((1 - prev) * ((mdri - frr * T)^2))
+    if bs == 0 && σ_prev > 0 && σ_prevR > 0 && σ_mdri > 0 && σ_frr > 0
+        σ = σ_dm(prev, prevR, mdri, frr, T, σ_prev, σ_prevR, σ_mdri, σ_frr) * per
+        ci = max.(Distributions.quantile.(Distributions.Normal(pe, σ), [α/2, 1-α/2]),0)
+        return pe, σ, ci
 
-        dm_sd = sqrt(fot_prev^2 * σ_prev^2 + fot_prevR^2 *
-            σ_prevR^2 + fot_mdri^2 * σ_mdri^2 + fot_frr^2 * σ_frr^2) * per
-
-        dm_ci = quantile.(Normal(pe, dm_sd), [α/2, 1-α/2])
-
-        return pe, dm_sd, dm_ci
-
-    elseif bs > 0
+    elseif bs > 0 && σ_prev > 0 && σ_prevR > 0 && σ_mdri > 0 && σ_frr > 0 
         print("Warning: In this implementation, prev and prevR are assumed independent. Variance-covariance matrix is:\n")
         vcovmat = [σ_prev^2 0 0 0 ; 0 σ_prevR^2 0 0 ; 0 0 σ_mdri^2 0 ; 0 0 0 σ_frr^2]
         display(vcovmat)
@@ -73,19 +74,22 @@ function incprops(prev::Float64,
             print("Warning: bootstrapping with σ_frr = 0")
         end
         # let's fist do it with independent prev and prevR
-        tn_prev = Truncated(Normal(prev,σ_prev), 0, 1)
+        tn_prev = Distributions.Truncated(Distributions.Normal(prev,σ_prev), 0, 1)
         prevs = rand(tn_prev, bs)
-        tn_prevR = Truncated(Normal(prevR,σ_prevR), 0, 1)
+        tn_prevR = Distributions.Truncated(Distributions.Normal(prevR,σ_prevR), 0, 1)
         prevRs = rand(tn_prevR, bs)
-        tn_mdri = Truncated(Normal(mdri,σ_mdri), 0, Inf)
+        tn_mdri = Distributions.Truncated(Distributions.Normal(mdri,σ_mdri), 0, Inf)
         mdris = rand(tn_mdri, bs)
-        tn_frr = Truncated(Normal(frr,σ_frr), 0, 1)
+        tn_frr = Distributions.Truncated(Distributions.Normal(frr,σ_frr), 0, 1)
         frrs = rand(tn_frr, bs)
         # do stuff
         bs_incidence = kassanjee.(prevs, prevRs, mdris, frrs, T) * per
-        sd = Statistics.std(bs_incidence)
-        ci = Statistics.quantile(bs_incidence, [α/2, 1-α/2])
-        return pe, sd, ci
+        σ = Statistics.std(bs_incidence)
+        ci = max.(Statistics.quantile(bs_incidence, [α/2, 1-α/2]),0)
+        return pe, σ, ci
+
+    else
+        return pe
     end
 
 end
@@ -155,11 +159,10 @@ function inccounts(n::Int64,
     prev, σ_prev  = prevalence(npos, n, de_npos)
     prevR, σ_prevR = prevalence(nR, ntestR, de_nR)
 
-    pe, sd, ci = incprops(prev, prevR, mdri, frr, σ_prev = σ_prev,
+    return incprops(prev, prevR, mdri, frr, σ_prev = σ_prev,
                             σ_prevR = σ_prevR, σ_mdri = σ_mdri, σ_frr = σ_frr,
                             cov = 0.0, T = T, timeconversion = timeconversion,
                             bs = bs, α = α, per = per)
-    return pe, sd, ci
 end
 
 
