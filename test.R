@@ -1,7 +1,7 @@
 n_cores <- 12
 setwd("~/dev/incidence-kzn/")
 
-library(dplyr); library(tidyr);
+library(dplyr); library(tidyr); library(inctools);
 
 lag <- read.csv("data/20170116-EP-LAgSedia.csv", stringsAsFactors = FALSE)
 lag <- filter(lag, result_field=="final_result" & visit_hivstatus=="P")

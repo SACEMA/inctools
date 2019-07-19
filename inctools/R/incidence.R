@@ -86,7 +86,7 @@ BS_SURVEY_ESTS <- function(prevH, prevR, mdri, frr, bs_count, bs_var_prevH, bs_v
                                      mean = mu,
                                      sigma = sigma,
                                      lower = rep(0, length = 4),
-                                     upper = rep(Inf, length = 4))
+                                     upper = c(1, 1, Inf, 1))
 
     return(BS_RootEst)
 }
@@ -379,7 +379,6 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
         BS_I_PrevH_cov_vec <- NA
         BS_I_PrevH_cor_vec <- NA
         for (i in 1:no_s) {
-          #browser()
             I_BSVec <- I_EST(prevH = BS_RootEstMat[, (i * 4 - 3)], prevR = BS_RootEstMat[,
                 (i * 4 - 2)], mdri = BS_RootEstMat[, (i * 4 - 1)], frr = BS_RootEstMat[,
                 (i * 4)], bigt = BigT[i])
