@@ -24,13 +24,61 @@ function kassanjee(prev::Float64, prevR::Float64, mdri::Float64, frr::Float64, T
 end
 
 function σ_dm(prev, prevR, mdri, frr, T, σ_prev, σ_prevR, σ_mdri, σ_frr)
-    fot_prev = (prevR - frr)/(((1 - prev)^2) * (mdri - frr * T))
-    fot_prevR = prev/((1 - prev) * (mdri - frr * T))
-    fot_mdri = (frr * prev - prevR * prev)/((1 - prev) * ((mdri - frr * T)^2))
-    fot_frr = (prev * (T * prevR - mdri))/((1 - prev) * ((mdri - frr * T)^2))
+    fot_prev = (prevR - frr) / (((1 - prev)^2) * (mdri - frr * T))
+    fot_prevR = prev / ((1 - prev) * (mdri - frr * T))
+    fot_mdri = (frr * prev - prevR * prev) / ((1 - prev) * ((mdri - frr * T)^2))
+    fot_frr = (prev * (T * prevR - mdri)) / ((1 - prev) * ((mdri - frr * T)^2))
     σ = sqrt(fot_prev^2 * σ_prev^2 + fot_prevR^2 * σ_prevR^2 + fot_mdri^2 * σ_mdri^2 + fot_frr^2 * σ_frr^2)
     σ_infSS = sqrt(fot_mdri^2 * σ_mdri^2 + fot_frr^2 * σ_frr^2)
     return σ, σ_infSS
+end
+
+function rtmvnorm(n::Int64,
+    µ::AbstractVector{Float64},
+    Σ::Array{Float64,2},
+    lower::AbstractVector{Float64} = [-Inf, -Inf, -Inf, -Inf],
+    upper::AbstractVector{Float64} = [Inf, Inf, Inf, Inf])
+
+    d = Distributions.MvNormal(µ, Σ)
+
+    # find acceptance rate
+    r = transpose(rand(d, 1000))
+    racc = r[(r[:,1] .>= lower[1]) .&
+             (r[:,2] .>= lower[2]) .&
+             (r[:,3] .>= lower[3]) .&
+             (r[:,4] .>= lower[4]) .&
+             (r[:,1] .<= upper[1]) .&
+             (r[:,2] .<= upper[2]) .&
+             (r[:,3] .<= upper[3]) .&
+             (r[:,4] .<= upper[4]),:]
+    rr = 1 - size(racc,1)/1000
+
+    r = transpose(rand(d, Int(round(n + n * rr))))
+    r = r[(r[:,1] .>= lower[1]) .&
+             (r[:,2] .>= lower[2]) .&
+             (r[:,3] .>= lower[3]) .&
+             (r[:,4] .>= lower[4]) .&
+             (r[:,1] .<= upper[1]) .&
+             (r[:,2] .<= upper[2]) .&
+             (r[:,3] .<= upper[3]) .&
+             (r[:,4] .<= upper[4]),:]
+    accepted = size(r,1)
+
+    while accepted < n
+        radd = transpose(rand(d, Int(round(n * rr + 1))))
+        radd = radd[(radd[:,1] .>= lower[1]) .&
+                    (radd[:,2] .>= lower[2]) .&
+                    (radd[:,3] .>= lower[3]) .&
+                    (radd[:,4] .>= lower[4]) .&
+                    (radd[:,1] .<= upper[1]) .&
+                    (radd[:,2] .<= upper[2]) .&
+                    (radd[:,3] .<= upper[3]) .&
+                    (radd[:,4] .<= upper[4]),:]
+        r = [r ; radd]
+        accepted = size(r,1)
+    end
+    r = r[1:n,:]
+    return r
 end
 
 # Method for single survey
@@ -56,8 +104,11 @@ function incprops(prev::Float64,
 
     pe = kassanjee(prev, prevR, mdri, frr, T) * per
 
-    if σ_prev == 0 || σ_prevR == 0
-        @warn "σ_prev or σ_prevR of zero supplied. Variance of incidence estimate likely incorrect."
+    if σ_prev == 0
+        @warn "σ_prev of zero supplied. Variance of incidence estimate likely incorrect."
+    end
+    if σ_prevR == 0
+        @warn "σ_prevR of zero supplied. Variance of incidence estimate likely incorrect."
     end
     if σ_mdri == 0
         @warn "σ_mdri of zero supplied."
@@ -69,31 +120,20 @@ function incprops(prev::Float64,
     if bs == 0
         σ, σ_infSS = σ_dm(prev, prevR, mdri, frr, T, σ_prev, σ_prevR, σ_mdri, σ_frr) .* per
         ci = max.(Distributions.quantile.(Distributions.Normal(pe, σ), [α/2, 1-α/2]),0)
-        return (I = pe, σ = σ, σ_infSS = σ_infSS, RSE = σ/pe, CI = ci)
+        return (I = pe, CI = ci, σ = σ, RSE = σ/pe)
 
+    # Manual implementation of truncated normal distribution
     elseif bs > 0 #&& covar > 0.0
         µ = [prev, prevR, mdri, frr]
         Σ = [σ_prev^2 covar 0 0 ; covar σ_prevR^2 0 0 ; 0 0 σ_mdri^2 0 ; 0 0 0 σ_frr^2]
-        d = Distributions.MvNormal(µ, Σ)
-        r = transpose(rand(d, bs*10))
-        r = r[(r[:,1] .>= 0) .& (r[:,2] .>= 0) .& (r[:,3] .>= 0) .&
-                        (r[:,4] .>= 0) .& (r[:,1] .<= 1) .& (r[:,2] .<= 1) .&
-                        (r[:,4] .<= 1),:]
-        accepted = size(r,1)
-        while accepted < bs
-            println("in while loop")
-            rnew = transpose(rand(d, bs))
-            rnew = rnew[(rnew[:,1] .>= 0) .& (rnew[:,2] .>= 0) .& (rnew[:,3] .>= 0) .&
-                            (rnew[:,4] .>= 0) .& (rnew[:,1] .<= 1) .& (rnew[:,2] .<= 1) .&
-                            (rnew[:,4] .<= 1),:]
-            r = [r ; rnew]
-            accepted = size(r,1)
-        end
-        r = r[1:bs,:]
+        r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, Inf, 1.0])
         bs_incidence = kassanjee.(r[:,1], r[:,2], r[:,3], r[:,4], T) * per
         σ = Statistics.std(bs_incidence)
         ci = max.(Statistics.quantile(bs_incidence, [α/2, 1-α/2]),0)
-        return (I = pe, σ = σ, RSE = σ/pe, CI = ci)
+        # These numbers differ from R - bug?
+        cov_prev_I = Statistics.cov([r[:,1] bs_incidence])
+        cor_prev_I = Statistics.cor([r[:,1] bs_incidence])
+        return (I = pe, CI = ci, σ = σ, RSE = σ/pe, cov_prev_I = cov_prev_I, cor_prev_I = cor_prev_I)
     end
 end
 
