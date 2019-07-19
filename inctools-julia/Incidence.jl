@@ -1,17 +1,10 @@
 module Incidence
 
-export prevalence, incprops, inccounts
+export prevalence, rtmvnorm, incprops, inccounts
 
 import LinearAlgebra.I
 import Distributions
 import Statistics
-
-using RCall
-#R"library(tmvtnorm)"
-
-#import Distributions.Normal
-#import Distributions.Truncated
-#import Distributions.rand
 
 function prevalence(pos, n, de = 1) #, f = 1
     p = pos/n
