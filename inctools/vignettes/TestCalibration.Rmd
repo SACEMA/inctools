@@ -76,6 +76,7 @@ The dataset `excalibdata` contains example data from an evaluation of an assay m
 
 The first example provides a variable that has pre-classified results, and uses only the complementary log-log functional form.
 
+*Note that in these examples we perform only 1,000 bootstraps, but in real-life use no fewer than 10,000 is recommended.*
 
 ```{r, results='hide' }
 mdri <- mdrical(data=excalibdata,
@@ -86,7 +87,7 @@ mdri <- mdrical(data=excalibdata,
                 functional_forms = c("cloglog_linear"),
                 recency_rule = "binary_data",
                 recency_vars = "Recent",
-                n_bootstraps = 10000,
+                n_bootstraps = 1000,
                 alpha = 0.05,
                 plot = TRUE,
                 parallel = FALSE)
@@ -110,7 +111,7 @@ mdri <- mdrical(data=excalibdata,
                 recency_rule = "independent_thresholds",
                 recency_vars = c("Result","VL"),
                 recency_params = c(10,0,1000,1),
-                n_bootstraps = 10000,
+                n_bootstraps = 1000,
                 alpha = 0.05,
                 plot = TRUE,
                 parallel = FALSE)

@@ -107,7 +107,7 @@ function incprops(prev::Float64,
         @warn "σ_mdri of zero supplied."
     end
     if σ_frr == 0
-        @warn "σ_mdri of zero supplied."
+        @warn "σ_frr of zero supplied."
     end
 
     if bs == 0

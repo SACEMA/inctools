@@ -2,11 +2,11 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.14.9001
-Date: 2019-07-10
+Version: 1.0.14.9005
+Date: 2019-08-28
 Authors@R: c(
-  person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Eduard","Grebe",email="eduardgrebe@sun.ac.za",role=c("cre","aut")),
+  person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
   person("Avery","McIntosh",email="avery.i.mcintosh@gmail.com",role="aut"),
   person("Petra","Bäumler",email="petra.baeumler@med.uni-muenich.de",role="aut"),
   person("Reshma","Kassanjee", role="ctb"),
