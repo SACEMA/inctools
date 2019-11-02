@@ -8,6 +8,10 @@ import Statistics
 import DataFrames
 
 function prevalence(pos, n, de = 1) #, f = 1
+    if n == 0
+        @warn "n = 0: prevalence undefined. n set to 1."
+        n = 1
+    end
     p = pos/n
     σ = sqrt( (p * (1 - p)) / n ) * de #* sqrt(1 - f)
     return p, σ
@@ -43,6 +47,21 @@ function σ_Δ_dm(prev, prevR, mdri, frr, T, σ_prev, σ_prevR, σ_mdri, σ_frr)
     return σ
 end
 
+# This follows the logic of Stefan Wilhelm
+# https://github.com/cran/tmvtnorm/blob/master/R/rtmvnorm.R
+function rtnorm_gibbs(n::Int64, μ::Float64, σ::Float64, lower::Float64, upper::Float64)
+    d = Distributions.Normal(μ,σ)
+    F = rand(Distributions.Uniform(), n)
+    lcdf = Distributions.cdf(d, lower)
+    ucdf = Distributions.cdf(d, upper)
+    tp = ucdf - lcdf
+    Q = F .* tp  .+ lcdf
+    r = Distributions.quantile.(Distributions.Normal(0, 1), Q) .* σ .+ μ
+    return r
+end
+
+# This function does not implement the appropriate methd
+# !! Replace with a gibbs sampler!
 function rtmvnorm(n::Int64,
     µ::AbstractVector{Float64},
     Σ::Array{Float64,2},
@@ -104,6 +123,7 @@ function incprops(prev::Float64,
     T = 730.5, # in same units as MDRI
     timeconversion = 365.25, # to convert from unit in which MDRI and T is specified to unit of incidence
     bs::Int64 = 0,
+    gibbs = false,
     bs_numbers = false,
     bs_numbers_n::AbstractVector{Int64} = [0, 0],
     α::Float64 = 0.05,
@@ -116,17 +136,33 @@ function incprops(prev::Float64,
 
     pe = kassanjee(prev, prevR, mdri, frr, T) * per
 
-    if σ_prev == 0
+    if bs == 0 && σ_prev == 0.0
         @warn "σ_prev of zero supplied. Variance of incidence estimate likely incorrect."
     end
-    if σ_prevR == 0
+    if bs == 0 && σ_prevR == 0.0
         @warn "σ_prevR of zero supplied. Variance of incidence estimate likely incorrect."
     end
-    if σ_mdri == 0
-        @warn "σ_mdri of zero supplied."
+    if bs == 0 && σ_mdri == 0.0
+        @warn "σ_mdri of zero supplied. Variance of incidence estimate likely incorrect."
     end
-    if σ_frr == 0
-        @warn "σ_frr of zero supplied."
+    if bs == 0 && σ_frr == 0.0
+        @warn "σ_frr of zero supplied. Variance of incidence estimate likely incorrect."
+    end
+    if bs > 0 && σ_prev == 0.0
+        @warn "σ_prev of zero supplied. Set to 0.0000000001."
+        σ_prev = 0.0000000001
+    end
+    if bs > 0 && σ_prevR == 0.0
+        @warn "σ_prevR of zero supplied. Set to 0.0000000001."
+        σ_prevR = 0.0000000001
+    end
+    if bs > 0 && σ_mdri == 0.0
+        @warn "σ_mdri of zero supplied. Set to 0.0000000001."
+        σ_mdri = 0.0000000001
+    end
+    if bs > 0 && σ_frr == 0.0
+        @warn "σ_frr of zero supplied. Set to 0.0000000001."
+        σ_frr = 0.0000000001
     end
 
     if bs == 0 && bs_numbers
@@ -137,16 +173,66 @@ function incprops(prev::Float64,
         @error "Cannot bootstrap numbers if number of trials is zero"
     end
 
+    if bs_numbers && bs_numbers_n[1] == 0
+        @warn "Set n1 to 1"
+        bs_numbers_n[1] = 1
+    end
+
+    if bs_numbers && bs_numbers_n[2] == 0
+        @warn "Set n2 to 1"
+        bs_numbers_n[2] = 1
+    end
+
     if bs == 0
         σ, σ_infSS = σ_dm(prev, prevR, mdri, frr, T, σ_prev, σ_prevR, σ_mdri, σ_frr) .* per
         ci = Distributions.quantile.(Distributions.Normal(pe, σ), [α/2, 1-α/2]) # max.(Distributions.quantile.(Distributions.Normal(pe, σ), [α/2, 1-α/2]),0)
-        return (I = pe, CI = ci, σ = σ, RSE = σ/pe)
+        return (I = pe, CI = ci, σ = σ, RSE = σ/abs(pe))
 
     # Manual implementation of truncated normal distribution
-    elseif bs > 0 && !bs_numbers
-        µ = [prev, prevR, mdri, frr]
-        Σ = [σ_prev^2 covar 0 0 ; covar σ_prevR^2 0 0 ; 0 0 σ_mdri^2 0 ; 0 0 0 σ_frr^2]
-        r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, Inf, 1.0])
+    elseif bs > 0 && !bs_numbers && gibbs
+        if covar < 0.0
+            @warn "Covariance of prev and prevR cannot be negative, set to 0.0"
+            covar = 0.0
+        elseif covar == 0.0
+            r = hcat(
+                    rtnorm_gibbs(bs, prev, σ_prev, 0.0, 1.0),
+                    rtnorm_gibbs(bs, prevR, σ_prevR, 0.0, 1.0),
+                    rtnorm_gibbs(bs, mdri, σ_mdri, 0.0, Inf),
+                    rtnorm_gibbs(bs, frr, σ_frr, 0.0, 1.0)
+                    )
+        elseif covar > 0.0
+            @warn "Truncated multivariate normal with covariance not implemented yet"
+            µ = [prev, prevR, mdri, frr]
+            Σ = [σ_prev^2 covar 0 0 ; covar σ_prevR^2 0 0 ; 0 0 σ_mdri^2 0 ; 0 0 0 σ_frr^2]
+            r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, Inf, 1.0])
+        end
+
+        bs_incidence = kassanjee.(r[:,1], r[:,2], r[:,3], r[:,4], T) .* per
+        σ = Statistics.std(bs_incidence)
+        ci = Statistics.quantile(bs_incidence, [α/2, 1-α/2]) # max.(Statistics.quantile(bs_incidence, [α/2, 1-α/2]),0)
+        cov_prev_I = Statistics.cov([r[:,1] bs_incidence])
+        cor_prev_I = Statistics.cor([r[:,1] bs_incidence])
+        return (I = pe, CI = ci, σ = σ, RSE = σ/abs(pe), cov_prev_I = cov_prev_I, cor_prev_I = cor_prev_I)
+
+    # Use Distributions.jl truncated normal
+    elseif bs > 0 && !bs_numbers && !gibbs
+        if covar < 0.0
+            @warn "Covariance of prev and prevR cannot be negative, set to 0.0"
+            covar = 0.0
+        elseif covar == 0.0
+            r = hcat(
+                    rand(Distributions.TruncatedNormal(prev, σ_prev, 0.0, 1.0), bs),
+                    rand(Distributions.TruncatedNormal(prevR, σ_prevR, 0.0, 1.0), bs),
+                    rand(Distributions.TruncatedNormal(mdri, σ_mdri, 0.0, Inf), bs),
+                    rand(Distributions.TruncatedNormal(frr, σ_frr, 0.0, 1.0), bs)
+                    )
+        elseif covar > 0.0
+            @warn "Truncated multivariate normal with covariance not implemented yet"
+            µ = [prev, prevR, mdri, frr]
+            Σ = [σ_prev^2 covar 0 0 ; covar σ_prevR^2 0 0 ; 0 0 σ_mdri^2 0 ; 0 0 0 σ_frr^2]
+            r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, Inf, 1.0])
+        end
+
         bs_incidence = kassanjee.(r[:,1], r[:,2], r[:,3], r[:,4], T) .* per
         σ = Statistics.std(bs_incidence)
         ci = Statistics.quantile(bs_incidence, [α/2, 1-α/2]) # max.(Statistics.quantile(bs_incidence, [α/2, 1-α/2]),0)
@@ -163,7 +249,7 @@ function incprops(prev::Float64,
         npos = rand(dprev, bs)
         prevs =  npos ./ bs_numbers_n[1]
         nr = rand(dprevR, bs)
-        prevRs = nr ./ bs_numbers_n[2]
+        prevRs = nr ./ max.(min.(bs_numbers_n[2], npos), 1)
         mdris = rand(dmdri, bs)
         frrs = rand(dfrr, bs)
         bs_incidence = kassanjee.(prevs, prevRs, mdris, frrs, T) .* per
@@ -188,17 +274,78 @@ function incdif(prev::AbstractVector{Float64},
     T = 730.5, # in same units as MDRI
     timeconversion = 365.25, # to convert from unit in which MDRI and T is specified to unit of incidence
     bs::Int64 = 0,
+    output_bs = false,
     bs_numbers = false,
     bs_numbers_n::AbstractVector{Int64} = [0, 0, 0, 0],
     α::Float64 = 0.05,
     per::Int64 = 1)
+
+
+    if bs == 0 && σ_mdri == 0
+        @warn "σ_mdri of zero supplied. Variance of incidence estimate likely incorrect."
+    end
+    if bs == 0 && σ_frr == 0
+        @warn "σ_frr of zero supplied. Variance of incidence estimate likely incorrect."
+    end
+
+    if bs > 0 && σ_mdri == 0
+        @warn "σ_mdri of zero supplied. Set to 0.0000000001."
+        σ_mdri = 0.0000000001
+    end
+    if bs > 0 && σ_frr == 0
+        @warn "σ_frr of zero supplied. Set to 0.0000000001."
+        σ_frr = 0.0000000001
+    end
+
+
+    if bs == 0 && σ_prev[1] == 0
+        @warn "σ_prev of zero supplied. Variance of incidence estimate likely incorrect."
+    end
+    if bs == 0 && σ_prevR[1] == 0
+        @warn "σ_prevR of zero supplied. Variance of incidence estimate likely incorrect."
+    end
+
+    if bs == 0 && σ_prev[2] == 0
+        @warn "σ_prev of zero supplied. Variance of incidence estimate likely incorrect."
+    end
+    if bs == 0 && σ_prevR[2] == 0
+        @warn "σ_prevR of zero supplied. Variance of incidence estimate likely incorrect."
+    end
+
+    if bs > 0 && σ_prev[1] == 0
+        @warn "σ_prev of zero supplied. Set to 0.0000000001."
+        σ_prev[1] = 0.0000000001
+    end
+    if bs > 0 && σ_prevR[1] == 0
+        @warn "σ_prevR of zero supplied. Set to 0.0000000001."
+        σ_prevR[1] = 0.0000000001
+    end
+
+    if bs > 0 && σ_prev[2] == 0
+        @warn "σ_prev of zero supplied. Set to 0.0000000001."
+        σ_prev[2] = 0.0000000001
+    end
+    if bs > 0 && σ_prevR[2] == 0
+        @warn "σ_prevR of zero supplied. Set to 0.0000000001."
+        σ_prevR[2] = 0.0000000001
+    end
 
     # convert to estimation unit
     mdri = mdri / timeconversion
     σ_mdri = σ_mdri / timeconversion
     T = T / timeconversion
 
-    pe = kassanjee(prev[1], prevR[1], mdri, frr, T) * per - kassanjee(prev[2], prevR[2], mdri, frr, T) * per
+    I_1 = kassanjee(prev[1], prevR[1], mdri, frr, T) * per
+    if I_1 < 0.0
+        @warn "Negative point estimate set to 0.0 for Δ calculation"
+        I_1 = 0.0
+    end
+    I_2 = kassanjee(prev[2], prevR[2], mdri, frr, T) * per
+    if I_2 < 0.0
+        @warn "Negative point estimate set to 0.0 for Δ calculation"
+        I_2 = 0.0
+    end
+    pe = I_1 - I_2
 
     if σ_prev == 0
         @warn "σ_prev of zero supplied. Variance of incidence estimate likely incorrect."
@@ -221,6 +368,26 @@ function incdif(prev::AbstractVector{Float64},
         @error "Cannot bootstrap numbers if number of trials is zero"
     end
 
+    if bs_numbers && bs_numbers_n[1] == 0
+        @warn "Set n1 to 1"
+        bs_numbers_n[1] = 1
+    end
+
+    if bs_numbers && bs_numbers_n[2] == 0
+        @warn "Set n2 to 1"
+        bs_numbers_n[2] = 1
+    end
+
+    if bs_numbers && length(bs_numbers_n) == 4 && bs_numbers_n[3] == 0
+        @warn "Set n3 to 1"
+        bs_numbers_n[3] = 1
+    end
+
+    if bs_numbers && length(bs_numbers_n) == 4 && bs_numbers_n[4] == 0
+        @warn "Set n4 to 1"
+        bs_numbers_n[4] = 1
+    end
+
     if bs == 0
         σ = σ_Δ_dm(prev, prevR, mdri, frr, T, σ_prev, σ_prevR, σ_mdri, σ_frr) * per
         ci = Distributions.quantile.(Distributions.Normal(pe, σ), [α/2, 1-α/2])
@@ -233,14 +400,21 @@ function incdif(prev::AbstractVector{Float64},
         r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0, Inf, 1.0])
         bs_incidence_1 = kassanjee.(r[:,1], r[:,2], r[:,5], r[:,6], T) .* per
         bs_incidence_2 = kassanjee.(r[:,3], r[:,4], r[:,5], r[:,6], T) .* per
-        bs_difs = bs_incidence_1 .- bs_incidence_2
+        if any(x-> x < 0, bs_incidence_1) || any(x-> x < 0, bs_incidence_2)
+            @warn "Negative boostrapped incidence estimates set to 0.0 for difference calculations"
+        end
+        bs_difs = max.(bs_incidence_1,0.0) .- max.(bs_incidence_2,0.0)
         σ = Statistics.std(bs_difs)
         ci = Statistics.quantile(bs_difs, [α/2, 1-α/2])
         p = Distributions.cdf(Distributions.Normal(), -abs(pe)/σ) * 2
         # These numbers differ from R - bug?
         #cov_prev_I = [Statistics.cov([r[:,1] bs_incidence_1]) Statistics.cov([r[:,3] bs_incidence_2])]
         #cor_prev_I = [Statistics.cor([r[:,1] bs_incidence_1]) Statistics.cor([r[:,3] bs_incidence_2])]
-        return (Δ = pe, CI = ci, σ = σ, RSE = σ/abs(pe), p = p) #, cov_prev_I = cov_prev_I, cor_prev_I = cor_prev_I
+        if output_bs
+            return (Δ = pe, CI = ci, σ = σ, RSE = σ/abs(pe), p = p, bs_difs = bs_difs) #, cov_prev_I = cov_prev_I, cor_prev_I = cor_prev_I #ptest = ptest,
+        else
+            return (Δ = pe, CI = ci, σ = σ, RSE = σ/abs(pe), p = p)
+        end
 
     elseif bs > 0 && bs_numbers
         @warn "Covariance between prevalence and prevalence of recency assumed zero"
@@ -262,11 +436,19 @@ function incdif(prev::AbstractVector{Float64},
         frrs = rand(dfrr, bs)
         bs_incidence_1 = kassanjee.(prevs_1, prevRs_1, mdris, frrs, T) .* per
         bs_incidence_2 = kassanjee.(prevs_2, prevRs_2, mdris, frrs, T) .* per
-        bs_difs = bs_incidence_1 .- bs_incidence_2
+        if any(x->x<0, bs_incidence_1) || any(x->x<0, bs_incidence_2)
+            @warn "Negative boostrapped incidence estimates set to 0.0 for difference calculations"
+        end
+        bs_difs = max.(bs_incidence_1,0.0) .- max.(bs_incidence_2,0.0)
         σ = Statistics.std(bs_difs)
         ci = Statistics.quantile(bs_difs, [α/2, 1-α/2])
+        bs_difs_abs = abs.(bs_difs)
         p = Distributions.cdf(Distributions.Normal(), -abs(pe)/σ) * 2
-        return (Δ = pe, CI = ci, σ = σ, RSE = σ/abs(pe), p = p) #, cov_prev_I = cov_prev_I, cor_prev_I = cor_prev_I
+        if output_bs
+            return (Δ = pe, CI = ci, σ = σ, RSE = σ/abs(pe), p = p, bs_difs = bs_difs) #, cov_prev_I = cov_prev_I, cor_prev_I = cor_prev_I #ptest = ptest,
+        else
+            return (Δ = pe, CI = ci, σ = σ, RSE = σ/abs(pe), p = p)
+        end
     end
 end
 
