@@ -395,9 +395,30 @@ function incdif(prev::AbstractVector{Float64},
         return (Δ = pe, CI = ci, σ = σ, RSE = σ/abs(pe), p = p)
 
     elseif bs > 0 && !bs_numbers
-        µ = [prev[1], prevR[1], prev[2], prevR[2], mdri, frr]
-        Σ = [σ_prev[1]^2 covar[1] 0 0 0 0; covar[1] σ_prevR[1]^2 0 0 0 0 ; 0 0 σ_prev[2]^2 covar[2] 0 0 ; 0 0 covar[2] σ_prevR[2]^2 0 0 ; 0 0 0 0 σ_mdri^2 0 ; 0 0 0 0 0 σ_frr^2]
-        r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0, Inf, 1.0])
+        if covar[1] < 0.0
+            @warn "Covariance of prev and prevR cannot be negative, set to 0.0"
+            covar[1] = 0.0
+        end
+        if covar[2] < 0.0
+            @warn "Covariance of prev and prevR cannot be negative, set to 0.0"
+            covar[2] = 0.0
+        end
+        if covar[1] == 0.0 && covar[2] == 0.0
+            r = hcat(
+                    rand(Distributions.TruncatedNormal(prev[1], σ_prev[1], 0.0, 1.0), bs),
+                    rand(Distributions.TruncatedNormal(prevR[1], σ_prevR[1], 0.0, 1.0), bs),
+                    rand(Distributions.TruncatedNormal(prev[2], σ_prev[2], 0.0, 1.0), bs),
+                    rand(Distributions.TruncatedNormal(prevR[2], σ_prevR[2], 0.0, 1.0), bs),
+                    rand(Distributions.TruncatedNormal(mdri, σ_mdri, 0.0, Inf), bs),
+                    rand(Distributions.TruncatedNormal(frr, σ_frr, 0.0, 1.0), bs)
+                    )
+        elseif covar[1] > 0.0 || covar[2] > 0.0
+            @warn "Truncated multivariate normal with covariance not implemented yet"
+            µ = [prev[1], prevR[1], prev[2], prevR[2], mdri, frr]
+            Σ = [σ_prev[1]^2 covar[1] 0 0 0 0; covar[1] σ_prevR[1]^2 0 0 0 0 ; 0 0 σ_prev[2]^2 covar[2] 0 0 ; 0 0 covar[2] σ_prevR[2]^2 0 0 ; 0 0 0 0 σ_mdri^2 0 ; 0 0 0 0 0 σ_frr^2]
+            r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0, Inf, 1.0])
+        end
+
         bs_incidence_1 = kassanjee.(r[:,1], r[:,2], r[:,5], r[:,6], T) .* per
         bs_incidence_2 = kassanjee.(r[:,3], r[:,4], r[:,5], r[:,6], T) .* per
         if any(x-> x < 0, bs_incidence_1) || any(x-> x < 0, bs_incidence_2)
