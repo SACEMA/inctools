@@ -1,7 +1,7 @@
-n_cores <- 4
+n_cores <- 12
 setwd("~/dev/incidence-kzn/")
 
-library(dplyr); library(tidyr);
+library(dplyr); library(tidyr); library(inctools);
 
 lag <- read.csv("data/20170116-EP-LAgSedia.csv", stringsAsFactors = FALSE)
 lag <- filter(lag, result_field=="final_result" & visit_hivstatus=="P")
@@ -82,6 +82,18 @@ mdrical(data = untreated_c,
         plot = TRUE,
         parallel = FALSE,
         output_bs_parms = TRUE,
+        debug = FALSE)
+
+mdrical(data = untreated_c,
+        subid_var = "subject_id",
+        time_var = "days_since_eddi",
+        functional_forms = "cloglog_linear",
+        recency_cutoff_time = 730.5,
+        recency_rule = "independent_thresholds",
+        recency_vars = c("LAg_ODn","viral_load"),
+        recency_params = c(1.5,0,75,1),
+        n_bootstraps = 0,
+        plot = TRUE,
         debug = FALSE)
 
 # with both functional forms

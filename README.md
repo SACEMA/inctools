@@ -22,11 +22,11 @@ install.packages("inctools")
 
 ### Current development version
 
-To build and install the current development version, make sure you have 
+To build and install the current development version, make sure you have
 `devtools` installed and execute the following line:
 
 ```
-devtools::install_github("SACEMA/inctools/inctools")
+devtools::install_github("eduardgrebe/inctools/inctools")
 ```
 
 ## Usage terms
@@ -46,16 +46,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Contributors
 
-Several people contributed to this package. We encourage contributions from the 
+Several people contributed to this package. We encourage contributions from the
 community of users.
 
-Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler, 
-Simon Daniel and Yuruo Li, with contributions by Cari van Schalkwyk, 
+Developers include Alex Welte, Eduard Grebe, Avery McIntosh, Petra Bäumler,
+Simon Daniel and Yuruo Li, with contributions by Cari van Schalkwyk,
 Reshma Kassanjee, Hilmarie Brand, Stefano Ongarello and Yusuke Asai.
 
 ## Contact
 
-For usage support and bug reports, please contact the package maintainer, 
+For usage support and bug reports, please contact the package maintainer,
 Eduard Grebe, or submit issues on this repository.
 
 ## References

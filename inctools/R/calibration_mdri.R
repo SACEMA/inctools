@@ -35,7 +35,7 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
   # variable
   tbl %>%
     dplyr::right_join(keep, by=grps) %>%
-    dplyr::group_by_(grps)
+    dplyr::group_by(get(grps))
 }
 
 #' Estimate Mean Duration of Recent Infection (MDRI)
@@ -136,6 +136,7 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
 #'         recency_rule = "binary_data",
 #'         recency_vars = "Recent",
 #'         n_bootstraps = 10,
+#'         parallel = FALSE,
 #'         alpha = 0.05,
 #'         plot = TRUE)
 #' @export
@@ -151,8 +152,8 @@ mdrical <- function(data = NULL,
                     n_bootstraps = 10000,
                     alpha = 0.05,
                     plot = TRUE,
-                    parallel = FALSE,
-                    cores = 4,
+                    parallel = ifelse(n_bootstraps == 0, FALSE, TRUE),
+                    cores = parallel::detectCores(),
                     output_bs_parms = FALSE,
                     debug = FALSE) {
 
@@ -544,7 +545,7 @@ fit_binomial_model <- function(data = data,
   switch(as.character(functional_form), cloglog_linear = {
     fitted <- FALSE
     while (!fitted) {
-      suppressWarnings(model <- glm2::glm2(formula = (1 - recency_status) ~ 1 +
+      suppressWarnings(model <- glm2::glm2(formula = recency_status ~ 1 +
                                              I(log(time_since_eddi)),
                                            family = stats::binomial(link = "cloglog"),
                                            data = data,
@@ -580,7 +581,7 @@ fit_binomial_model <- function(data = data,
 
 # The next two functions simply specify the model form for use in the integrator
 functional_form_clogloglinear <- function(t, parameters) {
-  exp(-exp(parameters[1] + (parameters[2]) * log(t)))
+  1 - exp(-exp(parameters[1] + (parameters[2]) * log(t)))
 }
 
 functional_form_logitcubic <- function(t, parameters) {
@@ -627,15 +628,10 @@ plot_probability <- function(functional_form = functional_form,
                              mdri_ci = mdri_ci) {
   plot_time <- seq(from = 0, to = inclusion_time_threshold, by = 0.01)
   switch(as.character(functional_form), cloglog_linear = {
-    plotdata <- data.frame(plot_time, exp(-exp(parameters[1] + (parameters[2]) *
-                                                 log(plot_time))))
+    plotdata <- data.frame(plot_time, functional_form_clogloglinear(t = plot_time, parameters = parameters))
     colnames(plotdata) <- c("time_since_eddi", "probability")
   }, logit_cubic = {
-    plotdata <- data.frame(plot_time,
-                           1/(1 + exp(-(parameters[1] +
-                                          parameters[2] * plot_time +
-                                          parameters[3] * plot_time^2 +
-                                          parameters[4] * plot_time^3))))
+    plotdata <- data.frame(plot_time, functional_form_logitcubic(t = plot_time, parameters = parameters))
     colnames(plotdata) <- c("time_since_eddi", "probability")
   })
 

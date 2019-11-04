@@ -143,12 +143,13 @@ frrcal <- function(data = NULL,
     }
   }
   subjectdata <- subjectdata[!is.na(subjectdata$sid),]
-  binomprob <- stats::binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
-                                 p = 0, conf.level = 1 - alpha)
-  FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1],
-                                                             4), round(binomprob$conf.int[2], 4), alpha, binomprob$statistic, binomprob$parameter[[1]],
-                    nrow(data))
-  colnames(FRR) <- c("FRRest", "LB", "UB", "alpha", "n_recent", "n_subjects", "n_observations")
+  nr <- ceiling(sum(subjectdata$recent))
+  n <- nrow(subjectdata)
+  p <- nr / n
+  sigma <- sqrt( (p * (1 - p)) / n )
+  binom_test <- stats::binom.test(nr, n, p = 0, conf.level = 1 - alpha)
+  FRR <- data.frame(p,  sigma, binom_test$conf.int[1], binom_test$conf.int[2], alpha, nr, n, nrow(data))
+  colnames(FRR) <- c("FRRest", "SE", "LB", "UB", "alpha", "n_recent", "n_subjects", "n_observations")
   rownames(FRR) <- ""
   return(FRR)
 }
