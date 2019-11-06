@@ -155,6 +155,7 @@ frr_untreated <- frrcal(data = untreated_all,
                         recency_rule = "independent_thresholds",
                         recency_vars = c("LAg_ODn","viral_load"),
                         recency_params = c(1.5,0,75,1),
+                        method = "exact",
                         debug = TRUE)
 print(frr_untreated)
 frr_treated <- frrcal(data = treated_all,

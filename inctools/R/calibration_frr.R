@@ -29,6 +29,7 @@
 #' @param recency_vars Variables to be used in determining recency outcomes
 #' @param recency_params Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule
 #' @param alpha Confidence level, default=0.05.
+#' @param method Method for computing confidence interval on binomial probability (passed to binom::binom.confint). Default is Clopper-Pearson 'exact' method. Accepted values: `c("exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit", "cloglog", "probit")`.
 #' @param debug Enable debugging mode (browser)
 #' @details The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 #'
@@ -51,6 +52,7 @@
 #'        recency_rule = "independent_thresholds",
 #'        recency_vars = c("Result","VL"),
 #'        recency_params = c(10,0,1000,1),
+#'        method = "exact",
 #'        alpha = 0.05)
 #' @export
 frrcal <- function(data = NULL,
@@ -61,6 +63,7 @@ frrcal <- function(data = NULL,
                    recency_vars = NULL,
                    recency_params = NULL,
                    alpha = 0.05,
+                   method = "exact",
                    debug = FALSE) {
 
   if (debug) {browser()}
@@ -101,6 +104,13 @@ frrcal <- function(data = NULL,
   if (is.null(time_var)) {stop("Error: No time variable provided.")}
   if (is.null(time_var)) {stop("Error: No recency variables provided variable provided.")}
 
+  if (is.null(method)) {stop("Error: Confidence interval method must be specified.")}
+  
+  if (length(method) != 1) {stop("Error: Exactly one confidence interval method must be specified.")}
+  
+  if ( !(method %in% c("exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit", "cloglog", "probit"))) {
+    stop("Confidence interval method must be one of 'exact', 'ac', 'asymptotic', 'wilson', 'prop.test', 'bayes', 'logit', 'cloglog', 'probit'. See help of binom::binom.test() for further details.")
+    }
 
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
@@ -143,13 +153,13 @@ frrcal <- function(data = NULL,
     }
   }
   subjectdata <- subjectdata[!is.na(subjectdata$sid),]
-  nr <- ceiling(sum(subjectdata$recent))
+  nr <- as.integer(ceiling(sum(subjectdata$recent)))
   n <- nrow(subjectdata)
   p <- nr / n
   sigma <- sqrt( (p * (1 - p)) / n )
-  binom_test <- stats::binom.test(nr, n, p = 0, conf.level = 1 - alpha)
-  FRR <- data.frame(p,  sigma, binom_test$conf.int[1], binom_test$conf.int[2], alpha, nr, n, nrow(data))
-  colnames(FRR) <- c("FRRest", "SE", "LB", "UB", "alpha", "n_recent", "n_subjects", "n_observations")
-  rownames(FRR) <- ""
+  binom_ci <- binom::binom.confint(nr, n, conf.level = 1 - alpha, methods = method)
+  FRR <- tibble::tibble(FRRest = p, SE = sigma, LB = binom_ci$lower, UB = binom_ci$upper, 
+                        alpha = alpha, n_recent = nr, n_subjects = n, n_observations = nrow(data), 
+                        ci_method = method)
   return(FRR)
 }
