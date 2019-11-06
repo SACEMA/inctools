@@ -7,14 +7,41 @@ import Distributions
 import Statistics
 import DataFrames
 
-function prevalence(pos, n, de = 1) #, f = 1
+function prevalence(pos, n, de = 1; ci = false, α = 0.05) #, f = 1
     if n == 0
         @warn "n = 0: prevalence undefined. n set to 1."
         n = 1
     end
+    if pos < 5
+        @warn "Too few successes for the normal approximation to be valid"
+    end
+    if n - pos < 5
+        @warn "Sample size twoo small for the normal apprximation to be valid"
+    end
     p = pos/n
     σ = sqrt( (p * (1 - p)) / n ) * de #* sqrt(1 - f)
-    return p, σ
+    if !ci
+        return (p = p, σ = σ)
+    elseif ci
+        Fd =
+        if pos == 0
+            lb = 0
+            ub = 1-(α/2)^(1/n)
+        elseif pos == n
+            lb = (α/2)^(1/n)
+            ub = 1
+        else
+            lb = ( 1+(n-pos+1)/(pos * Distributions.quantile(Distributions.FDist(2*pos, 2*(n-pos+1)), α/2)) ) ^ (-1)
+            ub = ( 1+(n-pos)/((pos + 1) * Distributions.quantile(Distributions.FDist(2*(pos + 1), 2*(n-pos)), 1-α/2)) ) ^ (-1)
+        end
+
+        # Normal approximation
+        # pprime = (pos + 2) / (n + 4)
+        # sigmaprime = sqrt( (pprime * (1 - pprime)) / (n + 4) )
+        #lb = max(pprime - 1.96 * sigmaprime,0)
+        # ub = min(pprime + 1.96 * sigmaprime,1)
+        return (p = p, σ = σ, ci = [lb, ub])
+    end
 end
 
 function kassanjee(prev::Float64, prevR::Float64, mdri::Float64, frr::Float64, T::Float64)

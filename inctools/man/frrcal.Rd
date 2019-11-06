@@ -7,7 +7,7 @@
 frrcal(data = NULL, subid_var = NULL, time_var = NULL,
   recency_cutoff_time = 730.5, recency_rule = "binary_data",
   recency_vars = NULL, recency_params = NULL, alpha = 0.05,
-  debug = FALSE)
+  method = "exact", debug = FALSE)
 }
 \arguments{
 \item{data}{A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)}
@@ -25,6 +25,8 @@ frrcal(data = NULL, subid_var = NULL, time_var = NULL,
 \item{recency_params}{Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule}
 
 \item{alpha}{Confidence level, default=0.05.}
+
+\item{method}{Method for computing confidence interval on binomial probability (passed to binom::binom.confint). Default is Clopper-Pearson 'exact' method. Accepted values: `c("exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit", "cloglog", "probit")`.}
 
 \item{debug}{Enable debugging mode (browser)}
 }
@@ -60,5 +62,6 @@ frrcal(data=excalibdata,
        recency_rule = "independent_thresholds",
        recency_vars = c("Result","VL"),
        recency_params = c(10,0,1000,1),
+       method = "exact",
        alpha = 0.05)
 }
