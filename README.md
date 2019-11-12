@@ -26,6 +26,12 @@ To build and install the current development version, make sure you have
 `devtools` installed and execute the following line:
 
 ```
+devtools::install_github("SACEMA/inctools/inctools")
+```
+
+or, the bleeding edge version (not recommended):
+
+```
 devtools::install_github("eduardgrebe/inctools/inctools")
 ```
 
