@@ -166,3 +166,59 @@ frr_treated <- frrcal(data = treated_all,
                       recency_vars = c("LAg_ODn","viral_load"),
                       recency_params = c(1.5,0,75,1))
 print(frr_treated)
+
+I1 <- incprops(PrevH = 0.20, RSE_PrevH = 0.028, PrevR = 0.10, RSE_PrevR = 0.09,
+         BS_Count = 10000, Boot = TRUE, MDRI = 200, RSE_MDRI = 0.05,
+         FRR = 0.01, RSE_FRR = 0.2, BigT = 730, debug = TRUE)
+print(I1)
+str(I1)
+
+I2 <- incprops(PrevH = c(0.20,0.21,0.18), 
+               RSE_PrevH = c(0.028,0.03,0.022),
+               PrevR = c(0.10,0.13,0.12), 
+               RSE_PrevR = c(0.094,0.095,0.05),
+               Boot = FALSE, 
+               BMest = 'MDRI.FRR.indep',
+               MDRI = c(200,180,180), 
+               RSE_MDRI = c(0.05,0.07,0.06),
+               FRR = c(0.01,0.009,0.02), 
+               RSE_FRR = c(0.2,0.2,0.1), 
+               BigT = 730.5)
+I2$Incidence.Difference.Statistics$p.value
+print(I2)
+str(I2)
+
+inccounts(N = 10000,
+          N_H = 1000,
+          N_testR = 990,
+          N_R = 99,
+          DE_H = 1.2,
+          DE_R = 1.2,
+          Boot = FALSE,
+          alpha = 0.05,
+          MDRI= 200,
+          RSE_MDRI = 0.1,
+          FRR = 0.01,
+          RSE_FRR = 0.25,
+          BigT = 730.5,
+          Covar_HR = 0,
+          debug = FALSE)
+
+incprops(PrevH = 0.1, 
+         RSE_PrevH = 0.03286335,
+         PrevR = 0.1, 
+         RSE_PrevR = 0.1044466,
+         Boot = FALSE,
+         alpha = 0.05,
+         MDRI= 200,
+         RSE_MDRI = 0.1,
+         FRR = 0.01,
+         RSE_FRR = 0.25,
+         BigT = 730.5,
+         Covar_HR = 0,
+         debug = FALSE)
+
+
+
+
+

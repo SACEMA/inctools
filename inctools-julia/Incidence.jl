@@ -305,8 +305,16 @@ function incdif(prev::AbstractVector{Float64},
     bs_numbers = false,
     bs_numbers_n::AbstractVector{Int64} = [0, 0, 0, 0],
     α::Float64 = 0.05,
+    bonf_cor::Int64 = 1,
     per::Int64 = 1)
 
+    if bonf_cor < 1
+        @error "Bonferroni correction only possible with positive integers for number of comparisons"
+    end
+
+    if bonf_cor > 1
+        α = α / bonf_cor
+    end
 
     if bs == 0 && σ_mdri == 0
         @warn "σ_mdri of zero supplied. Variance of incidence estimate likely incorrect."

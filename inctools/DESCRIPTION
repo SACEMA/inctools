@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.15
-Date: 2019-11-05
+Version: 1.1.9000
+Date: 2019-11-12
 Authors@R: c(
   person("Eduard","Grebe",email="Eduard.Grebe@ucsf.edu",role=c("cre","aut")),
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
@@ -22,7 +22,7 @@ Description: Tools for estimating incidence from biomarker data in cross-
     sectional surveys, and for calibrating tests for recent infection. 
     Implements and extends the method of Kassanjee et al. (2012)
     <doi:10.1097/EDE.0b013e3182576c07>.
-URL: http://www.incidence-estimation.org/page/inctools
+URL: https://github.com/SACEMA/inctools/
 BugReports: https://github.com/SACEMA/inctools/issues
 Depends:
     R (>= 3.4.0)
@@ -34,6 +34,7 @@ Imports:
     magrittr,
     rlang,
     dplyr,
+    tidyr,
     tibble,
     cubature,
     tmvtnorm,
@@ -48,7 +49,8 @@ Imports:
 Suggests:
     survey,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 2.1.0)
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
 Roxygen:
