@@ -1,5 +1,7 @@
 # Incidence Estimation Tools (*inctools*)
 
+[![Build Status](https://travis-ci.org/SACEMA/inctools.svg?branch=master)](https://travis-ci.org/SACEMA/inctools)
+
 Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests.
 
 This package is a more robust implementation of the deprecated spreadsheet tools released as *ABIE* and also contains the functionality previously available in the deprecated package *ritcalib*.
