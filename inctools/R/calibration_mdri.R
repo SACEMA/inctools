@@ -14,6 +14,7 @@
 #' @importFrom magrittr "%>%"
 #' @importFrom foreach "%dopar%"
 #' @importFrom rlang .data
+#' @importFrom rlang "!!"
 
 # Function for resampling groups using dplyr
 # inspired by drhagen
@@ -481,28 +482,20 @@ process_data <- function(data = data,
                          debug = FALSE) {
 
   if (debug) {browser()}
-
-  # THIS NEEDS TO BE REWRITTEN IN TIDY FASHION
-  names(data)[names(data) == subid_var] <- "sid"
-  names(data)[names(data) == time_var] <- "time_since_eddi"
-  data$time_since_eddi <- as.numeric(as.character(data$time_since_eddi))
-  temp_data <- data[, c("sid", "time_since_eddi")]
-  for (i in 1:length(recency_vars)) {
-    temp_data <- cbind(temp_data, data[, recency_vars[i]])
-    colnames(temp_data)[2 + i] <- paste0("recency", i)
-  }
-  temp_data <- subset(temp_data, 0 < temp_data$time_since_eddi &
-                        temp_data$time_since_eddi <= inclusion_time_threshold)
-  temp_data <- stats::na.omit(temp_data)
-  if (nrow(temp_data) < 1) {
+  recency_vars_newnames <- paste0("recency", 1:length(recency_vars))
+  data <- data %>%
+    dplyr::rename(sid = !!subid_var,
+           time_since_eddi = !!time_var) %>%
+    dplyr::select(.data$sid, .data$time_since_eddi, recency_vars) %>%
+    dplyr::rename_at(recency_vars, function(x) recency_vars_newnames) %>%
+    dplyr::filter(.data$time_since_eddi > 0, .data$time_since_eddi <= inclusion_time_threshold) %>%
+    tidyr::drop_na() %>%
+    dplyr::mutate(time_since_eddi = as.numeric(as.character(.data$time_since_eddi)),
+                  sid = plyr::mapvalues(.data$sid, unique(.data$sid), seq(1:length(unique(.data$sid))))) %>% # Is there a better way than using plyr?
+    dplyr::arrange(.data$sid, .data$time_since_eddi)
+  if (nrow(data) < 1) {
     stop("Error: dataframe is empty after omitting rows with empty cells and applying time exclusion criterion")
   }
-  data <- temp_data
-  # replace non-numeric subject identifiers with unique numeric identifiers
-  data$sid <- plyr::mapvalues(data$sid, from = unique(data$sid), to = seq(1:length(unique(data$sid))))
-  # order by subject id and then time_since_eddi
-  data$sid <- as.numeric(data$sid)
-  data <- data[order(data$sid, data$time_since_eddi), ]
   return(data)
 }
 
