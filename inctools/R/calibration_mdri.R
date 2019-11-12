@@ -14,6 +14,7 @@
 #' @importFrom magrittr "%>%"
 #' @importFrom foreach "%dopar%"
 #' @importFrom rlang .data
+#' @importFrom rlang "!!"
 
 # Function for resampling groups using dplyr
 # inspired by drhagen
@@ -358,8 +359,8 @@ mdrical <- function(data = NULL,
                                              maxit = maxit_integral)
           if (n_bootstraps > 0) {utils::setTxtProgressBar(pb, j)}
 
-          mdri_and_params_iterate <- dplyr::data_frame("MDRI" = mdri_iterate) %>%
-            dplyr::bind_cols(dplyr::as_data_frame(t(parameters)))
+          mdri_and_params_iterate <- tibble::tibble("MDRI" = mdri_iterate) %>%
+            dplyr::bind_cols(tibble::as_tibble(t(parameters)))
 
           return(mdri_and_params_iterate)
         }
@@ -414,13 +415,13 @@ mdrical <- function(data = NULL,
             plot_parameters <- parameters
           }
           if(output_bs_parms) {
-            bs_params <- dplyr::as_data_frame(t(parameters))[NULL,]
+            bs_params <- tibble::as_tibble(t(parameters))[NULL,]
             }
         } else if(j > 0) {
           mdris <- append(mdris, mdri_iterate)
           if(output_bs_parms) {
           bs_params <- bs_params %>%
-            dplyr::bind_rows(dplyr::as_data_frame(t(parameters)))
+            dplyr::bind_rows(tibble::as_tibble(t(parameters)))
           bs_parms_output[[functional_forms[i]]] <- bs_params
           }
           utils::setTxtProgressBar(pb, j)
@@ -481,27 +482,23 @@ process_data <- function(data = data,
                          debug = FALSE) {
 
   if (debug) {browser()}
-
-  names(data)[names(data) == subid_var] <- "sid"
-  names(data)[names(data) == time_var] <- "time_since_eddi"
-  data$time_since_eddi <- as.numeric(as.character(data$time_since_eddi))
-  temp_data <- data[, c("sid", "time_since_eddi")]
-  for (i in 1:length(recency_vars)) {
-    temp_data <- cbind(temp_data, data[, recency_vars[i]])
-    colnames(temp_data)[2 + i] <- paste0("recency", i)
-  }
-  temp_data <- subset(temp_data, 0 < temp_data$time_since_eddi &
-                        temp_data$time_since_eddi <= inclusion_time_threshold)
-  temp_data <- stats::na.omit(temp_data)
-  if (nrow(temp_data) < 1) {
+  
+  recency_vars_newnames <- paste0("recency", 1:length(recency_vars))
+  data <- data %>%
+    dplyr::rename(sid = !!subid_var,
+           time_since_eddi = !!time_var) %>%
+    dplyr::select(.data$sid, .data$time_since_eddi, recency_vars) %>%
+    dplyr::rename_at(recency_vars, function(x) recency_vars_newnames) %>%
+    dplyr::filter(.data$time_since_eddi > 0, .data$time_since_eddi <= inclusion_time_threshold) %>%
+    tidyr::drop_na() %>%
+    dplyr::mutate(time_since_eddi = as.numeric(as.character(.data$time_since_eddi)),
+                  sid = plyr::mapvalues(.data$sid, unique(.data$sid), seq(1:length(unique(.data$sid))))) %>% # Is there a better way than using plyr?
+    dplyr::arrange(.data$sid, .data$time_since_eddi)
+  
+  if (nrow(data) < 1) {
     stop("Error: dataframe is empty after omitting rows with empty cells and applying time exclusion criterion")
   }
-  data <- temp_data
-  # replace non-numeric subject identifiers with unique numeric identifiers
-  data$sid <- plyr::mapvalues(data$sid, from = unique(data$sid), to = seq(1:length(unique(data$sid))))
-  # order by subject id and then time_since_eddi
-  data$sid <- as.numeric(data$sid)
-  data <- data[order(data$sid, data$time_since_eddi), ]
+  
   return(data)
 }
 
@@ -512,25 +509,51 @@ assign_recency_status <- function(data = data,
                                   debug = FALSE) {
   if(debug) {browser()}
 
-  switch(as.character(recency_rule), binary_data = {
-    data$recency_status <- data$recency1
-  }, independent_thresholds = {
+  
+  if (recency_rule == "binary_data") {
+    
+    data <- dplyr::rename(data, recency_status = .data$recency1)
+  
+  } else if (recency_rule == "independent_thresholds") {
+   
     n_recvars <- length(recency_params)/2
+    recencyvars <- paste0("recency", 1:n_recvars)
+    statusvars <- paste0("recency_stat", 1:n_recvars)
+    data <- data %>%
+      dplyr::rename_at(recencyvars, function(x) statusvars)
+   
     for (i in 1:n_recvars) {
       if (recency_params[2 * i] == 0) {
-        data$recencytemp <- ifelse(data[, 2 + i] < recency_params[2 * i -
-                                                                    1], 1, 0)
+        
+        data[,2+i] <- dplyr::case_when(
+            data[,2+i] < recency_params[2 * i - 1] ~ 1,
+            data[,2+i] >= recency_params[2 * i - 1] ~ 0
+            )
+        
       }
+      
       if (recency_params[2 * i] == 1) {
-        data$recencytemp <- ifelse(data[, 2 + i] > recency_params[2 * i -
-                                                                    1], 1, 0)
+        
+        data[,2+i] <- dplyr::case_when(
+          data[,2+i] > recency_params[2 * i - 1] ~ 1,
+          data[,2+i] <= recency_params[2 * i - 1] ~ 0
+        )
+        
       }
-      data <- plyr::rename(data, replace = c(recencytemp = paste0("recency_stat",
-                                                                  i)))
     }
-    data$recency_status <- ifelse(rowSums(data[(3 + n_recvars):ncol(data)]) >=
-                                    n_recvars, 1, 0)
-  })
+    
+    data <- data %>%
+      dplyr::mutate(recency_sum = rowSums(data[,3:(2+n_recvars)]),
+             recency_status = dplyr::case_when(
+               .data$recency_sum < n_recvars ~ 0,
+               .data$recency_sum >= n_recvars ~ 1,
+             ))
+  } else {
+    
+    stop("Error: Recency rule is not `binary_data` or `independent_thresholds`.")
+    
+  }
+  
   return(data)
 }
 
