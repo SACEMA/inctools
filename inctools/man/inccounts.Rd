@@ -6,7 +6,7 @@
 \usage{
 inccounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
   Boot = FALSE, alpha = 0.05, BMest = "same.test", MDRI, RSE_MDRI,
-  FRR, RSE_FRR, BigT = 730, Covar_HR = 0)
+  FRR, RSE_FRR, BigT = 730, Covar_HR = 0, debug = FALSE)
 }
 \arguments{
 \item{N}{Counts of total survey sample size(s) (vector/integer).}
@@ -40,6 +40,8 @@ inccounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
 \item{BigT}{Cut point in days of recency used in biomarker assay to test recency in a given prevalence survey.}
 
 \item{Covar_HR}{Covariance of probability of being postive and being categorized recent from survey (or as a vector for multiple surveys).}
+
+\item{debug}{Enable debugging mode (browser)}
 }
 \value{
 Incidence estimate, annual risk of infection, confidence interval, relative standard error of estimate and of assay characteristics MDRI and FRR. If multiple surveys are entered, function returns said results, as well as estimates of incidence  differences, confidence intervals of differences, difference relative standard errors, and p-values testing the hypothesis that the difference in incidence measures are zero. Theoretical relative standard error of incidence and incidence difference at infinite sample size is returned only if Boot = FALSE, as that calculation relies on the asymptotic behavior of components of the Delta method approximation, and is not calculable from bootstrapped values.

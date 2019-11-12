@@ -533,6 +533,7 @@ assign_recency_status <- function(data = data,
       }
       
       if (recency_params[2 * i] == 1) {
+        
         data[,2+i] <- dplyr::case_when(
           data[,2+i] > recency_params[2 * i - 1] ~ 1,
           data[,2+i] <= recency_params[2 * i - 1] ~ 0
