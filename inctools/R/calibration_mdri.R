@@ -482,6 +482,7 @@ process_data <- function(data = data,
                          debug = FALSE) {
 
   if (debug) {browser()}
+  
   recency_vars_newnames <- paste0("recency", 1:length(recency_vars))
   data <- data %>%
     dplyr::rename(sid = !!subid_var,
@@ -493,9 +494,11 @@ process_data <- function(data = data,
     dplyr::mutate(time_since_eddi = as.numeric(as.character(.data$time_since_eddi)),
                   sid = plyr::mapvalues(.data$sid, unique(.data$sid), seq(1:length(unique(.data$sid))))) %>% # Is there a better way than using plyr?
     dplyr::arrange(.data$sid, .data$time_since_eddi)
+  
   if (nrow(data) < 1) {
     stop("Error: dataframe is empty after omitting rows with empty cells and applying time exclusion criterion")
   }
+  
   return(data)
 }
 
@@ -506,25 +509,50 @@ assign_recency_status <- function(data = data,
                                   debug = FALSE) {
   if(debug) {browser()}
 
-  switch(as.character(recency_rule), binary_data = {
-    data$recency_status <- data$recency1
-  }, independent_thresholds = {
+  
+  if (recency_rule == "binary_data") {
+    
+    data <- dplyr::rename(data, recency_status = .data$recency1)
+  
+  } else if (recency_rule == "independent_thresholds") {
+   
     n_recvars <- length(recency_params)/2
+    recencyvars <- paste0("recency", 1:n_recvars)
+    statusvars <- paste0("recency_stat", 1:n_recvars)
+    data <- data %>%
+      dplyr::rename_at(recencyvars, function(x) statusvars)
+   
     for (i in 1:n_recvars) {
       if (recency_params[2 * i] == 0) {
-        data$recencytemp <- ifelse(data[, 2 + i] < recency_params[2 * i -
-                                                                    1], 1, 0)
+        
+        data[,2+i] <- dplyr::case_when(
+            data[,2+i] < recency_params[2 * i - 1] ~ 1,
+            data[,2+i] >= recency_params[2 * i - 1] ~ 0
+            )
+        
       }
+      
       if (recency_params[2 * i] == 1) {
-        data$recencytemp <- ifelse(data[, 2 + i] > recency_params[2 * i -
-                                                                    1], 1, 0)
+        data[,2+i] <- dplyr::case_when(
+          data[,2+i] > recency_params[2 * i - 1] ~ 1,
+          data[,2+i] <= recency_params[2 * i - 1] ~ 0
+        )
+        
       }
-      data <- plyr::rename(data, replace = c(recencytemp = paste0("recency_stat",
-                                                                  i)))
     }
-    data$recency_status <- ifelse(rowSums(data[(3 + n_recvars):ncol(data)]) >=
-                                    n_recvars, 1, 0)
-  })
+    
+    data <- data %>%
+      dplyr::mutate(recency_sum = rowSums(data[,3:(2+n_recvars)]),
+             recency_status = dplyr::case_when(
+               .data$recency_sum < n_recvars ~ 0,
+               .data$recency_sum >= n_recvars ~ 1,
+             ))
+  } else {
+    
+    stop("Error: Recency rule is not `binary_data` or `independent_thresholds`.")
+    
+  }
+  
   return(data)
 }
 
