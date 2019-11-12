@@ -358,8 +358,8 @@ mdrical <- function(data = NULL,
                                              maxit = maxit_integral)
           if (n_bootstraps > 0) {utils::setTxtProgressBar(pb, j)}
 
-          mdri_and_params_iterate <- dplyr::data_frame("MDRI" = mdri_iterate) %>%
-            dplyr::bind_cols(dplyr::as_data_frame(t(parameters)))
+          mdri_and_params_iterate <- tibble::tibble("MDRI" = mdri_iterate) %>%
+            dplyr::bind_cols(tibble::as_tibble(t(parameters)))
 
           return(mdri_and_params_iterate)
         }
@@ -414,13 +414,13 @@ mdrical <- function(data = NULL,
             plot_parameters <- parameters
           }
           if(output_bs_parms) {
-            bs_params <- dplyr::as_data_frame(t(parameters))[NULL,]
+            bs_params <- tibble::as_tibble(t(parameters))[NULL,]
             }
         } else if(j > 0) {
           mdris <- append(mdris, mdri_iterate)
           if(output_bs_parms) {
           bs_params <- bs_params %>%
-            dplyr::bind_rows(dplyr::as_data_frame(t(parameters)))
+            dplyr::bind_rows(tibble::as_tibble(t(parameters)))
           bs_parms_output[[functional_forms[i]]] <- bs_params
           }
           utils::setTxtProgressBar(pb, j)
