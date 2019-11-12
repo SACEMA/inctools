@@ -531,20 +531,17 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
     # Modified here
     survey_no[(i * no_s - (no_s - 1)):(i * no_s)] <- c(i, rep(NA, times = (no_s -
                                                                              1)))
-    out_I_Est[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(I_Est[i], digits = 5),
+    out_I_Est[(i * no_s - (no_s - 1)):(i * no_s)] <- c(I_Est[i],
                                                        rep(NA, times = (no_s - 1)))
-    out_RSE_I[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(RSE_I[i], digits = 5),
+    out_RSE_I[(i * no_s - (no_s - 1)):(i * no_s)] <- c(RSE_I[i],
                                                        rep(NA, times = (no_s - 1)))
     
     if (Boot == FALSE) {
-      out_RSE_I.infSS[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(RSE_I.infSS[i],
-                                                                     digits = 5), rep(NA, times = (no_s - 1)))
+      out_RSE_I.infSS[(i * no_s - (no_s - 1)):(i * no_s)] <- c(RSE_I.infSS[i], rep(NA, times = (no_s - 1)))
     }
     
-    out_CI_I_lo[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(CI_I_Mat[i, 1],
-                                                               digits = 5), rep(NA, times = (no_s - 1)))
-    out_CI_I_up[(i * no_s - (no_s - 1)):(i * no_s)] <- c(round(CI_I_Mat[i, 2],
-                                                               digits = 5), rep(NA, times = (no_s - 1)))
+    out_CI_I_lo[(i * no_s - (no_s - 1)):(i * no_s)] <- c(CI_I_Mat[i, 1], rep(NA, times = (no_s - 1)))
+    out_CI_I_up[(i * no_s - (no_s - 1)):(i * no_s)] <- c(CI_I_Mat[i, 2], rep(NA, times = (no_s - 1)))
     for (j in c(1:no_s)) {
       delta_code[(i * no_s - (no_s - j))] <- paste(i, j, sep = " vs ")
     }
@@ -592,22 +589,21 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
   }
   
   
-  out_deltaI_Est <- round(deltaI_Est_Vec, digits = 5)
-  out_RSE_deltaI <- round(RSE_deltaI, digits = 5)
+  out_deltaI_Est <- deltaI_Est_Vec
+  out_RSE_deltaI <- RSE_deltaI
   
   if (Boot == FALSE) {
-    out_RSE.deltaI.infSS <- round(out_RSE.deltaI.infSS, digits = 5)
-    out_p_value.infSS <- ifelse(p_value.infSS < 0.001, "<0.0001", round(p_value.infSS,
-                                                                        digits = 5))
+    out_RSE.deltaI.infSS <- out_RSE.deltaI.infSS
+    out_p_value.infSS <- p_value.infSS
   }
   
-  out_CI_deltaI_Mat <- round(CI_deltaI_Mat, digits = 5)
-  out_p_value <- ifelse(p_value < 0.001, "<0.0001", round(p_value, digits = 5))
+  out_CI_deltaI_Mat <- CI_deltaI_Mat
+  out_p_value <- p_value
   
-  MDRI.CI <- round(365.25 * data.frame(CI.low = stats::qnorm(alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)),
-                                       CI.up = stats::qnorm(1 - alpha/2, mean = MDRI, sd = sqrt(Var_MDRI))), digits = 3)
-  FRR.CI <- round(data.frame(CI.low = stats::qnorm(alpha/2, mean = FRR, sd = sqrt(Var_FRR)),
-                             CI.up = stats::qnorm(1 - alpha/2, mean = FRR, sd = sqrt(Var_FRR))), digits = 4)
+  MDRI.CI <- 365.25 * data.frame(CI.low = stats::qnorm(alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)),
+                                       CI.up = stats::qnorm(1 - alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)))
+  FRR.CI <- data.frame(CI.low = stats::qnorm(alpha/2, mean = FRR, sd = sqrt(Var_FRR)),
+                             CI.up = stats::qnorm(1 - alpha/2, mean = FRR, sd = sqrt(Var_FRR)))
   
   if (BMest == "same.test") {
     MDRI.CI <- MDRI.CI[1, ]
@@ -623,8 +619,7 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
     ARI <- 1 - exp(-as.numeric(out_I_Est))
     ARI.CI.low <- 1 - exp(-as.numeric(out_CI_I_lo))
     ARI.CI.up <- 1 - exp(-as.numeric(out_CI_I_up))
-    ARI.list <- round(data.frame(ARI = ARI, ARI.CI.low = ARI.CI.low, ARI.CI.up = ARI.CI.up),
-                      digits = 4)
+    ARI.list <- data.frame(ARI = ARI, ARI.CI.low = ARI.CI.low, ARI.CI.up = ARI.CI.up)
     if (Boot == FALSE) {
       output <- list(Incidence.Statistics = data.frame(Incidence = out_I_Est,
                                                        `CI low` = out_CI_I_lo, `CI up` = out_CI_I_up, RSE = out_RSE_I, RSE.Inf.SS = out_RSE_I.infSS),
