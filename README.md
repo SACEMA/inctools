@@ -1,6 +1,6 @@
 # Incidence Estimation Tools (*inctools*)
 
-[![Build Status](https://travis-ci.org/SACEMA/inctools.svg?branch=master)](https://travis-ci.org/SACEMA/inctools)
+[![Build Status](https://travis-ci.org/SACEMA/inctools.svg?branch=master)](https://travis-ci.org/SACEMA/inctools) [![codecov](https://codecov.io/gh/SACEMA/inctools/branch/master/graph/badge.svg)](https://codecov.io/gh/SACEMA/inctools)
 
 Tools for estimating HIV incidence from biomarker data, and calibrating recent infection tests.
 
