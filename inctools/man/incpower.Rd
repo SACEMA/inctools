@@ -2,11 +2,13 @@
 % Please edit documentation in R/power.R
 \name{incpower}
 \alias{incpower}
-\title{Power and sample size calculation for assay-based incidence estimation}
+\title{Power and Required Sample Size}
 \usage{
-incpower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
-  Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1,
-  BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR, BigT = 730)
+incpower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both",
+  alpha = 0.05, Power = 0.8, SS = "out", CR = 1, DE_H = 1,
+  DE_R = 1, BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
+  BigT = 730, Boot = FALSE, BS_Count = 1e+05, Cov.PrevH.I = c(0,
+  0), debug = FALSE)
 }
 \arguments{
 \item{I1}{Predicted incidence of HIV in survey 1.}
@@ -44,12 +46,21 @@ incpower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
 \item{RSE_FRR}{Relative standard error of FRR (vector/integer). If a single value is specified, that value is assumed to be the value for both surveys.}
 
 \item{BigT}{Post-infection time cut-off (days). Default 730. If a single value is specified, that value is assumed to be the value for both surveys.}
+
+\item{Boot}{True/False variable indicating whether variance of point estimates is to be calculated by Empirical Bootstrapping (TRUE) or Delta Method (FALSE), the default setting.}
+
+\item{BS_Count}{Specifies number of bootstrap samples for bootstrapped confidence intervals of incidence.}
+
+\item{Cov.PrevH.I}{Covariance of prevalence and incidence for bootstrap resampling.}
+
+\item{debug}{Enable debugging mode (browser)}
 }
 \value{
 Common sample size of two surveys--or the sample size of one survey given the other has already been completed--necessary to achieve a given power level for testing a null hypothesis that the incidence rates are identical between populations; alternatively, the power of said test under a particular sample size scenario. Function also returns implied statistics from input values on paramters, confidence limits, and population counts.
 }
 \description{
-Power and sample size calculation for assay-based incidence estimation
+Calculate power and required sample size for a given power to detect
+incidence change.
 }
 \details{
 The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.

@@ -1,6 +1,6 @@
 ---
 title: "Recent infection test calibration"
-date: "29 April 2017"
+date: "21 September 2018"
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >
@@ -76,7 +76,7 @@ The dataset `excalibdata` contains example data from an evaluation of an assay m
 
 The first example provides a variable that has pre-classified results, and uses only the complementary log-log functional form.
 
-*Note: To keep compute time reasonable during execution of the example code, only 1000 bootstraps are performed. To obtain reasonable standard errors and confidence intervals, 10,000 bootstraps are recommended.*
+*Note that in these examples we perform only 1,000 bootstraps, but in real-life use no fewer than 10,000 is recommended.*
 
 ```{r, results='hide' }
 mdri <- mdrical(data=excalibdata,
@@ -89,7 +89,8 @@ mdri <- mdrical(data=excalibdata,
                 recency_vars = "Recent",
                 n_bootstraps = 1000,
                 alpha = 0.05,
-                plot = TRUE)
+                plot = TRUE,
+                parallel = FALSE)
 ```
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
@@ -99,8 +100,6 @@ print(mdri)
 ### Example of `mdrical` using the logit cubic functional form and two independent thresholds on biomarkers
 
 This example also specifies a vector of variables and a vector of paramaters to define recency, using the assay result and the viral load. The paramaters in the vector `c(10,0,1000,1)` mean that recency is defined as an assay biomarker reading below 10 and a viral load reading above 1000.
-
-*Note: To keep compute time reasonable during execution of the example code, only 1000 bootstraps are performed. To obtain reasonable standard errors and confidence intervals, 10,000 bootstraps are recommended.*
 
 ```{r, results='hide' }
 mdri <- mdrical(data=excalibdata,
@@ -114,34 +113,61 @@ mdri <- mdrical(data=excalibdata,
                 recency_params = c(10,0,1000,1),
                 n_bootstraps = 1000,
                 alpha = 0.05,
-                plot = TRUE)
+                plot = TRUE,
+                parallel = FALSE)
 ```
 
 ```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
 print(mdri)
 ```
 
-### Example of `mdrical` in which bootstraps are run in parallel
+### Obtaining fitting parameters for bootstrap iterations
 
-As above, but asking for both functional forms and parellelising the bootstrapping. In this case, the job is split over four cores.
+It is possible to output the fitting parameters for each bootstrap iteration, by 
+using the switch `output_bs_parms = TRUE`. This  provides the user with the 
+family of $P_{R}(t)$ curves used to obtain the confidence intervals on 
+the MDRI estimate, for potential further manipulation. Note that the functional 
+form `cloglog_linear` form has two parameters (labeled $\beta_0$ and $\beta_1$), 
+and the `logit_cubic` form has four parameters (labeled $\beta_0$ to $\beta_3$). 
+In each case $\beta_0$ denotes the intercept. In order to use these parameters to 
+obtain predicted probabilities of testing recent for given times since infection, 
+the complementary log-log and logit link functions must be "inverted", so that 
+the equations giving predicted probabilities are
 
-**Note: To make sure this vignette builds in a reasonable time, the example code, but not the output, is shown.**
+\begin{equation}
+	P_R(t) = \exp(-\exp(\beta_{0} + \beta_{1}\ln(t)))
+\end{equation}
 
-```{r, eval = FALSE}
-mdrical(data=excalibdata,
-                 subid_var = "SubjectID",
-                 time_var = "DaysSinceEDDI",
-                 recency_cutoff_time = 730.5,
-                 inclusion_time_threshold = 800,
-                 functional_forms = c("logit_cubic","cloglog_linear"),
-                 recency_rule = "independent_thresholds",
-                 recency_vars = c("Result","VL"),
-                 recency_params = c(10,0,1000,1),
-                 n_bootstraps = 10000,
-                 alpha = 0.05,
-                 plot = TRUE,
-                 parallel = TRUE,
-                 cores=4)
+and 
+
+\begin{equation}
+	P_R(t) = \frac{1}{1 + \exp(-(\beta_{0} + \beta_{1}t + \beta_{2}t^2 + \beta_{3}t^3))}
+\end{equation}
+
+respectively.
+
+As a demonstration, we perform only 10 bootstrap iterations in the example below:
+
+```{r, results='hide' }
+mdri <- mdrical(data=excalibdata,
+                subid_var = "SubjectID",
+                time_var = "DaysSinceEDDI",
+                recency_cutoff_time = 730.5,
+                inclusion_time_threshold = 800,
+                functional_forms = c("cloglog_linear","logit_cubic"),
+                recency_rule = "independent_thresholds",
+                recency_vars = c("Result","VL"),
+                recency_params = c(10,0,1000,1),
+                n_bootstraps = 10,
+                parallel = FALSE,
+                alpha = 0.05,
+                plot = TRUE,
+                output_bs_parms = TRUE)
+```
+
+```{r, fig.width=6.5, fig.height=5, fig.align="center", fig.show='hold'}
+print(mdri$Models)
+print(mdri$BSparms)
 ```
 
 ## Estimating FRR using binomial proportions with `frrcal`

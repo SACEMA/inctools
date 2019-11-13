@@ -1,0 +1,3 @@
+We use bgruening's conda r skeleton helpers from https://github.com/bgruening/conda_r_skeleton_helper
+
+Those scripts are licenced under the MIT licence.

@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-##Introduction
+## Introduction
 
 The *inctools*  package is broadly conceived to provide state of the art functionality to support numerous aspects of population level incidence surveillance. Estimating incidence in formally constituted study cohorts is conceptually straightforward and not the focus of this package.
 
@@ -39,7 +39,7 @@ The lack of any formal warranty notwithstanding, users are invited to contact th
 
 
 
-##Historical context
+## Historical context
 
 Amongst other features, Version 1 of *inctools* makes available the functionality of a spreadsheet based tool set previous circulated in three major versions under the name ABIE (*Assay Based Incidence Estimation*). Version 3 of ABIE is still available and may for a little while retain some advantages over an R package, for some users, such as the automatic generation of plots as part of some calculations, the production of which, in the initial R package, would require some R programmer intervention. However, the ABIE spreadsheet tools family is now technically obsolete and superseded, but will be supported for a while on [www.incidence-estimation.org]  (http://www.incidence-estimation.org/page/tools-for-incidence-from-biomarkers-for-recent-infection). The ABIE feature set forms the basis of two components of *inctools*:
 [^1]:	Analysis in support of survey design
@@ -48,11 +48,11 @@ Additionally, *inctools*  incorporates the heart of a little known, now deprecat
 [^3]:	Estimation of key performance characteristics of tests for ‘recent infection’
 
 
-##Overview of Functionality and Use
+## Overview of Functionality and Use
 
 Fleshing out the three primary components just noted above:
 
-###Analysis in support of survey design
+### Analysis in support of survey design
 
 Two primary exposed functions (`incprecision` and `incpower`) provide permutations on the relationship between
 
@@ -73,7 +73,7 @@ The primary (and currently implemented) uses are expected to be
 
 Users of `incprecision` and `incpower` will need to make significant efforts to assess the context of intended use, but require no detailed knowledge of the statistical theory underpinning the details of the calculations. The two primary functions each offer their various respective permutations on usage by having the user provide the value “out” for the parameter which is requested as output, while all the other logically necessary parameters will need to be supplied, in order to avoid an error.
 
-###Analysis of survey data
+### Analysis of survey data
 
 Once a population level survey has been carried out, the fully specified data set will essentially consist of subject level records indicating demographic factors, cluster/stratum membership, and various clinical indicators such as final HIV status and recency status.
 In order to accommodate arbitrarily sophisticated analysis of such complex data sets, the conception of *inctools*  is that a substantial layer of ‘pre-processing’ is expected to routinely precede any invocation of *inctools*  functionality. Use of the primary, preferred entry point into incidence estimate (function incprops) requires survey data to be reduced to:
@@ -95,7 +95,7 @@ It is usually the responsibility of the developers of recent infection tests to 
 The core functionality in this section of the package is provided by function `mdrical`, which produces estimates of mean duration of recent infection and function `frrcal` which produces estimates of false recent rate, both from data typically only available to test developers i.e. patient level test results from a putative recent infection test, applied at various times relative to relatively precisely estimated infection/seroconversion times.  
 
 
-##Glossary
+## Glossary
 
 The package inctools, and natural discussion of its application, implies use of some common or specialised (to this sub-field) terms which it may be prudent to define here. These are not detailed technical definitions, but are intended to serve as reminders, or, should they be unclear, would serve to highlight the need to investigate primary sources.
 
@@ -148,21 +148,16 @@ It should be noted that:
 *	It is not appropriate to scale the variances of the test property (MDRI and FRR) estimates, as these are not estimated in the incidence survey, but rather arise in the recency test development process.
 
 
-##Citation
+## Citation
 
 The use of package *inctools* implies the use of the methodology derived in the following article, which: Kassanjee R, McWalter TA, Bärnighausen T, Welte A. A new general biomarker-based incidence estimator. Epidemiology. 2012; 23(5): 721-728. Some features implemented in *inctools* are currently not published outside the package contents, and hence some additional technical details are documented in the appendix of this vignette.
 
 
-##Acknowledgements
+## Acknowledgements
 Funding support for the development of these tools has historically been variously provided by the South African National Research Foundation, the Bill and Melinda Gates Foundation, the (erstwhile) Canadian International Development Agency, UNAIDS, and the World Health Organisation.
-Many people have contributed indirectly to this work by providing feedback on major and minor aspects and revisions.  
+Many people have contributed indirectly to this work by providing feedback on major and minor aspects and revisions.
 
-
-
-
-
-
-##Appendix: Technical details
+## Appendix: Technical details
 
 The critical core of all the functionality of package *inctools* is the incidence estimator of *Kassanjee et al* and some hitherto unpublished generalisations to accomodate structured survey design, including incomplete coverage of recency ascertainment. In essence, this generalisation involves the replacement of simple survey counts, assumed in *Kassanjee et al* to be trinomially distributed, by estimated prevalences of HIV and of recent infection amongst HIV positives (including covariance, which does not arise in the trinomial distribution case). Additionally, the variance of the difference of incidence estimators raises further issues such as
 
@@ -177,20 +172,22 @@ Three cases of test property sharing can feasibly arise:
 
 Below are the variances of the incidence difference estimator for the three cases
 
-Case 1: Surveys share a single estimate for MDRI and a single estimate for FRR
-\begin{align}
+### Case 1: Surveys share a single estimate for MDRI and a single estimate for FRR
+
+\begin{align*}
 V[\Delta \mathbb{I}]_1 \approx &
 \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
 &\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
   & \frac{PrevH_1}{1 - PrevH_1}(\Omega - \beta T))\ (RSE_{PrevR_1}\ PrevR_1)^2) + \\     & \frac{PrevH_2}{1 - PrevH_2}(\Omega - \beta T))\ (RSE_{PrevR_2}PrevR_2)^2) +\\
     &\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
 &\Big(\big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{(1 - PrevH_1)} -\frac{PrevH_2(T\ PrevR_2 -\Omega)}{(1 - PrevH_2)}\big)(\Omega - \beta T)^2 \Big)^2 RSE_{\beta}\ \beta\\
-\end{align}
+\end{align*}
 
 
 
-Case 2: Surveys share a single estimate for MDRI, but have independent FRR estimates
-\begin{align}
+### Case 2: Surveys share a single estimate for MDRI, but have independent FRR estimates
+
+\begin{align*}
 V[\Delta \mathbb{I}]_2 \approx &
  \Big(\frac{(PrevR_1 - \beta)}{(1 - PrevH_1)^2} (\Omega - \beta T)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
 &\Big(\frac{(PrevR_2 - \beta)}{(1 - PrevH_2)^2} (\Omega - \beta T)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
@@ -198,11 +195,12 @@ V[\Delta \mathbb{I}]_2 \approx &
 &\Big(\big(\frac{\beta\ PrevH_1 - PrevR_1 \ PrevH_1}{1 - PrevH_1}  -  \frac{\beta\ PrevH_2 - PrevR_2 \ PrevH_2}{1 - PrevH_2}\big) (\Omega - \beta \ T)^2 \Big)^2  RSE_{MDRI}\ MDRI +\\
       &\Big(\frac{PrevH_1(T\ PrevR_1 - \Omega)}{1 - PrevH_1}(\Omega - \beta_1 \ T)^2\Big)^2 RSE_{\beta_1}\ \beta_1 + \\  
       &\Big(\frac{PrevH_2(T\ PrevR_2 - \Omega)}{1 - PrevH_2}(\Omega - \beta_2 \ T)^2)\Big)^2 RSE_{\beta_2}\ \beta_2
-\end{align}
+\end{align*}
 
 
-Case 3: Both MDRI and FRR are independently estimated in each survey
-\begin{align}
+### Case 3: Both MDRI and FRR are independently estimated in each survey
+
+\begin{align*}
 V[\Delta \mathbb{I}]_3 \approx &
  \Big(\frac{(PrevR_1 - \beta_1)}{(1 - PrevH_1)^2} (\Omega_1 - \beta_1 T_1)\Big)^2\   (RSE_{PrevH_1}PrevH_1)^2 + \\
 &\Big(\frac{(PrevR_2 - \beta_2)}{(1 - PrevH_2)^2} (\Omega_2 - \beta_2 T_2)\Big)^2\ (RSE_{PrevH_2}PrevH_2)^2 +\\
@@ -211,16 +209,13 @@ V[\Delta \mathbb{I}]_3 \approx &
     &\Big(\frac{\beta_2\ PrevH_2 - PrevR_2\ PrevH_2}{1 - PrevH_2}\ (\Omega_2 - \beta_2\ T_2)^2\Big)^2 RSE_{MDRI_2}\ MDRI_2    +\\
       &\Big(\frac{PrevH_1(T_1\ PrevR_1 - \Omega_1}{1 - PrevH_1}(\Omega_1 -\beta_1\ T_1)^2\Big)^2  RSE_{\beta_1}\ \beta_1 + \\     
       &\Big(\frac{PrevH_2(T_2\ PrevR_2 - \Omega_2}{1 - PrevH_2}(\Omega_2 -\beta_2\ T_2)^2\Big)^2  RSE_{\beta_2}\ \beta_2
-\end{align}
+\end{align*}
 
-
-Note:
+### Note:
 
 * The option for the assay characteristic scheme is specified by function parameter `BMest`. Subscripts 1 and 2 in the parameter notation denote associated survey or test parameters. The variances of the three cases follow.
 * To avoid unnecessarily confusing complexity in the specification of multiple *recency-test-property-estimate-sharing* rules for different subsets of a global set of surveys, only a single *recency-test-property-estimate-sharing* rule is allowed in any set of surveys submitted in one invocation of the functions `incprops` and `inccounts`.
 * If different recency tests are used in separate surveys, but they happen to have any numerically identical test property estimates, this will still need to be specified as independent test properties, as these estimates would be *statistically independent*.
-
-
 
 ### Crucial note on choice of null hypothesis, calculation of p-values and meaning of “statistical power”
 
@@ -234,10 +229,8 @@ The approach taken here is to:
 * allow the prevalence for each context to be independently estimated from the data from that context.  (Note that even if the data does not support the rejection of the hypothesis that the prevalences are identical, benchmarking indicates that there is little or no advantage in constructing the null hypothesis to include equal prevalence.)
 
 The preceding assumptions allow the calculation of a p-value, which is done according to a two-tailed test, capturing the point that the experimenter has no basis to pre-determine the acceptable direction of any incidence difference.
- 
+
 Note that while it is common to report “power” as simply the probability of correctly rejecting a null hypothesis, without regard to whether the inferred direction of difference is in correspondence with the underlying reality, the present construction specifically presumes a two-tailed test, where the direction of any particular inferred difference will be either correct or incorrect.  Hence, *inctools* calculates the probability of *correctly* detecting the sign of the incidence difference through the rejection of the null hypothesis throug the attainment of a below-threshold *p value*.  Numerically, the probability of rejecting the null hypothesis, but with the incorrect direction for the inferred effect, will usually be *very* small, unless the study design has no useful statistical power in any case. The primary difference between this implementation and an alternative likely to be proposed, is in the insistence on a two tailed test, which should not be controversial in this situation as it would be difficult to defend the claim that survey implementers can claim to know, in advance, the direction of a change in incidence.
-
-
 
 <!--   #not-for-release -->
 <!--

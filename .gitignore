@@ -33,3 +33,9 @@ inctools.Rcheck
 # Mac garbage
 .DS_Store
 
+# PyCharm files
+.idea/
+
+# Julia test scripts
+inctools-julia/test.jl
+inctools-julia/truncated_normal.jl
