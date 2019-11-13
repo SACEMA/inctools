@@ -8,7 +8,9 @@ This package is a more robust implementation of the deprecated spreadsheet tools
 
 ## Status
 
-[![Build Status](https://travis-ci.org/SACEMA/inctools.svg?branch=master)](https://travis-ci.org/SACEMA/inctools) [![codecov](https://codecov.io/gh/SACEMA/inctools/branch/master/graph/badge.svg)](https://codecov.io/gh/SACEMA/inctools)
+[![CRAN status](https://www.r-pkg.org/badges/version/inctools)](https://cran.r-project.org/package=inctools)
+[![Build Status](https://travis-ci.org/SACEMA/inctools.svg?branch=master)](https://travis-ci.org/SACEMA/inctools)
+[![codecov](https://codecov.io/gh/SACEMA/inctools/branch/master/graph/badge.svg)](https://codecov.io/gh/SACEMA/inctools)
 
 ## Installation
 
