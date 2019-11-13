@@ -219,6 +219,22 @@ incprops(PrevH = 0.1,
          debug = FALSE)
 
 
-
+incpower(I1 = 0.05, 
+         I2 = 0.03, 
+         PrevH1 = 0.20, 
+         PrevH2 = 0.20,
+         n1 = 5000, 
+         n2 = 5000, 
+         alpha = 0.05, 
+         Power = "out", 
+         SS = NULL,
+         DE_H = c(1,1.1), 
+         DE_R = 1, 
+         BMest = "FRR.indep", 
+         MDRI = 200,
+         RSE_MDRI = 0.05, 
+         FRR = c(0.01, 0.02), 
+         RSE_FRR = c(0.20, 0.15), 
+         BigT = 730.5)$Inc.Difference.Statistics$Power
 
 
