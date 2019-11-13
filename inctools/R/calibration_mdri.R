@@ -68,6 +68,8 @@ sample_frac_groups = function(tbl, size, replace = FALSE, weight=NULL) {
 #' from the calculation (in same unit as recency_cutoff_time, default = 800).
 #' @param n_bootstraps Number of subject-level bootstrap resampling operations
 #' for estimating confidence intervals, default = 10000.
+#' @param random_seed Pass a random seed for reproducible bootstrapping.
+#' Default is NULL.
 #' @param alpha Confidence level, default=0.05.
 # ADD OPTION TO GET FULL LIST OF MDRIs from the bootstrapping procedure or the
 # shape of the distribution or something
@@ -150,6 +152,7 @@ mdrical <- function(data = NULL,
                     recency_vars = NULL,
                     recency_params = NULL,
                     n_bootstraps = 10000,
+                    random_seed = NULL,
                     alpha = 0.05,
                     plot = TRUE,
                     parallel = ifelse(n_bootstraps == 0, FALSE, TRUE),
@@ -242,6 +245,10 @@ mdrical <- function(data = NULL,
     parallel <- FALSE
   }
 
+  if (!is.null(random_seed)) {
+    set.seed(random_seed)
+  }
+  
   ## Assign numeric subject ids, recency variables and recency status
   data <- process_data(data = data,
                        subid_var = subid_var,
@@ -259,9 +266,18 @@ mdrical <- function(data = NULL,
   tolerance_integral = 1e-08
   maxit_integral = 10000
 
-  n_subjects <- max(data$sid)
+  #n_subjects <- max(data$sid)
 
-  mdri_output <- tibble::tibble(matrix(ncol = 7, nrow = 0))
+  mdri_output <- tibble::tibble(
+    FuncForm = NA,
+    PE = NA,
+    CI_LB = NA,
+    CI_UB = NA,
+    SE = NA,
+    n_recent = NA,
+    n_subjects = NA,
+    n_observations = NA, .rows = 0
+  ) 
   model_output <- list()
 
   if (output_bs_parms) {
@@ -433,25 +449,35 @@ mdrical <- function(data = NULL,
     if (n_bootstraps == 0) {
       mdri_sd <- NA
       mdri_ci <- c(NA, NA)
-      mdri_ff <- tibble::tibble(round(mdri, 4),
-                            NA,
-                            NA,
-                            NA,
-                            sum(data$recency_status),
-                            length(unique(data$sid)),
-                            nrow(data))
-      mdri_output <- rbind(mdri_output, mdri_ff)
+      mdri_output <- mdri_output %>%
+        dplyr::bind_rows(
+          tibble::tibble(
+            FuncForm = functional_form,
+            PE = mdri,
+            CI_LB = mdri_ci[1],
+            CI_UB = mdri_ci[2],
+            SE = mdri_sd,
+            n_recent = sum(data$recency_status),
+            n_subjects = length(unique(data$sid)),
+            n_observations = nrow(data)
+          ) 
+        )
     } else {
       mdri_sd <- stats::sd(mdris)
       mdri_ci <- stats::quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
-      mdri_ff <- tibble::tibble(round(mdri, 4),
-                            round(mdri_ci[1], 4),
-                            round(mdri_ci[2], 4),
-                            round(mdri_sd, 4),
-                            sum(data$recency_status),
-                            length(unique(data$sid)),
-                            nrow(data))
-      mdri_output <- rbind(mdri_output, mdri_ff)
+      mdri_output <- mdri_output %>%
+        dplyr::bind_rows(
+          tibble::tibble(
+            FuncForm = functional_form,
+            PE = mdri,
+            CI_LB = mdri_ci[1],
+            CI_UB = mdri_ci[2],
+            SE = mdri_sd,
+            n_recent = sum(data$recency_status),
+            n_subjects = length(unique(data$sid)),
+            n_observations = nrow(data)
+          ) 
+        )
     }
 
 
@@ -463,14 +489,14 @@ mdrical <- function(data = NULL,
     }
 
   }  # functional forms
-  rownames(mdri_output) <- functional_forms
-  colnames(mdri_output) <- c("PE", "CI_LB", "CI_UB", "SE", "n_recent", "n_subjects", "n_observations")
 
   if (!plot) {plot_output <- NULL}
   if (!output_bs_parms) {bs_parms_output <- NULL}
 
   output <- list(MDRI = mdri_output, Models = model_output, Plots = plot_output, BSparms = bs_parms_output)
 
+  # Does this affect the calling environment?
+  options(pillar.sigfig = 6)
   return(output)
 }
 
@@ -516,13 +542,13 @@ assign_recency_status <- function(data = data,
   
   } else if (recency_rule == "independent_thresholds") {
    
-    n_recvars <- length(recency_params)/2
-    recencyvars <- paste0("recency", 1:n_recvars)
-    statusvars <- paste0("recency_stat", 1:n_recvars)
+    n_recentvars <- length(recency_params)/2
+    recencyvars <- paste0("recency", 1:n_recentvars)
+    statusvars <- paste0("recency_stat", 1:n_recentvars)
     data <- data %>%
       dplyr::rename_at(recencyvars, function(x) statusvars)
    
-    for (i in 1:n_recvars) {
+    for (i in 1:n_recentvars) {
       if (recency_params[2 * i] == 0) {
         
         data[,2+i] <- dplyr::case_when(
@@ -543,10 +569,10 @@ assign_recency_status <- function(data = data,
     }
     
     data <- data %>%
-      dplyr::mutate(recency_sum = rowSums(data[,3:(2+n_recvars)]),
+      dplyr::mutate(recency_sum = rowSums(data[,3:(2+n_recentvars)]),
              recency_status = dplyr::case_when(
-               .data$recency_sum < n_recvars ~ 0,
-               .data$recency_sum >= n_recvars ~ 1,
+               .data$recency_sum < n_recentvars ~ 0,
+               .data$recency_sum >= n_recentvars ~ 1,
              ))
   } else {
     

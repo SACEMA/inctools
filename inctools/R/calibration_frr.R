@@ -157,8 +157,9 @@ frrcal <- function(data = NULL,
   p <- nr / n
   sigma <- sqrt( (p * (1 - p)) / n )
   binom_ci <- binom::binom.confint(nr, n, conf.level = 1 - alpha, methods = method)
-  FRR <- tibble::tibble(FRRest = p, SE = sigma, LB = binom_ci$lower, UB = binom_ci$upper, 
+  FRR <- tibble::tibble(FRRest = p, SE = sigma, CI_LB = binom_ci$lower, CI_UB = binom_ci$upper, 
                         alpha = alpha, n_recent = nr, n_subjects = n, n_observations = nrow(data), 
                         ci_method = method)
+  options(pillar.sigfig = 6)
   return(FRR)
 }
