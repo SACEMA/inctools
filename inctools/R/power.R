@@ -1,6 +1,5 @@
-# Incidence Estimation Tools Copyright (C) 2015-2018, DST-NRF Centre of
-# Excellence in Epidemiological Modelling and Analysis (SACEMA), Stellenbosch
-# University and individual contributors.
+# Incidence Estimation Tools. Copyright (C) 2015-2019, individual contributors
+# and Stellenbosch University.
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
