@@ -1,6 +1,2 @@
-<<<<<<< HEAD
 Fabric=1.14.1
-=======
-Fabric==1.10.1
->>>>>>> shinyapps
 #pycrypto==2.6.1
