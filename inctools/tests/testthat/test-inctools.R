@@ -23,6 +23,93 @@ test_that("mdri estimation works", {
                        parallel = FALSE)$MDRI$PE, 248.1445)
 })
 
+test_that("mdrical() error messages work", {
+  expect_error(
+    mdrical(subid_var = "SubjectID",
+            time_var = "DaysSinceEDDI",
+            recency_cutoff_time = 730.5,
+            inclusion_time_threshold = 800,
+            functional_forms = c("cloglog_linear"),
+            recency_rule = "binary_data",
+            recency_vars = "Recent",
+            n_bootstraps = 0,
+            plot = FALSE,
+            parallel = FALSE),
+    "No input data has been specified", fixed = TRUE
+  )
+  expect_error(
+    mdrical(data=excalibdata,
+            time_var = "DaysSinceEDDI",
+            recency_cutoff_time = 730.5,
+            inclusion_time_threshold = 800,
+            functional_forms = c("cloglog_linear"),
+            recency_rule = "binary_data",
+            recency_vars = "Recent",
+            n_bootstraps = 0,
+            plot = FALSE,
+            parallel = FALSE),
+    "No subject identifier has been specified", fixed = TRUE
+  )
+  expect_error(
+    mdrical(data=excalibdata,
+            subid_var = "SubjectID",
+            time_var = "DaysSinceEDDI",
+            recency_cutoff_time = 730.5,
+            inclusion_time_threshold = 800,
+            functional_forms = c("logit_cubic"),
+            recency_rule = "garbage_rule",
+            recency_vars = "Recent",
+            n_bootstraps = 0,
+            plot = FALSE,
+            parallel = FALSE),
+    "Please specify a valid recency rule", fixed = TRUE
+  )
+  expect_error(
+    mdrical(data=excalibdata,
+            subid_var = "SubjectID",
+            time_var = "DaysSinceEDDI",
+            recency_cutoff_time = 730.5,
+            inclusion_time_threshold = 800,
+            functional_forms = c("logit_cubic"),
+            recency_rule = "binary_data",
+            recency_vars = c("Result","VL"),
+            recency_params = c(10,0,1000,1),
+            n_bootstraps = 0,
+            plot = FALSE,
+            parallel = FALSE),
+    "Binary data should have one recency variable", fixed = TRUE
+  )
+  expect_error(
+    mdrical(data=excalibdata,
+            subid_var = "SubjectID",
+            time_var = "DaysSinceEDDI",
+            recency_cutoff_time = 730.5,
+            inclusion_time_threshold = 800,
+            functional_forms = c("logit_cubic"),
+            recency_rule = "independent_thresholds",
+            recency_vars = "Recent",
+            recency_params =c(10,0,1000,1),
+            n_bootstraps = 0,
+            plot = FALSE,
+            parallel = FALSE),
+    "The number of recency variables must match the number of recency paramaters", fixed = TRUE
+  )
+  expect_error(
+    mdrical(data=excalibdata,
+            subid_var = "SubjectID",
+            time_var = "DaysSinceEDDI",
+            recency_cutoff_time = 730.5,
+            inclusion_time_threshold = 800,
+            functional_forms = c("logit"),
+            recency_rule = "binary_data",
+            recency_vars = "Recent",
+            n_bootstraps = 0,
+            plot = FALSE,
+            parallel = FALSE),
+    "Please specify valid functional form(s)", fixed = TRUE
+  )
+})
+
 test_that("frr estimation works", {
   expect_equal(frrcal(data=excalibdata,
                       subid_var = "SubjectID",

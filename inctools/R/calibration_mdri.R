@@ -177,9 +177,6 @@ mdrical <- function(data = NULL,
     stop("Specified data is not a dataframe or does not exist")
   }
 
-  if (is.null(functional_forms)) {
-    stop("Please select at least one functional form to apply to the data")
-  }
 
   if (is.null(recency_rule)) {
     stop("Please specify a recency rule")
@@ -189,14 +186,13 @@ mdrical <- function(data = NULL,
     stop("Please specify at least one Recency Variable")
   }
 
-  if (recency_rule != "binary_data" &
-      recency_rule != "independent_thresholds") {
-    stop("Please specify a valid recency rule")
-  }
+    if (!(recency_rule %in% c("binary_data", "independent_thresholds"))) {
+      stop("Please specify a valid recency rule")
+    }
 
   if (recency_rule == "binary_data") {
     if (length(recency_vars) > 1) {
-      stop("Binary data should be specified in one recency (outcome) variable.")
+      stop("Binary data should have one recency variable")
     }
     # This line was broken. Should we have a similar check?
     # if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
@@ -206,12 +202,17 @@ mdrical <- function(data = NULL,
 
   if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 *
       length(recency_params)) {
-    stop("The number of recency variables must match the number of recency
-         paramaters.")
+    stop("The number of recency variables must match the number of recency paramaters")
   }
 
-  if (is.null(subid_var) | is.null(time_var)) {
-    stop("Subject identifier and time variables must be specified.")
+  if (is.null(functional_forms)) {
+    stop("Please select at least one functional form to apply to the data")
+  }
+  
+  for (ff in functional_forms) {
+    if (!(ff %in% c("cloglog_linear", "logit_cubic"))) {
+      stop("Please specify valid functional form(s)")
+    }
   }
 
   # check that subject id, time and recency variables exist
