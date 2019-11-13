@@ -54,9 +54,27 @@
 #' @export
 
 
-incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
-                     Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI,
-                     RSE_MDRI, FRR, RSE_FRR, BigT = 730, Boot = FALSE, BS_Count = 100000, Cov.PrevH.I = c(0,0),
+incpower <- function(I1, 
+                     I2, 
+                     PrevH1, 
+                     PrevH2, 
+                     n1 = "both", 
+                     n2 = "both", 
+                     alpha = 0.05,
+                     Power = 0.8, 
+                     SS = "out", 
+                     CR = 1, 
+                     DE_H = 1, 
+                     DE_R = 1, 
+                     BMest = "same.test", 
+                     MDRI,
+                     RSE_MDRI, 
+                     FRR, 
+                     RSE_FRR, 
+                     BigT = 730, 
+                     Boot = FALSE, 
+                     BS_Count = 100000, 
+                     Cov.PrevH.I = c(0,0),
                      debug  = FALSE) {
 
   if (debug) {browser()}
@@ -106,6 +124,18 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
   if (sum(BigT <= 182) > 0) {
     warning("BigT is smaller than half a year")
+  }
+  
+  if ( ( (!is.null(SS) && SS == "out") | n1 == "out" | n2 == "out") & Power == "out") {
+    stop("Either power or sample size must be an output")
+  }
+  
+  if ( (n1 == "both" & n2 != "both") | (n1 != "both" & n2 == "both")  ) {
+    stop("If common sample size is requested both n1 and n2 must be 'both'")
+  }
+  
+  if ( n1 != "out" & n2 != "out" & n1 != "both" & n2 != "both" & (!is.null(SS) && SS == "out")) {
+    stop("If sample size is requested, either n1 or n2 or common sample size must be requested")
   }
 
   # dimension of inputs (number of surveys)
@@ -382,7 +412,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
 
 
-    } else if (SS == "out" & n1 == "out") {
+    } else if ((!is.null(SS) && SS == "out") & n1 == "out") {
     if (n2 == "out") {
       stop("both n1 and n2 cannot be designated 'out'")
     }
@@ -612,7 +642,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
 
 
-  } else if (SS == "out" & n2 == "out") {
+  } else if ((!is.null(SS) && SS == "out") & n2 == "out") {
     if (n1 == "out") {
       stop("both n1 and n2 cannot be designated 'out'")
     }
@@ -845,7 +875,7 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
 
 
-  } else if (SS == "out" & n1 == "both" & n2 == "both") {
+  } else if ((!is.null(SS) && SS == "out") & n1 == "both" & n2 == "both") {
     if (BMest == "same.test") {
       SS <- ceiling(sum(I^2 * ((1/PrevH) * (DE_H/(1 - PrevH) + (DE_R/CR) *
                                               (PrevR/PrevH) * (1 - PrevR/PrevH)/((PrevR/PrevH - FRR)^2))))/((deltaI_Est/(stats::qnorm(1 -
