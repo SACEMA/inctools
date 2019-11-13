@@ -9,7 +9,9 @@ test_that("mdri estimation works", {
                        recency_vars = "Recent",
                        n_bootstraps = 0,
                        plot = FALSE,
-                       parallel = FALSE)$MDRI$PE, 235.8039)
+                       parallel = FALSE)$MDRI$PE, 
+               235.8039,
+               tolerance = 1e-05)
   expect_equal(mdrical(data=excalibdata,
                        subid_var = "SubjectID",
                        time_var = "DaysSinceEDDI",
@@ -20,7 +22,23 @@ test_that("mdri estimation works", {
                        recency_vars = "Recent",
                        n_bootstraps = 0,
                        plot = FALSE,
-                       parallel = FALSE)$MDRI$PE, 248.1445)
+                       parallel = FALSE)$MDRI$PE, 
+               248.1445,
+               tolerance = 1e-05)
+  expect_equal(mdrical(data=excalibdata,
+                       subid_var = "SubjectID",
+                       time_var = "DaysSinceEDDI",
+                       recency_cutoff_time = 730.5,
+                       inclusion_time_threshold = 800,
+                       functional_forms = c("cloglog_linear"),
+                       recency_rule = "binary_data",
+                       recency_vars = "Recent",
+                       n_bootstraps = 50,
+                       random_seed = 123,
+                       plot = FALSE,
+                       parallel = FALSE)$MDRI$SE, 
+               12.86835,
+               tolerance = 1e-05)
 })
 
 test_that("mdrical() error messages work", {
@@ -136,7 +154,7 @@ test_that("frr estimation works", {
                       recency_vars = c("Result","VL"),
                       recency_params = c(10,0,1000,1),
                       alpha = 0.05,
-                      method = "probit")$LB, 0.01460227)
+                      method = "probit")$CI_LB, 0.01460227)
   expect_equal(frrcal(data=excalibdata,
                       subid_var = "SubjectID",
                       time_var = "DaysSinceEDDI",
@@ -145,7 +163,7 @@ test_that("frr estimation works", {
                       recency_vars = c("Result","VL"),
                       recency_params = c(10,0,1000,1),
                       alpha = 0.05,
-                      method = "probit")$UB, 0.05720647)
+                      method = "probit")$CI_UB, 0.05720647)
 })
 
 test_that("incidence estimation works", {
@@ -171,37 +189,67 @@ test_that("incidence estimation works", {
                         RSE_MDRI = c(0.05,0.07,0.06),
                         FRR = c(0.01,0.009,0.02), 
                         RSE_FRR = c(0.2,0.2,0.1), 
-                        BigT = 730.5)$Incidence.Difference.Statistics$p.value,
+                        BigT = 730.5)$Incidence.Difference.Statistics$p_value,
                c(0.01491562,0.39928244,0.01491562,0.05327965,0.39928244,0.05327965))
+})
+
+test_that("inccounts() and incprops() give the same answers", {
   expect_equal(inccounts(N = 10000,
-                             N_H = 1000,
-                             N_testR = 990,
-                             N_R = 99,
-                             DE_H = 1.2,
-                             DE_R = 1.2,
-                             Boot = FALSE,
-                             alpha = 0.05,
-                             MDRI= 200,
-                             RSE_MDRI = 0.1,
-                             FRR = 0.01,
-                             RSE_FRR = 0.25,
-                             BigT = 730.5,
-                             Covar_HR = 0,
-                             debug = FALSE),
-                   incprops(PrevH = 0.1, 
-                            RSE_PrevH = 0.03286335,
-                            PrevR = 0.1, 
-                            RSE_PrevR = 0.1044466,
-                            Boot = FALSE,
-                            alpha = 0.05,
-                            MDRI= 200,
-                            RSE_MDRI = 0.1,
-                            FRR = 0.01,
-                            RSE_FRR = 0.25,
-                            BigT = 730.5,
-                            Covar_HR = 0,
-                            debug = FALSE),
-                   tolerance = 1e-07)
+                         N_H = 1000,
+                         N_testR = 990,
+                         N_R = 99,
+                         DE_H = 1.2,
+                         DE_R = 1.2,
+                         Boot = FALSE,
+                         alpha = 0.05,
+                         MDRI= 200,
+                         RSE_MDRI = 0.1,
+                         FRR = 0.01,
+                         RSE_FRR = 0.25,
+                         BigT = 730.5,
+                         Covar_HR = 0,
+                         debug = FALSE)$Incidence.Statistics$Incidence,
+               incprops(PrevH = 0.1, 
+                        RSE_PrevH = 0.03286335,
+                        PrevR = 0.1, 
+                        RSE_PrevR = 0.1044466,
+                        Boot = FALSE,
+                        alpha = 0.05,
+                        MDRI= 200,
+                        RSE_MDRI = 0.1,
+                        FRR = 0.01,
+                        RSE_FRR = 0.25,
+                        BigT = 730.5,
+                        Covar_HR = 0,
+                        debug = FALSE)$Incidence.Statistics$Incidence)
+  expect_equal(inccounts(N = 10000,
+                         N_H = 1000,
+                         N_testR = 990,
+                         N_R = 99,
+                         DE_H = 1.2,
+                         DE_R = 1.2,
+                         Boot = FALSE,
+                         alpha = 0.05,
+                         MDRI= 200,
+                         RSE_MDRI = 0.1,
+                         FRR = 0.01,
+                         RSE_FRR = 0.25,
+                         BigT = 730.5,
+                         Covar_HR = 0,
+                         debug = FALSE)$Annual.Risk.of.Infection$ARI,
+               incprops(PrevH = 0.1, 
+                        RSE_PrevH = 0.03286335,
+                        PrevR = 0.1, 
+                        RSE_PrevR = 0.1044466,
+                        Boot = FALSE,
+                        alpha = 0.05,
+                        MDRI= 200,
+                        RSE_MDRI = 0.1,
+                        FRR = 0.01,
+                        RSE_FRR = 0.25,
+                        BigT = 730.5,
+                        Covar_HR = 0,
+                        debug = FALSE)$Annual.Risk.of.Infection$ARI)  
 })
 
 test_that("power calculation works", {
@@ -533,3 +581,4 @@ test_that("power calculation works", {
                         BigT = 730.5)$Minimum.SS,
                22579)
 })
+
