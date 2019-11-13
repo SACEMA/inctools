@@ -36,7 +36,11 @@ To build and install the current development version, make sure you have
 devtools::install_github("SACEMA/inctools/inctools")
 ```
 
-or, the bleeding edge version (not recommended):
+*Note: pay attention to whether the current build is passing or failing before 
+installing the development version.*
+
+At times the bleeding edge version can be installed from Eduard Grebe's fork of 
+the repository (**not recommended!**) with the following line:
 
 ```
 devtools::install_github("eduardgrebe/inctools/inctools")
