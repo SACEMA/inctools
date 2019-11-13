@@ -61,7 +61,7 @@ prevcounts <- function(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1) {
     RSE_PrevH <- sqrt(((PrevH * (1 - PrevH))/N) * DE_H)/PrevH
     RSE_PrevR <- sqrt(((PrevR * (1 - PrevR))/N_testR) * DE_R)/PrevR
 
-    output <- data.frame(PrevH = PrevH, PrevR = PrevR, RSE_PrevH = RSE_PrevH, RSE_PrevR = RSE_PrevR)
+    output <- tibble::tibble(PrevH = PrevH, PrevR = PrevR, RSE_PrevH = RSE_PrevH, RSE_PrevR = RSE_PrevR)
     return(output)
 }
 
@@ -599,9 +599,9 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
   out_CI_deltaI_Mat <- CI_deltaI_Mat
   out_p_value <- p_value
   
-  MDRI.CI <- 365.25 * data.frame(CI.low = stats::qnorm(alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)),
+  MDRI.CI <- 365.25 * tibble::tibble(CI.low = stats::qnorm(alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)),
                                        CI.up = stats::qnorm(1 - alpha/2, mean = MDRI, sd = sqrt(Var_MDRI)))
-  FRR.CI <- data.frame(CI.low = stats::qnorm(alpha/2, mean = FRR, sd = sqrt(Var_FRR)),
+  FRR.CI <- tibble::tibble(CI.low = stats::qnorm(alpha/2, mean = FRR, sd = sqrt(Var_FRR)),
                              CI.up = stats::qnorm(1 - alpha/2, mean = FRR, sd = sqrt(Var_FRR)))
   
   if (BMest == "same.test") {
@@ -618,21 +618,21 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
     ARI <- 1 - exp(-as.numeric(out_I_Est))
     ARI.CI.low <- 1 - exp(-as.numeric(out_CI_I_lo))
     ARI.CI.up <- 1 - exp(-as.numeric(out_CI_I_up))
-    ARI.list <- data.frame(ARI = ARI, ARI.CI.low = ARI.CI.low, ARI.CI.up = ARI.CI.up)
+    ARI.list <- tibble::tibble(ARI = ARI, ARI.CI.low = ARI.CI.low, ARI.CI.up = ARI.CI.up)
     if (Boot == FALSE) {
-      output <- list(Incidence.Statistics = data.frame(Incidence = out_I_Est,
+      output <- list(Incidence.Statistics = tibble::tibble(Incidence = out_I_Est,
                                                        `CI low` = out_CI_I_lo, `CI up` = out_CI_I_up, RSE = out_RSE_I, RSE.Inf.SS = out_RSE_I.infSS),
                      Annual.Risk.of.Infection = ARI.list, MDRI.CI = MDRI.CI, FRR.CI = FRR.CI)
     } else {
-      output <- list(Incidence.Statistics = data.frame(Incidence = out_I_Est,
+      output <- list(Incidence.Statistics = tibble::tibble(Incidence = out_I_Est,
                                                        `CI low` = out_CI_I_lo, `CI up` = out_CI_I_up, RSE = out_RSE_I, Cov.PrevH.I = BS_I_PrevH_cov_vec[[1]],
                                                        Cor.PrevH.I = BS_I_PrevH_cor_vec[[1]]),
                      Annual.Risk.of.Infection = ARI.list, MDRI.CI = MDRI.CI, FRR.CI = FRR.CI)
     }
   } else if (Boot == FALSE) {
-    Incidence.Statistics = data.frame(survey = survey_no, Incidence = out_I_Est,
+    Incidence.Statistics = tibble::tibble(survey = survey_no, Incidence = out_I_Est,
                                       `CI low` = out_CI_I_lo, `CI up` = out_CI_I_up, RSE = out_RSE_I, RSE.Inf.SS = out_RSE_I.infSS)
-    Incidence.Difference.Statistics = data.frame(compare = delta_code, Diff = out_deltaI_Est,
+    Incidence.Difference.Statistics = tibble::tibble(compare = delta_code, Diff = out_deltaI_Est,
                                                  `CI Diff low` = out_CI_deltaI_Mat[, 1], `CI Diff up` = out_CI_deltaI_Mat[,
                                                                                                                           2], `RSE Diff` = out_RSE_deltaI, `RSE Diff Inf.SS` = out_RSE.deltaI.infSS,
                                                  `p-value` = out_p_value, `p-value.Inf.SS` = out_p_value.infSS)
@@ -647,10 +647,10 @@ incprops <- function(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count 
                    MDRI.CI = MDRI.CI, FRR.CI = FRR.CI)
   } else {
     #browser()
-    Incidence.Difference.Statistics = data.frame(compare = delta_code, Diff = out_deltaI_Est,
+    Incidence.Difference.Statistics = tibble::tibble(compare = delta_code, Diff = out_deltaI_Est,
                                                  `CI Diff low` = out_CI_deltaI_Mat[, 1], `CI Diff up` = out_CI_deltaI_Mat[,
                                                                                                                           2], `RSE Diff` = out_RSE_deltaI, `p-value` = out_p_value)
-    Incidence.Statistics = data.frame(survey = survey_no, Incidence = out_I_Est,
+    Incidence.Statistics = tibble::tibble(survey = survey_no, Incidence = out_I_Est,
                                       `CI low` = out_CI_I_lo, `CI up` = out_CI_I_up, RSE = out_RSE_I)
     Incidence.Statistics = Incidence.Statistics[which(Incidence.Statistics[,
                                                                            1] != ""), ]

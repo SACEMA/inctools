@@ -261,7 +261,7 @@ mdrical <- function(data = NULL,
 
   n_subjects <- max(data$sid)
 
-  mdri_output <- data.frame(matrix(ncol = 7, nrow = 0))
+  mdri_output <- tibble::tibble(matrix(ncol = 7, nrow = 0))
   model_output <- list()
 
   if (output_bs_parms) {
@@ -433,7 +433,7 @@ mdrical <- function(data = NULL,
     if (n_bootstraps == 0) {
       mdri_sd <- NA
       mdri_ci <- c(NA, NA)
-      mdri_ff <- data.frame(round(mdri, 4),
+      mdri_ff <- tibble::tibble(round(mdri, 4),
                             NA,
                             NA,
                             NA,
@@ -444,7 +444,7 @@ mdrical <- function(data = NULL,
     } else {
       mdri_sd <- stats::sd(mdris)
       mdri_ci <- stats::quantile(mdris, probs = c(alpha/2, 1 - alpha/2))
-      mdri_ff <- data.frame(round(mdri, 4),
+      mdri_ff <- tibble::tibble(round(mdri, 4),
                             round(mdri_ci[1], 4),
                             round(mdri_ci[2], 4),
                             round(mdri_sd, 4),
@@ -651,10 +651,10 @@ plot_probability <- function(functional_form = functional_form,
                              mdri_ci = mdri_ci) {
   plot_time <- seq(from = 0, to = inclusion_time_threshold, by = 0.01)
   switch(as.character(functional_form), cloglog_linear = {
-    plotdata <- data.frame(plot_time, functional_form_clogloglinear(t = plot_time, parameters = parameters))
+    plotdata <- tibble::tibble(plot_time, functional_form_clogloglinear(t = plot_time, parameters = parameters))
     colnames(plotdata) <- c("time_since_eddi", "probability")
   }, logit_cubic = {
-    plotdata <- data.frame(plot_time, functional_form_logitcubic(t = plot_time, parameters = parameters))
+    plotdata <- tibble::tibble(plot_time, functional_form_logitcubic(t = plot_time, parameters = parameters))
     colnames(plotdata) <- c("time_since_eddi", "probability")
   })
 

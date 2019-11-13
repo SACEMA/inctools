@@ -136,7 +136,7 @@ frrcal <- function(data = NULL,
                           recency_rule = recency_rule,
                           debug = debug)
 
-  subjectdata <- data.frame(sid = NA, recent = NA)
+  subjectdata <- tibble::tibble(sid = NA, recent = NA)
   for (subjectid in unique(data$sid)) {
     if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
                                                                        subjectid, ]) == 0.5) {
