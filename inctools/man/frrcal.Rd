@@ -2,17 +2,12 @@
 % Please edit documentation in R/calibration_frr.R
 \name{frrcal}
 \alias{frrcal}
-\title{Estimate subject-level false-recent rate for a given time cutoff.
-Each subject with any observations after the time cutoff is assigned a recency status according to the majority
-of observations for that subject after the cutoff. In the event of exactly half of the observations being
-classified as recent, the subject contributes a count of 0.5.
-The function performs an exact binomial test and reports the estimated probability of testing recent after the
-cutoff, a confidence interval for the proportion, the number of recent results ('successes'),
-number of subjects ('trials') and the number of data points contributing to the subject-level estimate.}
+\title{Estimate False-Recent Rate}
 \usage{
 frrcal(data = NULL, subid_var = NULL, time_var = NULL,
   recency_cutoff_time = 730.5, recency_rule = "binary_data",
-  recency_vars = NULL, recency_params = NULL, alpha = 0.05)
+  recency_vars = NULL, recency_params = NULL, alpha = 0.05,
+  method = "exact", debug = FALSE)
 }
 \arguments{
 \item{data}{A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)}
@@ -30,9 +25,13 @@ frrcal(data = NULL, subid_var = NULL, time_var = NULL,
 \item{recency_params}{Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule}
 
 \item{alpha}{Confidence level, default=0.05.}
+
+\item{method}{Method for computing confidence interval on binomial probability (passed to binom::binom.confint). Default is Clopper-Pearson 'exact' method. Accepted values: `c("exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit", "cloglog", "probit")`.}
+
+\item{debug}{Enable debugging mode (browser)}
 }
 \description{
-Estimate subject-level false-recent rate for a given time cutoff.
+Estimates subject-level false-recent rate (FRR) for a given time cutoff.
 Each subject with any observations after the time cutoff is assigned a recency status according to the majority
 of observations for that subject after the cutoff. In the event of exactly half of the observations being
 classified as recent, the subject contributes a count of 0.5.
@@ -63,5 +62,6 @@ frrcal(data=excalibdata,
        recency_rule = "independent_thresholds",
        recency_vars = c("Result","VL"),
        recency_params = c(10,0,1000,1),
+       method = "exact",
        alpha = 0.05)
 }

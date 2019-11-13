@@ -1,7 +1,7 @@
-# 2017-04-13 - v1.0.0.10
+# 2018-09-21 - v1.0.14
 
 ## Build environment
-* OS X 10.12.4, R 3.3.3
+* OS X 10.13.6, R 3.5.1
 * Travis CI:
   - oldrel
   - release

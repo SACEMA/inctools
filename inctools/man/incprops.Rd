@@ -4,9 +4,9 @@
 \alias{incprops}
 \title{Incidence and incidence difference statistics from trinomial prevalences of HIV and recency}
 \usage{
-incprops(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
-  alpha = 0.05, BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-  BigT = 730, Covar_HR = 0)
+incprops(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE,
+  BS_Count = 10000, alpha = 0.05, BMest = "same.test", MDRI,
+  RSE_MDRI, FRR, RSE_FRR, BigT = 730, Covar_HR = 0, debug = FALSE)
 }
 \arguments{
 \item{PrevH}{Prevalence of HIV (vector/integer).}
@@ -36,6 +36,8 @@ incprops(PrevH, RSE_PrevH, PrevR, RSE_PrevR, Boot = FALSE, BS_Count = 10000,
 \item{BigT}{post-infection time cut-off true vs false recent [days] default 730 days (integer).}
 
 \item{Covar_HR}{Covariance of probability of being positive and being categorized recent from survey (vector/integer). Note that as the variances of PrevH and PrevR are often quite small, only a suitably commensurate covariance will enable the inversion of the bootstrap covariance matrix for random number generation to proceed without error.}
+
+\item{debug}{Enable debugging mode (browser)}
 }
 \value{
 Returns incidence and incidence difference statistics, annualised risk and implied CIs on test characteristics.

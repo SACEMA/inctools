@@ -1,22 +1,26 @@
-# Incidence Estimation Tools Copyright (C) 2015-2016, DST/NRF Centre of
-# Excellence in Epidemiological Modelling and Analysis (SACEMA) and individual
-# contributors.  This program is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published by the
-# Free Software Foundation, either version 3 of the License, or (at your option)
-# any later version.  This program is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
-# Public License for more details.  You should have received a copy of the GNU
-# General Public License along with this program.  If not, see
-# <http://www.gnu.org/licenses/>.
+# Incidence Estimation Tools Copyright (C) 2015-2018, DST-NRF Centre of
+# Excellence in Epidemiological Modelling and Analysis (SACEMA), Stellenbosch
+# University and individual contributors.
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.  This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.  You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#' Estimate subject-level false-recent rate for a given time cutoff.
+#' Estimate False-Recent Rate
+#'
+#' Estimates subject-level false-recent rate (FRR) for a given time cutoff.
 #' Each subject with any observations after the time cutoff is assigned a recency status according to the majority
 #' of observations for that subject after the cutoff. In the event of exactly half of the observations being
 #' classified as recent, the subject contributes a count of 0.5.
 #' The function performs an exact binomial test and reports the estimated probability of testing recent after the
 #' cutoff, a confidence interval for the proportion, the number of recent results ('successes'),
 #' number of subjects ('trials') and the number of data points contributing to the subject-level estimate.
+#'
 #' @param data A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)
 #' @param subid_var The variable in the dataframe identifying subjects
 #' @param time_var The variable in the dataframe indicating time between 'time zero' (usually detectable infection) and biomarker measurement
@@ -25,6 +29,8 @@
 #' @param recency_vars Variables to be used in determining recency outcomes
 #' @param recency_params Vector of numeric parameters (e.g. thresholds) for determining recency according to the relevant rule
 #' @param alpha Confidence level, default=0.05.
+#' @param method Method for computing confidence interval on binomial probability (passed to binom::binom.confint). Default is Clopper-Pearson 'exact' method. Accepted values: `c("exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit", "cloglog", "probit")`.
+#' @param debug Enable debugging mode (browser)
 #' @details The package contains long form documentation in the form of vignettes that cover the use of the main fucntions. Use browseVignettes(package="inctools") to access them.
 #'
 #' recency_rule: binary_data - supply a binary variable with 1=recent and 0=non-recent in recency_vars.
@@ -46,12 +52,21 @@
 #'        recency_rule = "independent_thresholds",
 #'        recency_vars = c("Result","VL"),
 #'        recency_params = c(10,0,1000,1),
+#'        method = "exact",
 #'        alpha = 0.05)
 #' @export
-frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cutoff_time = 730.5,
-                   recency_rule = "binary_data", recency_vars = NULL, recency_params = NULL,
-                   alpha = 0.05) {
+frrcal <- function(data = NULL,
+                   subid_var = NULL,
+                   time_var = NULL ,
+                   recency_cutoff_time = 730.5,
+                   recency_rule = "binary_data",
+                   recency_vars = NULL,
+                   recency_params = NULL,
+                   alpha = 0.05,
+                   method = "exact",
+                   debug = FALSE) {
 
+  if (debug) {browser()}
 
   if (is.null(recency_rule)) {
     stop("Please specify a recency rule")
@@ -69,9 +84,10 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
     if (length(recency_vars) > 1) {
       stop("Binary data should be specified in one recency (outcome) variable.")
     }
-    if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
-      stop("Input data is not binary")
-    }
+    # This line was broken. Should we have a similar check?
+    # if (!all(data$recency_vars == 0 | data$recency_vars == 1)) {
+    #   stop("Input data is not binary")
+    # }
   }
 
   if (recency_rule == "independent_thresholds" & length(recency_vars) != 0.5 *
@@ -88,6 +104,13 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
   if (is.null(time_var)) {stop("Error: No time variable provided.")}
   if (is.null(time_var)) {stop("Error: No recency variables provided variable provided.")}
 
+  if (is.null(method)) {stop("Error: Confidence interval method must be specified.")}
+  
+  if (length(method) != 1) {stop("Error: Exactly one confidence interval method must be specified.")}
+  
+  if ( !(method %in% c("exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit", "cloglog", "probit"))) {
+    stop("Confidence interval method must be one of 'exact', 'ac', 'asymptotic', 'wilson', 'prop.test', 'bayes', 'logit', 'cloglog', 'probit'. See help of binom::binom.test() for further details.")
+    }
 
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
@@ -103,12 +126,17 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
     }
   }
 
+  data <- data %>%
+    process_data(subid_var = subid_var,
+                 time_var = time_var,
+                 recency_vars = recency_vars,
+                 inclusion_time_threshold = 1e+06,
+                 debug = debug) %>%
+    dplyr::filter(.data$time_since_eddi > recency_cutoff_time) %>%
+    assign_recency_status(recency_params = recency_params,
+                          recency_rule = recency_rule,
+                          debug = debug)
 
-
-  data <- process_data(data = data, subid_var = subid_var, time_var = time_var,
-                       recency_vars = recency_vars, inclusion_time_threshold = 1e+06)
-  data <- data[data$time_since_eddi > recency_cutoff_time,]
-  data <- assign_recency_status(data = data, recency_params = recency_params, recency_rule = recency_rule)
   subjectdata <- data.frame(sid = NA, recent = NA)
   for (subjectid in unique(data$sid)) {
     if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
@@ -125,12 +153,13 @@ frrcal <- function(data = NULL, subid_var = NULL, time_var = NULL , recency_cuto
     }
   }
   subjectdata <- subjectdata[!is.na(subjectdata$sid),]
-  binomprob <- stats::binom.test(ceiling(sum(subjectdata$recent)), nrow(subjectdata),
-                                 p = 0, conf.level = 1 - alpha)
-  FRR <- data.frame(round(binomprob$estimate[[1]], 4), round(binomprob$conf.int[1],
-                                                             4), round(binomprob$conf.int[2], 4), alpha, binomprob$statistic, binomprob$parameter[[1]],
-                    nrow(data))
-  colnames(FRR) <- c("FRRest", "LB", "UB", "alpha", "n_recent", "n_subjects", "n_observations")
-  rownames(FRR) <- ""
+  nr <- as.integer(ceiling(sum(subjectdata$recent)))
+  n <- nrow(subjectdata)
+  p <- nr / n
+  sigma <- sqrt( (p * (1 - p)) / n )
+  binom_ci <- binom::binom.confint(nr, n, conf.level = 1 - alpha, methods = method)
+  FRR <- tibble::tibble(FRRest = p, SE = sigma, LB = binom_ci$lower, UB = binom_ci$upper, 
+                        alpha = alpha, n_recent = nr, n_subjects = n, n_observations = nrow(data), 
+                        ci_method = method)
   return(FRR)
 }
