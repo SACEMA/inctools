@@ -4,8 +4,21 @@
 \alias{incprecision}
 \title{Precision and Required Sample Size}
 \usage{
-incprecision(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR,
-  BigT = 730, DE_H = 1, DE_R = 1, n = "out", step = 5)
+incprecision(
+  I,
+  RSE_I,
+  PrevH,
+  CR,
+  MDRI,
+  RSE_MDRI,
+  FRR,
+  RSE_FRR,
+  BigT = 730,
+  DE_H = 1,
+  DE_R = 1,
+  n = "out",
+  step = 5
+)
 }
 \arguments{
 \item{I}{Expected Incidence.}

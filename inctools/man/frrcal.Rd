@@ -4,10 +4,18 @@
 \alias{frrcal}
 \title{Estimate False-Recent Rate}
 \usage{
-frrcal(data = NULL, subid_var = NULL, time_var = NULL,
-  recency_cutoff_time = 730.5, recency_rule = "binary_data",
-  recency_vars = NULL, recency_params = NULL, alpha = 0.05,
-  method = "exact", debug = FALSE)
+frrcal(
+  data = NULL,
+  subid_var = NULL,
+  time_var = NULL,
+  recency_cutoff_time = 730.5,
+  recency_rule = "binary_data",
+  recency_vars = NULL,
+  recency_params = NULL,
+  alpha = 0.05,
+  method = "exact",
+  debug = FALSE
+)
 }
 \arguments{
 \item{data}{A data frame containing variables for subject identifier, time (since detectable infection), and variables with biomarker readings or recency status (to be specified in recency_vars)}

@@ -4,9 +4,25 @@
 \alias{inccounts}
 \title{Incidence and incidence difference statistics from trinomial counts of HIV and recency}
 \usage{
-inccounts(N, N_H, N_testR, N_R, DE_H = 1, DE_R = 1, BS_Count = 10000,
-  Boot = FALSE, alpha = 0.05, BMest = "same.test", MDRI, RSE_MDRI,
-  FRR, RSE_FRR, BigT = 730, Covar_HR = 0, debug = FALSE)
+inccounts(
+  N,
+  N_H,
+  N_testR,
+  N_R,
+  DE_H = 1,
+  DE_R = 1,
+  BS_Count = 10000,
+  Boot = FALSE,
+  alpha = 0.05,
+  BMest = "same.test",
+  MDRI,
+  RSE_MDRI,
+  FRR,
+  RSE_FRR,
+  BigT = 730,
+  Covar_HR = 0,
+  debug = FALSE
+)
 }
 \arguments{
 \item{N}{Counts of total survey sample size(s) (vector/integer).}

@@ -4,11 +4,30 @@
 \alias{incpower}
 \title{Power and Required Sample Size}
 \usage{
-incpower(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both",
-  alpha = 0.05, Power = 0.8, SS = "out", CR = 1, DE_H = 1,
-  DE_R = 1, BMest = "same.test", MDRI, RSE_MDRI, FRR, RSE_FRR,
-  BigT = 730, Boot = FALSE, BS_Count = 1e+05, Cov.PrevH.I = c(0,
-  0), debug = FALSE)
+incpower(
+  I1,
+  I2,
+  PrevH1,
+  PrevH2,
+  n1 = "both",
+  n2 = "both",
+  alpha = 0.05,
+  Power = 0.8,
+  SS = "out",
+  CR = 1,
+  DE_H = 1,
+  DE_R = 1,
+  BMest = "same.test",
+  MDRI,
+  RSE_MDRI,
+  FRR,
+  RSE_FRR,
+  BigT = 730,
+  Boot = FALSE,
+  BS_Count = 1e+05,
+  Cov.PrevH.I = c(0, 0),
+  debug = FALSE
+)
 }
 \arguments{
 \item{I1}{Predicted incidence of HIV in survey 1.}

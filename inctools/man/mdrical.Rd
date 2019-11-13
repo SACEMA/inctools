@@ -4,14 +4,25 @@
 \alias{mdrical}
 \title{Estimate Mean Duration of Recent Infection (MDRI)}
 \usage{
-mdrical(data = NULL, subid_var = NULL, time_var = NULL,
+mdrical(
+  data = NULL,
+  subid_var = NULL,
+  time_var = NULL,
   functional_forms = c("cloglog_linear", "logit_cubic"),
-  recency_cutoff_time = 730.5, inclusion_time_threshold = 800,
-  recency_rule = "binary_data", recency_vars = NULL,
-  recency_params = NULL, n_bootstraps = 10000, alpha = 0.05,
-  plot = TRUE, parallel = ifelse(n_bootstraps == 0, FALSE, TRUE),
-  cores = parallel::detectCores(), output_bs_parms = FALSE,
-  debug = FALSE)
+  recency_cutoff_time = 730.5,
+  inclusion_time_threshold = 800,
+  recency_rule = "binary_data",
+  recency_vars = NULL,
+  recency_params = NULL,
+  n_bootstraps = 10000,
+  random_seed = NULL,
+  alpha = 0.05,
+  plot = TRUE,
+  parallel = ifelse(n_bootstraps == 0, FALSE, TRUE),
+  cores = parallel::detectCores(),
+  output_bs_parms = FALSE,
+  debug = FALSE
+)
 }
 \arguments{
 \item{data}{A data frame containing variables for subject identifier,
@@ -43,6 +54,9 @@ determining recency according to the relevant rule}
 
 \item{n_bootstraps}{Number of subject-level bootstrap resampling operations
 for estimating confidence intervals, default = 10000.}
+
+\item{random_seed}{Pass a random seed for reproducible bootstrapping.
+Default is NULL.}
 
 \item{alpha}{Confidence level, default=0.05.}
 
