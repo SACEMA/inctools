@@ -276,14 +276,14 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
           CI.up = CI.up
           ), 
         Implied.MDRI.Statistics = data.frame(
-          Given.MDRI = round(MDRI[1] * 365.25, 3), 
-          CI.low = round(MDRI.CI[1, 1], 3), 
-          CI.up = round(MDRI.CI[1, 2], 3)
+          Given.MDRI = MDRI[1] * 365.25, 
+          CI.low = MDRI.CI[1, 1], 
+          CI.up = MDRI.CI[1, 2]
           ), 
         Implied.FRR.Statistics = data.frame(
-          Given.FRR = round(FRR, 4), 
-          CI.low = round(FRR.CI[, 1], 4), 
-          CI.up = round(FRR.CI[, 2], 4)
+          Given.FRR = FRR, 
+          CI.low = FRR.CI[, 1], 
+          CI.up = FRR.CI[, 2]
           ), 
         Implied.Subject.Counts = round(data.frame(
           Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1],
@@ -316,14 +316,14 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
           CI.up = CI.up
           ), 
         Implied.MDRI.Statistics = data.frame(
-          Given.MDRI = round(MDRI[1] * 365.25, 3), 
-          CI.low = round(MDRI.CI[1, 1], 3), 
-          CI.up = round(MDRI.CI[1, 2], 3)
+          Given.MDRI = MDRI[1] * 365.25, 
+          CI.low = MDRI.CI[1, 1], 
+          CI.up = MDRI.CI[1, 2]
           ), 
         Implied.FRR.Statistics = data.frame(
-          Given.FRR = round(FRR[1], 3), 
-          CI.low = round(FRR.CI[1, 1], 3), 
-          CI.up = round(FRR.CI[1, 2], 3)
+          Given.FRR = FRR[1], 
+          CI.low = FRR.CI[1, 1], 
+          CI.up = FRR.CI[1, 2]
           ), 
         Implied.Subject.Counts = round(data.frame(
           Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], 
@@ -356,14 +356,15 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
           CI.up = CI.up
           ), 
         Implied.MDRI.Statistics = data.frame(
-          Given.MDRI = round(MDRI * 365.25, 3), 
-          CI.low = round(MDRI.CI[, 1], 3), 
-          CI.up = round(MDRI.CI[, 2], 3)
+          Given.MDRI = MDRI * 365.25, 
+          CI.low = MDRI.CI[, 1], 
+          CI.up = MDRI.CI[, 2]
           ), 
         Implied.FRR.Statistics = data.frame(
-          Given.FRR = round(FRR, 4), 
-          CI.low = round(FRR.CI[, 1], 4), 
-          CI.up = round(FRR.CI[, 2], 4)), 
+          Given.FRR = FRR, 
+          CI.low = FRR.CI[, 1], 
+          CI.up = FRR.CI[, 2]
+          ), 
         Implied.Subject.Counts = round(data.frame(
           Survey.1 = c(HIV.negative = round(N[1] * HIV.neg[1]), HIV.positive = round(N[1] - N[1] * HIV.neg[1]), 
                        HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
