@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title></title>
+	<meta name="generator" content="LibreOffice 4.2.8.2 (Linux)">
+	<meta name="author" content="&gt;">
+	<meta name="created" content="20170801;83700000000000">
+	<meta name="changedby" content="&gt;">
+	<meta name="changed" content="20170801;83800000000000">
+	<style type="text/css">
+	<!--
+		@page { size: 21cm 29.7cm; margin-left: 2.5cm; margin-right: 2.5cm; margin-top: 2cm; margin-bottom: 2cm }
+		p { margin-bottom: 0.25cm; direction: ltr; color: #00000a; line-height: 120%; text-align: left; widows: 2; orphans: 2 }
+		p.western { font-family: "Calibri", serif; font-size: 11pt; so-language: en-ZA }
+		p.cjk { font-family: "Droid Sans Fallback"; font-size: 11pt; so-language: en-US }
+		p.ctl { font-family: "Calibri"; font-size: 11pt; so-language: ar-SA }
+	-->
+	</style>
+</head>
+<body lang="en-ZA" text="#00000a" dir="ltr">
+<p class="western" align="center" style="margin-bottom: 0.28cm; line-height: 106%">
+<b>User Guide</b></p>
+<p class="western" align="center" style="margin-bottom: 0.28cm; line-height: 106%">
+&nbsp;<b>Assay-Based Incidence Estimation (ABIE) v3:</b></p>
+<p class="western" align="center" style="margin-bottom: 0.28cm; line-height: 106%">
+<b>Incidence_Prevalence_Calculator</b></p>
+<p class="western" align="center" style="margin-bottom: 0.28cm; line-height: 106%"><a name="_GoBack"></a>
+&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">It
+is recommended that users of the <b>Incidence_Prevalence_Calculator
+</b>workbook read through this calculator-specific user guide before
+using the calculator.</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">In
+addition to this workbook-specific guide, users will need to
+familiarise themselves with the overall ABIE user guide/version 3
+release note, which can be found on a separate tab &lt;<i>About&nbsp;ABIE&nbsp;v3</i>&gt;
+in this workbook.  The overall ABIE guide provides important
+contextual information, including suggested further reading, relevant
+to the correct use of this tool; in particular, critical information
+on 
+</p>
+<ul>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	nuanced concepts around input requirements and the meaning of
+	outputs, and</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	licensing and citation.</p>
+</ul>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><b>Summary</b></p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">The
+<b>Incidence_Prevalence_Calculator </b>estimates HIV incidence and
+prevalence from a cross-sectional survey which tested subjects for
+HIV and followed up by testing for biomarkers of recent infection
+amongst HIV positives. Required data comprises:</p>
+<ul>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	sample counts 
+	</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	recency test characteristics</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	estimates of “design effects” for the precision of cluster based
+	sampling estimates of <i>a</i>) HIV prevalence, and <i>b</i>) the
+	proportion of “recent” infections among HIV positives tested for
+	recency</p>
+</ul>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><b>Worksheets
+in this Workbook</b></p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">The
+<b>Incidence/Prevalence Calculator </b>contains six worksheets or
+tabs:</p>
+<ul>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	<i>&lt;About ABIE v3&gt;</i>: introduction to the ABIE toolbox in
+	general and major release three</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	<i>&lt;User Guide&gt;</i>:<i> </i>this document</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	<i>&lt;Single Calculation&gt;</i>: incidence from a sing
+	cross-sectional survey</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	<i>&lt;Scenario Comparison&gt;</i>: multiple (up to 10) sets of
+	inputs with graphical summary 
+	</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	<i>&lt;FRR Sensitivity Analysis&gt;</i>: incidence confidence
+	interval (CI) as a function of FRR</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	<i>&lt;Global DE</i> <i>Sensitivity Analysis&gt;</i>: incidence CI
+	as a function of a global design effect</p>
+</ul>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">Each
+sheet is described in more detail below.</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><b>&lt;</b><i><b>Single
+Calculation</b></i><b>&gt;</b></p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><i>Context</i>:</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">A
+cross-sectional survey has been executed with a recency test whose
+properties (MDRI and FRR) have been estimated.  Both HIV status and
+recent/non recent infection status amongst HIV positives have been
+ascertained (not necessarily for all subjects). 
+</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><i>Utility</i>:</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">This
+sheet calculates point estimates and 95% confidence intervals for
+prevalence and incidence. 
+</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">Note:</p>
+<ul>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	Subjects whose HIV status was left unascertained are nowhere
+	accounted for in this analysis.</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	The calculation accounts for HIV positive subjects whose
+	recent/non-recent status was unascertained.</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	Incidence (including a 95% confidence interval) is reported both as
+	an “instantaneous rate”, with units of % per annum (p.a.), and
+	as a cumulative annual risk of infection.</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	Warnings about negative incidence estimates are indeed “warnings”
+	and not “errors”, even though, physically, incidence of course
+	takes strictly non-negative values.</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	The relative standard error of the incidence estimate is not
+	reported if the point estimate is less than or equal to zero.  
+	</p>
+</ul>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><b>&lt;</b><i><b>Scenario
+Comparison</b></i><b>&gt;</b></p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><i>Context</i>:</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">A
+cross-sectional survey has been executed with a recency test whose
+properties (MDRI and FRR) have been estimated, <i>but questions
+remain about the local applicability of these estimates</i>.  Both
+HIV status and recent/non recent infection status amongst HIV
+positives has been ascertained (not necessarily for all subjects). 
+</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><i>Utility</i>:</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">This
+sheet accesses the survey results entered into the <i>&lt;Single
+Calculation&gt;</i> sheet, while allowing variable specification of
+test properties – for example, leading to a sensitivity analysis
+indicating how the incidence estimate depends on the assumed value of
+MDRI or FRR. 
+</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">Note:</p>
+<ul>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	Each scenario is specified in a column much like column D in the
+	<i>&lt;Single Calculation&gt;</i> sheet. For consistency of layout,
+	the recycled survey data is reproduced in each column.  
+	</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	It is recommended that the user at some point enter each input set
+	into the <i>&lt;Single Calculation&gt;</i> sheet, in order to view
+	possible relevant warnings and error messages.</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	It is envisaged that the main use of this sheet is to implement
+	sensitivity analysis of incidence estimates as a function of one
+	test property at a time; the 10 scenarios can however be selected
+	arbitrarily and independently of each other. 
+	</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	It would be inappropriate to try to use this sheet to consider how
+	incidence estimates would vary for different recent/non-recent
+	discrimination thresholds on a given test.  This is because the
+	sheet reuses a single set of counts of recent, non-recent, and HIV
+	negative results from the <i>&lt;Single  Calculation&gt;</i> sheet,
+	and a changing threshold would also change these counts.</p>
+</ul>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><b>&lt;</b><i><b>FRR
+Sensitivity Analysis</b></i><b>&gt;</b></p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">One
+of the most common uses of the <i>&lt;Scenario Comparison&gt;</i>
+sheet is likely to be a sensitivity analysis considering dependence
+of the incidence estimate on the estimate of FRR (and this should
+always be investigated at some point for any data set).  The
+&lt;<i>FRR&nbsp;Sensitivity&nbsp;Analysis</i>&gt; sheet thus
+automatically implements this analysis by using input from the
+&lt;<i>Single&nbsp;Calculation</i>&gt; sheet to plot the incidence
+estimate and 95% confidence interval against a hypothetical FRR. 
+Changes to input on the &lt;<i>Single Calculation</i>&gt; sheet
+automatically carry through to the figure.  Intermediate results
+required to populate the figure are found on a hidden sheet, which
+may be unhidden without a password (<i>home tab, cells toolbar,
+format button → </i>drop down menu:<i> hide &amp; unhide →
+</i>secondary dropdown,<i> unhide sheet</i>).</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">Note:</p>
+<ul>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	The <i>x</i> variable is a hypothetical FRR, assumed to be known
+	precisely.</p>
+	<li><p class="western" style="margin-bottom: 0.28cm; line-height: 106%">
+	The range of FRR values shown is from 0 to twice the point estimate
+	entered in the <i>&lt;Single Calculation&gt;</i> sheet.</p>
+</ul>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><b>&lt;</b><i><b>Global
+DE Sensitivity Analysis</b></i><b>&gt;</b></p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">This
+sheet displays the incidence estimate and 95% CI as a function of a
+global scaling of the variance of the incidence estimate by a
+hypothetical overall “design effect” ranging from 1 (no effect)
+to 5.  The figure is linked to the inputs of the <i>&lt;Single
+Calculation&gt;</i> sheet, and is populated by intermediate results
+found on a hidden sheet (which may be unhidden without password). 
+</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%">&nbsp;</p>
+<p class="western" style="margin-bottom: 0.28cm; line-height: 106%"><br><br>
+</p>
+</body>
+</html>
