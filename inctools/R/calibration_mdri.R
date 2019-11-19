@@ -12,6 +12,7 @@
 
 #' @importFrom magrittr "%>%"
 #' @importFrom foreach "%dopar%"
+#' @importFrom doRNG "%dorng%"
 #' @importFrom rlang .data
 #' @importFrom rlang "!!"
 
@@ -325,7 +326,7 @@ mdrical <- function(data = NULL,
                                   #.options.snow = opts,
                                   .inorder = FALSE #,
                                   #.packages = "inctools"
-        ) %dopar%
+        ) %dorng% #%dopar%
         {
           boot_data <- data_grouped %>%
             sample_frac_groups(1, replace = TRUE) %>%
@@ -351,7 +352,7 @@ mdrical <- function(data = NULL,
                                              #.options.snow = opts,
                                              .inorder = FALSE #,
                                              #.packages = "inctools"
-        ) %dopar%
+        ) %dorng% #%dopar%
         {
           boot_data <- data_grouped %>%
             sample_frac_groups(1, replace = TRUE) %>%
