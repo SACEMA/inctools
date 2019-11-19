@@ -12,7 +12,6 @@
 
 #' @importFrom magrittr "%>%"
 #' @importFrom foreach "%dopar%"
-#' @importFrom doRNG "%dorng%"
 #' @importFrom rlang .data
 #' @importFrom rlang "!!"
 
@@ -322,11 +321,11 @@ mdrical <- function(data = NULL,
         dplyr::group_by(.data$sid)
 
       if (!output_bs_parms) {
-        mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
+        mdris <- foreach::foreach(j = 1:n_bootstraps, .combine = c,
                                   #.options.snow = opts,
                                   .inorder = FALSE #,
                                   #.packages = "inctools"
-        ) %dorng% #%dopar%
+        ) %dopar%
         {
           boot_data <- data_grouped %>%
             sample_frac_groups(1, replace = TRUE) %>%
@@ -348,11 +347,11 @@ mdrical <- function(data = NULL,
         parallel::stopCluster(cluster)
 
       } else if(output_bs_parms) {
-        mdris_and_params <- foreach::foreach(j = 1:n_bootstraps, .combine = rbind,
+        mdris_and_params <- foreach::foreach(j = 1:n_bootstraps, .combine = dplyr::bind_rows,
                                              #.options.snow = opts,
                                              .inorder = FALSE #,
                                              #.packages = "inctools"
-        ) %dorng% #%dopar%
+        ) %dopar%
         {
           boot_data <- data_grouped %>%
             sample_frac_groups(1, replace = TRUE) %>%

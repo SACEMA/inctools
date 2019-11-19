@@ -30,14 +30,14 @@ test_that("mdri estimation works", {
                        time_var = "DaysSinceEDDI",
                        recency_cutoff_time = 730.5,
                        inclusion_time_threshold = 800,
-                       functional_forms = c("cloglog_linear"),
-                       recency_rule = "binary_data",
-                       recency_vars = "Recent",
-                       n_bootstraps = 100,
-                       random_seed = 123,
+                       functional_forms = c("logit_cubic"),
+                       recency_rule = "independent_thresholds",
+                       recency_vars = c("Result","VL"),
+                       recency_params = c(10,0,1000,1),
+                       n_bootstraps = 0,
                        plot = FALSE,
-                       parallel = FALSE)$MDRI$SE,
-               12.5850,
+                       parallel = FALSE)$MDRI$PE, 
+               259.2234,
                tolerance = 1e-05)
   expect_equal(mdrical(data=excalibdata,
                        subid_var = "SubjectID",
@@ -45,15 +45,137 @@ test_that("mdri estimation works", {
                        recency_cutoff_time = 730.5,
                        inclusion_time_threshold = 800,
                        functional_forms = c("cloglog_linear"),
-                       recency_rule = "binary_data",
-                       recency_vars = "Recent",
-                       n_bootstraps = 1000,
-                       random_seed = 123,
+                       recency_rule = "independent_thresholds",
+                       recency_vars = c("Result","VL"),
+                       recency_params = c(10,0,1000,1),
+                       n_bootstraps = 0,
                        plot = FALSE,
-                       parallel = TRUE,
-                       cores = 4)$MDRI$SE,
-               13.70371,
+                       parallel = FALSE)$MDRI$PE, 
+               271.7752,
                tolerance = 1e-05)
+})
+
+test_that("mdri bootstrapping works", {
+  skip_on_cran()
+  expect_equal({
+    mdri <- mdrical(data=excalibdata,
+                    subid_var = "SubjectID",
+                    time_var = "DaysSinceEDDI",
+                    recency_cutoff_time = 730.5,
+                    inclusion_time_threshold = 800,
+                    functional_forms = c("logit_cubic"),
+                    recency_rule = "binary_data",
+                    recency_vars = "Recent",
+                    n_bootstraps = 100,
+                    random_seed = 123,
+                    plot = FALSE,
+                    parallel = FALSE,
+                    output_bs_parms = FALSE)
+    c(mdri$MDRI$SE, mdri$MDRI$CI_LB, mdri$MDRI$CI_UB)
+  },
+  c(12.4942, 212.1693, 257.5222),
+  tolerance = 1e-05)
+  expect_equal({
+    mdri <- mdrical(data=excalibdata,
+                    subid_var = "SubjectID",
+                    time_var = "DaysSinceEDDI",
+                    recency_cutoff_time = 730.5,
+                    inclusion_time_threshold = 800,
+                    functional_forms = c("cloglog_linear"),
+                    recency_rule = "binary_data",
+                    recency_vars = "Recent",
+                    n_bootstraps = 100,
+                    random_seed = 123,
+                    plot = FALSE,
+                    parallel = FALSE,
+                    output_bs_parms = FALSE)
+    c(mdri$MDRI$SE, mdri$MDRI$CI_LB, mdri$MDRI$CI_UB)
+  },
+  c(12.58502, 221.64980, 268.07910),
+  tolerance = 1e-05)
+  expect_equal({
+    mdri <- mdrical(data=excalibdata,
+                    subid_var = "SubjectID",
+                    time_var = "DaysSinceEDDI",
+                    recency_cutoff_time = 730.5,
+                    inclusion_time_threshold = 800,
+                    functional_forms = c("logit_cubic"),
+                    recency_rule = "binary_data",
+                    recency_vars = "Recent",
+                    n_bootstraps = 100,
+                    random_seed = 123,
+                    plot = FALSE,
+                    parallel = FALSE,
+                    output_bs_parms = TRUE)
+    c(nrow(mdri$BSparms$logit_cubic),
+      mean(mdri$BSparms$logit_cubic$beta0),
+      mean(mdri$BSparms$logit_cubic$beta1),
+      mean(mdri$BSparms$logit_cubic$beta2),
+      mean(mdri$BSparms$logit_cubic$beta3))
+  },
+  c(100, 2.243834, -0.01571105, 2.212851e-05, -1.509442e-08),
+  tolerance = 1e-05)
+  expect_equal({
+    mdri <- mdrical(data=excalibdata,
+                    subid_var = "SubjectID",
+                    time_var = "DaysSinceEDDI",
+                    recency_cutoff_time = 730.5,
+                    inclusion_time_threshold = 800,
+                    functional_forms = c("cloglog_linear"),
+                    recency_rule = "binary_data",
+                    recency_vars = "Recent",
+                    n_bootstraps = 100,
+                    random_seed = 123,
+                    plot = FALSE,
+                    parallel = FALSE,
+                    output_bs_parms = TRUE)
+    c(nrow(mdri$BSparms$cloglog_linear),
+      mean(mdri$BSparms$cloglog_linear$beta0),
+      mean(mdri$BSparms$cloglog_linear$beta1))
+  },
+  c(100, 4.2747332, -0.9427134),
+  tolerance = 1e-05)
+  # Run estimation and perform a few tests on the result (is this bad?)
+  mdri_parallel <- mdrical(data=excalibdata,
+                  subid_var = "SubjectID",
+                  time_var = "DaysSinceEDDI",
+                  recency_cutoff_time = 730.5,
+                  inclusion_time_threshold = 800,
+                  functional_forms = c("cloglog_linear", "logit_cubic"),
+                  recency_rule = "binary_data",
+                  recency_vars = "Recent",
+                  n_bootstraps = 250,
+                  random_seed = NULL,
+                  plot = FALSE,
+                  parallel = TRUE,
+                  cores = 2,
+                  output_bs_parms = FALSE)
+  expect_gte(mdri_parallel$MDRI$SE[1],12)
+  expect_gte(mdri_parallel$MDRI$SE[2],12)
+  expect_lte(mdri_parallel$MDRI$CI_LB[1],227)
+  expect_lte(mdri_parallel$MDRI$CI_LB[2],215)
+  expect_gte(mdri_parallel$MDRI$CI_UB[1],271)
+  expect_gte(mdri_parallel$MDRI$CI_UB[2],257)
+  expect_equal({
+    mdri_parallel_bsparams <- mdrical(data=excalibdata,
+                                      subid_var = "SubjectID",
+                                      time_var = "DaysSinceEDDI",
+                                      recency_cutoff_time = 730.5,
+                                      inclusion_time_threshold = 800,
+                                      functional_forms = c("cloglog_linear", "logit_cubic"),
+                                      recency_rule = "binary_data",
+                                      recency_vars = "Recent",
+                                      n_bootstraps = 250,
+                                      random_seed = NULL,
+                                      plot = FALSE,
+                                      parallel = TRUE,
+                                      cores = 2,
+                                      output_bs_parms = TRUE)
+    c(nrow(mdri_parallel_bsparams$BSparms$cloglog_linear), 
+      nrow(mdri_parallel_bsparams$BSparms$logit_cubic))
+  },
+  c(250,250)
+  )
 })
 
 test_that("mdrical() error messages work", {

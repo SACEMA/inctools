@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: inctools
 Type: Package
 Title: Incidence Estimation Tools
-Version: 1.0.9001
-Date: 2019-11-14
+Version: 1.0.9002
+Date: 2019-11-19
 Authors@R: c(
   person("Eduard","Grebe",email="Eduard.Grebe@ucsf.edu",role=c("cre","aut")),
   person("Alex","Welte", email="alexwelte@sun.ac.za", role="aut"),
@@ -45,7 +45,6 @@ Imports:
     foreach,
     parallel,
     doParallel,
-    doRNG,
     binom
 Suggests:
     survey,
