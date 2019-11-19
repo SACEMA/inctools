@@ -53,6 +53,30 @@ test_that("mdri estimation works", {
                        parallel = FALSE)$MDRI$PE, 
                271.7752,
                tolerance = 1e-05)
+  expect_equal(class(mdrical(data=excalibdata,
+                       subid_var = "SubjectID",
+                       time_var = "DaysSinceEDDI",
+                       recency_cutoff_time = 730.5,
+                       inclusion_time_threshold = 800,
+                       functional_forms = c("cloglog_linear"),
+                       recency_rule = "independent_thresholds",
+                       recency_vars = c("Result","VL"),
+                       recency_params = c(10,0,1000,1),
+                       n_bootstraps = 0,
+                       plot = TRUE)$Plots$cloglog_linear), 
+               c("gg","ggplot"))
+  expect_equal(class(mdrical(data=excalibdata,
+                             subid_var = "SubjectID",
+                             time_var = "DaysSinceEDDI",
+                             recency_cutoff_time = 730.5,
+                             inclusion_time_threshold = 800,
+                             functional_forms = c("logit_cubic"),
+                             recency_rule = "independent_thresholds",
+                             recency_vars = c("Result","VL"),
+                             recency_params = c(10,0,1000,1),
+                             n_bootstraps = 0,
+                             plot = TRUE)$Plots$logit_cubic), 
+               c("gg","ggplot"))
 })
 
 test_that("mdri bootstrapping works", {
