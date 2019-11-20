@@ -94,21 +94,22 @@ frrcal <- function(data = NULL,
     stop("The number of recency variables must match the number of recency paramaters.")
   }
 
-  if (is.null(subid_var) | is.null(time_var)) {
-    stop("Subject identifier and time variables must be specified.")
+  if (is.null(subid_var)) {
+    stop("Subject identifier must be specified")
+  }
+  
+  if (is.null(time_var)) {
+    stop("Time variable must be specified")
   }
 
-  if (is.null(data)) {stop("Error: No dataframe provided.")}
-  if (is.null(subid_var)) {stop("Error: No subject identifier variable provided.")}
-  if (is.null(time_var)) {stop("Error: No time variable provided.")}
-  if (is.null(time_var)) {stop("Error: No recency variables provided variable provided.")}
+  if (is.null(data)) {stop("No dataframe provided")}
 
-  if (is.null(method)) {stop("Error: Confidence interval method must be specified.")}
+  if (is.null(method)) {stop("Confidence interval method must be specified")}
   
-  if (length(method) != 1) {stop("Error: Exactly one confidence interval method must be specified.")}
+  if (length(method) != 1) {stop("Exactly one confidence interval method must be specified")}
   
   if ( !(method %in% c("exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit", "cloglog", "probit"))) {
-    stop("Confidence interval method must be one of 'exact', 'ac', 'asymptotic', 'wilson', 'prop.test', 'bayes', 'logit', 'cloglog', 'probit'. See help of binom::binom.test() for further details.")
+    stop("Confidence interval method must be one of 'exact', 'ac', 'asymptotic', 'wilson', 'prop.test', 'bayes', 'logit', 'cloglog', 'probit'. See help of binom::binom.test() for further details")
     }
 
   # check that subject id, time and recency variables exist
