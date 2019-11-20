@@ -115,14 +115,14 @@ frrcal <- function(data = NULL,
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
   if (sum(variables == subid_var) != 1) {
-    stop(paste("There is no column", subid_var, "in the data frame."))
+    stop(paste("There is no column", subid_var, "in the data frame"))
   }
   if (sum(variables == time_var) != 1) {
-    stop(paste("There is no column", time_var, "in the data frame."))
+    stop(paste("There is no column", time_var, "in the data frame"))
   }
   for (i in 1:length(recency_vars)) {
     if (sum(variables == recency_vars[i]) != 1) {
-      stop(paste("There is no column", recency_vars[i], "in the data frame."))
+      stop(paste("There is no column", recency_vars[i], "in the data frame"))
     }
   }
 

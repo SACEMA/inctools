@@ -356,6 +356,33 @@ test_that("frrcal() error messages work", {
   )
   expect_error(
     frrcal(data=excalibdata,
+           subid_var = "GarbageVar",
+           time_var = "DaysSinceEDDI",
+           recency_cutoff_time = 730.5,
+           recency_rule = "binary_data",
+           recency_vars = "Recent"),
+    "There is no column GarbageVar in the data frame", fixed = TRUE
+  )
+  expect_error(
+    frrcal(data=excalibdata,
+           subid_var = "SubjectID",
+           time_var = "GarbageVar",
+           recency_cutoff_time = 730.5,
+           recency_rule = "binary_data",
+           recency_vars = "Recent"),
+    "There is no column GarbageVar in the data frame", fixed = TRUE
+  )
+  expect_error(
+    frrcal(data=excalibdata,
+           subid_var = "SubjectID",
+           time_var = "DaysSinceEDDI",
+           recency_cutoff_time = 730.5,
+           recency_rule = "binary_data",
+           recency_vars = "GarbageVar"),
+    "There is no column GarbageVar in the data frame", fixed = TRUE
+  )
+  expect_error(
+    frrcal(data=excalibdata,
            subid_var = "SubjectID",
            time_var = "DaysSinceEDDI",
            recency_cutoff_time = 730.5,
