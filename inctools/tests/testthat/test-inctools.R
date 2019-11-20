@@ -170,7 +170,7 @@ test_that("mdri bootstrapping works", {
                            functional_forms = c("cloglog_linear", "logit_cubic"),
                            recency_rule = "binary_data",
                            recency_vars = "Recent",
-                           n_bootstraps = 250,
+                           n_bootstraps = 500,
                            random_seed = NULL,
                            plot = FALSE,
                            parallel = TRUE,
@@ -178,10 +178,10 @@ test_that("mdri bootstrapping works", {
                            output_bs_parms = FALSE)
   expect_gte(mdri_parallel$MDRI$SE[1],12)
   expect_gte(mdri_parallel$MDRI$SE[2],12)
-  expect_lte(mdri_parallel$MDRI$CI_LB[1],227)
-  expect_lte(mdri_parallel$MDRI$CI_LB[2],215)
-  expect_gte(mdri_parallel$MDRI$CI_UB[1],271)
-  expect_gte(mdri_parallel$MDRI$CI_UB[2],257)
+  expect_lte(mdri_parallel$MDRI$CI_LB[1],228)
+  expect_lte(mdri_parallel$MDRI$CI_LB[2],216)
+  expect_gte(mdri_parallel$MDRI$CI_UB[1],270)
+  expect_gte(mdri_parallel$MDRI$CI_UB[2],256)
   expect_equal({
     mdri_parallel_bsparams <- mdrical(data=excalibdata,
                                       subid_var = "SubjectID",
