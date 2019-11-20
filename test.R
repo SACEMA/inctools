@@ -4,6 +4,12 @@ rhub::check(path = "~/dev/inctools/inctools/")
 # Automated for CRAN
 rhub::check_for_cran(path = "~/dev/inctools/inctools/")
 
+rhub::check_with_roldrel(path = "~/dev/inctools/inctools/")
+rhub::check_with_rrelease(path = "~/dev/inctools/inctools/")
+rhub::check_with_rpatched(path = "~/dev/inctools/inctools/")
+rhub::check_with_rdevel(path = "~/dev/inctools/inctools/") 
+
+
 n_cores <- 12
 setwd("~/dev/incidence-kzn/")
 

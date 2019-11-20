@@ -39,7 +39,7 @@ Imports:
     cubature,
     tmvtnorm,
     ggplot2,
-    glm2,
+    glm2 (>= 1.2.0),
     plyr,
     pracma,
     foreach,

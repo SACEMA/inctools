@@ -327,6 +327,62 @@ test_that("frr estimation works", {
                       method = "probit")$CI_UB, 0.05720647)
 })
 
+test_that("frrcal() error messages work", {
+  expect_error(
+    frrcal(subid_var = "SubjectID",
+            time_var = "DaysSinceEDDI",
+            recency_cutoff_time = 730.5,
+            recency_rule = "binary_data",
+            recency_vars = "Recent"),
+    "Error: No dataframe provided.", fixed = TRUE
+  )
+  expect_error(
+    frrcal(data=excalibdata,
+           time_var = "DaysSinceEDDI",
+           recency_cutoff_time = 730.5,
+           recency_rule = "binary_data",
+           recency_vars = "Recent"),
+    "Subject identifier and time variables must be specified.", fixed = TRUE
+  )
+  expect_error(
+    frrcal(data=excalibdata,
+           subid_var = "SubjectID",
+           recency_cutoff_time = 730.5,
+           recency_rule = "binary_data",
+           recency_vars = "Recent"),
+    "Subject identifier and time variables must be specified.", fixed = TRUE
+  )
+  expect_error(
+    frrcal(data=excalibdata,
+           subid_var = "SubjectID",
+           time_var = "DaysSinceEDDI",
+           recency_cutoff_time = 730.5,
+           recency_rule = "garbage_rule",
+           recency_vars = "Recent"),
+    "Please specify a valid recency rule", fixed = TRUE
+  )
+  expect_error(
+    frrcal(data=excalibdata,
+           subid_var = "SubjectID",
+           time_var = "DaysSinceEDDI",
+           recency_cutoff_time = 730.5,
+            recency_rule = "binary_data",
+            recency_vars = c("Result","VL"),
+            recency_params = c(10,0,1000,1)),
+    "Binary data should be specified in one recency (outcome) variable.", fixed = TRUE
+  )
+  expect_error(
+    frrcal(data=excalibdata,
+           subid_var = "SubjectID",
+           time_var = "DaysSinceEDDI",
+           recency_cutoff_time = 730.5,
+            recency_rule = "independent_thresholds",
+            recency_vars = "Recent",
+            recency_params =c(10,0,1000,1)),
+    "The number of recency variables must match the number of recency paramaters.", fixed = TRUE
+  )
+})
+
 test_that("incidence estimation works", {
   expect_equal(incprops(PrevH = 0.20, 
                         RSE_PrevH = 0.028, 
