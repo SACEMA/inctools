@@ -162,26 +162,27 @@ test_that("mdri bootstrapping works", {
   c(100, 4.2747332, -0.9427134),
   tolerance = 1e-05)
   # Run estimation and perform a few tests on the result (is this bad?)
-  mdri_parallel <- mdrical(data=excalibdata,
-                           subid_var = "SubjectID",
-                           time_var = "DaysSinceEDDI",
-                           recency_cutoff_time = 730.5,
-                           inclusion_time_threshold = 800,
-                           functional_forms = c("cloglog_linear", "logit_cubic"),
-                           recency_rule = "binary_data",
-                           recency_vars = "Recent",
-                           n_bootstraps = 500,
-                           random_seed = NULL,
-                           plot = FALSE,
-                           parallel = TRUE,
-                           cores = 2,
-                           output_bs_parms = FALSE)
-  expect_gte(mdri_parallel$MDRI$SE[1],12)
-  expect_gte(mdri_parallel$MDRI$SE[2],12)
-  expect_lte(mdri_parallel$MDRI$CI_LB[1],228)
-  expect_lte(mdri_parallel$MDRI$CI_LB[2],216)
-  expect_gte(mdri_parallel$MDRI$CI_UB[1],270)
-  expect_gte(mdri_parallel$MDRI$CI_UB[2],256)
+  expect_equal({
+    mdri_parallel <- mdrical(data=excalibdata,
+                             subid_var = "SubjectID",
+                             time_var = "DaysSinceEDDI",
+                             recency_cutoff_time = 730.5,
+                             inclusion_time_threshold = 800,
+                             functional_forms = c("cloglog_linear", "logit_cubic"),
+                             recency_rule = "binary_data",
+                             recency_vars = "Recent",
+                             n_bootstraps = 500,
+                             random_seed = 123,
+                             plot = FALSE,
+                             parallel = TRUE,
+                             cores = 2,
+                             output_bs_parms = FALSE)
+    c(mdri_parallel$MDRI$SE[1], mdri_parallel$MDRI$SE[2],
+      mdri_parallel$MDRI$CI_LB[1], mdri_parallel$MDRI$CI_LB[2], 
+      mdri_parallel$MDRI$CI_UB[1], mdri_parallel$MDRI$CI_UB[2])
+  },
+  c(13.05429, 13.01022, 221.56480, 209.66825, 271.29934, 259.05984),
+  tolerance = 1e-05)
   expect_equal({
     mdri_parallel_bsparams <- mdrical(data=excalibdata,
                                       subid_var = "SubjectID",

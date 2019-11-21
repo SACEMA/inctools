@@ -327,6 +327,9 @@ mdrical <- function(data = NULL,
                                   #.packages = "inctools"
         ) %dopar%
         {
+          if (!is.null(random_seed)) {
+            set.seed(j * random_seed)
+          }
           boot_data <- data_grouped %>%
             sample_frac_groups(1, replace = TRUE) %>%
             dplyr::ungroup()
@@ -353,6 +356,9 @@ mdrical <- function(data = NULL,
                                              #.packages = "inctools"
         ) %dopar%
         {
+          if (!is.null(random_seed)) {
+            set.seed(j * random_seed)
+          }
           boot_data <- data_grouped %>%
             sample_frac_groups(1, replace = TRUE) %>%
             dplyr::ungroup()
