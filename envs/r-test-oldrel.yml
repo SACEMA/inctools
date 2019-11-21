@@ -21,6 +21,7 @@ dependencies:
 - r-rmarkdown
 - r-knitr
 - r-devtools
+- r-qpdf
 - rstudio
 # - r-base=3.6.*
 # - r-rlang=0.4.*
