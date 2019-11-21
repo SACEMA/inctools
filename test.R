@@ -1,3 +1,15 @@
+# Check build using R-hub
+# Interactive
+rhub::check(path = "~/dev/inctools/inctools/")
+# Automated for CRAN
+rhub::check_for_cran(path = "~/dev/inctools/inctools/")
+
+rhub::check_with_roldrel(path = "~/dev/inctools/inctools/")
+rhub::check_with_rrelease(path = "~/dev/inctools/inctools/")
+rhub::check_with_rpatched(path = "~/dev/inctools/inctools/")
+rhub::check_with_rdevel(path = "~/dev/inctools/inctools/") 
+
+
 n_cores <- 12
 setwd("~/dev/incidence-kzn/")
 
@@ -188,37 +200,61 @@ I2$Incidence.Difference.Statistics$p.value
 print(I2)
 str(I2)
 
-inccounts(N = 10000,
-          N_H = 1000,
-          N_testR = 990,
-          N_R = 99,
-          DE_H = 1.2,
-          DE_R = 1.2,
-          Boot = FALSE,
-          alpha = 0.05,
-          MDRI= 200,
-          RSE_MDRI = 0.1,
-          FRR = 0.01,
-          RSE_FRR = 0.25,
-          BigT = 730.5,
-          Covar_HR = 0,
-          debug = FALSE)
-
-incprops(PrevH = 0.1, 
-         RSE_PrevH = 0.03286335,
-         PrevR = 0.1, 
-         RSE_PrevR = 0.1044466,
-         Boot = FALSE,
-         alpha = 0.05,
-         MDRI= 200,
-         RSE_MDRI = 0.1,
-         FRR = 0.01,
-         RSE_FRR = 0.25,
-         BigT = 730.5,
-         Covar_HR = 0,
-         debug = FALSE)
+c(mdri$MDRI$SE, mdri$MDRI$CI_LB, mdri$MDRI$CI_UB, 
+  nrow(mdri$BSparms$logit_cubic),
+  mean(mdri$BSparms$logit_cubic$beta0),
+  mean(mdri$BSparms$logit_cubic$beta1))
 
 
 
+
+SEs <- 0
+LBs <- 0
+UBs <- 0
+for (i in 1:25) {
+  mdri <-mdrical(data=excalibdata,
+                    subid_var = "SubjectID",
+                    time_var = "DaysSinceEDDI",
+                    recency_cutoff_time = 730.5,
+                    inclusion_time_threshold = 800,
+                    functional_forms = c("cloglog_linear"),
+                    recency_rule = "binary_data",
+                    recency_vars = "Recent",
+                    n_bootstraps = 250,
+                    random_seed = 123,
+                    plot = FALSE,
+                    parallel = TRUE)
+  SEs[i] <- mdri$MDRI$SE
+  LBs[i] <- mdri$MDRI$CI_LB
+  UBs[i] <- mdri$MDRI$CI_UB
+}
+min(SEs) - 0.5
+max(LBs) + 0.5
+min(UBs) - 0.5
+
+SEs <- 0
+LBs <- 0
+UBs <- 0
+for (i in 1:25) {
+  mdri <- mdrical(data=excalibdata,
+                  subid_var = "SubjectID",
+                  time_var = "DaysSinceEDDI",
+                  recency_cutoff_time = 730.5,
+                  inclusion_time_threshold = 800,
+                  functional_forms = c("logit_cubic"),
+                  recency_rule = "binary_data",
+                  recency_vars = "Recent",
+                  n_bootstraps = 250,
+                  random_seed = 123,
+                  plot = FALSE,
+                  parallel = TRUE,
+                  cores = 2)
+  SEs[i] <- mdri$MDRI$SE
+  LBs[i] <- mdri$MDRI$CI_LB
+  UBs[i] <- mdri$MDRI$CI_UB
+}
+min(SEs) - 0.5
+max(LBs) + 0.5
+min(UBs) - 0.5
 
 

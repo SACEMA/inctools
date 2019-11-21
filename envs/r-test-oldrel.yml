@@ -1,0 +1,42 @@
+name: r-test-oldrel
+channels:
+- conda-forge
+- r
+dependencies:
+- r-base=3.5.*
+- r-rlang
+- r-dplyr
+- r-tidyr
+- r-tibble
+- r-cubature
+- r-tmvtnorm
+- r-ggplot2
+- r-glm2
+- r-plyr
+- r-pracma
+- r-foreach
+- r-doparallel
+- r-binom
+- r-testthat
+- r-rmarkdown
+- r-knitr
+- r-devtools
+- r-qpdf
+- rstudio
+# - r-base=3.6.*
+# - r-rlang=0.4.*
+# - r-dplyr=0.8.*
+# - r-tidyr=1.0.*
+# - r-tibble=2.1.*
+# - r-cubature=2.0.*
+# - r-tmvtnorm=1.4*
+# - r-ggplot2=3.2.*
+# - r-glm2=1.2.*
+# - r-plyr=1.8.*
+# - r-pracma=2.2.*
+# - r-foreach=1.4.*
+# - r-doparallel=1.0.8
+# - r-binom=1.1*
+# - r-testthat=1.2.*
+# - r-rmarkdown=1.17
+# - r-knitr=1.26

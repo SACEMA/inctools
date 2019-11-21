@@ -1,6 +1,5 @@
-# Incidence Estimation Tools Copyright (C) 2015-2018, DST-NRF Centre of
-# Excellence in Epidemiological Modelling and Analysis (SACEMA), Stellenbosch
-# University and individual contributors.
+# Incidence Estimation Tools. Copyright (C) 2015-2019, individual contributors
+# and Stellenbosch University.
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -95,34 +94,35 @@ frrcal <- function(data = NULL,
     stop("The number of recency variables must match the number of recency paramaters.")
   }
 
-  if (is.null(subid_var) | is.null(time_var)) {
-    stop("Subject identifier and time variables must be specified.")
+  if (is.null(subid_var)) {
+    stop("Subject identifier must be specified")
+  }
+  
+  if (is.null(time_var)) {
+    stop("Time variable must be specified")
   }
 
-  if (is.null(data)) {stop("Error: No dataframe provided.")}
-  if (is.null(subid_var)) {stop("Error: No subject identifier variable provided.")}
-  if (is.null(time_var)) {stop("Error: No time variable provided.")}
-  if (is.null(time_var)) {stop("Error: No recency variables provided variable provided.")}
+  if (is.null(data)) {stop("No dataframe provided")}
 
-  if (is.null(method)) {stop("Error: Confidence interval method must be specified.")}
+  if (is.null(method)) {stop("Confidence interval method must be specified")}
   
-  if (length(method) != 1) {stop("Error: Exactly one confidence interval method must be specified.")}
+  if (length(method) != 1) {stop("Exactly one confidence interval method must be specified")}
   
   if ( !(method %in% c("exact", "ac", "asymptotic", "wilson", "prop.test", "bayes", "logit", "cloglog", "probit"))) {
-    stop("Confidence interval method must be one of 'exact', 'ac', 'asymptotic', 'wilson', 'prop.test', 'bayes', 'logit', 'cloglog', 'probit'. See help of binom::binom.test() for further details.")
+    stop("Confidence interval method must be one of 'exact', 'ac', 'asymptotic', 'wilson', 'prop.test', 'bayes', 'logit', 'cloglog', 'probit'. See help of binom::binom.test() for further details")
     }
 
   # check that subject id, time and recency variables exist
   variables <- colnames(data)
   if (sum(variables == subid_var) != 1) {
-    stop(paste("There is no column", subid_var, "in the data frame."))
+    stop(paste("There is no column", subid_var, "in the data frame"))
   }
   if (sum(variables == time_var) != 1) {
-    stop(paste("There is no column", time_var, "in the data frame."))
+    stop(paste("There is no column", time_var, "in the data frame"))
   }
   for (i in 1:length(recency_vars)) {
     if (sum(variables == recency_vars[i]) != 1) {
-      stop(paste("There is no column", recency_vars[i], "in the data frame."))
+      stop(paste("There is no column", recency_vars[i], "in the data frame"))
     }
   }
 
@@ -137,7 +137,7 @@ frrcal <- function(data = NULL,
                           recency_rule = recency_rule,
                           debug = debug)
 
-  subjectdata <- data.frame(sid = NA, recent = NA)
+  subjectdata <- tibble::tibble(sid = NA, recent = NA)
   for (subjectid in unique(data$sid)) {
     if (sum(data$recency_status[data$sid == subjectid] == 1)/nrow(data[data$sid ==
                                                                        subjectid, ]) == 0.5) {
@@ -158,8 +158,9 @@ frrcal <- function(data = NULL,
   p <- nr / n
   sigma <- sqrt( (p * (1 - p)) / n )
   binom_ci <- binom::binom.confint(nr, n, conf.level = 1 - alpha, methods = method)
-  FRR <- tibble::tibble(FRRest = p, SE = sigma, LB = binom_ci$lower, UB = binom_ci$upper, 
+  FRR <- tibble::tibble(FRRest = p, SE = sigma, CI_LB = binom_ci$lower, CI_UB = binom_ci$upper, 
                         alpha = alpha, n_recent = nr, n_subjects = n, n_observations = nrow(data), 
                         ci_method = method)
+  options(pillar.sigfig = 6)
   return(FRR)
 }

@@ -1,6 +1,5 @@
-# Incidence Estimation Tools Copyright (C) 2015-2018, DST-NRF Centre of
-# Excellence in Epidemiological Modelling and Analysis (SACEMA), Stellenbosch
-# University and individual contributors.
+# Incidence Estimation Tools. Copyright (C) 2015-2019, individual contributors
+# and Stellenbosch University.
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -55,9 +54,27 @@
 #' @export
 
 
-incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0.05,
-                     Power = 0.8, SS = "out", CR = 1, DE_H = 1, DE_R = 1, BMest = "same.test", MDRI,
-                     RSE_MDRI, FRR, RSE_FRR, BigT = 730, Boot = FALSE, BS_Count = 100000, Cov.PrevH.I = c(0,0),
+incpower <- function(I1, 
+                     I2, 
+                     PrevH1, 
+                     PrevH2, 
+                     n1 = "both", 
+                     n2 = "both", 
+                     alpha = 0.05,
+                     Power = 0.8, 
+                     SS = "out", 
+                     CR = 1, 
+                     DE_H = 1, 
+                     DE_R = 1, 
+                     BMest = "same.test", 
+                     MDRI,
+                     RSE_MDRI, 
+                     FRR, 
+                     RSE_FRR, 
+                     BigT = 730, 
+                     Boot = FALSE, 
+                     BS_Count = 100000, 
+                     Cov.PrevH.I = c(0,0),
                      debug  = FALSE) {
 
   if (debug) {browser()}
@@ -107,6 +124,18 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
   if (sum(BigT <= 182) > 0) {
     warning("BigT is smaller than half a year")
+  }
+  
+  if ( ( (!is.null(SS) && SS == "out") | n1 == "out" | n2 == "out") & Power == "out") {
+    stop("Either power or sample size must be an output")
+  }
+  
+  if ( (n1 == "both" & n2 != "both") | (n1 != "both" & n2 == "both")  ) {
+    stop("If common sample size is requested both n1 and n2 must be 'both'")
+  }
+  
+  if ( n1 != "out" & n2 != "out" & n1 != "both" & n2 != "both" & (!is.null(SS) && SS == "out")) {
+    stop("If sample size is requested, either n1 or n2 or common sample size must be requested")
   }
 
   # dimension of inputs (number of surveys)
@@ -174,9 +203,9 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
   DM_Var_MDRI <- (MDRI * RSE_MDRI)^2
   DM_Var_FRR <- (FRR * RSE_FRR)^2
 
-  MDRI.CI <- 365.25 * data.frame(CI.low = stats::qnorm(alpha/2, mean = MDRI, sd = sqrt(DM_Var_MDRI)),
+  MDRI.CI <- 365.25 * tibble::tibble(CI.low = stats::qnorm(alpha/2, mean = MDRI, sd = sqrt(DM_Var_MDRI)),
                                  CI.up = stats::qnorm(1 - alpha/2, mean = MDRI, sd = sqrt(DM_Var_MDRI)))
-  FRR.CI <- data.frame(CI.low = stats::qnorm(alpha/2, mean = FRR, sd = sqrt(DM_Var_FRR)),
+  FRR.CI <- tibble::tibble(CI.low = stats::qnorm(alpha/2, mean = FRR, sd = sqrt(DM_Var_FRR)),
                        CI.up = stats::qnorm(1 - alpha/2, mean = FRR, sd = sqrt(DM_Var_FRR)))
 
 
@@ -259,17 +288,131 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
 
 
     if (BMest == "FRR.indep") {
-      output <- list(Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI[1] * 365.25, 3), CI.low = round(MDRI.CI[1, 1], 3), CI.up = round(MDRI.CI[1, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR, 4), CI.low = round(FRR.CI[, 1], 4), CI.up = round(FRR.CI[, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI[1] * 365.25, 
+          CI.low = MDRI.CI[1, 1], 
+          CI.up = MDRI.CI[1, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR, 
+          CI.low = FRR.CI[, 1], 
+          CI.up = FRR.CI[, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1],
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     } else if (BMest == "same.test") {
-      output <- list(Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI[1] * 365.25, 3), CI.low = round(MDRI.CI[1, 1], 3), CI.up = round(MDRI.CI[1, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR[1], 3), CI.low = round(FRR.CI[1, 1], 3), CI.up = round(FRR.CI[1, 2], 3)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI[1] * 365.25, 
+          CI.low = MDRI.CI[1, 1], 
+          CI.up = MDRI.CI[1, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR[1], 
+          CI.low = FRR.CI[1, 1], 
+          CI.up = FRR.CI[1, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     } else if (BMest == "MDRI.FRR.indep") {
-      output <- list(Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI * 365.25, 3), CI.low = round(MDRI.CI[, 1], 3), CI.up = round(MDRI.CI[, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR, 4), CI.low = round(FRR.CI[, 1], 4), CI.up = round(FRR.CI[, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = round(N[1] * HIV.neg[1]), HIV.positive = round(N[1] - N[1] * HIV.neg[1]), HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = round(N[2] * HIV.neg[2]), HIV.positive = round(N[2] - N[2] * HIV.neg[2]), HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI * 365.25, 
+          CI.low = MDRI.CI[, 1], 
+          CI.up = MDRI.CI[, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR, 
+          CI.low = FRR.CI[, 1], 
+          CI.up = FRR.CI[, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = round(N[1] * HIV.neg[1]), HIV.positive = round(N[1] - N[1] * HIV.neg[1]), 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = round(N[2] * HIV.neg[2]), HIV.positive = round(N[2] - N[2] * HIV.neg[2]), 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     }
 
 
 
 
-    } else if (SS == "out" & n1 == "out") {
+    } else if ((!is.null(SS) && SS == "out") & n1 == "out") {
     if (n2 == "out") {
       stop("both n1 and n2 cannot be designated 'out'")
     }
@@ -367,17 +510,139 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
                                     sd = 1)
 
     if (BMest == "FRR.indep") {
-      output <- list(Minimum.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI[1] * 365.25, 3), CI.low = round(MDRI.CI[1, 1], 3), CI.up = round(MDRI.CI[1, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR, 4), CI.low = round(FRR.CI[, 1], 4), CI.up = round(FRR.CI[, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI[1] * 365.25, 
+          CI.low = MDRI.CI[1, 1], 
+          CI.up = MDRI.CI[1, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR, 
+          CI.low = FRR.CI[, 1], 
+          CI.up = FRR.CI[, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2],
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     } else if (BMest == "same.test") {
-      output <- list(Minimum.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI[1] * 365.25, 3), CI.low = round(MDRI.CI[1, 1], 3), CI.up = round(MDRI.CI[1, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR[1], 3), CI.low = round(FRR.CI[1, 1], 4), CI.up = round(FRR.CI[1, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI[1] * 365.25, 
+          CI.low = MDRI.CI[1, 1], 
+          CI.up = MDRI.CI[1, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR[1], 
+          CI.low = FRR.CI[1, 1], 
+          CI.up = FRR.CI[1, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     } else if (BMest == "MDRI.FRR.indep") {
-      output <- list(Minimum.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI * 365.25, 3), CI.low = round(MDRI.CI[, 1], 3), CI.up = round(MDRI.CI[, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR, 4), CI.low = round(FRR.CI[, 1], 4), CI.up = round(FRR.CI[, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI * 365.25, 
+          CI.low = MDRI.CI[, 1], 
+          CI.up = MDRI.CI[, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR, 
+          CI.low = FRR.CI[, 1], 
+          CI.up = FRR.CI[, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
 
     }
 
 
 
-  } else if (SS == "out" & n2 == "out") {
+  } else if ((!is.null(SS) && SS == "out") & n2 == "out") {
     if (n1 == "out") {
       stop("both n1 and n2 cannot be designated 'out'")
     }
@@ -477,17 +742,140 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
                                     sd = 1)
 
     if (BMest == "FRR.indep") {
-      output <- list(Minimum.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI[1] * 365.25, 3), CI.low = round(MDRI.CI[1, 1], 3), CI.up = round(MDRI.CI[1, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR, 4), CI.low = round(FRR.CI[, 1], 4), CI.up = round(FRR.CI[, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI[1] * 365.25, 
+          CI.low = MDRI.CI[1, 1], 
+          CI.up = MDRI.CI[1, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR, 
+          CI.low = FRR.CI[, 1], 
+          CI.up = FRR.CI[, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     } else if (BMest == "same.test") {
-      output <- list(Minimum.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI[1] * 365.25, 3), CI.low = round(MDRI.CI[1, 1], 3), CI.up = round(MDRI.CI[1, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR[1], 3), CI.low = round(FRR.CI[1, 1], 4), CI.up = round(FRR.CI[1, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est,
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI[1] * 365.25, 
+          CI.low = MDRI.CI[1, 1], 
+          CI.up = MDRI.CI[1, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR[1], 
+          CI.low = FRR.CI[1, 1], 
+          CI.up = FRR.CI[1, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     } else if (BMest == "MDRI.FRR.indep") {
-      output <- list(Minimum.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI * 365.25, 3), CI.low = round(MDRI.CI[, 1], 3), CI.up = round(MDRI.CI[, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR, 4), CI.low = round(FRR.CI[, 1], 4), CI.up = round(FRR.CI[, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI * 365.25, 
+          CI.low = MDRI.CI[, 1],
+          CI.up = MDRI.CI[, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR,
+          CI.low = FRR.CI[, 1],
+          CI.up = FRR.CI[, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
 
     }
 
 
 
-  } else if (SS == "out" & n1 == "both" & n2 == "both") {
+  } else if ((!is.null(SS) && SS == "out") & n1 == "both" & n2 == "both") {
     if (BMest == "same.test") {
       SS <- ceiling(sum(I^2 * ((1/PrevH) * (DE_H/(1 - PrevH) + (DE_R/CR) *
                                               (PrevR/PrevH) * (1 - PrevR/PrevH)/((PrevR/PrevH - FRR)^2))))/((deltaI_Est/(stats::qnorm(1 -
@@ -574,15 +962,136 @@ incpower <- function(I1, I2, PrevH1, PrevH2, n1 = "both", n2 = "both", alpha = 0
                                     sd = 1)
 
     if (BMest == "FRR.indep") {
-      output <- list(Minimum.Common.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI[1] * 365.25, 3), CI.low = round(MDRI.CI[1, 1], 3), CI.up = round(MDRI.CI[1, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR, 4), CI.low = round(FRR.CI[, 1], 4), CI.up = round(FRR.CI[, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.Common.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI[1] * 365.25,
+          CI.low = MDRI.CI[1, 1],
+          CI.up = MDRI.CI[1, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR,
+          CI.low = FRR.CI[, 1],
+          CI.up = FRR.CI[, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     } else if (BMest == "same.test") {
-      output <- list(Minimum.Common.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI[1] * 365.25, 3), CI.low = round(MDRI.CI[1, 1], 3), CI.up = round(MDRI.CI[1, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR[1], 3), CI.low = round(FRR.CI[1, 1], 4), CI.up = round(FRR.CI[1, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.Common.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          CI.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI[1] * 365.25,
+          CI.low = MDRI.CI[1, 1],
+          CI.up = MDRI.CI[1, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR[1],
+          CI.low = FRR.CI[1, 1],
+          CI.up = FRR.CI[1, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])),
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     } else if (BMest == "MDRI.FRR.indep") {
-      output <- list(Minimum.Common.SS = SS, Inc.Difference.Statistics = data.frame(deltaI_Est = deltaI_Est, RSE_deltaI = RSE_deltaI, RSE_deltaI.infSS = ifelse(RSE_deltaI.infSS < 0.001, "<0.001", RSE_deltaI.infSS), Power = ss.power, Power.infSS = ifelse(Power.infSS > 0.99, ">0.99", Power.infSS), CI.low = deltaI_CI[1], CI.up = deltaI_CI[2]), Implied.Incidence.Statistics = data.frame(Survey = c(1, 2), Given.I = I, RSE_I = RSE_I, CI.low = CI.low, CI.up = CI.up), Implied.MDRI.Statistics = data.frame(Given.MDRI = round(MDRI * 365.25, 3), CI.low = round(MDRI.CI[, 1], 3), CI.up = round(MDRI.CI[, 2], 3)), Implied.FRR.Statistics = data.frame(Given.FRR = round(FRR, 4), CI.low = round(FRR.CI[, 1], 4), CI.up = round(FRR.CI[, 2], 4)), Implied.Subject.Counts = round(data.frame(Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], HIV.positive = N[1] - N[1] * HIV.neg[1], HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))), Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], HIV.positive = N[2] - N[2] * HIV.neg[2], HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))))))
+      output <- list(
+        Minimum.Common.SS = SS, 
+        Inc.Difference.Statistics = tibble::tibble(
+          deltaI_Est = deltaI_Est, 
+          RSE_deltaI = RSE_deltaI, 
+          RSE_deltaI.infSS = RSE_deltaI.infSS, 
+          Power = ss.power, 
+          Power.infSS = Power.infSS, 
+          CI.low = deltaI_CI[1], 
+          CI.up = deltaI_CI[2]
+          ), 
+        Implied.Incidence.Statistics = tibble::tibble(
+          Survey = c(1, 2), 
+          Given.I = I, 
+          RSE_I = RSE_I, 
+          CI.low = CI.low, 
+          I.up = CI.up
+          ), 
+        Implied.MDRI.Statistics = tibble::tibble(
+          Given.MDRI = MDRI * 365.25,
+          CI.low = MDRI.CI[, 1],
+          CI.up = MDRI.CI[, 2]
+          ), 
+        Implied.FRR.Statistics = tibble::tibble(
+          Given.FRR = FRR,
+          CI.low = FRR.CI[, 1],
+          CI.up = FRR.CI[, 2]
+          ), 
+        Implied.Subject.Counts = round(tibble::tibble(
+          Survey.1 = c(HIV.negative = N[1] * HIV.neg[1], 
+                       HIV.positive = N[1] - N[1] * HIV.neg[1], 
+                       HIV.post.tested.for.recent = round(CR[1] * (N[1] - N[1] * HIV.neg[1])), 
+                       Recency.test.pos = round(PrevR[1]/PrevH[1] * (CR[1] * (N[1] - N[1] * HIV.neg[1])))
+                       ), 
+          Survey.2 = c(HIV.negative = N[2] * HIV.neg[2], 
+                       HIV.positive = N[2] - N[2] * HIV.neg[2], 
+                       HIV.post.tested.for.recent = round(CR[2] * (N[2] - N[2] * HIV.neg[2])), 
+                       Recency.test.pos = round(PrevR[2]/PrevH[2] * (CR[2] * (N[2] - N[2] * HIV.neg[2])))
+                       )
+          )
+          )
+        )
     }
   }
-
-
 
   return(output)
 
