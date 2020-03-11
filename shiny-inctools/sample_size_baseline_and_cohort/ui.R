@@ -59,6 +59,8 @@ fluidPage(
            wellPanel(
              div(img(src='SACEMA_logo.png', width = "100%"), style = "text-align: center;"),
              br(),
+             div(img(src='VRI_logo.png', width = "100%"), style = "text-align: center;"),
+             br(),
              div(img(src='FIND_logo.jpg', width = "100%"), style = "text-align: center;")
            )
            # wellPanel(
@@ -112,11 +114,11 @@ fluidPage(
                        tabPanel("About", value='tab4_val', id = 'tab4',
                                 wellPanel(
                                   p("This tool calculates the minimum required sample size to achieve a specified
-                                    probability of correctly inferring an incidence decline (power) in the special
+                                    power (probability of correctly inferring an incidence decline) in the special
                                     case where a baseline cross-sectional HIV incidence survey is conducted and HIV-
-                                    survey respondents are recruited into a cohort to observe an expected decline
-                                    in incidence. It also allows to evaluate the impact on power and required sample size
-                                    for different values of % incidence reduction."),
+                                    survey respondents are recruited into a cohort. It also allows one to evaluate 
+                                    the impact on power and required sample size of different effect sizes (i.e. 
+                                    different values of proportional incidence reduction)."),
                                   p("Contributors:"),
                                   tags$ul(
                                     tags$li("Eduard Grebe"),

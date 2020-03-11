@@ -692,8 +692,8 @@ plot_probability <- function(functional_form = functional_form,
 
   plotout <- ggplot2::ggplot() +
     ggplot2::geom_line(data = plotdata,
-                       ggplot2::aes(x = plotdata$time_since_eddi,
-                                    y = plotdata$probability)) +
+                       ggplot2::aes(x = .data$time_since_eddi,
+                                    y = .data$probability)) +
     ggplot2::labs(x = "Time (since detectable infection)",
                   y = "Probability of testing recent") +
     ggplot2::scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2)) +
