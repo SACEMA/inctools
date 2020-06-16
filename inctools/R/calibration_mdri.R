@@ -269,14 +269,15 @@ mdrical <- function(data = NULL,
   #n_subjects <- max(data$sid)
 
   mdri_output <- tibble::tibble(
-    FuncForm = NA,
-    PE = NA,
-    CI_LB = NA,
-    CI_UB = NA,
-    SE = NA,
-    n_recent = NA,
-    n_subjects = NA,
-    n_observations = NA, .rows = 0
+    FuncForm = character(),
+    PE = numeric(),
+    CI_LB = numeric(),
+    CI_UB = numeric(),
+    SE = numeric(),
+    n_recent = numeric(),
+    n_subjects = numeric(),
+    n_observations = numeric(),
+    .rows = 0
   ) 
   model_output <- list()
 
