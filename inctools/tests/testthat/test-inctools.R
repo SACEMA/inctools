@@ -97,7 +97,7 @@ test_that("mdri bootstrapping works", {
                     plot = FALSE,
                     parallel = FALSE,
                     output_bs_parms = FALSE)
-    c(mdri$MDRI$SE, mdri$MDRI$CI_LB, mdri$MDRI$CI_UB)
+    unname(c(mdri$MDRI$SE, mdri$MDRI$CI_LB, mdri$MDRI$CI_UB))
   },
   c(12.4942, 212.1693, 257.5222),
   tolerance = 1e-05)
@@ -115,7 +115,7 @@ test_that("mdri bootstrapping works", {
                     plot = FALSE,
                     parallel = FALSE,
                     output_bs_parms = FALSE)
-    c(mdri$MDRI$SE, mdri$MDRI$CI_LB, mdri$MDRI$CI_UB)
+    unname(c(mdri$MDRI$SE, mdri$MDRI$CI_LB, mdri$MDRI$CI_UB))
   },
   c(12.58502, 221.64980, 268.07910),
   tolerance = 1e-05)
@@ -177,9 +177,9 @@ test_that("mdri bootstrapping works", {
                              parallel = TRUE,
                              cores = 2,
                              output_bs_parms = FALSE)
-    c(mdri_parallel$MDRI$SE[1], mdri_parallel$MDRI$SE[2],
+    unname(c(mdri_parallel$MDRI$SE[1], mdri_parallel$MDRI$SE[2],
       mdri_parallel$MDRI$CI_LB[1], mdri_parallel$MDRI$CI_LB[2], 
-      mdri_parallel$MDRI$CI_UB[1], mdri_parallel$MDRI$CI_UB[2])
+      mdri_parallel$MDRI$CI_UB[1], mdri_parallel$MDRI$CI_UB[2]))
   },
   c(13.05429, 13.01022, 221.56480, 209.66825, 271.29934, 259.05984),
   tolerance = 1e-05)

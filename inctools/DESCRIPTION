@@ -52,6 +52,6 @@ Suggests:
     rmarkdown,
     testthat (>= 2.1.0)
 VignetteBuilder: knitr
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Roxygen:
     list(roclets = c("rd", "collate", "namespace", "vignette"))

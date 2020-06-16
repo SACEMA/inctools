@@ -278,3 +278,4 @@ generate_table_power_ss_incred <- function(Inc = 0.05, Prev = 0.2,
   res <- ddply(df, "FracIncRed", find_power_ss, power_threshold = power_threshold)
   return(res)
 }
+
