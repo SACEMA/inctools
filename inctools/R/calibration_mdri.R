@@ -313,9 +313,11 @@ mdrical <- function(data = NULL,
       ## Revert to 'sequential' setup of PSOCK cluster in RStudio Console on macOS and R 4
       if (Sys.getenv("RSTUDIO") == "1" && !nzchar(Sys.getenv("RSTUDIO_TERM")) && 
           Sys.info()["sysname"] == "Darwin" && R.Version()$major == "4") {
-        parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
+        cluster <- parallel::makeCluster(cores, outfile="", setup_strategy = "sequential")
+      } else {
+        cluster <- parallel::makeCluster(cores, outfile="")
       }
-      cluster <- parallel::makeCluster(cores, outfile="")
+      
       doParallel::registerDoParallel(cluster)
       if (foreach::getDoParWorkers() != cores) {
         stop("Failed to initialise parallel worker threads.")
