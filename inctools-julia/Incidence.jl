@@ -1,4 +1,4 @@
-# Incidence Estimation Tools (Julia implementation). Copyright (C) 2019, 
+# Incidence Estimation Tools (Julia implementation). Copyright (C) 2019,
 # Eduard Grebe and individual contributors.
 #
 # This program is free software: you can redistribute it and/or modify it under
@@ -260,10 +260,10 @@ function incprops(prev::Float64,
             covar = 0.0
         elseif covar == 0.0
             r = hcat(
-                    rand(Distributions.TruncatedNormal(prev, σ_prev, 0.0, 1.0), bs),
-                    rand(Distributions.TruncatedNormal(prevR, σ_prevR, 0.0, 1.0), bs),
-                    rand(Distributions.TruncatedNormal(mdri, σ_mdri, 0.0, Inf), bs),
-                    rand(Distributions.TruncatedNormal(frr, σ_frr, 0.0, 1.0), bs)
+                    rand(Distributions.truncated(Distributions.Normal(prev, σ_prev), 0.0, 1.0), bs),
+                    rand(Distributions.truncated(Distributions.Normal(prevR, σ_prevR), 0.0, 1.0), bs),
+                    rand(Distributions.truncated(Distributions.Normal(mdri, σ_mdri), 0.0, Inf), bs),
+                    rand(Distributions.truncated(Distributions.Normal(frr, σ_frr), 0.0, 1.0), bs)
                     )
         elseif covar > 0.0
             @warn "Truncated multivariate normal with covariance not implemented yet"
@@ -283,8 +283,8 @@ function incprops(prev::Float64,
         @warn "Covariance between prevalence and prevalence of recency assumed zero"
         dprev = Distributions.Binomial(bs_numbers_n[1], prev)
         dprevR = Distributions.Binomial(bs_numbers_n[2], prevR)
-        dmdri = Distributions.TruncatedNormal(mdri, σ_mdri, 0, Inf)
-        dfrr = Distributions.TruncatedNormal(frr, σ_frr, 0, 1)
+        dmdri = Distributions.truncated(Distributions.Normal(mdri, σ_mdri), 0, Inf)
+        dfrr = Distributions.truncated(Distributions.Normal(frr, σ_frr), 0, 1)
         npos = rand(dprev, bs)
         prevs =  npos ./ bs_numbers_n[1]
         nr = rand(dprevR, bs)
@@ -452,12 +452,12 @@ function incdif(prev::AbstractVector{Float64},
         end
         if covar[1] == 0.0 && covar[2] == 0.0
             r = hcat(
-                    rand(Distributions.TruncatedNormal(prev[1], σ_prev[1], 0.0, 1.0), bs),
-                    rand(Distributions.TruncatedNormal(prevR[1], σ_prevR[1], 0.0, 1.0), bs),
-                    rand(Distributions.TruncatedNormal(prev[2], σ_prev[2], 0.0, 1.0), bs),
-                    rand(Distributions.TruncatedNormal(prevR[2], σ_prevR[2], 0.0, 1.0), bs),
-                    rand(Distributions.TruncatedNormal(mdri, σ_mdri, 0.0, Inf), bs),
-                    rand(Distributions.TruncatedNormal(frr, σ_frr, 0.0, 1.0), bs)
+                    rand(Distributions.truncated(Distributions.Normal(prev[1], σ_prev[1]), 0.0, 1.0), bs),
+                    rand(Distributions.truncated(Distributions.Normal(prevR[1], σ_prevR[1]), 0.0, 1.0), bs),
+                    rand(Distributions.truncated(Distributions.Normal(prev[2], σ_prev[2]), 0.0, 1.0), bs),
+                    rand(Distributions.truncated(Distributions.Normal(prevR[2], σ_prevR[2]), 0.0, 1.0), bs),
+                    rand(Distributions.truncated(Distributions.Normal(mdri, σ_mdri), 0.0, Inf), bs),
+                    rand(Distributions.truncated(Distributions.Normal(frr, σ_frr), 0.0, 1.0), bs)
                     )
         elseif covar[1] > 0.0 || covar[2] > 0.0
             @warn "Truncated multivariate normal with covariance not implemented yet"
@@ -490,8 +490,8 @@ function incdif(prev::AbstractVector{Float64},
         dprevR_1 = Distributions.Binomial(bs_numbers_n[2], prevR[1])
         dprev_2 = Distributions.Binomial(bs_numbers_n[3], prev[2])
         dprevR_2 = Distributions.Binomial(bs_numbers_n[4], prevR[2])
-        dmdri = Distributions.TruncatedNormal(mdri, σ_mdri, 0, Inf)
-        dfrr = Distributions.TruncatedNormal(frr, σ_frr, 0, 1)
+        dmdri = Distributions.truncated(Distributions.Normal(mdri, σ_mdri), 0, Inf)
+        dfrr = Distributions.truncated(Distributions.Normal(frr, σ_frr), 0, 1)
         npos_1 = rand(dprev_1, bs)
         prevs_1 =  npos_1 ./ bs_numbers_n[1]
         nr_1 = rand(dprevR_1, bs)
