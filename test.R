@@ -49,7 +49,7 @@ mdrical(data = untreated_c,
         n_bootstraps = 10,
         plot = TRUE,
         parallel = TRUE,
-        cores = 4,
+        cores = 6,
         output_bs_parms = TRUE,
         debug = FALSE)
 
@@ -64,7 +64,7 @@ mdrical(data = untreated_c,
         n_bootstraps = 10,
         plot = TRUE,
         parallel = TRUE,
-        cores = 4,
+        cores = 6,
         output_bs_parms = TRUE,
         debug = FALSE)
 
