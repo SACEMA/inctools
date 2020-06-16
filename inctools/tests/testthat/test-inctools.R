@@ -81,8 +81,8 @@ test_that("mdri estimation works", {
 
 test_that("mdri bootstrapping works", {
   skip_on_cran()
-  skip_if(as.numeric(as.character(R.Version()$minor)) < 6.0, 
-          message = "Bootstrapping tests skipped on R versions before 6") # Workaround for unexplained failures
+  skip_if(as.numeric(R.Version()$major) == 3 & as.numeric(R.Version()$minor) < 6, 
+          message = "Bootstrapping tests skipped on R versions before 3.6") # Workaround for unexplained failures
   expect_equal({
     mdri <- mdrical(data=excalibdata,
                     subid_var = "SubjectID",
