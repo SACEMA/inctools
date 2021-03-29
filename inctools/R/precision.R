@@ -363,7 +363,7 @@ incprecision <- function(I, RSE_I, PrevH, CR, MDRI, RSE_MDRI, FRR, RSE_FRR, BigT
     }
 
 
-    PrevR <- ((I * (1 - PrevH) * (MDRI - FRR * BigT))/PrevH + FRR)
+    PrevR <- (I * (1 - PrevH) * (MDRI - FRR * BigT))/PrevH + FRR
     out2 <- PrevHR <- round(PrevH * PrevR, digits = 5)  #Prev.HIV&recent
     out3 <- PrevHnR <- round(PrevH - PrevHR, digits = 5)  #Prev.HIV&nonrecent
 
