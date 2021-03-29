@@ -1,0 +1,10 @@
+pandoc: '2.13'
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  EstimatingIncidence: EstimatingIncidence.html
+  Introduction: Introduction.html
+  SurveyDesign: SurveyDesign.html
+  TestCalibration: TestCalibration.html
+last_built: 2021-03-29T00:00Z
+
