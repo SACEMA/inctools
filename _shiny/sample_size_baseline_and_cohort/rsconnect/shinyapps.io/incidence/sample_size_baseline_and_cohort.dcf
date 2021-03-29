@@ -1,0 +1,13 @@
+name: sample_size_baseline_and_cohort
+title: sample_size_baseline_and_cohort
+username:
+account: incidence
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1684137
+bundleId: 3436029
+url: https://vitalantri.shinyapps.io/sample_size_baseline_and_cohort/
+when: 1595728621.53679
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: test.R
