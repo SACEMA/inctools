@@ -140,7 +140,7 @@ g(P_R(t)) = f(t)
 <a href="#example-of-mdrical-using-the-complementary-log-log-functional-form-and-pre-classified-data" class="anchor"></a>Example of <code>mdrical</code> using the complementary log-log functional form and pre-classified data</h3>
 <p>Load the package in order to use it</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SACEMA/inctools/">inctools</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.sacema.org/inctools/index.html">inctools</a></span><span class="op">)</span></code></pre></div>
 <p>The dataset <code>excalibdata</code> contains example data from an evaluation of an assay measuring recency of infection. At an assay result of &lt;10, the specimen is considered to be recently infected. It further contains viral load data, which is commonly used to reduce false recency. For example, when recency is defined as assay result &lt;10 and viral load &gt; 1000, the FRR is substantially lower (but the MDRI is also reduced).</p>
 <p>The first example provides a variable that has pre-classified results, and uses only the complementary log-log functional form.</p>
 <p><em>Note that in these examples we perform only 1,000 bootstraps, but in real-life use no fewer than 10,000 is recommended.</em></p>
@@ -163,7 +163,7 @@ g(P_R(t)) = f(t)
 ## # A tibble: 1 x 8
 ##   FuncForm         PE   CI_LB   CI_UB      SE n_recent n_subjects n_observations
 ##   &lt;chr&gt;         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;          &lt;dbl&gt;
-## 1 cloglog_li… 248.145 223.420 274.514 13.2944      270        304            708
+## 1 cloglog_li… 248.145 221.871 275.385 13.9594      270        304            708
 ## 
 ## $Models
 ## $Models$cloglog_linear
@@ -214,7 +214,7 @@ g(P_R(t)) = f(t)
 ## # A tibble: 1 x 8
 ##   FuncForm         PE   CI_LB   CI_UB      SE n_recent n_subjects n_observations
 ##   &lt;chr&gt;         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;          &lt;dbl&gt;
-## 1 logit_cubic 259.223 231.220 286.658 14.3171      270        295            644
+## 1 logit_cubic 259.223 230.240 288.328 14.8080      270        295            644
 ## 
 ## $Models
 ## $Models$logit_cubic
@@ -310,31 +310,31 @@ g(P_R(t)) = f(t)
 ## # A tibble: 10 x 2
 ##      beta0     beta1
 ##      &lt;dbl&gt;     &lt;dbl&gt;
-##  1 5.26010 -1.08991 
-##  2 4.23369 -0.895114
-##  3 3.93328 -0.866162
-##  4 4.77841 -0.999182
-##  5 4.93478 -1.01115 
-##  6 3.98848 -0.861358
-##  7 5.62975 -1.18414 
-##  8 3.66375 -0.816467
-##  9 3.91739 -0.838525
-## 10 4.45090 -0.956161
+##  1 3.29594 -0.761601
+##  2 5.05694 -1.06022 
+##  3 6.60235 -1.36734 
+##  4 4.95220 -1.04441 
+##  5 3.70290 -0.809043
+##  6 5.60194 -1.15259 
+##  7 4.69908 -1.00689 
+##  8 5.00977 -1.09142 
+##  9 3.93211 -0.845659
+## 10 4.06603 -0.853132
 ## 
 ## $logit_cubic
 ## # A tibble: 10 x 4
-##      beta0       beta1       beta2       beta3
-##      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
-##  1 2.17785 -0.0109090   4.45363e-6  1.99106e-9
-##  2 2.26354 -0.0137147   1.97395e-5 -1.67604e-8
-##  3 1.66204 -0.00408510 -1.24150e-5  1.07219e-8
-##  4 3.17137 -0.0219830   4.10995e-5 -3.04078e-8
-##  5 2.15774 -0.0133716   1.62678e-5 -8.52806e-9
-##  6 2.67090 -0.0168655   2.16907e-5 -1.17569e-8
-##  7 2.15173 -0.0103831   3.12975e-6  3.72852e-9
-##  8 2.15479 -0.0101495   6.15652e-6 -4.85004e-9
-##  9 2.40013 -0.0157874   2.36073e-5 -1.79941e-8
-## 10 2.91831 -0.0176216   2.27165e-5 -1.45477e-8</code></pre>
+##      beta0       beta1         beta2       beta3
+##      &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;       &lt;dbl&gt;
+##  1 2.35567 -0.0181791   0.0000429113 -4.70728e-8
+##  2 2.98647 -0.0187627   0.0000275547 -1.76425e-8
+##  3 2.59631 -0.0190237   0.0000344552 -2.71399e-8
+##  4 2.67829 -0.0188507   0.0000357175 -2.89343e-8
+##  5 2.69395 -0.0173708   0.0000235609 -1.52147e-8
+##  6 2.43651 -0.0187123   0.0000327189 -2.46380e-8
+##  7 1.97974 -0.00593447 -0.0000127699  1.37053e-8
+##  8 2.27268 -0.0158627   0.0000232652 -1.49586e-8
+##  9 2.39561 -0.0141260   0.0000185814 -1.35574e-8
+## 10 2.85485 -0.0215979   0.0000391911 -2.82185e-8</code></pre>
 </div>
 </div>
 <div id="estimating-frr-using-binomial-proportions-with-frrcal" class="section level2">
