@@ -211,7 +211,7 @@ mdrical <- function(data = NULL,
   if (is.null(functional_forms)) {
     stop("Please select at least one functional form to apply to the data")
   }
-  
+
   for (ff in functional_forms) {
     if (!(ff %in% c("cloglog_linear", "logit_cubic"))) {
       stop("Please specify valid functional form(s)")
@@ -248,7 +248,7 @@ mdrical <- function(data = NULL,
   if (!is.null(random_seed)) {
     set.seed(random_seed)
   }
-  
+
   ## Assign numeric subject ids, recency variables and recency status
   data <- process_data(data = data,
                        subid_var = subid_var,
@@ -278,7 +278,7 @@ mdrical <- function(data = NULL,
     n_subjects = numeric(),
     n_observations = numeric(),
     .rows = 0
-  ) 
+  )
   model_output <- list()
 
   if (output_bs_parms) {
@@ -311,13 +311,13 @@ mdrical <- function(data = NULL,
       }
       ## WORKAROUND: https://github.com/rstudio/rstudio/issues/6692
       ## Revert to 'sequential' setup of PSOCK cluster in RStudio Console on macOS and R 4
-      if (Sys.getenv("RSTUDIO") == "1" && !nzchar(Sys.getenv("RSTUDIO_TERM")) && 
+      if (Sys.getenv("RSTUDIO") == "1" && !nzchar(Sys.getenv("RSTUDIO_TERM")) &&
           Sys.info()["sysname"] == "Darwin" && R.Version()$major == "4") {
         cluster <- parallel::makeCluster(cores, outfile="", setup_strategy = "sequential")
       } else {
         cluster <- parallel::makeCluster(cores, outfile="")
       }
-      
+
       doParallel::registerDoParallel(cluster)
       if (foreach::getDoParWorkers() != cores) {
         stop("Failed to initialise parallel worker threads.")
@@ -474,7 +474,7 @@ mdrical <- function(data = NULL,
             n_recent = sum(data$recency_status),
             n_subjects = length(unique(data$sid)),
             n_observations = nrow(data)
-          ) 
+          )
         )
     } else {
       mdri_sd <- stats::sd(mdris)
@@ -490,7 +490,7 @@ mdrical <- function(data = NULL,
             n_recent = sum(data$recency_status),
             n_subjects = length(unique(data$sid)),
             n_observations = nrow(data)
-          ) 
+          )
         )
     }
 
@@ -522,7 +522,7 @@ process_data <- function(data = data,
                          debug = FALSE) {
 
   if (debug) {browser()}
-  
+
   recency_vars_newnames <- paste0("recency", 1:length(recency_vars))
   data <- data %>%
     dplyr::rename(sid = !!subid_var,
@@ -534,11 +534,11 @@ process_data <- function(data = data,
     dplyr::mutate(time_since_eddi = as.numeric(as.character(.data$time_since_eddi)),
                   sid = plyr::mapvalues(.data$sid, unique(.data$sid), seq(1:length(unique(.data$sid))))) %>% # Is there a better way than using plyr?
     dplyr::arrange(.data$sid, .data$time_since_eddi)
-  
+
   if (nrow(data) < 1) {
     stop("Error: dataframe is empty after omitting rows with empty cells and applying time exclusion criterion")
   }
-  
+
   return(data)
 }
 
@@ -549,39 +549,39 @@ assign_recency_status <- function(data = data,
                                   debug = FALSE) {
   if(debug) {browser()}
 
-  
+
   if (recency_rule == "binary_data") {
-    
+
     data <- dplyr::rename(data, recency_status = .data$recency1)
-  
+
   } else if (recency_rule == "independent_thresholds") {
-   
+
     n_recentvars <- length(recency_params)/2
     recencyvars <- paste0("recency", 1:n_recentvars)
     statusvars <- paste0("recency_stat", 1:n_recentvars)
     data <- data %>%
       dplyr::rename_at(recencyvars, function(x) statusvars)
-   
+
     for (i in 1:n_recentvars) {
       if (recency_params[2 * i] == 0) {
-        
+
         data[,2+i] <- dplyr::case_when(
             data[,2+i] < recency_params[2 * i - 1] ~ 1,
             data[,2+i] >= recency_params[2 * i - 1] ~ 0
             )
-        
+
       }
-      
+
       if (recency_params[2 * i] == 1) {
-        
+
         data[,2+i] <- dplyr::case_when(
           data[,2+i] > recency_params[2 * i - 1] ~ 1,
           data[,2+i] <= recency_params[2 * i - 1] ~ 0
         )
-        
+
       }
     }
-    
+
     data <- data %>%
       dplyr::mutate(recency_sum = rowSums(data[,3:(2+n_recentvars)]),
              recency_status = dplyr::case_when(
@@ -589,11 +589,11 @@ assign_recency_status <- function(data = data,
                .data$recency_sum >= n_recentvars ~ 1,
              ))
   } else {
-    
+
     stop("Error: Recency rule is not `binary_data` or `independent_thresholds`.")
-    
+
   }
-  
+
   return(data)
 }
 
