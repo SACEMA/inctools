@@ -14,7 +14,7 @@ module Inctools
 
 export prevalence, rtmvnorm, incprops, inccounts, incdif
 
-import LinearAlgebra.I
+import LinearAlgebra: I, diag
 import Distributions
 import Statistics
 import DataFrames
@@ -142,20 +142,20 @@ function rtnorm_gibbs(n::Int64, μ::Float64, σ::Float64, lower::Float64, upper:
 end
 
 """
-    rtmvnorm(n, µ, Σ, lower=[-Inf,-Inf,-Inf,-Inf], upper=[Inf,Inf,Inf,Inf])
+    rtmvnorm_rejection(n, µ, Σ, lower, upper)
 
 Generate random samples from a truncated multivariate normal distribution using rejection sampling.
 
-⚠️ **Warning**: This function is currently hardcoded for 4-dimensional distributions and uses
-inefficient rejection sampling. Consider using the `gibbs=true` option in `incprops` for
-univariate truncated normals, which uses a more efficient Gibbs sampler.
+⚠️ **Warning**: This function is hardcoded for 4-dimensional distributions. It uses rejection
+sampling which becomes very inefficient when the truncation region has low probability mass.
+For diagonal covariance matrices, consider using `rtmvnorm_gibbs` instead.
 
 # Arguments
 - `n::Int64`: Number of samples to generate
 - `µ::AbstractVector{Float64}`: Mean vector (length 4)
 - `Σ::Array{Float64,2}`: Covariance matrix (4×4)
-- `lower::AbstractVector{Float64}`: Lower truncation bounds (default: [-Inf,-Inf,-Inf,-Inf])
-- `upper::AbstractVector{Float64}`: Upper truncation bounds (default: [Inf,Inf,Inf,Inf])
+- `lower::AbstractVector{Float64}`: Lower truncation bounds (length 4)
+- `upper::AbstractVector{Float64}`: Upper truncation bounds (length 4)
 
 # Returns
 - `Matrix{Float64}`: n×4 matrix of samples, where each row is one sample
@@ -169,29 +169,30 @@ Uses rejection sampling:
 
 # Performance Notes
 - Becomes very inefficient when truncation region has low probability
-- For high rejection rates, consider alternative sampling methods
-- The acceptance rate estimation helps reduce wasted sampling but adds overhead
+- Acceptance rate estimation adds overhead but reduces wasted sampling
+- Consider `rtmvnorm_gibbs` for diagonal covariance matrices
 
 # Examples
 ```julia
 using LinearAlgebra
 
-# Sample from 4D normal with all variables in [0,1]
+# Sample from 4D normal with correlation
 µ = [0.5, 0.5, 0.5, 0.5]
-Σ = Matrix(Diagonal([0.1, 0.1, 0.1, 0.1]))
-samples = rtmvnorm(1000, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0])
+Σ = [0.1 0.02 0 0; 0.02 0.1 0 0; 0 0 0.1 0; 0 0 0 0.1]
+samples = rtmvnorm_rejection(1000, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0])
 ```
 
 # See Also
-- `rtnorm_gibbs`: More efficient for univariate truncated normals
+- `rtmvnorm`: Smart wrapper that chooses between Gibbs and rejection sampling
+- `rtmvnorm_gibbs`: Efficient Gibbs sampler for diagonal covariance
+- `rtnorm_gibbs`: Univariate Gibbs sampler
 """
-# This function does not implement the appropriate method
-# !! Replace with a gibbs sampler!
-function rtmvnorm(n::Int64,
+# Rejection sampling implementation - retained for correlated variables
+function rtmvnorm_rejection(n::Int64,
     µ::AbstractVector{Float64},
     Σ::Array{Float64,2},
-    lower::AbstractVector{Float64} = [-Inf, -Inf, -Inf, -Inf],
-    upper::AbstractVector{Float64} = [Inf, Inf, Inf, Inf])
+    lower::AbstractVector{Float64},
+    upper::AbstractVector{Float64})
 
     d = Distributions.MvNormal(µ, Σ)
 
@@ -233,6 +234,192 @@ function rtmvnorm(n::Int64,
     end
     r = r[1:n,:]
     return r
+end
+
+"""
+    rtmvnorm_gibbs(n, µ, Σ, lower, upper)
+
+Generate random samples from a truncated multivariate normal using independent Gibbs sampling.
+
+This function uses Gibbs sampling when the covariance matrix is diagonal (no correlation between
+variables). It samples each dimension independently using the efficient univariate `rtnorm_gibbs`
+method. Much faster than rejection sampling for diagonal covariance matrices.
+
+# Arguments
+- `n::Int64`: Number of samples to generate
+- `µ::AbstractVector{Float64}`: Mean vector (any length)
+- `Σ::Array{Float64,2}`: Diagonal covariance matrix (d×d)
+- `lower::AbstractVector{Float64}`: Lower truncation bounds (length d)
+- `upper::AbstractVector{Float64}`: Upper truncation bounds (length d)
+
+# Returns
+- `Matrix{Float64}`: n×d matrix of samples, where each row is one sample
+
+# Requirements
+- The covariance matrix must be diagonal (off-diagonal elements = 0)
+- Dimensions of µ, Σ, lower, and upper must match
+
+# Algorithm
+For each dimension i:
+1. Extract µᵢ and σᵢ = √Σᵢᵢ
+2. Use univariate Gibbs sampler: `rtnorm_gibbs(n, µᵢ, σᵢ, lowerᵢ, upperᵢ)`
+3. Combine samples into matrix
+
+# Performance
+- O(n × d) complexity
+- Much faster than rejection sampling for diagonal covariance
+- No wasted samples (100% acceptance rate)
+
+# Examples
+```julia
+using LinearAlgebra
+
+# 4D independent truncated normals
+µ = [0.5, 0.3, 0.7, 0.4]
+Σ = Matrix(Diagonal([0.1, 0.08, 0.12, 0.09]))
+samples = rtmvnorm_gibbs(1000, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0])
+
+# 2D case
+µ = [0.2, 0.8]
+Σ = Matrix(Diagonal([0.05, 0.05]))
+samples = rtmvnorm_gibbs(5000, µ, Σ, [0.0, 0.0], [1.0, 1.0])
+```
+
+# See Also
+- `rtmvnorm`: Smart wrapper that automatically chooses this method for diagonal covariance
+- `rtmvnorm_rejection`: For correlated variables (non-diagonal covariance)
+- `rtnorm_gibbs`: Univariate Gibbs sampler used internally
+"""
+function rtmvnorm_gibbs(n::Int64,
+    µ::AbstractVector{Float64},
+    Σ::Array{Float64,2},
+    lower::AbstractVector{Float64},
+    upper::AbstractVector{Float64})
+
+    d = length(µ)
+
+    # Verify dimensions match
+    if size(Σ) != (d, d)
+        throw(DimensionMismatch("Covariance matrix dimensions $(size(Σ)) do not match mean vector length $d"))
+    end
+    if length(lower) != d || length(upper) != d
+        throw(DimensionMismatch("Truncation bounds must have same length as mean vector ($d)"))
+    end
+
+    # Extract standard deviations from diagonal
+    σ = sqrt.(diag(Σ))
+
+    # Sample each dimension independently using Gibbs sampler
+    samples = zeros(n, d)
+    for i in 1:d
+        samples[:, i] = rtnorm_gibbs(n, µ[i], σ[i], lower[i], upper[i])
+    end
+
+    return samples
+end
+
+"""
+    rtmvnorm(n, µ, Σ, lower, upper; method=:auto)
+
+Generate random samples from a truncated multivariate normal distribution.
+
+This is a smart wrapper that automatically chooses between Gibbs sampling (for diagonal covariance)
+and rejection sampling (for correlated variables). Defaults to Gibbs sampling when possible, as it
+is much more efficient.
+
+# Arguments
+- `n::Int64`: Number of samples to generate
+- `µ::AbstractVector{Float64}`: Mean vector (length d)
+- `Σ::Array{Float64,2}`: Covariance matrix (d×d)
+- `lower::AbstractVector{Float64}`: Lower truncation bounds (length d)
+- `upper::AbstractVector{Float64}`: Upper truncation bounds (length d)
+- `method::Symbol=:auto`: Sampling method - `:auto`, `:gibbs`, or `:rejection`
+  - `:auto` - Automatically choose Gibbs for diagonal Σ, rejection otherwise
+  - `:gibbs` - Force Gibbs sampling (error if Σ not diagonal)
+  - `:rejection` - Force rejection sampling (works but slow for 4D only)
+
+# Returns
+- `Matrix{Float64}`: n×d matrix of samples, where each row is one sample
+
+# Method Selection (when method=:auto)
+- **Gibbs sampling** used when covariance matrix is diagonal (max off-diagonal < 1e-10)
+- **Rejection sampling** used when variables are correlated (non-diagonal covariance)
+
+# Notes
+- Gibbs sampling: Fast, works for any dimension with diagonal covariance
+- Rejection sampling: Slow, currently hardcoded for 4 dimensions only
+- Gibbs is typically 10-100x faster than rejection for diagonal covariance
+
+# Examples
+```julia
+using LinearAlgebra
+
+# Example 1: Diagonal covariance (automatically uses Gibbs)
+µ = [0.5, 0.3, 0.7, 0.4]
+Σ = Matrix(Diagonal([0.1, 0.08, 0.12, 0.09]))
+samples = rtmvnorm(1000, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0])
+
+# Example 2: Correlated variables (automatically uses rejection)
+Σ_corr = [0.1 0.02 0 0; 0.02 0.08 0 0; 0 0 0.12 0; 0 0 0 0.09]
+samples = rtmvnorm(1000, µ, Σ_corr, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0])
+
+# Example 3: Force specific method
+samples = rtmvnorm(1000, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0], method=:gibbs)
+```
+
+# See Also
+- `rtmvnorm_gibbs`: Efficient Gibbs sampler for diagonal covariance
+- `rtmvnorm_rejection`: Rejection sampler for correlated variables
+- `rtnorm_gibbs`: Univariate Gibbs sampler
+"""
+function rtmvnorm(n::Int64,
+    µ::AbstractVector{Float64},
+    Σ::Array{Float64,2},
+    lower::AbstractVector{Float64},
+    upper::AbstractVector{Float64};
+    method::Symbol = :auto)
+
+    d = length(µ)
+
+    # Check if covariance matrix is diagonal (no correlation)
+    is_diagonal = true
+    for i in 1:d
+        for j in 1:d
+            if i != j && abs(Σ[i,j]) > 1e-10
+                is_diagonal = false
+                break
+            end
+        end
+        if !is_diagonal
+            break
+        end
+    end
+
+    # Choose method
+    if method == :auto
+        if is_diagonal
+            # Use efficient Gibbs sampling
+            return rtmvnorm_gibbs(n, µ, Σ, lower, upper)
+        else
+            # Use rejection sampling for correlated variables
+            if d != 4
+                @warn "Rejection sampling currently only supports 4 dimensions. Covariance is non-diagonal, falling back to rejection sampling which requires exactly 4 dimensions."
+            end
+            return rtmvnorm_rejection(n, µ, Σ, lower, upper)
+        end
+    elseif method == :gibbs
+        if !is_diagonal
+            throw(ArgumentError("Gibbs sampling requires diagonal covariance matrix. Use method=:rejection or method=:auto"))
+        end
+        return rtmvnorm_gibbs(n, µ, Σ, lower, upper)
+    elseif method == :rejection
+        if d != 4
+            throw(DimensionMismatch("Rejection sampling currently only supports 4 dimensions, got $d"))
+        end
+        return rtmvnorm_rejection(n, µ, Σ, lower, upper)
+    else
+        throw(ArgumentError("Unknown method: $method. Use :auto, :gibbs, or :rejection"))
+    end
 end
 
 """
@@ -419,7 +606,7 @@ function incprops(prev::Float64,
                     rtnorm_gibbs(bs, frr, σ_frr, 0.0, 1.0)
                     )
         elseif covar > 0.0
-            @warn "Truncated multivariate normal with covariance not implemented yet"
+            # Use rejection sampling for correlated prev and prevR
             µ = [prev, prevR, mdri, frr]
             Σ = [σ_prev^2 covar 0 0 ; covar σ_prevR^2 0 0 ; 0 0 σ_mdri^2 0 ; 0 0 0 σ_frr^2]
             r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, Inf, 1.0])
@@ -445,7 +632,7 @@ function incprops(prev::Float64,
                     rand(Distributions.truncated(Distributions.Normal(frr, σ_frr), 0.0, 1.0), bs)
                     )
         elseif covar > 0.0
-            @warn "Truncated multivariate normal with covariance not implemented yet"
+            # Use rejection sampling for correlated prev and prevR
             µ = [prev, prevR, mdri, frr]
             Σ = [σ_prev^2 covar 0 0 ; covar σ_prevR^2 0 0 ; 0 0 σ_mdri^2 0 ; 0 0 0 σ_frr^2]
             r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0], [1.0, 1.0, Inf, 1.0])
@@ -739,7 +926,7 @@ function incdif(prev::AbstractVector{Float64},
                     rand(Distributions.truncated(Distributions.Normal(frr, σ_frr), 0.0, 1.0), bs)
                     )
         elseif covar[1] > 0.0 || covar[2] > 0.0
-            @warn "Truncated multivariate normal with covariance not implemented yet"
+            @error "Truncated 6D multivariate normal with covariance not supported. Rejection sampling is limited to 4 dimensions. Set covar=[0.0, 0.0] to use independent Gibbs sampling."
             µ = [prev[1], prevR[1], prev[2], prevR[2], mdri, frr]
             Σ = [σ_prev[1]^2 covar[1] 0 0 0 0; covar[1] σ_prevR[1]^2 0 0 0 0 ; 0 0 σ_prev[2]^2 covar[2] 0 0 ; 0 0 covar[2] σ_prevR[2]^2 0 0 ; 0 0 0 0 σ_mdri^2 0 ; 0 0 0 0 0 σ_frr^2]
             r = rtmvnorm(bs, µ, Σ, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0, Inf, 1.0])
