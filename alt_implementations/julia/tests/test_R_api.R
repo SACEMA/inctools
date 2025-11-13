@@ -1,13 +1,13 @@
 # Test script for R API to Inctools.jl
-# Run this from the julia/ directory
+# Run this from the julia/ directory: Rscript tests/test_R_api.R
 
 cat("Testing R API to Inctools.jl\n")
 cat(rep("=", 70), "\n\n", sep = "")
 
-# Load the R functions
+# Load the R functions from InctoolsJulia package
 cat("Loading R functions...\n")
-source("R/zzz.R")
-source("R/inctools.R")
+source("InctoolsJulia/R/zzz.R")
+source("InctoolsJulia/R/inctools.R")
 
 # Initialize Julia and Inctools.jl
 cat("Initializing Julia (this may take ~30 seconds on first run)...\n")

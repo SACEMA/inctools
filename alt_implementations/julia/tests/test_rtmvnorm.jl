@@ -1,5 +1,12 @@
 using Pkg
-Pkg.activate("./Inctools")
+
+# Find Inctools package (works from julia/ or tests/ directory)
+inctools_path = isdir("./Inctools") ? "./Inctools" : "../Inctools"
+if !isdir(inctools_path)
+    error("Cannot find Inctools package. Run this from julia/ directory.")
+end
+Pkg.activate(inctools_path)
+
 using Revise
 using Inctools
 using LinearAlgebra

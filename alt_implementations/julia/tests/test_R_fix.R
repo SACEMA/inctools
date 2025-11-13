@@ -1,6 +1,7 @@
 # Quick test of the R API fix
-source("R/zzz.R")
-source("R/inctools.R")
+# Run from julia/ directory: Rscript tests/test_R_fix.R
+source("InctoolsJulia/R/zzz.R")
+source("InctoolsJulia/R/inctools.R")
 
 cat("Initializing Julia...\n")
 inctools_setup()
