@@ -16,12 +16,29 @@
     julia <- JuliaCall::julia_setup()
 
     # Get the path to the Inctools.jl package
+    # When installed: inst/Inctools becomes <package-root>/Inctools
     pkg_path <- system.file("Inctools", package = "InctoolsJulia", mustWork = FALSE)
+
     if (pkg_path == "") {
-      # If not installed as R package, try relative path
-      pkg_path <- file.path(getwd(), "Inctools")
-      if (!dir.exists(pkg_path)) {
-        stop("Cannot find Inctools.jl package directory")
+      # If not installed as R package, try common development locations
+      # 1. Try ../Inctools (from InctoolsJulia/ directory)
+      # 2. Try ../../Inctools (from InctoolsJulia/R/ when sourcing)
+      possible_paths <- c(
+        file.path(getwd(), "..", "Inctools"),
+        file.path(getwd(), "Inctools"),
+        file.path(dirname(getwd()), "Inctools")
+      )
+
+      for (path in possible_paths) {
+        if (dir.exists(path)) {
+          pkg_path <- normalizePath(path)
+          break
+        }
+      }
+
+      if (pkg_path == "" || !dir.exists(pkg_path)) {
+        stop("Cannot find Inctools.jl package directory. ",
+             "Make sure you are in the julia/ directory or install the package properly.")
       }
     }
 
