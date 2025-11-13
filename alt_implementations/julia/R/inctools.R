@@ -36,9 +36,9 @@ inctools_setup <- function(julia_path = NULL) {
 prevalence <- function(pos, n, de = 1.0, ci = FALSE, alpha = 0.05) {
   .inctools_julia_setup()
 
-  # Call Julia function
+  # Call Julia function (note: Julia uses α, not alpha)
   result <- JuliaCall::julia_call("prevalence", pos, n, de,
-                                   ci = ci, alpha = alpha)
+                                   ci = ci, α = alpha)
 
   return(result)
 }
@@ -88,13 +88,13 @@ incprops <- function(prev, sigma_prev, prevR, sigma_prevR,
   bs <- as.integer(bs)
   per <- as.integer(per)
 
-  # Call Julia function
+  # Call Julia function (note: Julia uses α, not alpha)
   result <- JuliaCall::julia_call("incprops",
                                    prev, sigma_prev, prevR, sigma_prevR,
                                    mdri, sigma_mdri, frr, sigma_frr,
                                    covar = covar, T = T,
                                    timeconversion = timeconversion,
-                                   bs = bs, alpha = alpha, per = per)
+                                   bs = bs, α = alpha, per = per)
 
   return(result)
 }
@@ -154,14 +154,14 @@ inccounts <- function(n, npos, ntestR, nR, mdri, frr,
   bs <- as.integer(bs)
   per <- as.integer(per)
 
-  # Call Julia function
+  # Call Julia function (note: Julia uses α, not alpha)
   result <- JuliaCall::julia_call("inccounts",
                                    n, npos, ntestR, nR, mdri, frr,
                                    de_npos = de_npos, de_nR = de_nR,
-                                   sigma_mdri = sigma_mdri, sigma_frr = sigma_frr,
+                                   σ_mdri = sigma_mdri, σ_frr = sigma_frr,
                                    covar = covar, T = T,
                                    timeconversion = timeconversion,
-                                   bs = bs, alpha = alpha, per = per)
+                                   bs = bs, α = alpha, per = per)
 
   return(result)
 }
@@ -206,13 +206,13 @@ incdif <- function(prev, sigma_prev, prevR, sigma_prevR,
   bs <- as.integer(bs)
   per <- as.integer(per)
 
-  # Call Julia function
+  # Call Julia function (note: Julia uses Greek letters α, σ)
   result <- JuliaCall::julia_call("incdif",
                                    prev, sigma_prev, prevR, sigma_prevR,
                                    mdri, sigma_mdri, frr, sigma_frr,
                                    covar = covar, T = T,
                                    timeconversion = timeconversion,
-                                   bs = bs, alpha = alpha, per = per)
+                                   bs = bs, α = alpha, per = per)
 
   return(result)
 }
