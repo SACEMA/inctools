@@ -110,7 +110,7 @@ uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
 version = "0.3.28"
 
 [[deps.Inctools]]
-deps = ["Distributions", "LinearAlgebra", "Statistics"]
+deps = ["DataFrames", "Distributions", "LinearAlgebra", "Statistics"]
 path = "."
 uuid = "52dc77e3-fa08-4cbc-ba58-0637665c6c17"
 version = "0.1.0"
