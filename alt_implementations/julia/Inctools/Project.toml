@@ -1,7 +1,7 @@
 name = "Inctools"
 uuid = "52dc77e3-fa08-4cbc-ba58-0637665c6c17"
-version = "0.1.0"
-authors = ["Eduard Grebe <egrebe@vitalant.org>"]
+version = "0.2.0"
+authors = ["Eduard Grebe <eduard@grebe.consulting> <egrebe@vitalant.org>"]
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"

@@ -1,0 +1,26 @@
+Package: InctoolsJulia
+Type: Package
+Title: R Interface to Inctools.jl - HIV Incidence Estimation Tools (Julia Backend)
+Version: 0.2.0
+Authors@R: c(
+    person("Eduard", "Grebe", email = "eduard@grebe.consulting", role = c("aut", "cre"),
+           comment = "Also: egrebe@vitalant.org"),
+    person("Claude", "AI", role = "ctb", comment = "R wrapper implementation")
+    )
+Description: Provides an R interface to the Inctools.jl Julia package for
+    estimating HIV incidence using cross-sectional survey data with recency
+    biomarkers. Implements the Kassanjee method for incidence estimation with
+    support for bootstrap and Delta method uncertainty estimation. This package
+    wraps the high-performance Julia implementation and is distinct from the
+    'inctools' R package on CRAN. Requires Julia to be installed on the system.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 3.5.0)
+Imports:
+    JuliaCall (>= 0.17.0)
+SystemRequirements: Julia (>= 1.6)
+RoxygenNote: 7.0.0
+URL: https://github.com/SACEMA/inctools
+BugReports: https://github.com/SACEMA/inctools/issues
