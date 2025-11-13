@@ -1152,20 +1152,36 @@ function inccounts(n::Int64,
     de_nR::Float64 = 1.0,
     σ_mdri::Float64 = 0.0,
     σ_frr::Float64 = 0.0,
-    cov::Float64 = 0.0, # covariance of prev and prevR
+    covar::Union{Float64, Nothing} = nothing,  # covariance of prev and prevR
+    cov::Union{Float64, Nothing} = nothing,    # DEPRECATED: use covar instead
     T = 730.5, # in same units as MDRI
     timeconversion = 365.25, # to convert from unit in which MDRI and T is specified to unit of incidence
     bs::Int64 = 0,
     α::Float64 = 0.05,
     per::Int64 = 1)
 
+    # Handle deprecated cov parameter
+    if cov !== nothing && covar !== nothing
+        if cov != covar
+            error("Both 'cov' and 'covar' were provided with different values. Please use only 'covar' (cov is deprecated).")
+        end
+        @warn "The 'cov' argument is deprecated and will be removed in the next version. Please use 'covar' instead."
+        covar_value = covar
+    elseif cov !== nothing
+        @warn "The 'cov' argument is deprecated and will be removed in the next version. Please use 'covar' instead."
+        covar_value = cov
+    elseif covar !== nothing
+        covar_value = covar
+    else
+        covar_value = 0.0  # Default value
+    end
+
     # compute prevalences
     prev, σ_prev  = prevalence(npos, n, de_npos)
     prevR, σ_prevR = prevalence(nR, ntestR, de_nR)
 
-    return incprops(prev, prevR, mdri, frr, σ_prev = σ_prev,
-                            σ_prevR = σ_prevR, σ_mdri = σ_mdri, σ_frr = σ_frr,
-                            cov = 0.0, T = T, timeconversion = timeconversion,
+    return incprops(prev, σ_prev, prevR, σ_prevR, mdri, σ_mdri, frr, σ_frr,
+                            covar = covar_value, T = T, timeconversion = timeconversion,
                             bs = bs, α = α, per = per)
 end
 
@@ -1180,7 +1196,8 @@ function inccounts(n::AbstractVector{Int64},
     de_nR::AbstractVector{Float64} = repeat([1.0],size(n)[1]),
     σ_mdri::Float64 = 0.0,
     σ_frr::Float64 = 0.0,
-    cov::Array{Float64,2} = Matrix{Float64}(I, size(prev)[1], size(prev)[1]), # covariance of prev and prevR
+    covar::Union{Array{Float64,2}, Nothing} = nothing,  # covariance matrix of prev and prevR
+    cov::Union{Array{Float64,2}, Nothing} = nothing,    # DEPRECATED: use covar instead
     T = 730.5, # in same units as MDRI
     timeconversion = 365.25, # to convert from unit in which MDRI and T is specified to unit of incidence
     bs::Int64 = 0,
@@ -1191,9 +1208,25 @@ function inccounts(n::AbstractVector{Int64},
     prev, σ_prev  = prevalence(npos, n, de_npos)
     prevR, σ_prevR = prevalence(nR, ntestR, de_nR)
 
-    return incprops(prev, prevR, mdri, frr, σ_prev = σ_prev,
-                            σ_prevR = σ_prevR, σ_mdri = σ_mdri, σ_frr = σ_frr,
-                            cov = 0.0, T = T, timeconversion = timeconversion,
+    # Handle deprecated cov parameter
+    if cov !== nothing && covar !== nothing
+        if cov != covar
+            error("Both 'cov' and 'covar' were provided with different values. Please use only 'covar' (cov is deprecated).")
+        end
+        @warn "The 'cov' argument is deprecated and will be removed in the next version. Please use 'covar' instead."
+        covar_value = covar
+    elseif cov !== nothing
+        @warn "The 'cov' argument is deprecated and will be removed in the next version. Please use 'covar' instead."
+        covar_value = cov
+    elseif covar !== nothing
+        covar_value = covar
+    else
+        # Default: identity matrix (no correlation between surveys)
+        covar_value = Matrix{Float64}(I, size(prev)[1], size(prev)[1])
+    end
+
+    return incprops(prev, σ_prev, prevR, σ_prevR, mdri, σ_mdri, frr, σ_frr,
+                            covar = covar_value, T = T, timeconversion = timeconversion,
                             bs = bs, α = α, per = per)
 end
 

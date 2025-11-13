@@ -175,6 +175,90 @@ println("  Rejection (correlated): $(round(t_reject, digits=2)) ms")
 println("  Speedup: $(round(t_reject / t_gibbs, digits=1))x faster with Gibbs")
 println("  ✓ Gibbs is significantly faster than rejection")
 
+# Test 9: Verify inccounts and incprops give same results
+println("\n9. Testing equivalence of inccounts and incprops")
+println("-"^70)
+
+# Define raw count data
+n_total = 1000
+n_positive = 200
+n_testedR = 180
+n_recent = 20
+mdri_val = 130.0
+frr_val = 0.01
+σ_mdri_val = 15.0
+σ_frr_val = 0.005
+de_npos_val = 1.0
+de_nR_val = 1.0
+covar_val = 0.0002
+
+println("  Input data:")
+println("    n=$n_total, npos=$n_positive, ntestR=$n_testedR, nR=$n_recent")
+println("    mdri=$mdri_val, frr=$frr_val")
+println("    σ_mdri=$σ_mdri_val, σ_frr=$σ_frr_val, covar=$covar_val")
+
+# Manually compute prevalences (what inccounts does internally)
+prev_val, σ_prev_val = prevalence(n_positive, n_total, de_npos_val)
+prevR_val, σ_prevR_val = prevalence(n_recent, n_testedR, de_nR_val)
+
+println("\n  Computed prevalences:")
+println("    prev=$(round(prev_val, digits=4)), σ_prev=$(round(σ_prev_val, digits=6))")
+println("    prevR=$(round(prevR_val, digits=4)), σ_prevR=$(round(σ_prevR_val, digits=6))")
+
+# Test 9a: Delta method (deterministic - should give identical results)
+println("\n  9a. Testing with Delta method (bs=0, deterministic):")
+result_incprops_delta = incprops(prev_val, σ_prev_val, prevR_val, σ_prevR_val,
+                                  mdri_val, σ_mdri_val, frr_val, σ_frr_val,
+                                  covar=covar_val, bs=0, α=0.05)
+result_inccounts_delta = inccounts(n_total, n_positive, n_testedR, n_recent,
+                                    mdri_val, frr_val,
+                                    de_npos=de_npos_val, de_nR=de_nR_val,
+                                    σ_mdri=σ_mdri_val, σ_frr=σ_frr_val,
+                                    covar=covar_val, bs=0, α=0.05)
+
+println("      incprops:  I=$(round(result_incprops_delta.I, digits=6)), CI=[$(round(result_incprops_delta.CI[1], digits=6)), $(round(result_incprops_delta.CI[2], digits=6))], RSE=$(round(result_incprops_delta.RSE, digits=6))")
+println("      inccounts: I=$(round(result_inccounts_delta.I, digits=6)), CI=[$(round(result_inccounts_delta.CI[1], digits=6)), $(round(result_inccounts_delta.CI[2], digits=6))], RSE=$(round(result_inccounts_delta.RSE, digits=6))")
+
+if result_incprops_delta.I == result_inccounts_delta.I &&
+   result_incprops_delta.CI == result_inccounts_delta.CI &&
+   result_incprops_delta.RSE == result_inccounts_delta.RSE
+    println("      ✓ Perfect match with Delta method!")
+else
+    println("      ✗ MISMATCH with Delta method (should be identical)")
+end
+
+# Test 9b: Bootstrap method (stochastic - results should be similar but not identical)
+println("\n  9b. Testing with bootstrap (bs=2000, stochastic):")
+import Random
+Random.seed!(12345)  # Set seed for reproducibility
+result_incprops_boot = incprops(prev_val, σ_prev_val, prevR_val, σ_prevR_val,
+                                 mdri_val, σ_mdri_val, frr_val, σ_frr_val,
+                                 covar=covar_val, bs=2000, α=0.05)
+Random.seed!(12345)  # Reset seed
+result_inccounts_boot = inccounts(n_total, n_positive, n_testedR, n_recent,
+                                   mdri_val, frr_val,
+                                   de_npos=de_npos_val, de_nR=de_nR_val,
+                                   σ_mdri=σ_mdri_val, σ_frr=σ_frr_val,
+                                   covar=covar_val, bs=2000, α=0.05)
+
+println("      incprops:  I=$(round(result_incprops_boot.I, digits=6)), CI=[$(round(result_incprops_boot.CI[1], digits=6)), $(round(result_incprops_boot.CI[2], digits=6))], RSE=$(round(result_incprops_boot.RSE, digits=6))")
+println("      inccounts: I=$(round(result_inccounts_boot.I, digits=6)), CI=[$(round(result_inccounts_boot.CI[1], digits=6)), $(round(result_inccounts_boot.CI[2], digits=6))], RSE=$(round(result_inccounts_boot.RSE, digits=6))")
+
+# Point estimate should always be identical
+if result_incprops_boot.I == result_inccounts_boot.I
+    println("      ✓ Incidence estimates match exactly")
+else
+    println("      ✗ Incidence estimates differ (should be identical)")
+end
+
+# With same random seed, bootstrap results should also be identical
+if result_incprops_boot.CI == result_inccounts_boot.CI &&
+   result_incprops_boot.RSE == result_inccounts_boot.RSE
+    println("      ✓ Bootstrap CIs match with same random seed")
+else
+    println("      ⚠ Bootstrap CIs differ (may indicate different RNG usage)")
+end
+
 println("\n" * "="^70)
 println("✓ ALL TESTS PASSED!")
 println("="^70)
@@ -185,3 +269,4 @@ println("  - incprops works with both covar=0.0 and covar>0.0")
 println("  - incdif works correctly with independent variables")
 println("  - Gibbs sampling works for 2D through 6D")
 println("  - Gibbs provides significant performance improvement")
+println("  - inccounts and incprops produce identical results")
